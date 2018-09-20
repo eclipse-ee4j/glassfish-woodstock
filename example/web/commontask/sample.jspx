@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<jsp:root version="2.0" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:webuijsf="http://www.sun.com/webui/webuijsf">
+<jsp:directive.page contentType="text/html;charset=UTF-8" 
+                    pageEncoding="UTF-8"/>
+<f:view>
+  <webuijsf:page>
+    <f:loadBundle basename="com.sun.webui.jsf.example.resources.Resources" var="msgs" />
+    <webuijsf:head title="#{msgs.commontask_title}" />
+    <webuijsf:body>
+    <webuijsf:form id="form1">
+          <webuijsf:masthead id="masthead"
+             productImageURL="/images/example_primary_masthead.png"
+             productImageHeight="40"
+             productImageWidth="188"
+             userInfo="test_user" 
+             serverInfo="test_server"
+             productImageDescription="#{msgs.mastheadAltText}" />
+        <webuijsf:contentPageTitle id="cpt0" title="#{msgs.commontask_sampletitle}" />          
+        <webuijsf:markup tag="div" extraAttributes="align='middle'">
+            <webuijsf:staticText id="primary" text="#{msgs.commontask_tasklaunch}" style="font-weight:bold"/>
+            <br /><br /><br />
+            <webuijsf:button id="button2" text="#{msgs.commontask_closeButton}" onClick = "window.close();return false;"/>
+        </webuijsf:markup>
+                                   
+    </webuijsf:form>
+    </webuijsf:body>
+  </webuijsf:page>
+</f:view>
+</jsp:root>
+
+
+

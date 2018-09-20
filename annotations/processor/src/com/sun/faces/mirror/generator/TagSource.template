@@ -1,0 +1,113 @@
+<!--
+
+ Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v. 2.0, which is available at
+ http://www.eclipse.org/legal/epl-2.0.
+
+ This Source Code may also be made available under the following Secondary
+ Licenses when the conditions for such availability set forth in the
+ Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+ version 2 with the GNU Classpath Exception, which is available at
+ https://www.gnu.org/software/classpath/license.html.
+
+ SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+package ${tagPackage};
+
+import javax.el.ELException;
+import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.faces.FacesException;
+import javax.faces.component.UIComponent;
+import javax.faces.component.StateHolder;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.webapp.UIComponentELTag;
+import javax.faces.context.FacesContext;
+
+/**
+ * This file was generated automatically on ${date}.
+ */
+
+public class ${tagClass} extends UIComponentELTag {
+    
+    /**
+     * Returns the requested component type.
+     */
+    public String getComponentType() {
+        return "${componentInfo.family}";
+    }
+    
+    /**
+     * Returns the requested renderer type.
+     */
+    public String getRendererType() {
+#if ($componentInfo.tagRendererType)
+        return "${componentInfo.tagRendererType}";
+#else
+        return null;
+#end
+    }
+    
+    /**
+     * Release any allocated tag handler attributes.
+     */
+    public void release() {
+        super.release();
+#foreach($propertyInfo in $propertyInfos)
+#if ($propertyInfo.attributeInfo && !($propertyInfo.name == "id" || $propertyInfo.name == "parent"))
+        ${propertyInfo.instanceName} = null;
+#end
+#end
+    }
+    
+    /**
+     * Transfer tag attribute values to component properties.
+     */
+    protected void setProperties(UIComponent component) {
+        super.setProperties(component);
+                        
+#foreach($propertyInfo in $propertyInfos)
+#if ($propertyInfo.attributeInfo)
+#if ($propertyInfo.type == "javax.el.MethodExpression")
+        if (${propertyInfo.instanceName} != null) {
+            try {
+                component.getAttributes().put("${propertyInfo.instanceName}", ${propertyInfo.instanceName});
+            } catch (ELException e) {
+                throw new FacesException(e);
+            }
+        }
+#elseif (!($propertyInfo.name == "id" || $propertyInfo.name == "parent"))
+        if (${propertyInfo.instanceName} != null) {
+            component.setValueExpression("${propertyInfo.attributeInfo.name}", ${propertyInfo.instanceName});
+        }
+#end
+#end
+#end ##foreach($propertyInfo in $propertyInfos)
+    }
+    
+
+#foreach($propertyInfo in $propertyInfos)
+#if ($propertyInfo.attributeInfo && !($propertyInfo.name == "id" || $propertyInfo.name == "parent"))
+    /**
+     * Set attribute corresponding to the "${propertyInfo.name}" property
+     */
+#if ($propertyInfo.type == 'javax.el.MethodExpression')
+    private MethodExpression ${propertyInfo.instanceName} = null;
+    public void ${propertyInfo.attributeInfo.writeMethodName} (MethodExpression ${propertyInfo.instanceName}) {
+        this.${propertyInfo.instanceName} = ${propertyInfo.instanceName};
+    }
+#else
+    private ValueExpression ${propertyInfo.instanceName} = null;
+    public void ${propertyInfo.attributeInfo.writeMethodName} (ValueExpression ${propertyInfo.instanceName}) {
+        this.${propertyInfo.instanceName} = ${propertyInfo.instanceName};
+    }
+#end
+#end ##if ($propertyInfo.attributeInfo)
+#end ##foreach($propertyInfo in $propertyInfos)
+
+}

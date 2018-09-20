@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<!-- This file was generated automatically on ${date}. -->
+
+## TODO Extract javadoc for taglib descriptions
+    
+<taglib>
+
+    <tlib-version>1.1</tlib-version>
+    <jsp-version>2.1</jsp-version>
+    <short-name>${namespacePrefix}</short-name>
+    <uri>${namespace}</uri>
+#foreach ($componentInfo in $componentInfoSet)
+#if ($componentInfo.isTag())
+    <tag>
+        <name>${componentInfo.tagName}</name>
+        <tag-class>${componentInfo.tagClassQualifiedName}</tag-class>
+        <body-content>JSP</body-content>
+        <description><![CDATA[${componentInfo.tagDescription}]]></description>
+
+        <attribute>
+            <name>binding</name>
+            <required>false</required>
+            <deferred-value>
+                <type>${componentInfo.qualifiedName}</type>
+            </deferred-value>
+            <description>
+                A ValueExpression that resolves to the UIComponent that corresponds
+                to this tag. This binding allows the Java bean that contains the UIComponent 
+                to manipulate the UIComponent, its properties, and its children.
+            </description>
+        </attribute>
+#foreach ($propertyInfo in $componentInfo.propertyInfoMap)
+#if ($propertyInfo.name == 'id' && $propertyInfo.attributeInfo)
+        <attribute>
+            <name>${propertyInfo.attributeInfo.name}</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+#elseif ($propertyInfo.attributeInfo)
+
+        <attribute>
+            <name>${propertyInfo.attributeInfo.name}</name>
+#if ($propertyInfo.attributeInfo.isRequired())
+            <required>true</required>
+#else
+            <required>false</required>
+#end  
+#if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.attributeInfo.methodSignature)
+            <deferred-method>
+                <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
+            </deferred-method>
+#else
+            <deferred-method>
+                <method-signature/>
+            </deferred-method>
+#end
+#else
+            <deferred-value>
+                <type>${propertyInfo.type}</type>
+            </deferred-value>
+#end##if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.attributeInfo.description)
+            <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
+#end
+        </attribute>
+#end##if ($propertyInfo.attributeInfo)
+#end##foreach ($propertyInfo in $componentInfo.propertyInfoMap)
+
+#if ($componentInfo.inheritedPropertyInfoMap.size() > 0)
+        <!-- Inherited properties -->
+#end
+#foreach ($propertyInfo in $componentInfo.inheritedPropertyInfoMap)
+#if ($propertyInfo.name == 'id' && $propertyInfo.attributeInfo)
+        <attribute>
+            <name>${propertyInfo.attributeInfo.name}</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+#elseif ($propertyInfo.attributeInfo)
+
+        <attribute>
+            <name>${propertyInfo.attributeInfo.name}</name>
+#if ($propertyInfo.attributeInfo.isRequired())
+            <required>true</required>
+#else
+            <required>false</required>
+#end
+#if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.attributeInfo.methodSignature)
+            <deferred-method>
+                <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
+            </deferred-method>
+#else
+            <deferred-method>
+                <method-signature/>
+            </deferred-method>
+#end
+#else
+            <deferred-value>
+                <type>${propertyInfo.type}</type>
+            </deferred-value>
+#end##if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.attributeInfo.description)
+            <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
+#end
+        </attribute>
+#end##if ($propertyInfo.attributeInfo)
+#end##foreach ($propertyInfo in $componentInfo.inheritedPropertyInfoMap)
+
+    </tag>
+
+#end
+#end
+</taglib>

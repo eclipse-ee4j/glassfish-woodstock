@@ -1,0 +1,52 @@
+<!--
+
+    Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<div dojoAttachPoint="domNode" class="Tbl2Grp@THEME_CSS@">
+  <table dojoAttachPoint="tableContainer" cellpadding="0" cellspacing="0" class="Tbl@THEME_CSS@"
+      style="padding:0px">
+    <thead dojoAttachPoint="theadContainer">
+      <!-- Group Header -->
+      <tr dojoAttachPoint="groupHeaderContainer" class="Tbl2GrpHdr@THEME_CSS@ hidden@THEME_CSS@">
+        <th dojoAttachPoint="groupHeaderNode" scope="colgroup" style="padding:0px;" tabindex="-1">
+          <span dojoAttachPoint="groupHeaderTextNode" class="Tbl2GrpHdrTxt@THEME_CSS@"></span>
+          <span dojoAttachPoint="groupHeaderRowsTextNode" class="Tbl2GrpHdrRowsTxt@THEME_CSS@"></span>
+        </th>
+      </tr>
+      <!-- Column Headers -->
+      <tr dojoAttachPoint="colHeaderContainer" class="Tbl2ColHdr@THEME_CSS@ hidden@THEME_CSS@">
+        <th dojoAttachPoint="colHeaderNode" scope="col" style="padding:0px;" tabindex="-1"></th>
+      </tr>
+    </thead>
+    <tbody dojoAttachPoint="tbodyContainer">
+      <!-- Rows -->
+      <tr dojoAttachPoint="rowContainer" class="hidden@THEME_CSS@">
+        <td dojoAttachPoint="rowNode" style="padding:0px;" tabindex="-1"></td>
+      </tr>
+    </tbody>
+    <tfoot dojoAttachPoint="tfootContainer">
+      <!-- Column Footers -->
+      <tr dojoAttachPoint="colFooterContainer" class="Tbl2ColFtr@THEME_CSS@ hidden@THEME_CSS@">
+        <td dojoAttachPoint="colFooterNode" style="padding:0px;" tabindex="-1"></td>
+      </tr>
+      <!-- Group Footer -->
+      <tr dojoAttachPoint="groupFooterContainer" class="Tbl2GrpFtr@THEME_CSS@ hidden@THEME_CSS@">
+        <td dojoAttachPoint="groupFooterNode" style="padding:0px;" tabindex="-1"></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

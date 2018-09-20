@@ -1,0 +1,90 @@
+/*
+ * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0, which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the
+ * Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+ * version 2 with the GNU Classpath Exception, which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ */
+
+package com.sun.webui.jsf.renderkit.html;
+
+import com.sun.faces.annotation.Renderer;
+import com.sun.webui.jsf.component.ImageHyperlink;
+import com.sun.webui.jsf.util.ConversionUtilities;
+import com.sun.webui.jsf.util.RenderingUtilities;
+import java.io.IOException;
+import javax.faces.component.UIComponent;
+import java.util.Map;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
+
+/**
+ * <p>This class is responsible for rendering the {@link ImageHyperlink} component for the
+ * HTML Render Kit.</p> <p> The {@link ImageHyperlink} component can be used as an anchor, a
+ * plain hyperlink or a hyperlink that submits the form depending on how the
+ * properites are filled out for the component </p>
+ */
+@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.ImageHyperlink"))
+public class ImageHyperlinkRenderer extends HyperlinkRenderer {
+
+    // -------------------------------------------------------- Static Variables
+    // for positioning of the label.
+    private static final String LABEL_LEFT = "left"; //NOI8N
+    private static final String LABEL_RIGHT = "right"; //NOI8N
+
+    // -------------------------------------------------------- Renderer Methods
+    @Override
+    protected void finishRenderAttributes(FacesContext context,
+            UIComponent component,
+            ResponseWriter writer)
+            throws IOException {
+        //create an image component based on image attributes
+        //write out image as escaped text
+        //TODO: suppress the text field from the XML
+        ImageHyperlink ilink = (ImageHyperlink) component;
+
+        // If there is no text property set, then label == null which prevents
+        // rendering anything at all
+        //
+        Object text = ilink.getText();
+        String label = (text == null) ? null : ConversionUtilities.convertValueToString(component, text);
+
+        String textPosition = ilink.getTextPosition();
+
+        if (label != null && textPosition.equalsIgnoreCase(LABEL_LEFT)) {
+            writer.writeText(label, null);
+            writer.write("&nbsp;");
+        }
+
+        // ImageURL
+        UIComponent ic = ilink.getImageFacet();
+        if (ic != null) {
+            // GF-required 508 change
+            Map<String, Object> atts = ic.getAttributes();
+            Object value = atts.get("alt");
+            if ((value == null) || (value.equals(""))) {
+                atts.put("alt", label);
+            }
+            value = atts.get("toolTip");
+            if ((value == null) || (value.equals(""))) {
+                atts.put("toolTip", label);
+            }
+            RenderingUtilities.renderComponent(ic, context);
+        }
+
+        if (label != null && textPosition.equalsIgnoreCase(LABEL_RIGHT)) {
+            writer.write("&nbsp;");
+            writer.writeText(label, null);
+        }
+
+    }
+    // --------------------------------------------------------- Private Methods
+}

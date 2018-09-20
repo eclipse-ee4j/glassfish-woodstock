@@ -1,0 +1,105 @@
+<?xml encoding='UTF-8'?>
+<!--
+
+    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<!-- ========== EditableValueHolder Properties ============================= -->
+
+
+     <property>
+      <description>
+        Flag indicating that event handling for this component
+          should be handled immediately (in Apply Request Values
+          phase) rather than waiting until Invoke Application phase.
+      </description>
+      <display-name>Immediate</display-name>
+      <property-name>immediate</property-name>
+      <property-class>boolean</property-class>
+      <property-extension>
+        <category>ADVANCED</category>
+        <is-bindable>true</is-bindable>
+      </property-extension>
+    </property>
+
+      <property>
+        <property-name>localValueSet</property-name>
+        <property-extension>
+          <category>INTERNAL</category>
+          <is-hidden>true</is-hidden>
+          <tag-attribute>false</tag-attribute>
+        </property-extension>
+      </property>
+
+      <property>
+        <description>
+          Flag indicating that an input value for this field is
+          mandatory, and failure to provide one will trigger a
+          validation error.
+        </description>
+        <property-name>required</property-name>
+        <property-extension>
+            <category>DATA</category>
+        </property-extension>
+      </property>
+
+      <property>
+        <property-name>submittedValue</property-name>
+        <property-extension>
+          <category>INTERNAL</category>
+          <is-hidden>true</is-hidden>
+          <tag-attribute>false</tag-attribute>
+        </property-extension>
+      </property>
+
+      <property>
+        <property-name>valid</property-name>
+        <property-extension>
+          <category>INTERNAL</category>
+          <is-hidden>true</is-hidden>
+          <tag-attribute>false</tag-attribute>
+        </property-extension>
+      </property>
+
+      <property>
+        <description>
+          Method binding representing a method that performs
+          validations on this component's value.
+        </description>
+        <property-name>validator</property-name>
+        <property-extension>
+            <category>DATA</category>
+            <editor-class>
+              com.sun.jsfcl.std.ValidatorRefPropertyEditor
+            </editor-class>
+        </property-extension>
+      </property>
+
+      <property>
+        <description>
+          Method binding representing a method that receives value
+          change events from this component.
+        </description>
+        <property-name>valueChangeListener</property-name>
+        <!-- Work around typo in JSF 1.1 metadata -->
+        <property-class>javax.faces.el.MethodBinding</property-class>
+        <property-extension>
+            <category>ADVANCED</category>
+            <editor-class>
+              com.sun.jsfcl.std.MethodBindingPropertyEditor
+            </editor-class>
+        </property-extension>
+      </property>
