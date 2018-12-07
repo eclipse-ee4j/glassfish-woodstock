@@ -90,7 +90,6 @@
         <delete dir="${build}" />
         <delete dir="${src}" />
         <delete dir="${meta-inf}" />
-        <ant dir="${example}" target="clean" inheritAll="false"/>
         <ant dir="${webui}" target="clean" inheritAll="false"/>
         <ant dir="${themes}" target="clean" inheritAll="false"/>
     </target>
@@ -276,7 +275,7 @@
     <target name="all" depends="clean, ship">
     </target>
 
-    <target name="ship" depends="themes, webui, extralibs, doc, buildsdk, example">
+    <target name="ship" depends="themes, webui, extralibs, doc, buildsdk">
     </target>
     
     <target name="build-manifests">
