@@ -18,6 +18,7 @@ package com.sun.faces.mirror;
 
 import java.util.Map;
 import java.util.Set;
+import javax.lang.model.element.Element;
 
 /**
  * An interface that defines the basic metadata available for a class with one
@@ -26,7 +27,7 @@ import java.util.Set;
  *
  * @author gjmurphy
  */
-public abstract class ClassInfo {
+public abstract class ClassInfo implements Element {
     
     /**
      * Returns the name of this class.

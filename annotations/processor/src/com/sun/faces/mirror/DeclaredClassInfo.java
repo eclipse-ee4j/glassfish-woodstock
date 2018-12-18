@@ -17,7 +17,7 @@
 package com.sun.faces.mirror;
 
 import com.sun.mirror.declaration.ClassDeclaration;
-import com.sun.mirror.declaration.Declaration;
+import javax.lang.model.element.Element;
 import com.sun.mirror.type.InterfaceType;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,6 +137,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
         return this.inheritedEventInfoMap;
     }
     
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof DeclaredClassInfo))
             return false;

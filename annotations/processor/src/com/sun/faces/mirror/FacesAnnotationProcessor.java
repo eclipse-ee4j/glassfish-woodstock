@@ -19,8 +19,8 @@ package com.sun.faces.mirror;
 import com.sun.faces.annotation.*;
 import com.sun.faces.mirror.DeclaredRendererInfo.RendersInfo;
 import com.sun.faces.mirror.generator.*;
-import com.sun.mirror.apt.AnnotationProcessor;
-import com.sun.mirror.apt.AnnotationProcessorEnvironment;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.ProcessingEnvironment;
 import com.sun.mirror.apt.Filer;
 import com.sun.mirror.declaration.*;
 import com.sun.mirror.type.*;
@@ -45,6 +45,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import javax.annotation.processing.Completion;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Types;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
@@ -62,9 +70,9 @@ import org.xml.sax.helpers.DefaultHandler;
 // TODO - Make all XxxInfo classes immutable when seen by generators
 // TODO - Handle different versions of JSF (1.1 and 1.2)
 // TODO - Handle attribute annotations within a tag class
-class FacesAnnotationProcessor implements AnnotationProcessor {
+class FacesAnnotationProcessor implements Processor {
     
-    AnnotationProcessorEnvironment env;
+    ProcessingEnvironment env;
     
     // Set of all packages that define the current compilation unit
     Set<String> packageNameSet = new HashSet<String>();
@@ -93,7 +101,7 @@ class FacesAnnotationProcessor implements AnnotationProcessor {
     /**
      * Create a new annotation processor for the processing environment specified.
      */
-    FacesAnnotationProcessor(AnnotationProcessorEnvironment env) {
+    FacesAnnotationProcessor(ProcessingEnvironment env) {
         this.env = env;
     }
     
@@ -174,7 +182,7 @@ class FacesAnnotationProcessor implements AnnotationProcessor {
         // process all properties declared within each class or interface.
         MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.env);
         classMemberVisitor.setCategoryMap(this.categoryMap);
-        for (TypeDeclaration typeDecl : env.getTypeDeclarations()) {
+        for (Types typeDecl : env.getTypeUtils()) {
             this.packageNameSet.add(typeDecl.getPackage().getQualifiedName());
             if (typeDecl instanceof ClassDeclaration || typeDecl instanceof InterfaceDeclaration) {
                 DeclaredTypeInfo typeInfo = null;
@@ -645,6 +653,30 @@ class FacesAnnotationProcessor implements AnnotationProcessor {
             env.getMessager().printError(e.getMessage());
         }
         
+    }
+
+    public Set<String> getSupportedOptions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Set<String> getSupportedAnnotationTypes() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public SourceVersion getSupportedSourceVersion() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void init(ProcessingEnvironment processingEnv) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

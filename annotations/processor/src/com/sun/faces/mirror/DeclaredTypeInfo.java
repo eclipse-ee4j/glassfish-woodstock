@@ -17,7 +17,8 @@
 package com.sun.faces.mirror;
 
 import com.sun.mirror.declaration.MethodDeclaration;
-import com.sun.mirror.declaration.TypeDeclaration;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 import com.sun.mirror.type.InterfaceType;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,13 +29,13 @@ import java.util.Set;
  *
  * @author gjmurphy
  */
-public abstract class DeclaredTypeInfo extends ClassInfo {
+public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement {
     
-    TypeDeclaration decl;
+    TypeElement decl;
     
-    DeclaredTypeInfo(TypeDeclaration decl) {
+    DeclaredTypeInfo(TypeElement decl) {
         this.decl = decl;
-        String qualifiedName = this.decl.getQualifiedName();
+        String qualifiedName = this.decl.getQualifiedName().toString();
         int index = qualifiedName.lastIndexOf('.');
         if (index >= 0) {
             this.className = qualifiedName.substring(index + 1);
@@ -45,7 +46,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
         }
     }
     
-    public TypeDeclaration getDeclaration() {
+    public TypeElement getDeclaration() {
         return this.decl;
     }
     
@@ -72,7 +73,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
     }
 
     public boolean isAssignableTo(String qualifiedName) {
-        TypeDeclaration decl = this.getDeclaration();
+        TypeElement decl = this.getDeclaration();
         if (decl.getQualifiedName().equals(qualifiedName))
             return true;
         for (InterfaceType interfaceType : decl.getSuperinterfaces()) {
@@ -155,7 +156,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
      * Returns the JavaDoc comments associated with the type declaration.
      */
     public String getDocComment() {
-        return this.getDeclaration().getDocComment();
+        return Elements.getDocComment(this);
     }
     
 }
