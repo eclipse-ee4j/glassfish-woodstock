@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,7 +23,7 @@ import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import javax.lang.model.element.TypeElement;
 
 /**
  * Represents a JSF component class declared in the current compilation unit.
@@ -46,7 +47,7 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
     
     Map<String,Object> annotationValueMap;
     
-    DeclaredComponentInfo(Map<String,Object> annotationValueMap, ClassDeclaration decl) {
+    DeclaredComponentInfo(Map<String,Object> annotationValueMap, TypeElement decl) {
         super(decl);
         this.annotationValueMap = annotationValueMap;
     }
@@ -54,7 +55,7 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
     public String getType() {
         String type = (String) this.annotationValueMap.get(TYPE);
         if (type == null)
-            type = this.decl.getQualifiedName();
+            type = this.decl.getQualifiedName().toString();
         return type;
     }
     

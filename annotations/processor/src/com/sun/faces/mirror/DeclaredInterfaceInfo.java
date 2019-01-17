@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,11 +17,7 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.mirror.declaration.InterfaceDeclaration;
-import com.sun.mirror.declaration.TypeDeclaration;
-import com.sun.mirror.type.InterfaceType;
-import java.util.HashMap;
-import java.util.Map;
+import javax.lang.model.element.TypeElement;
 
 /**
  * Represents a component class or a non-component base class declared in the current
@@ -34,10 +31,11 @@ import java.util.Map;
  */
 public class DeclaredInterfaceInfo extends DeclaredTypeInfo {
     
-    DeclaredInterfaceInfo(InterfaceDeclaration decl) {
+    DeclaredInterfaceInfo(TypeElement decl) {
         super(decl);
     }
     
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof DeclaredInterfaceInfo))
             return false;

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,11 +17,10 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.mirror.declaration.ClassDeclaration;
-import javax.lang.model.element.Element;
-import com.sun.mirror.type.InterfaceType;
 import java.util.HashMap;
 import java.util.Map;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 
 /**
  * Represents a component class or a non-component base class declared in the current
@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class DeclaredClassInfo extends DeclaredTypeInfo {
     
-    DeclaredClassInfo(ClassDeclaration decl) {
+    DeclaredClassInfo(TypeElement decl) {
         super(decl);
     }
     
@@ -44,6 +44,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * this type implements or extends {@link javax.faces.component.ValueHolder},
      * then the {@code value} property is made default.
      */
+    @Override
     public PropertyInfo getDefaultPropertyInfo() {
         PropertyInfo defaultPropertyInfo = super.getDefaultPropertyInfo();
         if (defaultPropertyInfo == null) {
@@ -51,8 +52,8 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
                 defaultPropertyInfo = this.getSuperClassInfo().getDefaultPropertyInfo();
             }
             if (defaultPropertyInfo == null) {
-                for (InterfaceType interfaceType : this.decl.getSuperinterfaces()) {
-                    if (interfaceType.getDeclaration().getQualifiedName().equals("javax.faces.component.ValueHolder")) {
+                for (TypeMirror interfaceType : this.decl.getInterfaces()) {
+                    if (interfaceType.toString().equals("javax.faces.component.ValueHolder")) {
                         defaultPropertyInfo = this.getPropertyInfoMap().get("value");
                         if (defaultPropertyInfo == null)
                             defaultPropertyInfo = this.getInheritedPropertyInfoMap().get("value");
@@ -69,6 +70,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * this type implements or extends {@link javax.faces.component.ValueHolder},
      * then the {@code value} Event is made default.
      */
+    @Override
     public EventInfo getDefaultEventInfo() {
         EventInfo defaultEventInfo = super.getDefaultEventInfo();
         if (defaultEventInfo == null) {
@@ -76,7 +78,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
                 defaultEventInfo = this.getSuperClassInfo().getDefaultEventInfo();
             }
             if (defaultEventInfo == null) {
-                for (InterfaceType interfaceType : this.decl.getSuperinterfaces()) {
+                for (TypeMirror interfaceType : this.decl.getInterfaces()) {
                     if (interfaceType.getDeclaration().getQualifiedName().equals("javax.faces.component.EditableValueHolder")) {
                         defaultEventInfo = this.getEventInfoMap().get("valueChange");
                         if (defaultEventInfo == null)

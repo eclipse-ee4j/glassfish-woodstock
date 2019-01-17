@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Service Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,14 +17,14 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.mirror.declaration.Declaration;
 import com.sun.mirror.declaration.MethodDeclaration;
 import com.sun.mirror.declaration.ParameterDeclaration;
 import com.sun.mirror.declaration.TypeDeclaration;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
 /**
  *
@@ -39,15 +40,15 @@ public class DeclaredEventInfo extends EventInfo {
     static final String GET_LISTENERS_METHOD_NAME = "getListenersMethodName";
     static final String IS_DEFAULT = "isDefault";
     
-    Declaration decl;
+    Element decl;
     Map<String,Object> annotationValueMap;
     
-    DeclaredEventInfo(Map<String,Object> annotationValueMap, Declaration decl) {
+    DeclaredEventInfo(Map<String,Object> annotationValueMap, Element decl) {
         this.annotationValueMap = annotationValueMap;
         this.decl = decl;
     }
     
-    public Declaration getDeclaration() {
+    public Element getDeclaration() {
         return this.decl;
     }
     
@@ -110,7 +111,7 @@ public class DeclaredEventInfo extends EventInfo {
     }
     
     public String getListenerMethodSignature() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (this.getListenerDeclaration() != null) {
             MethodDeclaration listenerMethodDecl =
                     this.getListenerDeclaration().getMethods().iterator().next();
@@ -146,7 +147,7 @@ public class DeclaredEventInfo extends EventInfo {
         return this.listenerDeclaration;
     }
     
-    void setListenerDeclaration(TypeDeclaration listenerDeclaration) {
+    void setListenerDeclaration(Element listenerDeclaration) {
         this.listenerDeclaration = listenerDeclaration;
     }
     

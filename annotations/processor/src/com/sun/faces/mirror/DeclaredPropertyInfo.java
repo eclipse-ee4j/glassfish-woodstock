@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,9 +17,9 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.faces.annotation.Property;
-import com.sun.mirror.declaration.Declaration;
 import java.util.Map;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Element;
 
 /**
  * Represents a property declared on a component class or non-component base
@@ -41,15 +42,20 @@ public class DeclaredPropertyInfo extends PropertyInfo {
     static final String READ_METHOD_NAME = "readMethodName";
     static final String WRITE_METHOD_NAME = "writeMethodName";
     
-    Declaration decl;
+    Element decl;
     Map<String,Object> annotationValueMap;
     
-    DeclaredPropertyInfo(Map<String,Object> annotationValueMap, Declaration decl) {
+    private ProcessingEnvironment environment;
+    
+    DeclaredPropertyInfo(Map<String,Object> annotationValueMap, Element decl) {
         this.annotationValueMap = annotationValueMap;
         this.decl = decl;
     }
     
-    public Declaration getDeclaration() {
+    /**
+     * @return the element that has been declared
+     */
+    public Element getDeclaration() {
         return this.decl;
     }
     
@@ -256,7 +262,11 @@ public class DeclaredPropertyInfo extends PropertyInfo {
      * where this property was defined.
      */
     public String getDocComment() {
-        return this.getDeclaration().getDocComment();
+        if (environment != null ) {
+            return environment.getElementUtils().getDocComment(getDeclaration());
+        } else {
+            return null;
+        }
     }
     
 }

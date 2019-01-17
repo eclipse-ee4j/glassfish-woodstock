@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,10 +17,10 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.mirror.declaration.ClassDeclaration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.lang.model.element.TypeElement;
 
 /**
  * Represents a JSF renderer class declared in the current compilation unit.
@@ -33,7 +34,7 @@ public class DeclaredRendererInfo extends DeclaredClassInfo {
     Map<String,Object> annotationValueMap;
     List<RendersInfo> renderings;
     
-    DeclaredRendererInfo(Map<String,Object> annotationValueMap, ClassDeclaration decl) {
+    DeclaredRendererInfo(Map<String,Object> annotationValueMap, TypeElement decl) {
         super(decl);
         this.annotationValueMap = annotationValueMap;
         renderings = new ArrayList<RendersInfo>();

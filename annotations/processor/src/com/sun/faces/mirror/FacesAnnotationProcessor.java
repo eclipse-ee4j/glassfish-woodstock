@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -49,10 +50,19 @@ import javax.annotation.processing.Completion;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
@@ -61,7 +71,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * An annotation processor that generates JSF source and configuration files for
- * the current compilation unit, as resported by the annotation processor
+ * the current compilation unit, as reported by the annotation processor
  * environment.
  *
  * @author gjmurphy
@@ -70,7 +80,7 @@ import org.xml.sax.helpers.DefaultHandler;
 // TODO - Make all XxxInfo classes immutable when seen by generators
 // TODO - Handle different versions of JSF (1.1 and 1.2)
 // TODO - Handle attribute annotations within a tag class
-class FacesAnnotationProcessor implements Processor {
+class FacesAnnotationProcessor implements Processor  {
     
     ProcessingEnvironment env;
     
@@ -98,10 +108,26 @@ class FacesAnnotationProcessor implements Processor {
     // A set of all Java EE EL resolvers declared in the current compilation unit
     Set<String> javaeeResolverNameSet = new HashSet<String>();
     
+    private Set<String> supportedAnnotations;
+    
+    public FacesAnnotationProcessor() {
+        supportedAnnotations = new HashSet<String>();
+        supportedAnnotations.add(Attribute.class.getName());
+        supportedAnnotations.add(Component.class.getName());
+        supportedAnnotations.add(Event.class.getName());
+        supportedAnnotations.add(Localizable.class.getName());
+        supportedAnnotations.add(Property.class.getName());
+        supportedAnnotations.add(PropertyCategory.class.getName());
+        supportedAnnotations.add(Renderer.class.getName());
+        supportedAnnotations.add(Resolver.class.getName());
+        supportedAnnotations.add(Tag.class.getName());
+    }
+    
     /**
      * Create a new annotation processor for the processing environment specified.
      */
     FacesAnnotationProcessor(ProcessingEnvironment env) {
+        this();
         this.env = env;
     }
     
@@ -175,70 +201,72 @@ class FacesAnnotationProcessor implements Processor {
     
     // Processor methods
     
-    public void process() {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         
         // Find all component classes in the compilation unit, creating a skeleton
         // ComponentInfo for each, then invoke a declaration classMemberVisitor that will
         // process all properties declared within each class or interface.
         MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.env);
         classMemberVisitor.setCategoryMap(this.categoryMap);
-        for (Types typeDecl : env.getTypeUtils()) {
-            this.packageNameSet.add(typeDecl.getPackage().getQualifiedName());
-            if (typeDecl instanceof ClassDeclaration || typeDecl instanceof InterfaceDeclaration) {
+        for (TypeElement typeDecl : annotations) {
+            this.packageNameSet.add(typeDecl.getEnclosingElement().getSimpleName().toString());
+            if (true) {
                 DeclaredTypeInfo typeInfo = null;
                 classMemberVisitor.reset();
                 typeDecl.accept(
                         DeclarationVisitors.getDeclarationScanner(classMemberVisitor, DeclarationVisitors.NO_OP));
-                if (typeDecl instanceof ClassDeclaration) {
+                if (typeDecl.getKind() == ElementKind.CLASS) {
                     if (typeDecl.getAnnotation(Component.class) != null) {
                         // This is a component class
                         Map<String,Object> annotationValueMap =
                                 getAnnotationValueMap(typeDecl, Component.class.getName());
                         DeclaredComponentInfo componentInfo =
-                                new DeclaredComponentInfo(annotationValueMap, (ClassDeclaration) typeDecl);
+                                new DeclaredComponentInfo(annotationValueMap, typeDecl);
                         this.declaredComponentSet.add(componentInfo);
-                        this.declaredClassMap.put(typeDecl.getQualifiedName(), componentInfo);
+                        this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), componentInfo);
                         typeInfo = componentInfo;
                     } else if (typeDecl.getAnnotation(Renderer.class) != null) {
                         // This is a renderer class
                         Map<String,Object> annotationValueMap =
                                 getAnnotationValueMap(typeDecl, Renderer.class.getName());
                         DeclaredRendererInfo rendererInfo =
-                                new DeclaredRendererInfo(annotationValueMap, (ClassDeclaration) typeDecl);
-                        if (rendererInfo.getRenderings().size() == 0)
-                            this.env.getMessager().printWarning(typeDecl.getPosition(), "No renderings declared in renderer annotation");
+                                new DeclaredRendererInfo(annotationValueMap, typeDecl);
+                        if (rendererInfo.getRenderings().isEmpty())
+                            this.env.getMessager().printMessage(Kind.WARNING, "No renderings declared in renderer annotation", typeDecl);
                         this.declaredRendererSet.add(rendererInfo);
                     } else if (typeDecl.getAnnotation(Tag.class) != null) {
                         // This is a hand-authored tag class
                         Map<String,Object> annotationValueMap =
                                 getAnnotationValueMap(typeDecl, Tag.class.getName());
                         String componentType = (String) annotationValueMap.get("componentType");
-                        DeclaredClassInfo tagClassInfo = new DeclaredClassInfo((ClassDeclaration) typeDecl);
+                        DeclaredClassInfo tagClassInfo = new DeclaredClassInfo(typeDecl);
                         this.declaredTagClassMap.put(componentType, tagClassInfo);
                     } else if (typeDecl.getAnnotation(Resolver.class) != null) {
                         // This is a JSF property or variable resolver, or a JavaEE EL resolver
-                        ClassType superClassType = ((ClassDeclaration) typeDecl).getSuperclass();
+                        TypeMirror superClassType = typeDecl.getSuperclass();
                         while (superClassType != null) {
-                            String superClassName = superClassType.getDeclaration().getQualifiedName();
-                            if (superClassName.equals("javax.faces.el.PropertyResolver"))
-                                this.propertyResolverNameSet.add(typeDecl.getQualifiedName());
-                            else if (superClassName.equals("javax.faces.el.VariableResolver"))
-                                this.variableResolverNameSet.add(typeDecl.getQualifiedName());
-                            else if (superClassName.equals("javax.el.ELResolver"))
-                                this.javaeeResolverNameSet.add(typeDecl.getQualifiedName());
-                            superClassType = superClassType.getSuperclass();
+                            String superClassName = superClassType.toString();
+                            if (superClassName.equals("javax.faces.el.PropertyResolver")) {
+                                this.propertyResolverNameSet.add(typeDecl.toString());
+                            } else if (superClassName.equals("javax.faces.el.VariableResolver")) {
+                                this.variableResolverNameSet.add(typeDecl.toString());
+                            } else if (superClassName.equals("javax.el.ELResolver")) {
+                                this.javaeeResolverNameSet.add(typeDecl.toString());
+                            }
+                            
+                            superClassType = env.getTypeUtils().directSupertypes(superClassType).get(0);
                         }
                     } else {
                         // This is probably a base class that provides one or more properties
                         // (possibly via its super class)
-                        DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo((ClassDeclaration) typeDecl);
-                        this.declaredClassMap.put(typeDecl.getQualifiedName(), declaredClassInfo);
+                        DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo(typeDecl);
+                        this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), declaredClassInfo);
                         typeInfo = declaredClassInfo;
                     }
                 } else {
                     // This is an interface that may provide one or more properties
-                    DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo((InterfaceDeclaration) typeDecl);
-                    this.declaredInterfaceMap.put(typeDecl.getQualifiedName(), declaredInterfaceInfo);
+                    DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo(typeDecl);
+                    this.declaredInterfaceMap.put(typeDecl.getQualifiedName().toString(), declaredInterfaceInfo);
                     typeInfo = declaredInterfaceInfo;
                 }
                 if (typeInfo != null) {
@@ -255,8 +283,8 @@ class FacesAnnotationProcessor implements Processor {
         // introspected.
         Map<String,ClassInfo> introspectedClassMap = new HashMap<String,ClassInfo>();
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
-            ClassType superClassType = ((ClassDeclaration) declaredClassInfo.getDeclaration()).getSuperclass();
-            String superClassName = superClassType.getDeclaration().getQualifiedName();
+            TypeMirror superClassType = env.getTypeUtils().directSupertypes(declaredClassInfo.asType()).get(0);
+            String superClassName = superClassType.toString();
             if (this.declaredClassMap.containsKey(superClassName)) {
                 declaredClassInfo.setSuperClassInfo(this.declaredClassMap.get(superClassName));
             } else if (introspectedClassMap.containsKey(superClassName)) {
@@ -267,18 +295,16 @@ class FacesAnnotationProcessor implements Processor {
                     BeanInfo superBeanInfo = Introspector.getBeanInfo(superClass);
                     IntrospectedClassInfo superClassInfo = new IntrospectedClassInfo(superBeanInfo);
                     Map<String, PropertyInfo> propertyInfoMap = new HashMap<String, PropertyInfo>();
-                    Set<CategoryDescriptor> categoryDescriptors = new HashSet<CategoryDescriptor>();
                     for (PropertyDescriptor propertyDescriptor : superBeanInfo.getPropertyDescriptors()) {
                         String name = propertyDescriptor.getName();
                         IntrospectedPropertyInfo propertyInfo = new IntrospectedPropertyInfo(propertyDescriptor);
-                        CategoryDescriptor categoryDescriptor =
-                                (CategoryDescriptor) propertyDescriptor.getValue(Constants.PropertyDescriptor.CATEGORY);
+                        CategoryDescriptor categoryDescriptor = (CategoryDescriptor) propertyDescriptor.getValue(Constants.PropertyDescriptor.CATEGORY);
                         if (categoryDescriptor != null) {
                             String categoryName = categoryDescriptor.getName();
                             if (this.categoryMap.containsKey(categoryName)) {
                                 propertyInfo.setCategoryInfo(this.categoryMap.get(categoryName));
                             } else {
-                                this.env.getMessager().printWarning(
+                                this.env.getMessager().printMessage(Kind.WARNING,
                                         "No category descriptor found in current compilation unit for '" + categoryName +
                                         "', referenced in " + superBeanInfo.getClass().getName());
                             }
@@ -320,21 +346,18 @@ class FacesAnnotationProcessor implements Processor {
             for (PropertyInfo propertyInfo : declaredClassInfo.getPropertyInfoMap().values()) {
                 // Ensure that property name is valid
                 if (!isNameValid(propertyInfo.getName()))
-                    this.env.getMessager().printError(
-                            ((DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                            "The name specified is not a valid property name");
+                    this.env.getMessager().printMessage(Kind.ERROR,
+                            "The name specified is not a valid property name", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 if (propertyInfo.getAttributeInfo() != null) {
                     String name = propertyInfo.getAttributeInfo().getName();
                     if (!isNameValid(name))
-                        this.env.getMessager().printError(
-                                ((DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                                "The name specified is not a valid attribute name");
+                        this.env.getMessager().printMessage(Kind.ERROR,
+                                "The name specified is not a valid attribute name", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 // Ensure that property does not correspond to the special "binding" tag attribute
                 if (propertyInfo.getAttributeInfo() != null && propertyInfo.getAttributeInfo().getName().equals("binding"))
-                    this.env.getMessager().printWarning(
-                            ((DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                            "Property corresponds to the reserved 'binding' tag attribute");
+                    this.env.getMessager().printMessage(Kind.WARNING,
+                            "Property corresponds to the reserved 'binding' tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration);
                 // Ensure that property read method exists
                 String readMethodName = propertyInfo.getReadMethodName();
                 if (readMethodName == null) {
@@ -344,9 +367,8 @@ class FacesAnnotationProcessor implements Processor {
                     else
                         readMethodName = null;
                 } else if (!methodNameSet.contains(readMethodName)) {
-                    env.getMessager().printError((
-                            (DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                            "No such property method " + readMethodName);
+                    env.getMessager().printMessage(Kind.ERROR,
+                            "No such property method " + readMethodName, ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 // Ensure that read method has a valid signature
                 for (MethodDeclaration methodDecl : declaredClassInfo.getDeclaration().getMethods()) {
@@ -370,24 +392,22 @@ class FacesAnnotationProcessor implements Processor {
                     else
                         writeMethodName = null;
                 } else if (!methodNameSet.contains(writeMethodName)) {
-                    env.getMessager().printError((
-                            (DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                            "No such property method " + writeMethodName);
+                    env.getMessager().printMessage(Kind.ERROR,
+                            "No such property method " + writeMethodName, (
+                            (DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 if (readMethodName == null && writeMethodName == null)
-                    env.getMessager().printError((
-                            (DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                            "No get or set method found for property");
+                    env.getMessager().printMessage(Kind.ERROR,
+                            "No get or set method found for property", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 if (writeMethodName == null && propertyInfo.getAttributeInfo() != null)
-                    env.getMessager().printError((
-                            (DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                            "A read-only method cannot be associated with a JSP tag attribute");
+                    env.getMessager().printMessage(Kind.ERROR,
+                            "A read-only method cannot be associated with a JSP tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 // Ensure that write method has a valid signature
                 for (MethodDeclaration methodDecl : declaredClassInfo.getDeclaration().getMethods()) {
                     if (methodDecl.getSimpleName().equals(writeMethodName)) {
                         TypeMirror returnType = methodDecl.getReturnType();
                         Collection<ParameterDeclaration> params = methodDecl.getParameters();
-                        if(!(returnType instanceof VoidType) || params.size() != 1 ||
+                        if(!(returnType.getKind() == TypeKind.VOID ) || params.size() != 1 ||
                                 !params.iterator().next().getType().toString().equals(propertyInfo.getType())) {
                             env.getMessager().printError(methodDecl.getPosition(),
                                     "Method " + writeMethodName + " for property " + propertyInfo.getName() + " has incorrect signature");
@@ -401,16 +421,17 @@ class FacesAnnotationProcessor implements Processor {
                         ((DeclaredPropertyInfo) propertyInfo).getCategoryReferenceName();
                 if (categoryReferenceName != null) {
                     CategoryInfo categoryInfo = this.categoryMap.get(categoryReferenceName);
-                    if (categoryInfo == null)
-                        this.env.getMessager().printError(((DeclaredPropertyInfo) propertyInfo).getDeclaration().getPosition(),
-                                "Reference to non-existant category descriptor: " + categoryReferenceName);
-                    else
+                    if (categoryInfo == null) {
+                        this.env.getMessager().printMessage(Kind.ERROR,
+                                "Reference to non-existant category descriptor: " + categoryReferenceName, ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
+                    } else {
                         ((DeclaredPropertyInfo) propertyInfo).setCategoryInfo(categoryInfo);
+                    }
                 }
                 // If property is of type javax.el.MethodExpression, verfiy that it is
                 // annotated with a signature, or, that it refers to an event from which
                 // the signature can be derived
-                Declaration decl = ((DeclaredPropertyInfo) propertyInfo).getDeclaration();
+                Element decl = ((DeclaredPropertyInfo) propertyInfo).getDeclaration();
                 if (decl.getAnnotation(Property.Method.class) != null) {
                     if (propertyInfo.getType().equals("javax.el.MethodExpression")) {
                         Map<String,Object> annotationMap = getAnnotationValueMap(decl, Property.Method.class.getCanonicalName());
@@ -429,15 +450,14 @@ class FacesAnnotationProcessor implements Processor {
                                 attributeInfo.setMethodSignature(eventInfo.getListenerMethodSignature());
                                 eventInfo.setPropertyInfo(propertyInfo);
                             } else {
-                                this.env.getMessager().printError(decl.getPosition(), "No such component event");
+                                this.env.getMessager().printMessage(Kind.ERROR, "No such component event", decl);
                             }
                         } else {
-                            this.env.getMessager().printError(decl.getPosition(),
-                                    "Method annotation is missing an event or signature element");
+                            this.env.getMessager().printMessage(Kind.ERROR, "Method annotation is missing an event or signature element", decl);
                         }
                     } else {
-                        this.env.getMessager().printError(decl.getPosition(),
-                                "Method annotation for property that is not of type javax.el.MethodExpression");
+                        this.env.getMessager().printMessage(Kind.ERROR,
+                                "Method annotation for property that is not of type javax.el.MethodExpression", decl);
                     }
                 }
             }
@@ -449,13 +469,11 @@ class FacesAnnotationProcessor implements Processor {
                     if (methodNameSet.contains(addListenerMethodName))
                         ((DeclaredEventInfo) eventInfo).setAddListenerMethodName(addListenerMethodName);
                     else
-                        env.getMessager().printError(
-                                ((DeclaredEventInfo) eventInfo).getDeclaration().getPosition(),
-                                "No add event listener method declared or found");
+                        env.getMessager().printMessage(Kind.ERROR,
+                                "No add event listener method declared or found", ((DeclaredEventInfo) eventInfo).getDeclaration());
                 } else if (!methodNameSet.contains(addListenerMethodName)) {
-                    env.getMessager().printError(
-                            ((DeclaredEventInfo) eventInfo).getDeclaration().getPosition(),
-                            "No such event method " + addListenerMethodName);
+                    env.getMessager().printMessage(Kind.ERROR, 
+                            "No such event method " + addListenerMethodName, ((DeclaredEventInfo) eventInfo).getDeclaration());
                 }
                 String removeListenerMethodName = eventInfo.getRemoveListenerMethodName();
                 if (removeListenerMethodName == null) {
@@ -463,13 +481,11 @@ class FacesAnnotationProcessor implements Processor {
                     if (methodNameSet.contains(removeListenerMethodName))
                         ((DeclaredEventInfo) eventInfo).setRemoveListenerMethodName(removeListenerMethodName);
                     else
-                        env.getMessager().printError(
-                                ((DeclaredEventInfo) eventInfo).getDeclaration().getPosition(),
-                                "No remove event listener method declared or found");
+                        env.getMessager().printMessage(Kind.ERROR,
+                                "No remove event listener method declared or found", ((DeclaredEventInfo) eventInfo).getDeclaration());
                 } else if (!methodNameSet.contains(removeListenerMethodName)) {
-                    env.getMessager().printError((
-                            (DeclaredEventInfo) eventInfo).getDeclaration().getPosition(),
-                            "No such event method " + removeListenerMethodName);
+                    env.getMessager().printMessage(Kind.ERROR, 
+                            "No such event method " + removeListenerMethodName, ((DeclaredEventInfo) eventInfo).getDeclaration());
                 }
                 String getListenersMethodName = eventInfo.getGetListenersMethodName();
                 if (getListenersMethodName == null) {
@@ -503,8 +519,8 @@ class FacesAnnotationProcessor implements Processor {
                     }
                 }
                 if (!rendererFound)
-                    this.env.getMessager().printWarning(declaredClassInfo.getDeclaration().getPosition(),
-                            "No renderer found of correct renderer type and component family");
+                    this.env.getMessager().printMessage(Kind.WARNING,
+                            "No renderer found of correct renderer type and component family", declaredClassInfo.getDeclaration());
             }
         }
         
@@ -519,9 +535,8 @@ class FacesAnnotationProcessor implements Processor {
                 }
             }
             if (!found)
-                this.env.getMessager().printWarning(
-                        this.declaredTagClassMap.get(componentType).getDeclaration().getPosition(),
-                        "No component found for tag's component type");
+                this.env.getMessager().printMessage(Kind.WARNING,
+                        "No component found for tag's component type", this.declaredTagClassMap.get(componentType).getDeclaration());
         }
         
         // Finally, if our toil hitherto has not been in vain, generate the source and config files
@@ -633,7 +648,7 @@ class FacesAnnotationProcessor implements Processor {
                                 }
                             }
                         } catch (Exception e) {
-                            this.env.getMessager().printError("Error occurred while processing input tag description file: " +
+                            this.env.getMessager().printMessage(Kind.ERROR, "Error occurred while processing input tag description file: " +
                                     e.getMessage());
                         }
                     }
@@ -648,33 +663,43 @@ class FacesAnnotationProcessor implements Processor {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            env.getMessager().printError(e.getMessage());
+            env.getMessager().printMessage(Kind.ERROR, e.getMessage());
         } catch (GeneratorException e) {
-            env.getMessager().printError(e.getMessage());
+            env.getMessager().printMessage(Kind.ERROR, e.getMessage());
         }
         
     }
 
+    @Override
     public Set<String> getSupportedOptions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
     public Set<String> getSupportedAnnotationTypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return supportedAnnotations;
     }
 
+    @Override
     public SourceVersion getSupportedSourceVersion() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return SourceVersion.RELEASE_7;
     }
 
+    @Override
     public void init(ProcessingEnvironment processingEnv) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        env = processingEnv;
     }
 
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+//    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+//        // Find all component classes in the compilation unit, creating a skeleton
+//        // ComponentInfo for each, then invoke a declaration classMemberVisitor that will
+//        // process all properties declared within each class or interface.
+//        MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.env);
+//        
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 
+    @Override
     public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -686,107 +711,108 @@ class FacesAnnotationProcessor implements Processor {
      */
     private static class MemberDeclarationVisitor extends SimpleDeclarationVisitor {
         
-        AnnotationProcessorEnvironment env;
+        ProcessingEnvironment env;
         Map<String,PropertyInfo> propertyInfoMap = new HashMap<String,PropertyInfo>();
         Map<String,EventInfo> eventInfoMap = new HashMap<String,EventInfo>();
         String defaultPropertyName = null;
         String defaultEventName = null;
         
-        MemberDeclarationVisitor(AnnotationProcessorEnvironment env) {
+        MemberDeclarationVisitor(ProcessingEnvironment env) {
             this.env = env;
         }
         
-        public void visitFieldDeclaration(FieldDeclaration decl) {
+        public void visitFieldDeclaration(VariableElement decl) {
             if (decl.getAnnotation(Property.class) != null) {
                 // Annotation indicates that this field corresponds to a property
                 Map<String,Object> annotationMap = getAnnotationValueMap(decl, Property.class.getName());
                 DeclaredPropertyInfo propertyInfo = new DeclaredPropertyInfo(annotationMap, decl);
                 String name = (String) annotationMap.get(DeclaredPropertyInfo.NAME);
                 if (name == null || name.length() == 0)
-                    name = decl.getSimpleName();
+                    name = decl.getSimpleName().toString();
                 if (Boolean.TRUE.equals(annotationMap.get(DeclaredPropertyInfo.IS_DEFAULT))) {
                     if (this.defaultPropertyName == null)
                         this.defaultPropertyName = name;
                     else
-                        this.env.getMessager().printError(decl.getPosition(), "Duplicate default property");
+                        this.env.getMessager().printMessage(Kind.ERROR, "Duplicate default property", decl);
                 }
                 propertyInfo.setName(name);
-                propertyInfo.setType(decl.getType().toString());
+                propertyInfo.setType(decl.asType().toString());
                 if (propertyInfoMap.containsKey(name))
-                    this.env.getMessager().printError(decl.getPosition(), "Duplicate property annotation");
+                    this.env.getMessager().printMessage(Kind.ERROR, "Duplicate property annotation", decl);
                 propertyInfoMap.put(name, propertyInfo);
             } else if (decl.getAnnotation(PropertyCategory.class) != null) {
                 // Annotation indicates that this field corresponds to a property category descriptor
                 boolean categoryIsValid = true;
                 Collection modifiers = decl.getModifiers();
-                if (!decl.getType().toString().equals(CategoryDescriptor.class.getName())) {
-                    env.getMessager().printError(decl.getPosition(),
-                            "Fields identified as property categories must be of type " + CategoryDescriptor.class.getName());
+                if (!decl.asType().toString().equals(CategoryDescriptor.class.getName())) {
+                    env.getMessager().printMessage(Kind.ERROR, "Fields identified as property categories must be of type " + CategoryDescriptor.class.getName(), decl);
                     categoryIsValid = false;
                 }
                 if (!modifiers.contains(Modifier.PUBLIC)) {
-                    this.env.getMessager().printError(decl.getPosition(),
-                            "Non-public field cannot be a property category");
+                    this.env.getMessager().printMessage(Kind.ERROR, 
+                            "Non-public field cannot be a property category", decl);
                     categoryIsValid = false;
                 }
                 if(!modifiers.contains(Modifier.STATIC)) {
-                    this.env.getMessager().printError(decl.getPosition(),
-                            "Non-static field cannot be a property category");
+                    this.env.getMessager().printMessage(Kind.ERROR, 
+                            "Non-static field cannot be a property category", decl);
                     categoryIsValid = false;
                 }
                 if (categoryIsValid) {
                     CategoryInfo categoryInfo = new CategoryInfo(getAnnotationValueMap(decl, PropertyCategory.class.getName()));
-                    String className = decl.getDeclaringType().getQualifiedName();
-                    String fieldName = decl.getSimpleName();
+                    String className = decl.asType().getClass().getName();
+                    String fieldName = decl.getSimpleName().toString();
                     categoryInfo.setFieldName(className + "." + fieldName);
                     this.categoryMap.put(categoryInfo.getName(), categoryInfo);
                 }
             }
         }
         
-        public void visitMethodDeclaration(MethodDeclaration decl) {
+        public void visitMethodDeclaration(ExecutableElement decl) {
             if (decl.getAnnotation(Property.class) != null) {
                 // Annotation indicates that this method is a property getter or setter method
                 Map<String,Object> annotationMap = getAnnotationValueMap(decl, Property.class.getName());
                 DeclaredPropertyInfo propertyInfo = new DeclaredPropertyInfo(annotationMap, decl);
                 String name = (String) annotationMap.get(DeclaredPropertyInfo.NAME);
                 TypeMirror returnType = decl.getReturnType();
-                Collection<ParameterDeclaration> paramDecls = decl.getParameters();
-                if (returnType instanceof VoidType && paramDecls.size() == 1) {
+                Collection<? extends VariableElement> paramDecls = decl.getParameters();
+                if (returnType.getKind() == TypeKind.VOID && paramDecls.size() == 1) {
                     // This is a "set" method
-                    String methodName = decl.getSimpleName();
+                    String methodName = decl.getSimpleName().toString();
                     propertyInfo.setWriteMethodName(methodName);
-                    propertyInfo.setType(paramDecls.iterator().next().getType().toString());
+                    propertyInfo.setType(paramDecls.iterator().next().asType().toString());
                     if (name == null || name.length() == 0) {
-                        if (methodName.startsWith("set"))
+                        if (methodName.startsWith("set")) {
                             name = methodName.substring(3,4).toLowerCase() + methodName.substring(4);
-                        else
-                            this.env.getMessager().printError(decl.getPosition(),
-                                    "Property name implied for a write method name that is not standard");
+                        } else {
+                            this.env.getMessager().printMessage(Kind.ERROR,
+                                    "Property name implied for a write method name that is not standard", decl);
+                        }
                     }
-                } else if (!(returnType instanceof VoidType) && paramDecls.size() == 0) {
+                } else if (!(returnType.getKind() == TypeKind.VOID) && paramDecls.isEmpty()) {
                     // This is a "get" method
-                    String methodName = decl.getSimpleName();
+                    String methodName = decl.getSimpleName().toString();
                     propertyInfo.setReadMethodName(methodName);
                     propertyInfo.setType(returnType.toString());
                     if (name == null || name.length() == 0) {
-                        if (methodName.startsWith("get"))
+                        if (methodName.startsWith("get")) {
                             name = methodName.substring(3,4).toLowerCase() + methodName.substring(4);
-                        else if (propertyInfo.getType().equals("boolean") && methodName.startsWith("is"))
+                        } else if (propertyInfo.getType().equals("boolean") && methodName.startsWith("is")) {
                             name = methodName.substring(2,3).toLowerCase() + methodName.substring(3);
-                        else
-                            this.env.getMessager().printError(decl.getPosition(),
-                                    "Property name implied for a read method name that is not standard");
+                        } else {
+                            this.env.getMessager().printMessage(Kind.ERROR,
+                                    "Property name implied for a read method name that is not standard", decl);
+                        }
                     }
                 } else {
                     // This is not a valid property "get" or "set" method
-                    this.env.getMessager().printError(decl.getPosition(),
-                            "Annotated property method does not have correct signature");
+                    this.env.getMessager().printMessage(Kind.ERROR,
+                            "Annotated property method does not have correct signature", decl);
                 }
                 if (name != null) {
                     propertyInfo.setName(name);
                     if (propertyInfoMap.containsKey(name))
-                        this.env.getMessager().printError(decl.getPosition(), "Duplicate property annotation");
+                        this.env.getMessager().printMessage(Kind.ERROR, "Duplicate property annotation", decl);
                     propertyInfoMap.put(name, propertyInfo);
                 }
             } else if (decl.getAnnotation(Event.class) != null) {
@@ -795,15 +821,15 @@ class FacesAnnotationProcessor implements Processor {
                 DeclaredEventInfo eventInfo = new DeclaredEventInfo(annotationMap, decl);
                 String name = (String) annotationMap.get(DeclaredEventInfo.NAME);
                 TypeMirror returnType = decl.getReturnType();
-                Collection<ParameterDeclaration> paramDecls = decl.getParameters();
+                Collection<? extends VariableElement> paramDecls = decl.getParameters();
                 if (Boolean.TRUE.equals(annotationMap.get(DeclaredEventInfo.IS_DEFAULT))) {
                     if (this.defaultEventName == null)
                         this.defaultEventName = name;
                     else
-                        this.env.getMessager().printError(decl.getPosition(), "Duplicate default event");
+                        this.env.getMessager().printMessage(Kind.ERROR, "Duplicate default event", decl);
                 }
-                if (returnType instanceof VoidType && paramDecls.size() == 1) {
-                    String methodName = decl.getSimpleName();
+                if (returnType.getKind() == TypeKind.VOID && paramDecls.size() == 1) {
+                    String methodName = decl.getSimpleName().toString();
                     if (methodName.startsWith("add")) {
                         eventInfo.setAddListenerMethodName(methodName);
                     } else if (methodName.startsWith("remove")) {
@@ -811,16 +837,16 @@ class FacesAnnotationProcessor implements Processor {
                     } else {
                         if (!methodName.equals(annotationMap.get(DeclaredEventInfo.ADD_LISTENER_METHOD_NAME)) &&
                                 !methodName.equals(annotationMap.get(DeclaredEventInfo.REMOVE_LISTENER_METHOD_NAME)))
-                            this.env.getMessager().printError(decl.getPosition(),
-                                    "Indeterminate event listener method (may be 'add' or 'remove' method)");
+                            this.env.getMessager().printMessage(Kind.ERROR,
+                                    "Indeterminate event listener method (may be 'add' or 'remove' method)", decl);
                         if (name == null)
-                            this.env.getMessager().printError(decl.getPosition(),
-                                    "Event name unspecified for event listener method with non-standard name");
+                            this.env.getMessager().printMessage(Kind.ERROR,
+                                    "Event name unspecified for event listener method with non-standard name", decl);
                     }
-                    TypeMirror paramType = paramDecls.iterator().next().getType();
+                    TypeMirror paramType = paramDecls.iterator().next().asType();
                     if (DeclaredType.class.isAssignableFrom(paramType.getClass())) {
                         // Event listener class is defined in this compilation unit
-                        eventInfo.setListenerDeclaration(((DeclaredType) paramType).getDeclaration());
+                        eventInfo.setListenerDeclaration(((DeclaredType) paramType).asElement());
                     } else {
                         // Event listener class is defined in an external library
                         try {
@@ -832,23 +858,23 @@ class FacesAnnotationProcessor implements Processor {
                     if (name == null) {
                         String listenerClassName = eventInfo.getListenerClassName();
                         if (listenerClassName.endsWith("Listener")) {
-                            int offset = listenerClassName.indexOf(".") >= 0 ? listenerClassName.lastIndexOf(".") + 1: 0;
+                            int offset = listenerClassName.contains(".") ? listenerClassName.lastIndexOf('.') + 1: 0;
                             name = listenerClassName.substring(offset, offset + 1).toLowerCase() +
                                     listenerClassName.substring(offset + 1, listenerClassName.indexOf("Listener"));
                         } else {
-                            this.env.getMessager().printError(decl.getPosition(),
-                                    "Event name unspecified for event listener class with non-standard name");
+                            this.env.getMessager().printMessage(Kind.ERROR,
+                                    "Event name unspecified for event listener class with non-standard name", decl);
                         }
                     }
                     if (name != null) {
                         eventInfo.setName(name);
                         if (eventInfoMap.containsKey(name))
-                            this.env.getMessager().printError(decl.getPosition(), "Duplicate event annotation");
+                            this.env.getMessager().printMessage(Kind.ERROR, "Duplicate event annotation", decl);
                         eventInfoMap.put(name, eventInfo);
                     }
                 } else {
-                    this.env.getMessager().printError(decl.getPosition(),
-                            "Invalid signature for an event listener 'add' or 'remove' method");
+                    this.env.getMessager().printMessage(Kind.ERROR,
+                            "Invalid signature for an event listener 'add' or 'remove' method", decl);
                 }
             }
         }
@@ -893,16 +919,19 @@ class FacesAnnotationProcessor implements Processor {
         Map<String,Map> tagAttributeMap = new HashMap<String,Map>();
         Map<String,String> attributeDescriptionMap;
         
+        @Override
         public void startDocument() throws SAXException {
             this.tagDescriptionMap.clear();
             this.tagAttributeMap.clear();
             this.elementStack.clear();
         }
         
+        @Override
         public void characters(char[] chars, int start, int length) throws SAXException {
             buffer.append(chars, start, length);
         }
         
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             if (localName == null || localName.length() == 0)
                 localName = qName;
@@ -917,6 +946,7 @@ class FacesAnnotationProcessor implements Processor {
             this.elementStack.push(localName);
         }
         
+        @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             this.elementStack.pop();
             if (localName == null || localName.length() == 0)
@@ -977,22 +1007,23 @@ class FacesAnnotationProcessor implements Processor {
                 superPropertyInfoMap.putAll(((DeclaredClassInfo) superClassInfo).getInheritedPropertyInfoMap());
             classInfo.getMethodNameSet().addAll(superClassInfo.getMethodNameSet());
         }
-        Stack<InterfaceType> superInterfaces = new Stack<InterfaceType>();
-        superInterfaces.addAll(classInfo.getDeclaration().getSuperinterfaces());
+        Stack<TypeMirror> superInterfaces = new Stack<TypeMirror>();
+        superInterfaces.addAll(classInfo.getDeclaration().getInterfaces());
         while (!superInterfaces.isEmpty()) {
-            InterfaceType interfaceType = superInterfaces.pop();
+            TypeMirror interfaceType = superInterfaces.pop();
             // Add properties from super interface to map of inherited properties
             if (this.declaredInterfaceMap.containsKey(interfaceType.toString())) {
                 DeclaredInterfaceInfo interfaceInfo = this.declaredInterfaceMap.get(interfaceType.toString());
                 for (PropertyInfo propertyInfo : interfaceInfo.getPropertyInfoMap().values()) {
-                    if (superPropertyInfoMap.containsKey(propertyInfo.getName()))
-                        this.env.getMessager().printError(
+                    if (superPropertyInfoMap.containsKey(propertyInfo.getName())) {
+                        this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, 
                                 classInfo.getQualifiedName() + " inherits property " + propertyInfo.getName() + " more than once");
-                    else
+                    } else {
                         superPropertyInfoMap.put(propertyInfo.getName(), propertyInfo);
+                    }
                 }
             }
-            superInterfaces.addAll(interfaceType.getSuperinterfaces());
+            //superInterfaces.addAll(interfaceType.getInterfaces());
         }
         for (PropertyInfo propertyInfo : classInfo.getPropertyInfoMap().values()) {
             // Validate overriden properties, and merge their property info
@@ -1001,20 +1032,20 @@ class FacesAnnotationProcessor implements Processor {
                 PropertyInfo superPropertyInfo = superPropertyInfoMap.get(propertyInfo.getName());
                 boolean updateInheritedValues = true;
                 if (!propertyInfo.getType().equals(superPropertyInfo.getType())) {
-                    this.env.getMessager().printError(thisPropertyInfo.getDeclaration().getPosition(),
-                            "Property in sub class must be of same type as the property that it overrides");
+                    this.env.getMessager().printMessage(Kind.ERROR,
+                            "Property in sub class must be of same type as the property that it overrides", thisPropertyInfo.getDeclaration());
                     updateInheritedValues = false;
                 }
                 if (propertyInfo.getReadMethodName() != null && superPropertyInfo.getReadMethodName() != null
                         && !propertyInfo.getReadMethodName().equals(superPropertyInfo.getReadMethodName())) {
-                    this.env.getMessager().printError(thisPropertyInfo.getDeclaration().getPosition(),
-                            "Read method of property in sub class must have same name as the method that it overrides");
+                    this.env.getMessager().printMessage(Kind.ERROR,
+                            "Read method of property in sub class must have same name as the method that it overrides", thisPropertyInfo.getDeclaration());
                     updateInheritedValues = false;
                 }
                 if (propertyInfo.getWriteMethodName() != null && superPropertyInfo.getWriteMethodName() != null
                         && !propertyInfo.getWriteMethodName().equals(superPropertyInfo.getWriteMethodName())) {
-                    this.env.getMessager().printError(thisPropertyInfo.getDeclaration().getPosition(),
-                            "Write method of property in sub class must have same name as the method that it overrides");
+                    this.env.getMessager().printMessage(Kind.ERROR,
+                            "Write method of property in sub class must have same name as the method that it overrides", thisPropertyInfo.getDeclaration());
                     updateInheritedValues = false;
                 }
                 if (updateInheritedValues)
@@ -1026,9 +1057,9 @@ class FacesAnnotationProcessor implements Processor {
         Map<String,PropertyInfo> propertyInfoMap = classInfo.getPropertyInfoMap();
         Map<String,EventInfo> eventInfoMap = classInfo.getEventInfoMap();
         superInterfaces.clear();
-        superInterfaces.addAll(classInfo.getDeclaration().getSuperinterfaces());
+        superInterfaces.addAll(classInfo.getDeclaration().getInterfaces());
         while (!superInterfaces.isEmpty()) {
-            InterfaceType interfaceType = superInterfaces.pop();
+            TypeMirror interfaceType = superInterfaces.pop();
             if (this.declaredInterfaceMap.containsKey(interfaceType.toString())) {
                 DeclaredInterfaceInfo interfaceInfo = this.declaredInterfaceMap.get(interfaceType.toString());
                 for (PropertyInfo propertyInfo : interfaceInfo.getPropertyInfoMap().values()) {
@@ -1040,7 +1071,7 @@ class FacesAnnotationProcessor implements Processor {
                         eventInfoMap.put(eventInfo.getName(), eventInfo);
                 }
             }
-            superInterfaces.addAll(interfaceType.getSuperinterfaces());
+            //superInterfaces.addAll(interfaceType.getKind().getDeclaringClass().);
         }
     }
     
@@ -1054,9 +1085,9 @@ class FacesAnnotationProcessor implements Processor {
      * those elements and value supplied explicitly in the declaration. Elements that
      * are implicitly assuming their default value will not be present.
      */
-    private static Map<String,Object> getAnnotationValueMap(Declaration decl, String annotationClassName) {
+    private static Map<String,Object> getAnnotationValueMap(Element decl, String annotationClassName) {
         for (AnnotationMirror annotationMirror : decl.getAnnotationMirrors()) {
-            if (annotationMirror.getAnnotationType().getDeclaration().getQualifiedName().equals(annotationClassName)) {
+            if (annotationMirror.getAnnotationType().asElement().asType().toString().equals(annotationClassName)) {
                 return getAnnotationValueMap(annotationMirror);
             }
         }
@@ -1069,8 +1100,8 @@ class FacesAnnotationProcessor implements Processor {
      */
     private static Map<String,Object> getAnnotationValueMap(AnnotationMirror annotationMirror) {
         Map<String,Object> annotationValueMap = new HashMap<String,Object>();
-        for (AnnotationTypeElementDeclaration elementDecl : annotationMirror.getElementValues().keySet()) {
-            String name = elementDecl.getSimpleName();
+        for (ExecutableElement elementDecl : annotationMirror.getElementValues().keySet()) {
+            String name = elementDecl.getSimpleName().toString();
             Object value = annotationMirror.getElementValues().get(elementDecl).getValue();
             if (value != null && AnnotationMirror.class.isAssignableFrom(value.getClass())) {
                 // Nested annotations should also be stored as maps

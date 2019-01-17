@@ -76,7 +76,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
         TypeElement decl = this.getDeclaration();
         if (decl.getQualifiedName().equals(qualifiedName))
             return true;
-        for (InterfaceType interfaceType : decl.getSuperinterfaces()) {
+        for (InterfaceType interfaceType : decl.getInterfaces()) {
             if (interfaceType.getDeclaration().getQualifiedName().equals(qualifiedName))
                 return true;
         }
