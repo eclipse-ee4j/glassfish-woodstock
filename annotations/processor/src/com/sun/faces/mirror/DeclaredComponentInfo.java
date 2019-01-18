@@ -17,11 +17,8 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.faces.annotation.Component;
-import com.sun.mirror.declaration.ClassDeclaration;
 import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
-import java.util.HashSet;
 import java.util.Map;
 import javax.lang.model.element.TypeElement;
 
@@ -152,25 +149,25 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         this.tagRendererType = tagRendererType;
     }
     
-    private ClassDeclaration tagClassDeclaration;
+    private TypeElement tagTypeElement;
     
     /**
      * Returns the tag class declaration that was found in the current compilation
      * unit for this component, or null if none was found.
      */
-    public ClassDeclaration getTagClassDeclaration() {
-        return this.tagClassDeclaration;
+    public TypeElement getTagTypeElement() {
+        return this.tagTypeElement;
     }
     
-    void setTagClassDeclaration(ClassDeclaration tagClassDeclaration) {
-        this.tagClassDeclaration = tagClassDeclaration;
+    void setTagTypeElement(TypeElement tagTypeElement) {
+        this.tagTypeElement = tagTypeElement;
     }
     
     public String getTagClassQualifiedName() {
-        ClassDeclaration tagClassDecl = this.getTagClassDeclaration();
+        TypeElement tagClassDecl = this.getTagTypeElement();
         if (tagClassDecl == null)
             return this.getQualifiedName() + "Tag";
-        return tagClassDecl.getQualifiedName();
+        return tagClassDecl.getQualifiedName().toString();
     }
     
     private String tagDescription;

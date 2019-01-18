@@ -19,7 +19,10 @@ package com.sun.faces.mirror;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
 /**
@@ -78,13 +81,19 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
                 defaultEventInfo = this.getSuperClassInfo().getDefaultEventInfo();
             }
             if (defaultEventInfo == null) {
-                for (TypeMirror interfaceType : this.decl.getInterfaces()) {
-                    if (interfaceType.getDeclaration().getQualifiedName().equals("javax.faces.component.EditableValueHolder")) {
+                for (TypeMirror interfaceMirror : this.decl.getInterfaces()) {
+                    if (!(interfaceMirror instanceof DeclaredType)) {
+                        continue;
+                    }
+                    
+                    Element interfaceElement = ((DeclaredType) interfaceMirror).asElement();
+                    if ((interfaceElement.getEnclosingElement().toString() + interfaceElement.getSimpleName())
+                            .equals("javax.faces.component.EditableValueHolder")) {
                         defaultEventInfo = this.getEventInfoMap().get("valueChange");
                         if (defaultEventInfo == null)
                             defaultEventInfo = this.getInheritedEventInfoMap().get("valueChange");
                     }
-                    if (interfaceType.getDeclaration().getQualifiedName().equals("javax.faces.component.ActionSource")) {
+                    if ((interfaceElement.getEnclosingElement().toString() + interfaceElement.getSimpleName()).equals("javax.faces.component.ActionSource")) {
                         defaultEventInfo = this.getEventInfoMap().get("action");
                         if (defaultEventInfo == null)
                             defaultEventInfo = this.getInheritedEventInfoMap().get("action");
@@ -151,6 +160,11 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
         if (!this.getClassName().equals(that.getClassName()))
             return false;
         return true;
+    }
+
+    @Override
+    public ElementKind getKind() {
+        return ElementKind.CLASS;
     }
     
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,7 +18,7 @@
 package com.sun.faces.mirror.generator;
 
 import com.sun.faces.mirror.DeclaredComponentInfo;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -63,7 +64,7 @@ class TagLibFileGeneratorImpl extends TagLibFileGenerator {
             componentInfoSet.addAll(this.getDeclaredComponentInfoSet());
             String namespace = this.getNamespace();
             String namespacePrefix = this.getNamespacePrefix();
-            PrintWriter printWriter = this.getPrintWriter();
+            Writer printWriter = this.getPrintWriter();
             VelocityContext velocityContext = new VelocityContext();
             velocityContext.put("date", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
             velocityContext.put("componentInfoSet", componentInfoSet);

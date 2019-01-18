@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,7 +23,7 @@ import com.sun.faces.mirror.DeclaredComponentInfo;
 import com.sun.faces.mirror.EventInfo;
 import com.sun.faces.mirror.PropertyBundleMap;
 import com.sun.faces.mirror.PropertyInfo;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -116,7 +117,7 @@ class BeanInfoSourceGeneratorImpl extends BeanInfoSourceGenerator{
             velocityContext.put("namespace", namespace == null ? "" : namespace);
             velocityContext.put("namespacePrefix", namespacePrefix == null ? "" : namespacePrefix);
             Template template = velocityEngine.getTemplate(TEMPLATE);
-            PrintWriter printWriter = this.getPrintWriter();
+            Writer printWriter = this.getPrintWriter();
             template.merge(velocityContext, printWriter);
         } catch (Exception e) {
             e.printStackTrace();

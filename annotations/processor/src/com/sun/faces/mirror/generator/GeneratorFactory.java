@@ -16,10 +16,6 @@
 
 package com.sun.faces.mirror.generator;
 
-import com.sun.mirror.apt.AnnotationProcessorEnvironment;
-import com.sun.mirror.apt.Filer;
-import java.io.File;
-import java.io.PrintWriter;
 import org.apache.velocity.app.VelocityEngine;
 
 /**

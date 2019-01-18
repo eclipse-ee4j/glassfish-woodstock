@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,16 +17,21 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.mirror.declaration.MethodDeclaration;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
-import com.sun.mirror.type.InterfaceType;
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ElementVisitor;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
+import javax.lang.model.element.NestingKind;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.TypeMirror;
 
 /**
  * Represents a class or interface declared in the current compilation unit.
@@ -83,9 +89,10 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
         TypeElement decl = this.getDeclaration();
         if (decl.getQualifiedName().toString().equals(qualifiedName))
             return true;
-        for (InterfaceType interfaceType : decl.getInterfaces()) {
-            if (interfaceType.getDeclaration().getQualifiedName().equals(qualifiedName))
+        for (TypeMirror interfaceType : decl.getInterfaces()) {
+            if (interfaceType.toString().equals(qualifiedName)) {
                 return true;
+            }
         }
         return false;
     }
@@ -174,8 +181,75 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
     /**
      * Returns the JavaDoc comments associated with the type declaration.
      */
+    @Deprecated
     public String getDocComment() {
-        return Elements.getDocComment(this);
+        return "";
+        //return Elements.getDocComment(this);
+    }
+    
+    @Override
+    public TypeMirror asType() {
+        return decl.asType();        
+    }
+
+    @Override
+    public Set<Modifier> getModifiers() {
+        return decl.getModifiers();
+    }
+
+    @Override
+    public Name getSimpleName() {
+        return decl.getSimpleName();
+    }
+
+    @Override
+    public Element getEnclosingElement() {
+        return decl.getEnclosingElement();
+    }
+
+    @Override
+    public List<? extends Element> getEnclosedElements() {
+        return decl.getEnclosedElements();
+    }
+
+    @Override
+    public List<? extends AnnotationMirror> getAnnotationMirrors() {
+        return decl.getAnnotationMirrors();
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+        return decl.getAnnotation(annotationType);
+    }
+
+    @Override
+    public <R, P> R accept(ElementVisitor<R, P> v, P p) {
+        return decl.accept(v, p);
+    }
+
+    @Override
+    public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationType) {
+        return decl.getAnnotationsByType(annotationType);
+    }
+
+    @Override
+    public NestingKind getNestingKind() {
+        return decl.getNestingKind();
+    }
+
+    @Override
+    public TypeMirror getSuperclass() {
+        return decl.getSuperclass();
+    }
+
+    @Override
+    public List<? extends TypeMirror> getInterfaces() {
+        return decl.getInterfaces();
+    }
+
+    @Override
+    public List<? extends TypeParameterElement> getTypeParameters() {
+        return decl.getTypeParameters();
     }
     
 }

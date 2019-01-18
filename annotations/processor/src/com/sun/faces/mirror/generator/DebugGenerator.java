@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,7 +20,7 @@ package com.sun.faces.mirror.generator;
 import com.sun.faces.mirror.ClassInfo;
 import com.sun.faces.mirror.DeclaredComponentInfo;
 import com.sun.faces.mirror.DeclaredRendererInfo;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -53,7 +54,7 @@ public class DebugGenerator extends Generator {
             velocityContext.put("namespace", namespace == null ? "" : namespace);
             velocityContext.put("namespacePrefix", namespacePrefix == null ? "" : namespacePrefix);
             Template template = velocityEngine.getTemplate(TEMPLATE);
-            PrintWriter printWriter = this.getPrintWriter();
+            Writer printWriter = this.getPrintWriter();
             template.merge(velocityContext, printWriter);
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,6 +153,7 @@ public class DebugGenerator extends Generator {
     
     static class ClassInfoComparator implements Comparator {
         
+        @Override
         public int compare(Object obj1, Object obj2) {
             return ((ClassInfo)obj1).getQualifiedName().compareTo(((ClassInfo)obj2).getClassName());
         }

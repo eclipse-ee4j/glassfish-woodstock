@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -40,10 +41,12 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return this.propertyDescriptor;
     }
 
+    @Override
     public String getName() {
         return this.propertyDescriptor.getName();
     }
     
+    @Override
     public String getInstanceName() {
         String name = this.getName();
         if (PropertyInfo.JAVA_KEYWORD_PATTERN.matcher(name).matches())
@@ -51,10 +54,12 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return name;
     }
 
+    @Override
     public String getType() {
         return this.propertyDescriptor.getPropertyType().getName();
     }
 
+    @Override
     public String getWriteMethodName() {
         Method method = this.propertyDescriptor.getWriteMethod();
         if (method == null)
@@ -62,6 +67,7 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return method.getName();
     }
 
+    @Override
     public String getReadMethodName() {
         Method method = this.propertyDescriptor.getReadMethod();
         if (method == null)
@@ -69,18 +75,22 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return method.getName();
     }
 
+    @Override
     public String getShortDescription() {
         return this.propertyDescriptor.getShortDescription();
     }
 
+    @Override
     public String getDisplayName() {
         return this.propertyDescriptor.getDisplayName();
     }
     
+    @Override
     public boolean isHidden() {
         return this.propertyDescriptor.isHidden();
     }
 
+    @Override
     public String getEditorClassName() {
         Class editorClass = this.propertyDescriptor.getPropertyEditorClass();
         if (editorClass == null)
@@ -90,6 +100,7 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
     
     private CategoryInfo categoryInfo;
     
+    @Override
     public CategoryInfo getCategoryInfo() {
         return this.categoryInfo;
     }
@@ -98,6 +109,7 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         this.categoryInfo = categoryInfo;
     }
     
+    @Override
     String getCategoryReferenceName() {
         if (this.propertyDescriptor.getValue(Constants.PropertyDescriptor.CATEGORY) != null)
             return ((CategoryDescriptor) this.propertyDescriptor.getValue(Constants.PropertyDescriptor.CATEGORY)).getName();
@@ -126,6 +138,7 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return true;
     }
 
+    @Override
     public AttributeInfo getAttributeInfo() {
         AttributeDescriptor attributeDescriptor =
                 (AttributeDescriptor) this.propertyDescriptor.getValue(Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR);

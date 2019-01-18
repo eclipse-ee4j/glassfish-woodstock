@@ -17,6 +17,7 @@
 
 package com.sun.faces.mirror;
 
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 /**
@@ -47,6 +48,11 @@ public class DeclaredInterfaceInfo extends DeclaredTypeInfo {
         if (!this.getClassName().equals(that.getClassName()))
             return false;
         return true;
+    }
+    
+    @Override
+    public ElementKind getKind() {
+        return ElementKind.INTERFACE;
     }
     
 }

@@ -17,13 +17,12 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.mirror.declaration.MethodDeclaration;
-import com.sun.mirror.declaration.ParameterDeclaration;
-import com.sun.mirror.declaration.TypeDeclaration;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
 
 /**
  *
@@ -42,6 +41,14 @@ public class DeclaredEventInfo extends EventInfo {
     Element decl;
     Map<String,Object> annotationValueMap;
     
+    private String name;
+    private Element listenerDeclaration;
+    private String addListenerMethodName;
+    private String removeListenerMethodName;
+    private String[] listenerMethodParameterClassNames;
+    private String listenerMethodName;
+    private String getListenersMethodName;
+    
     DeclaredEventInfo(Map<String,Object> annotationValueMap, Element decl) {
         this.annotationValueMap = annotationValueMap;
         this.decl = decl;
@@ -51,8 +58,7 @@ public class DeclaredEventInfo extends EventInfo {
         return this.decl;
     }
     
-    private String name;
-    
+    @Override
     public String getName() {
         return this.name;
     }
@@ -61,20 +67,22 @@ public class DeclaredEventInfo extends EventInfo {
         this.name = name;
     }
     
+    @Override
     public String getDisplayName() {
         return this.getName();
     }
     
+    @Override
     public String getShortDescription() {
         return this.getDisplayName();
     }
     
+    @Override
     public boolean isHidden() {
         return false;
     }
     
-    private String addListenerMethodName;
-    
+    @Override
     public String getAddListenerMethodName() {
         if (this.addListenerMethodName == null)
             this.addListenerMethodName = (String) this.annotationValueMap.get(ADD_LISTENER_METHOD_NAME);
@@ -85,8 +93,7 @@ public class DeclaredEventInfo extends EventInfo {
         this.addListenerMethodName = addMethodName;
     }
     
-    private String removeListenerMethodName;
-    
+    @Override
     public String getRemoveListenerMethodName() {
         if (this.removeListenerMethodName == null)
             this.removeListenerMethodName = (String) this.annotationValueMap.get(REMOVE_LISTENER_METHOD_NAME);
@@ -96,8 +103,6 @@ public class DeclaredEventInfo extends EventInfo {
     void setRemoveListenerMethodName(String removeMethodName) {
         this.removeListenerMethodName = removeMethodName;
     }
-    
-    private String getListenersMethodName;
     
     @Override
     public String getGetListenersMethodName() {
@@ -114,14 +119,14 @@ public class DeclaredEventInfo extends EventInfo {
     public String getListenerMethodSignature() {
         StringBuilder buffer = new StringBuilder();
         if (this.getListenerDeclaration() != null) {
-            MethodDeclaration listenerMethodDecl =
-                    this.getListenerDeclaration().getMethods().iterator().next();
+            
+            ExecutableElement listenerMethodDecl = (ExecutableElement) listenerDeclaration.getEnclosedElements().iterator().next();
             buffer.append(listenerMethodDecl.getReturnType().toString());
             buffer.append(" ");
             buffer.append(listenerMethodDecl.getSimpleName());
             buffer.append("(");
-            for (ParameterDeclaration paramDecl : listenerMethodDecl.getParameters()) {
-                buffer.append(paramDecl.getType().toString());
+            for (VariableElement paramDecl : listenerMethodDecl.getParameters()) {
+                buffer.append(paramDecl.asType().toString());
                 buffer.append(",");
             }
             buffer.setLength(buffer.length() - 1);
@@ -142,9 +147,7 @@ public class DeclaredEventInfo extends EventInfo {
         return buffer.toString();
     }
     
-    private TypeDeclaration listenerDeclaration;
-    
-    public TypeDeclaration getListenerDeclaration() {
+    public Element getListenerDeclaration() {
         return this.listenerDeclaration;
     }
     
@@ -162,23 +165,22 @@ public class DeclaredEventInfo extends EventInfo {
         this.listenerClass = listenerClass;
     }
     
+    @Override
     public String getListenerClassName() {
         if (this.getListenerDeclaration() != null) {
-            return this.getListenerDeclaration().getQualifiedName();
+            return this.getListenerDeclaration().asType().toString();
         } else if (this.getListenerClass() != null) {
             return this.getListenerClass().getName();
         }
         return null;
     }
     
-    private String listenerMethodName;
-    
+    @Override
     public String getListenerMethodName() {
         if (listenerMethodName == null) {
             if (this.getListenerDeclaration() != null) {
-                MethodDeclaration listenerMethodDecl =
-                        this.getListenerDeclaration().getMethods().iterator().next();
-                listenerMethodName = listenerMethodDecl.getSimpleName();
+                ExecutableElement listenerMethodDecl = (ExecutableElement) listenerDeclaration.getEnclosedElements().iterator().next();
+                listenerMethodName = listenerMethodDecl.getSimpleName().toString();
             } else if (this.getListenerClass() != null) {
                 listenerMethodName = this.getListenerClass().getMethods()[0].getName();
             }
@@ -186,14 +188,13 @@ public class DeclaredEventInfo extends EventInfo {
         return listenerMethodName;
     }
     
-    private String[] listenerMethodParameterClassNames;
-    
+    @Override
     public String[] getListenerMethodParameterClassNames() {
         if (listenerMethodParameterClassNames == null) {
             ArrayList<String> paramNameList = new ArrayList<String>();
             if (this.getListenerDeclaration() != null) {
-                for (ParameterDeclaration paramDecl : this.getListenerDeclaration().getMethods().iterator().next().getParameters())
-                    paramNameList.add(paramDecl.getType().toString());
+                for (VariableElement paramDecl : ((ExecutableElement) listenerDeclaration.getEnclosedElements().iterator().next()).getParameters())
+                    paramNameList.add(paramDecl.asType().toString());
             } else if (this.getListenerClass() != null) {
                 for (Class paramClass: this.getListenerClass().getMethods()[0].getParameterTypes())
                     paramNameList.add(paramClass.getName());

@@ -20,7 +20,6 @@ package com.sun.faces.mirror;
 import com.sun.faces.annotation.*;
 import com.sun.faces.mirror.DeclaredRendererInfo.RendersInfo;
 import com.sun.faces.mirror.generator.*;
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.ProcessingEnvironment;
 import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
@@ -35,6 +34,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
@@ -73,42 +74,47 @@ import org.xml.sax.helpers.DefaultHandler;
  * environment.
  *
  * @author gjmurphy
+ * @author jonathan coustick
  */
 // TODO - Handle localization of property metadata inherited from external libraries
 // TODO - Make all XxxInfo classes immutable when seen by generators
 // TODO - Handle different versions of JSF (1.1 and 1.2)
 // TODO - Handle attribute annotations within a tag class
-class FacesAnnotationProcessor implements Processor  {
+class FacesAnnotationProcessor extends AbstractProcessor  {
     
     ProcessingEnvironment env;
     
-    // Set of all packages that define the current compilation unit
+    /** Set of all packages that define the current compilation unit */
     Set<String> packageNameSet = new HashSet<String>();
-    // Set of all JSF components declared in the current compilation unit
+    /** Set of all JSF components declared in the current compilation unit */
     Set<DeclaredComponentInfo> declaredComponentSet = new HashSet<DeclaredComponentInfo>();
-    // Set of all JSF renderers declared in the current compilation unit
+    /** Set of all JSF renderers declared in the current compilation unit */
     Set<DeclaredRendererInfo> declaredRendererSet = new HashSet<DeclaredRendererInfo>();
-    // A map of fully qualified class names to their class info, for all classes
-    // in the current compilation unit
+    /** A map of fully qualified class names to their class info, for all classes
+     * in the current compilation unit */
     Map<String,DeclaredClassInfo> declaredClassMap = new HashMap<String,DeclaredClassInfo>();
-    // A map of fully qualified interface names to their interface info, for all interfaces
-    // in the current compilation unit
+    /** A map of fully qualified interface names to their interface info, for all interfaces
+     * in the current compilation unit */
     Map<String,DeclaredInterfaceInfo> declaredInterfaceMap = new HashMap<String,DeclaredInterfaceInfo>();
-    // A map of component names to hand-authored tag classes, for all components
-    // for which hand-authored tag classes were declared
+    /** A map of component names to hand-authored tag classes, for all components
+     * for which hand-authored tag classes were declared */
     Map<String,DeclaredClassInfo> declaredTagClassMap = new HashMap<String,DeclaredClassInfo>();
-    // A map of property category names to their category descriptor info
+    /** A map of property category names to their category descriptor info */
     Map<String,CategoryInfo> categoryMap = new HashMap<String,CategoryInfo>();
-    // A set of all JSF property resolvers declared in the current compilation unit
+    /** A set of all JSF property resolvers declared in the current compilation unit */
     Set<String> propertyResolverNameSet = new HashSet<String>();
-    // A set of all JSF variable resolvers declared in the current compilation unit
+    /** A set of all JSF variable resolvers declared in the current compilation unit */
     Set<String> variableResolverNameSet = new HashSet<String>();
-    // A set of all Java EE EL resolvers declared in the current compilation unit
+    /** A set of all Java EE EL resolvers declared in the current compilation unit */
     Set<String> javaeeResolverNameSet = new HashSet<String>();
     
+    private static final String LOCALIZE_OPTION = "localize";
+    
+    private static final Set<String> SUPPORTED_OPTIONS = Collections.emptySet();
     private Set<String> supportedAnnotations;
     
     public FacesAnnotationProcessor() {
+        SUPPORTED_OPTIONS.add(LOCALIZE_OPTION);
         supportedAnnotations = new HashSet<String>();
         supportedAnnotations.add(Attribute.class.getName());
         supportedAnnotations.add(Component.class.getName());
@@ -222,8 +228,7 @@ class FacesAnnotationProcessor implements Processor  {
                         // This is a component class
                         Map<String,Object> annotationValueMap =
                                 getAnnotationValueMap(typeDecl, Component.class.getName());
-                        DeclaredComponentInfo componentInfo =
-                                new DeclaredComponentInfo(annotationValueMap, typeDecl);
+                        DeclaredComponentInfo componentInfo = new DeclaredComponentInfo(annotationValueMap, typeDecl);
                         this.declaredComponentSet.add(componentInfo);
                         this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), componentInfo);
                         typeInfo = componentInfo;
@@ -248,12 +253,18 @@ class FacesAnnotationProcessor implements Processor  {
                         TypeMirror superClassType = typeDecl.getSuperclass();
                         while (superClassType != null) {
                             String superClassName = superClassType.toString();
-                            if (superClassName.equals("javax.faces.el.PropertyResolver")) {
-                                this.propertyResolverNameSet.add(typeDecl.toString());
-                            } else if (superClassName.equals("javax.faces.el.VariableResolver")) {
-                                this.variableResolverNameSet.add(typeDecl.toString());
-                            } else if (superClassName.equals("javax.el.ELResolver")) {
-                                this.javaeeResolverNameSet.add(typeDecl.toString());
+                            switch (superClassName) {
+                                case "javax.faces.el.PropertyResolver":
+                                    this.propertyResolverNameSet.add(typeDecl.toString());
+                                    break;
+                                case "javax.faces.el.VariableResolver":
+                                    this.variableResolverNameSet.add(typeDecl.toString());
+                                    break;
+                                case "javax.el.ELResolver":
+                                    this.javaeeResolverNameSet.add(typeDecl.toString());
+                                    break;
+                                default:
+                                    break;
                             }
                             
                             superClassType = env.getTypeUtils().directSupertypes(superClassType).get(0);
@@ -327,9 +338,7 @@ class FacesAnnotationProcessor implements Processor  {
                     superClassInfo.setEventInfoMap(eventInfoMap);
                     introspectedClassMap.put(superClassName, superClassInfo);
                     declaredClassInfo.setSuperClassInfo(superClassInfo);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IntrospectionException e) {
+                } catch (ClassNotFoundException | IntrospectionException e) {
                     e.printStackTrace();
                 }
             }
@@ -418,7 +427,7 @@ class FacesAnnotationProcessor implements Processor  {
                         continue;
                     }
                     ExecutableElement methodDecl = (ExecutableElement) enclosedElement;
-                    if (methodDecl.getSimpleName().equals(writeMethodName)) {
+                    if (methodDecl.getSimpleName().toString().equals(writeMethodName)) {
                         TypeMirror returnType = methodDecl.getReturnType();
                         Collection<? extends VariableElement> params = methodDecl.getParameters();
                         if(!(returnType.getKind() == TypeKind.VOID ) || params.size() != 1 ||
@@ -559,9 +568,7 @@ class FacesAnnotationProcessor implements Processor  {
             if (this.getGeneratorFactoryClass() != null) {
                 try {
                     generatorFactory = (GeneratorFactory) this.getGeneratorFactoryClass().newInstance();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
@@ -686,12 +693,12 @@ class FacesAnnotationProcessor implements Processor  {
 
     @Override
     public Set<String> getSupportedOptions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.unmodifiableSet(SUPPORTED_OPTIONS);
     }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return supportedAnnotations;
+        return Collections.unmodifiableSet(supportedAnnotations);
     }
 
     @Override
