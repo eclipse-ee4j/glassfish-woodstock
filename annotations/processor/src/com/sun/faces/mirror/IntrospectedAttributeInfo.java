@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,24 +33,29 @@ public class IntrospectedAttributeInfo implements AttributeInfo {
         this.attributeDescriptor = attributeDescriptor;
     }
 
+    @Override
     public String getName() {
         return this.attributeDescriptor.getName();
     }
 
+    @Override
     public boolean isBindable() {
         return this.attributeDescriptor.isBindable();
     }
 
+    @Override
     public boolean isRequired() {
         return this.attributeDescriptor.isRequired();
     }
 
+    @Override
     public String getMethodSignature() {
         return null;
     }
     
     private String description;
     
+    @Override
     public String getDescription() {
         if (description == null) {
             return "";
@@ -61,6 +67,7 @@ public class IntrospectedAttributeInfo implements AttributeInfo {
         this.description = description;
     }
 
+    @Override
     public String getWriteMethodName() {
         String name = this.getName();
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);

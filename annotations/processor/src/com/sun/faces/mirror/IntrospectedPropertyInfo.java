@@ -104,6 +104,7 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return null;
     }
     
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof PropertyInfo))
             return false;

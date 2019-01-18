@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * @author gjmurphy
  */
 // TODO - Implement javaee.version option.
-public class FacesAnnotationProcessorFactory implements ProcessorFactory {
+public class FacesAnnotationProcessorFactory implements ProcessFactory {
     
     private static final String LOCALIZE_OPTION = "localize";
     private static final String JAVAEE_VERSION_OPTION = "javaee.version";

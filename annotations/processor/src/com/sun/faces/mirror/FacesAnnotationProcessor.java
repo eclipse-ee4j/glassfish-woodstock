@@ -22,11 +22,6 @@ import com.sun.faces.mirror.DeclaredRendererInfo.RendersInfo;
 import com.sun.faces.mirror.generator.*;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.ProcessingEnvironment;
-import com.sun.mirror.apt.Filer;
-import com.sun.mirror.declaration.*;
-import com.sun.mirror.type.*;
-import com.sun.mirror.util.DeclarationVisitors;
-import com.sun.mirror.util.SimpleDeclarationVisitor;
 import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
 import java.beans.BeanInfo;
@@ -37,6 +32,7 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +43,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import javax.annotation.processing.Completion;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
@@ -60,9 +57,10 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
+import javax.lang.model.util.SimpleElementVisitor8;
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.StandardLocation;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
@@ -200,8 +198,13 @@ class FacesAnnotationProcessor implements Processor  {
     
     
     // Processor methods
-    
+    @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        
+        //Are the supplied annotations ones that are supported by this?
+        if (!supportedAnnotations.containsAll(annotations)) {
+             return false;
+        }
         
         // Find all component classes in the compilation unit, creating a skeleton
         // ComponentInfo for each, then invoke a declaration classMemberVisitor that will
@@ -212,9 +215,8 @@ class FacesAnnotationProcessor implements Processor  {
             this.packageNameSet.add(typeDecl.getEnclosingElement().getSimpleName().toString());
             if (true) {
                 DeclaredTypeInfo typeInfo = null;
-                classMemberVisitor.reset();
-                typeDecl.accept(
-                        DeclarationVisitors.getDeclarationScanner(classMemberVisitor, DeclarationVisitors.NO_OP));
+                classMemberVisitor.reset();typeDecl.
+                typeDecl.accept(classMemberVisitor);
                 if (typeDecl.getKind() == ElementKind.CLASS) {
                     if (typeDecl.getAnnotation(Component.class) != null) {
                         // This is a component class
@@ -357,28 +359,32 @@ class FacesAnnotationProcessor implements Processor  {
                 // Ensure that property does not correspond to the special "binding" tag attribute
                 if (propertyInfo.getAttributeInfo() != null && propertyInfo.getAttributeInfo().getName().equals("binding"))
                     this.env.getMessager().printMessage(Kind.WARNING,
-                            "Property corresponds to the reserved 'binding' tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration);
+                            "Property corresponds to the reserved 'binding' tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 // Ensure that property read method exists
                 String readMethodName = propertyInfo.getReadMethodName();
                 if (readMethodName == null) {
                     readMethodName = generateReadMethodName(propertyInfo);
-                    if (methodNameSet.contains(readMethodName))
+                    if (methodNameSet.contains(readMethodName)) {
                         ((DeclaredPropertyInfo) propertyInfo).setReadMethodName(readMethodName);
-                    else
+                    } else {
                         readMethodName = null;
+                    }
                 } else if (!methodNameSet.contains(readMethodName)) {
                     env.getMessager().printMessage(Kind.ERROR,
                             "No such property method " + readMethodName, ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 // Ensure that read method has a valid signature
-                for (MethodDeclaration methodDecl : declaredClassInfo.getDeclaration().getMethods()) {
-                    if (methodDecl.getSimpleName().equals(readMethodName)) {
+                for (Element enclosedElement : declaredClassInfo.getDeclaration().getEnclosedElements()) {
+                    if (!(enclosedElement instanceof ExecutableElement)) {
+                        continue;
+                    }
+                    ExecutableElement methodDecl = (ExecutableElement) enclosedElement;
+                    if (methodDecl.getSimpleName().toString().equals(readMethodName)) {
                         TypeMirror returnType = methodDecl.getReturnType();
                         if(!returnType.toString().equals(propertyInfo.getType()) ||
                                 methodDecl.getParameters().size() > 0) {
-                            env.getMessager().printError(methodDecl.getPosition(),
-                                    "Method " + readMethodName + " for property " +
-                                    propertyInfo.getName() + " has incorrect signature");
+                            env.getMessager().printMessage(Kind.ERROR, 
+                                    "Method " + readMethodName + " for property " + propertyInfo.getName() + " has incorrect signature", methodDecl);
                         }
                         break;
                     }
@@ -396,21 +402,29 @@ class FacesAnnotationProcessor implements Processor  {
                             "No such property method " + writeMethodName, (
                             (DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
-                if (readMethodName == null && writeMethodName == null)
+                if (readMethodName == null && writeMethodName == null) {
                     env.getMessager().printMessage(Kind.ERROR,
                             "No get or set method found for property", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
-                if (writeMethodName == null && propertyInfo.getAttributeInfo() != null)
+                }
+                if (writeMethodName == null && propertyInfo.getAttributeInfo() != null) {
                     env.getMessager().printMessage(Kind.ERROR,
                             "A read-only method cannot be associated with a JSP tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
+                }
                 // Ensure that write method has a valid signature
-                for (MethodDeclaration methodDecl : declaredClassInfo.getDeclaration().getMethods()) {
+                
+                
+                for (Element enclosedElement : declaredClassInfo.getDeclaration().getEnclosedElements()) {
+                    if (!(enclosedElement instanceof ExecutableElement)) {
+                        continue;
+                    }
+                    ExecutableElement methodDecl = (ExecutableElement) enclosedElement;
                     if (methodDecl.getSimpleName().equals(writeMethodName)) {
                         TypeMirror returnType = methodDecl.getReturnType();
-                        Collection<ParameterDeclaration> params = methodDecl.getParameters();
+                        Collection<? extends VariableElement> params = methodDecl.getParameters();
                         if(!(returnType.getKind() == TypeKind.VOID ) || params.size() != 1 ||
-                                !params.iterator().next().getType().toString().equals(propertyInfo.getType())) {
-                            env.getMessager().printError(methodDecl.getPosition(),
-                                    "Method " + writeMethodName + " for property " + propertyInfo.getName() + " has incorrect signature");
+                                !params.iterator().next().asType().toString().equals(propertyInfo.getType())) {
+                            env.getMessager().printMessage(Kind.ERROR,
+                                    "Method " + writeMethodName + " for property " + propertyInfo.getName() + " has incorrect signature", methodDecl);
                         }
                         break;
                     }
@@ -559,10 +573,10 @@ class FacesAnnotationProcessor implements Processor  {
                 debugGenerator.setPackageNameSet(this.packageNameSet);
                 debugGenerator.setDeclaredComponentInfoSet(this.declaredComponentSet);
                 debugGenerator.setDeclaredRendererInfoSet(this.declaredRendererSet);
-                PrintWriter debugWriter = new PrintWriter(System.out);
-                debugGenerator.setPrintWriter(debugWriter);
-                debugGenerator.generate();
-                debugWriter.close();
+                try (PrintWriter debugWriter = new PrintWriter(System.out)) {
+                    debugGenerator.setPrintWriter(debugWriter);
+                    debugGenerator.generate();
+                }
             }
             if (this.processDesignTime) {
                 // Generate BeanInfo base class files
@@ -572,7 +586,7 @@ class FacesAnnotationProcessor implements Processor  {
                 beanInfoSourceGenerator.setNamespacePrefix(this.getNamespacePrefix());
                 for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
                     beanInfoSourceGenerator.setDeclaredComponentInfo(componentInfo);
-                    beanInfoSourceGenerator.setPrintWriter(filer.createSourceFile(beanInfoSourceGenerator.getQualifiedName()));
+                    beanInfoSourceGenerator.setPrintWriter(filer.createSourceFile(beanInfoSourceGenerator.getQualifiedName()).openWriter());
                     if (this.localize) {
                         String packageName = componentInfo.getPackageName();
                         PropertyBundleMap propertyBundleMap = propertyBundleMapsMap.get(packageName);
@@ -589,13 +603,13 @@ class FacesAnnotationProcessor implements Processor  {
                     for (PropertyBundleMap propertyBundleMap : propertyBundleMapsMap.values()) {
                         if (propertyBundleMap.size() > 0) {
                             String fileName = propertyBundleMap.getQualifiedName().replace('.', File.separatorChar) + ".properties";
-                            PrintWriter printWriter =
-                                    filer.createTextFile(Filer.Location.SOURCE_TREE, "", new File(fileName), "ASCII");
-                            for (Object key : propertyBundleMap.keyList()) {
-                                Object value = propertyBundleMap.get(key);
-                                printWriter.println(key.toString() + "=" + value.toString());
+                            try (Writer printWriter = filer.createResource(StandardLocation.SOURCE_PATH, "", fileName).openWriter()) {
+                                for (Object key : propertyBundleMap.keyList()) {
+                                    Object value = propertyBundleMap.get(key);
+                                    printWriter.write(key.toString() + "=" + value.toString());
+                                    printWriter.write(System.lineSeparator());
+                                }
                             }
-                            printWriter.close();
                         }
                     }
                 }
@@ -610,7 +624,7 @@ class FacesAnnotationProcessor implements Processor  {
                     facesConfigGenerator.setDeclaredVariableResolverNameSet(this.variableResolverNameSet);
                     facesConfigGenerator.setDeclaredJavaEEResolverNameSet(this.javaeeResolverNameSet);
                     String fileName = facesConfigGenerator.getFileName();
-                    facesConfigGenerator.setPrintWriter(filer.createTextFile(Filer.Location.CLASS_TREE, "", new File(fileName), "UTF-8"));
+                    facesConfigGenerator.setPrintWriter(filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter());
                     facesConfigGenerator.generate();
                 }
                 // Generate JSP tag class files, unless a hand-authored tag class exists
@@ -620,7 +634,7 @@ class FacesAnnotationProcessor implements Processor  {
                 for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
                     if (!this.declaredTagClassMap.containsKey(componentInfo.getType()) && componentInfo.isTag()) {
                         tagSourceGenerator.setDeclaredComponentInfo(componentInfo);
-                        tagSourceGenerator.setPrintWriter(filer.createSourceFile(tagSourceGenerator.getQualifiedName()));
+                        tagSourceGenerator.setPrintWriter(filer.createSourceFile(tagSourceGenerator.getQualifiedName()).openWriter());
                         tagSourceGenerator.generate();
                     }
                 }
@@ -657,7 +671,7 @@ class FacesAnnotationProcessor implements Processor  {
                     tagLibGenerator.setNamespace(this.getNamespaceUri());
                     tagLibGenerator.setNamespacePrefix(this.getNamespacePrefix());
                     String fileName = tagLibGenerator.getFileName();
-                    tagLibGenerator.setPrintWriter(filer.createTextFile(Filer.Location.CLASS_TREE, "", new File(fileName), "UTF-8"));
+                    tagLibGenerator.setPrintWriter(filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter());
                     tagLibGenerator.generate();
                 }
             }
@@ -667,7 +681,7 @@ class FacesAnnotationProcessor implements Processor  {
         } catch (GeneratorException e) {
             env.getMessager().printMessage(Kind.ERROR, e.getMessage());
         }
-        
+        return true;
     }
 
     @Override
@@ -709,7 +723,7 @@ class FacesAnnotationProcessor implements Processor  {
      * Visitor implementation used to visit field and method declarations in a
      * class.
      */
-    private static class MemberDeclarationVisitor extends SimpleDeclarationVisitor {
+    private static class MemberDeclarationVisitor extends SimpleElementVisitor8 {
         
         ProcessingEnvironment env;
         Map<String,PropertyInfo> propertyInfoMap = new HashMap<String,PropertyInfo>();
@@ -951,23 +965,30 @@ class FacesAnnotationProcessor implements Processor  {
             this.elementStack.pop();
             if (localName == null || localName.length() == 0)
                 localName = qName;
-            if (localName.equals("name")) {
-                if (this.elementStack.peek().equals("tag"))
-                    this.tagName = buffer.toString().trim();
-                else
-                    this.attrName = buffer.toString().trim();
-            } else if (localName.equals("description")) {
-                if (this.elementStack.peek().equals("tag"))
-                    this.tagDescription = buffer.toString().trim();
-                else
-                    this.attrDescription = buffer.toString().trim();
-            } else if (localName.equals("attribute")) {
-                if (attrDescription != null)
-                    this.attributeDescriptionMap.put(attrName, attrDescription);
-            } else if (localName.equals("tag")) {
-                if (tagDescription != null)
-                    this.tagDescriptionMap.put(tagName, tagDescription);
-                this.tagAttributeMap.put(tagName, this.attributeDescriptionMap);
+            switch (localName) {
+                case "name":
+                    if (this.elementStack.peek().equals("tag"))
+                        this.tagName = buffer.toString().trim();
+                    else
+                        this.attrName = buffer.toString().trim();
+                    break;
+                case "description":
+                    if (this.elementStack.peek().equals("tag"))
+                        this.tagDescription = buffer.toString().trim();
+                    else
+                        this.attrDescription = buffer.toString().trim();
+                    break;
+                case "attribute":
+                    if (attrDescription != null)
+                        this.attributeDescriptionMap.put(attrName, attrDescription);
+                    break;
+                case "tag":
+                    if (tagDescription != null)
+                        this.tagDescriptionMap.put(tagName, tagDescription);
+                    this.tagAttributeMap.put(tagName, this.attributeDescriptionMap);
+                    break;
+                default:
+                    break;
             }
             this.buffer.setLength(0);
         }

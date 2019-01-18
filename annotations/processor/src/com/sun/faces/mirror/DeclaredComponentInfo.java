@@ -74,25 +74,33 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
                 shortDescription = this.getDisplayName();
             } else {
                 char[] chars = comment.toCharArray();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 int index = 0;
                 while (index < chars.length && Character.isSpaceChar(chars[index]))
                     index++;
+                OUTER:
                 while (index < chars.length) {
-                    if (chars[index] == '<') {
-                        index++;
-                        while (index < chars.length && chars[index] != '>')
+                    switch (chars[index]) {
+                        case '<':
                             index++;
-                    } else if (chars[index] == '\n') {
-                        buffer.append(" ");
-                    } else if (chars[index] == '"') {
-                        buffer.append("&quot;");
-                    } else if (chars[index] == '.') {
-                        if (index == chars.length - 1 || Character.isSpaceChar(chars[index+1]))
+                            while (index < chars.length && chars[index] != '>')
+                                index++;
                             break;
-                        buffer.append('.');
-                    } else {
-                        buffer.append(chars[index]);
+                        case '\n':
+                            buffer.append(" ");
+                            break;
+                        case '"':
+                            buffer.append("&quot;");
+                            break;
+                        case '.':
+                            if (index == chars.length - 1 || Character.isSpaceChar(chars[index+1])) {
+                                break OUTER;
+                            }
+                            buffer.append('.');
+                            break;
+                        default:
+                            buffer.append(chars[index]);
+                            break;
                     }
                     index++;
                 }
@@ -105,14 +113,14 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
     public String getDisplayName() {
         String displayName = (String) this.annotationValueMap.get(DISPLAY_NAME);
         if (displayName == null)
-            displayName = this.decl.getSimpleName();
+            displayName = this.decl.getSimpleName().toString();
         return displayName;
     }
     
     public String getInstanceName() {
         String instanceName = (String) this.annotationValueMap.get(INSTANCE_NAME);
         if (instanceName == null) {
-            String name = this.decl.getSimpleName();
+            String name = this.decl.getSimpleName().toString();
             instanceName = name.substring(0, 1).toLowerCase() + name.substring(1);
         }
         return instanceName;
@@ -122,7 +130,7 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         Boolean isTag = (Boolean) this.annotationValueMap.get(IS_TAG);
         if (isTag == null)
             return true;
-        return isTag.booleanValue();
+        return isTag;
     }
     
     public String getTagName() {

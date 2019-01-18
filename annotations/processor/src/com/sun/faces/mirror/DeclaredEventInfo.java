@@ -24,7 +24,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 
 /**
  *
@@ -100,6 +99,7 @@ public class DeclaredEventInfo extends EventInfo {
     
     private String getListenersMethodName;
     
+    @Override
     public String getGetListenersMethodName() {
         if (this.getListenersMethodName == null)
             this.getListenersMethodName = (String) this.annotationValueMap.get(GET_LISTENERS_METHOD_NAME);
@@ -110,6 +110,7 @@ public class DeclaredEventInfo extends EventInfo {
         this.getListenersMethodName = getMethodName;
     }
     
+    @Override
     public String getListenerMethodSignature() {
         StringBuilder buffer = new StringBuilder();
         if (this.getListenerDeclaration() != null) {

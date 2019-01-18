@@ -23,6 +23,9 @@ import com.sun.mirror.type.InterfaceType;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Name;
 
 /**
  * Represents a class or interface declared in the current compilation unit.
@@ -52,18 +55,21 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
     
     private String className;
     
+    @Override
     public String getClassName() {
         return this.className;
     }
     
     private String packageName;
     
+    @Override
     public String getPackageName() {
         return this.packageName;
     }
     
     private ClassInfo superClassInfo;
     
+    @Override
     public ClassInfo getSuperClassInfo() {
         return this.superClassInfo;
     }
@@ -72,9 +78,10 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
         this.superClassInfo = classInfo;
     }
 
+    @Override
     public boolean isAssignableTo(String qualifiedName) {
         TypeElement decl = this.getDeclaration();
-        if (decl.getQualifiedName().equals(qualifiedName))
+        if (decl.getQualifiedName().toString().equals(qualifiedName))
             return true;
         for (InterfaceType interfaceType : decl.getInterfaces()) {
             if (interfaceType.getDeclaration().getQualifiedName().equals(qualifiedName))
@@ -83,11 +90,17 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
         return false;
     }
     
+    @Override
+    public Name getQualifiedName(){
+        return decl.getQualifiedName();
+    }
+    
     Map<String, PropertyInfo> propertyInfoMap;
     
     /**
      * Returns a map of all properties declared explicitly in this class or interface.
      */
+    @Override
     public Map<String, PropertyInfo> getPropertyInfoMap() {
         return this.propertyInfoMap;
     }
@@ -107,6 +120,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
     /**
      * Returns a map of all events declared explicitly in this class or interface.
      */
+    @Override
     public Map<String, EventInfo> getEventInfoMap() {
         return this.eventInfoMap;
     }
@@ -123,6 +137,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
     
     private PropertyInfo defaultPropertyInfo;
     
+    @Override
     public PropertyInfo getDefaultPropertyInfo() {
         return this.defaultPropertyInfo;
     }
@@ -133,6 +148,7 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
     
     private EventInfo defaultEventInfo;
     
+    @Override
     public EventInfo getDefaultEventInfo() {
         return this.defaultEventInfo;
     }
@@ -143,11 +159,14 @@ public abstract class DeclaredTypeInfo extends ClassInfo implements TypeElement 
     
     Set<String> methodNameSet;
     
+    @Override
     Set<String> getMethodNameSet() {
         if (this.methodNameSet == null) {
             this.methodNameSet = new HashSet<String>();
-            for (MethodDeclaration decl : this.decl.getMethods())
-                this.methodNameSet.add(decl.getSimpleName());
+            for (Element enclosedElement : this.decl.getEnclosedElements())
+                if (enclosedElement.getKind()== ElementKind.METHOD) {
+                    this.methodNameSet.add(enclosedElement.getSimpleName().toString());
+                }
         }
         return this.methodNameSet;
     }

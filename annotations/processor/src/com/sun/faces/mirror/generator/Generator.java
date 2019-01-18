@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,8 +17,7 @@
 
 package com.sun.faces.mirror.generator;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * Abstract base class for all source file and config file generators.
@@ -36,13 +36,13 @@ abstract public class Generator {
      */
     abstract public void generate() throws GeneratorException;
 
-    private PrintWriter printWriter;
+    private Writer printWriter;
 
     /**
      * Protected getter for property printWriter, used by subclasses to obtain the
      * print writer to use during generation.
      */
-    protected PrintWriter getPrintWriter() {
+    protected Writer getPrintWriter() {
         return this.printWriter;
     }
 
@@ -50,7 +50,7 @@ abstract public class Generator {
      * Setter for property printWriter. The annotation processor will set the print
      * writer before each call to {@link #generate}.
      */
-    public void setPrintWriter(PrintWriter printWriter) {
+    public void setPrintWriter(Writer printWriter) {
         this.printWriter = printWriter;
     }
     
