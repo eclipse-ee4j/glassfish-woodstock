@@ -155,7 +155,7 @@ public class DebugGenerator extends Generator {
         
         @Override
         public int compare(Object obj1, Object obj2) {
-            return ((ClassInfo)obj1).getQualifiedName().compareTo(((ClassInfo)obj2).getClassName());
+            return ((ClassInfo)obj1).getQualifiedName().toString().compareTo(((ClassInfo)obj2).getClassName());
         }
         
     }

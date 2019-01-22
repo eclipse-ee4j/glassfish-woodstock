@@ -221,8 +221,8 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
             this.packageNameSet.add(typeDecl.getEnclosingElement().getSimpleName().toString());
             if (true) {
                 DeclaredTypeInfo typeInfo = null;
-                classMemberVisitor.reset();typeDecl.
-                typeDecl.accept(classMemberVisitor);
+                classMemberVisitor.reset();
+                typeDecl.accept(classMemberVisitor, env);
                 if (typeDecl.getKind() == ElementKind.CLASS) {
                     if (typeDecl.getAnnotation(Component.class) != null) {
                         // This is a component class

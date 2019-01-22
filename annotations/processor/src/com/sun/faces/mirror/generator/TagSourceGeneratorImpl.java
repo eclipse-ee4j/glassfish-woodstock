@@ -18,7 +18,7 @@ package com.sun.faces.mirror.generator;
 
 import com.sun.faces.mirror.DeclaredComponentInfo;
 import com.sun.faces.mirror.PropertyInfo;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ class TagSourceGeneratorImpl extends TagSourceGenerator{
             DeclaredComponentInfo componentInfo = this.getDeclaredComponentInfo();
             String namespace = this.getNamespace();
             String namespacePrefix = this.getNamespacePrefix();
-            PrintWriter printWriter = this.getPrintWriter();
+            Writer printWriter = this.getPrintWriter();
             Collection<PropertyInfo> propertyInfos = new ArrayList<PropertyInfo>();
             propertyInfos.addAll(componentInfo.getInheritedPropertyInfoMap().values());
             propertyInfos.addAll(componentInfo.getPropertyInfoMap().values());

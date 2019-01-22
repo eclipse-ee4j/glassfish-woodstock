@@ -234,7 +234,28 @@
         <pathconvert property="apt.sourcepath" pathsep=" ">
             <path refid="annotation-sourcepath"/>
         </pathconvert>
-        <exec executable="${apt.home}/bin/apt">
+        <mkdir dir="${classes}/designtime"/>
+        <javac srcdir="${generated-source-dir}"
+            destdir="${classes}/designtime" deprecation="false"
+            debug="${debug}"
+            optimize="false"
+            source="1.8" target="1.8">
+            <compilerarg line="-Xmaxwarns 1000"/>
+            <compilerarg line="-processor com.sun.faces.mirror.FacesAnnotationProcessor"/>
+            <classpath>
+                <path refid=""/>
+                <path refid="dataprovider.jars"/>
+                <path refid="jsf.jars"/>
+                <path refid="jsf-ri.jars"/>
+                <path refid="webui.jars"/>
+                <path refid="jsfcl.jars"/>
+                <path refid="propertyeditors.jars"/>
+                <path refid="designtime.jars"/>
+                <!-- mbohm: add annotation-lib.jars -->
+                <path refid="annotation-lib.jars"/>
+            </classpath>
+        </javac>
+        <!-- <exec executable="${apt.home}/bin/apt">
             <arg line="-s ${generated-source-dir}"/>
             <arg line="-d ${generated-classes-dir}"/>
             <arg line="-nocompile"/>
@@ -246,7 +267,7 @@
             <arg line="-classpath ${apt.classpath}"/>
             <arg line="-factory com.sun.faces.mirror.FacesAnnotationProcessorFactory"/>
             <arg line="${apt.sourcepath}"/>
-        </exec>
+        </exec> -->
     </target>
 
     <target name="compile-precopy-runtime" depends="process-runtime-annotations"
@@ -271,7 +292,7 @@
             destdir="${classes}/runtime" deprecation="false"
             debug="${debug}"
             optimize="false"
-            source="1.5" target="1.5">
+            source="1.8" target="1.8">
             <compilerarg line="-Xmaxwarns 1000"/>
             <classpath>
                 <path refid="annotation-lib.jars"/>
@@ -303,7 +324,7 @@
             destdir="${classes}/designtime" deprecation="false"
             debug="${debug}"
             optimize="false"
-            source="1.5" target="1.5">
+            source="1.8" target="1.8">
             <compilerarg line="-Xmaxwarns 1000"/>
             <classpath>
                 <path refid="dataprovider.jars"/>

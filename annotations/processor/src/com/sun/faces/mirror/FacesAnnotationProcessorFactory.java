@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,10 +18,6 @@
 package com.sun.faces.mirror;
 
 import com.sun.faces.mirror.generator.GeneratorFactory;
-import com.sun.mirror.apt.AnnotationProcessor;
-import com.sun.mirror.apt.AnnotationProcessorEnvironment;
-import com.sun.mirror.apt.AnnotationProcessorFactory;
-import com.sun.mirror.declaration.AnnotationTypeDeclaration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +25,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
+import javax.tools.Diagnostic.Kind;
 
 /**
  * The annotation processing factory that should be specified to the annotation
@@ -96,8 +96,8 @@ public class FacesAnnotationProcessorFactory  {
         return supportedOptions;
     }
     
-    public AnnotationProcessor getProcessorFor(Set<AnnotationTypeDeclaration> declSet,
-            AnnotationProcessorEnvironment env) {
+    public Processor getProcessorFor(Set<javax.annotation.processing.SupportedAnnotationTypes> declSet,
+            ProcessingEnvironment env) {
         FacesAnnotationProcessor annotationProcessor = new FacesAnnotationProcessor(env);
         Map<String,String> optionMap = env.getOptions();
         // Process options passed to the annotation processor tool. The tool should be
@@ -108,41 +108,52 @@ public class FacesAnnotationProcessorFactory  {
             if (matcher.matches()) {
                 String name = matcher.group(1);
                 String value = matcher.group(2);
-                if (name.equals(LOCALIZE_OPTION)) {
-                    annotationProcessor.setLocalize(true);
-                } else if (name.equals(JAVAEE_VERSION_OPTION)) {
-                    // TODO - Add support for different versions of JavaEE
-                } else if (name.equals(GENERATE_RUNTIME_OPTION)) {
-                    annotationProcessor.setProcessRunTime(true);
-                } else if (name.equals(GENERATE_DESIGNTIME_OPTION)) {
-                    annotationProcessor.setProcessDesignTime(true);
-                } else if (name.equals(GENERATOR_FACTORY_OPTION)) {
-                    if (value == null || value.length() == 0)
-                        env.getMessager().printError("Option " + GENERATOR_FACTORY_OPTION + " missing value");
-                    try {
-                        Class factoryClass = Class.forName(value);
-                        if (!GeneratorFactory.class.isAssignableFrom(factoryClass))
-                            env.getMessager().printError("Generator factory class must extend " + GeneratorFactory.class.toString());
-                        else
-                            annotationProcessor.setGeneratorFactoryClass(Class.forName(value));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                } else if (name.equals(NAMESPACE_URI_OPTION)) {
-                    if (value == null || value.length() == 0)
-                        env.getMessager().printError("Option " + NAMESPACE_URI_OPTION + " missing value");
-                    annotationProcessor.setNamespaceUri(value);
-                } else if (name.equals(NAMESPACE_PREFIX_OPTION)) {
-                    if (value == null || value.length() == 0)
-                        env.getMessager().printError("Option " + NAMESPACE_PREFIX_OPTION + " missing value");
-                    annotationProcessor.setNamespacePrefix(value);
-                } else if (name.equals(TAGLIB_DOC_OPTION)) {
-                    if (value == null || value.length() == 0)
-                        env.getMessager().printError("Option " + TAGLIB_DOC_OPTION + " missing value");
-                    annotationProcessor.setTaglibDoc(value);
-                } else if (name.equals(DEBUG_OPTION)) {
-                    annotationProcessor.setDebug(true);
+                switch (name) {
+                    case LOCALIZE_OPTION:
+                        annotationProcessor.setLocalize(true);
+                        break;
+                // TODO - Add support for different versions of JavaEE
+                    case JAVAEE_VERSION_OPTION:
+                        break;
+                    case GENERATE_RUNTIME_OPTION:
+                        annotationProcessor.setProcessRunTime(true);
+                        break;
+                    case GENERATE_DESIGNTIME_OPTION:
+                        annotationProcessor.setProcessDesignTime(true);
+                        break;
+                    case GENERATOR_FACTORY_OPTION:
+                        if (value == null || value.length() == 0)
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + GENERATOR_FACTORY_OPTION + " missing value");
+                        try {
+                            Class factoryClass = Class.forName(value);
+                            if (!GeneratorFactory.class.isAssignableFrom(factoryClass))
+                                env.getMessager().printMessage(Kind.ERROR, "Generator factory class must extend " + GeneratorFactory.class.toString());
+                            else
+                                annotationProcessor.setGeneratorFactoryClass(Class.forName(value));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }   break;
+                    case NAMESPACE_URI_OPTION:
+                        if (value == null || value.length() == 0)
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_URI_OPTION + " missing value");
+                        annotationProcessor.setNamespaceUri(value);
+                        break;
+                    case NAMESPACE_PREFIX_OPTION:
+                        if (value == null || value.length() == 0)
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_PREFIX_OPTION + " missing value");
+                        annotationProcessor.setNamespacePrefix(value);
+                        break;
+                    case TAGLIB_DOC_OPTION:
+                        if (value == null || value.length() == 0)
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + TAGLIB_DOC_OPTION + " missing value");
+                        annotationProcessor.setTaglibDoc(value);
+                        break;
+                    case DEBUG_OPTION:
+                        annotationProcessor.setDebug(true);
+                        break;
+                    default:
+                        break;
                 }
             }
         }

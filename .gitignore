@@ -28,3 +28,5 @@ target/
 .vscode/
 .idea
 nb-configuration.xml
+/annotations/library/nbproject/private/
+/annotations/processor/dist/
