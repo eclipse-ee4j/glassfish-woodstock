@@ -89,7 +89,7 @@ import org.xml.sax.helpers.DefaultHandler;
 @SupportedAnnotationTypes("com.sun.faces.annotation.*")
 @SupportedOptions({"localize", "javaee.version", "generate.runtime"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-class FacesAnnotationProcessor extends AbstractProcessor  {
+public class FacesAnnotationProcessor extends AbstractProcessor  {
     
     
     public static void main(String[] args) {
@@ -99,7 +99,6 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     }
     
     // Properties
-    ProcessingEnvironment env;
     private String namespaceUri;
     private String namespacePrefix;
     private boolean initialized = false;
@@ -147,14 +146,14 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
      */
     public FacesAnnotationProcessor(ProcessingEnvironment env) {
         this();
-        this.env = env;
+        this.processingEnv = env;
         configureOptions();
     }
     
     @Override
     public void init(ProcessingEnvironment env) {
-        super.init(processingEnv);
-        this.env = env;
+        super.init(env);
+        this.processingEnv = env;
         configureOptions();
     }
     
@@ -222,7 +221,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     // Processor methods
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Messager envMessager = env.getMessager();
+        Messager envMessager = processingEnv.getMessager();
         System.out.println("Entered annotation processing...");
         envMessager.printMessage(Kind.NOTE, "Entered annotation processing...");
         
@@ -267,15 +266,15 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
      * @param roundEnv 
      */
     private void visitComponentClasses(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        env.getMessager().printMessage(Kind.NOTE, "Visting component classes...");
-        MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.env);
+        processingEnv.getMessager().printMessage(Kind.NOTE, "Visting component classes...");
+        MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.processingEnv);
         classMemberVisitor.setCategoryMap(this.categoryMap);
         for (TypeElement typeDecl : annotations) {
             this.packageNameSet.add(typeDecl.getEnclosingElement().getSimpleName().toString());
             if (true) {
                 DeclaredTypeInfo typeInfo = null;
                 classMemberVisitor.reset();
-                typeDecl.accept(classMemberVisitor, env);
+                typeDecl.accept(classMemberVisitor, processingEnv);
                 if (typeDecl.getKind() == ElementKind.CLASS) {
                     if (typeDecl.getAnnotation(Component.class) != null) {
                         // This is a component class
@@ -292,7 +291,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         DeclaredRendererInfo rendererInfo =
                                 new DeclaredRendererInfo(annotationValueMap, typeDecl);
                         if (rendererInfo.getRenderings().isEmpty())
-                            this.env.getMessager().printMessage(Kind.WARNING, "No renderings declared in renderer annotation", typeDecl);
+                            this.processingEnv.getMessager().printMessage(Kind.WARNING, "No renderings declared in renderer annotation", typeDecl);
                         this.declaredRendererSet.add(rendererInfo);
                     } else if (typeDecl.getAnnotation(Tag.class) != null) {
                         // This is a hand-authored tag class
@@ -320,7 +319,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                                     break;
                             }
                             
-                            superClassType = env.getTypeUtils().directSupertypes(superClassType).get(0);
+                            superClassType = processingEnv.getTypeUtils().directSupertypes(superClassType).get(0);
                         }
                     } else {
                         // This is probably a base class that provides one or more properties
@@ -354,7 +353,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     private void setSuperClassInfo() {
         Map<String,ClassInfo> introspectedClassMap = new HashMap<String,ClassInfo>();
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
-            TypeMirror superClassType = env.getTypeUtils().directSupertypes(declaredClassInfo.asType()).get(0);
+            TypeMirror superClassType = processingEnv.getTypeUtils().directSupertypes(declaredClassInfo.asType()).get(0);
             String superClassName = superClassType.toString();
             if (this.declaredClassMap.containsKey(superClassName)) {
                 declaredClassInfo.setSuperClassInfo(this.declaredClassMap.get(superClassName));
@@ -375,7 +374,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                             if (this.categoryMap.containsKey(categoryName)) {
                                 propertyInfo.setCategoryInfo(this.categoryMap.get(categoryName));
                             } else {
-                                this.env.getMessager().printMessage(Kind.WARNING,
+                                this.processingEnv.getMessager().printMessage(Kind.WARNING,
                                         "No category descriptor found in current compilation unit for '" + categoryName +
                                         "', referenced in " + superBeanInfo.getClass().getName());
                             }
@@ -404,7 +403,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     }
        
     private void updatePropertyMetadata() {
-        env.getMessager().printMessage(Kind.NOTE, "Updating property metadata...");
+        processingEnv.getMessager().printMessage(Kind.NOTE, "Updating property metadata...");
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
             // Update metadata of overriding properties and events
             updateInheritedInfo(declaredClassInfo);
@@ -413,17 +412,17 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
             for (PropertyInfo propertyInfo : declaredClassInfo.getPropertyInfoMap().values()) {
                 // Ensure that property name is valid
                 if (!isNameValid(propertyInfo.getName()))
-                    this.env.getMessager().printMessage(Kind.ERROR,
+                    this.processingEnv.getMessager().printMessage(Kind.ERROR,
                             "The name specified is not a valid property name", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 if (propertyInfo.getAttributeInfo() != null) {
                     String name = propertyInfo.getAttributeInfo().getName();
                     if (!isNameValid(name))
-                        this.env.getMessager().printMessage(Kind.ERROR,
+                        this.processingEnv.getMessager().printMessage(Kind.ERROR,
                                 "The name specified is not a valid attribute name", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 // Ensure that property does not correspond to the special "binding" tag attribute
                 if (propertyInfo.getAttributeInfo() != null && propertyInfo.getAttributeInfo().getName().equals("binding"))
-                    this.env.getMessager().printMessage(Kind.WARNING,
+                    this.processingEnv.getMessager().printMessage(Kind.WARNING,
                             "Property corresponds to the reserved 'binding' tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 // Ensure that property read method exists
                 String readMethodName = propertyInfo.getReadMethodName();
@@ -435,7 +434,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         readMethodName = null;
                     }
                 } else if (!methodNameSet.contains(readMethodName)) {
-                    env.getMessager().printMessage(Kind.ERROR,
+                    processingEnv.getMessager().printMessage(Kind.ERROR,
                             "No such property method " + readMethodName, ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 // Ensure that read method has a valid signature
@@ -448,7 +447,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         TypeMirror returnType = methodDecl.getReturnType();
                         if(!returnType.toString().equals(propertyInfo.getType()) ||
                                 methodDecl.getParameters().size() > 0) {
-                            env.getMessager().printMessage(Kind.ERROR, 
+                            processingEnv.getMessager().printMessage(Kind.ERROR, 
                                     "Method " + readMethodName + " for property " + propertyInfo.getName() + " has incorrect signature", methodDecl);
                         }
                         break;
@@ -463,16 +462,16 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                     else
                         writeMethodName = null;
                 } else if (!methodNameSet.contains(writeMethodName)) {
-                    env.getMessager().printMessage(Kind.ERROR,
+                    processingEnv.getMessager().printMessage(Kind.ERROR,
                             "No such property method " + writeMethodName, (
                             (DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 if (readMethodName == null && writeMethodName == null) {
-                    env.getMessager().printMessage(Kind.ERROR,
+                    processingEnv.getMessager().printMessage(Kind.ERROR,
                             "No get or set method found for property", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 if (writeMethodName == null && propertyInfo.getAttributeInfo() != null) {
-                    env.getMessager().printMessage(Kind.ERROR,
+                    processingEnv.getMessager().printMessage(Kind.ERROR,
                             "A read-only method cannot be associated with a JSP tag attribute", ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                 }
                 // Ensure that write method has a valid signature
@@ -488,7 +487,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         Collection<? extends VariableElement> params = methodDecl.getParameters();
                         if(!(returnType.getKind() == TypeKind.VOID ) || params.size() != 1 ||
                                 !params.iterator().next().asType().toString().equals(propertyInfo.getType())) {
-                            env.getMessager().printMessage(Kind.ERROR,
+                            processingEnv.getMessager().printMessage(Kind.ERROR,
                                     "Method " + writeMethodName + " for property " + propertyInfo.getName() + " has incorrect signature", methodDecl);
                         }
                         break;
@@ -501,7 +500,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 if (categoryReferenceName != null) {
                     CategoryInfo categoryInfo = this.categoryMap.get(categoryReferenceName);
                     if (categoryInfo == null) {
-                        this.env.getMessager().printMessage(Kind.ERROR,
+                        this.processingEnv.getMessager().printMessage(Kind.ERROR,
                                 "Reference to non-existant category descriptor: " + categoryReferenceName, ((DeclaredPropertyInfo) propertyInfo).getDeclaration());
                     } else {
                         ((DeclaredPropertyInfo) propertyInfo).setCategoryInfo(categoryInfo);
@@ -529,19 +528,19 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                                 attributeInfo.setMethodSignature(eventInfo.getListenerMethodSignature());
                                 eventInfo.setPropertyInfo(propertyInfo);
                             } else {
-                                this.env.getMessager().printMessage(Kind.ERROR, "No such component event", decl);
+                                this.processingEnv.getMessager().printMessage(Kind.ERROR, "No such component event", decl);
                             }
                         } else {
-                            this.env.getMessager().printMessage(Kind.ERROR, "Method annotation is missing an event or signature element", decl);
+                            this.processingEnv.getMessager().printMessage(Kind.ERROR, "Method annotation is missing an event or signature element", decl);
                         }
                     } else {
-                        this.env.getMessager().printMessage(Kind.ERROR,
+                        this.processingEnv.getMessager().printMessage(Kind.ERROR,
                                 "Method annotation for property that is not of type javax.el.MethodExpression", decl);
                     }
                 }
             }
             // Validate events, and supply event listener method names if defaulted
-            env.getMessager().printMessage(Kind.NOTE, "Validating events...");
+            processingEnv.getMessager().printMessage(Kind.NOTE, "Validating events...");
             for (EventInfo eventInfo : declaredClassInfo.getEventInfoMap().values()) {
                 String addListenerMethodName = eventInfo.getAddListenerMethodName();
                 if (addListenerMethodName == null) {
@@ -549,10 +548,10 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                     if (methodNameSet.contains(addListenerMethodName))
                         ((DeclaredEventInfo) eventInfo).setAddListenerMethodName(addListenerMethodName);
                     else
-                        env.getMessager().printMessage(Kind.ERROR,
+                        processingEnv.getMessager().printMessage(Kind.ERROR,
                                 "No add event listener method declared or found", ((DeclaredEventInfo) eventInfo).getDeclaration());
                 } else if (!methodNameSet.contains(addListenerMethodName)) {
-                    env.getMessager().printMessage(Kind.ERROR, 
+                    processingEnv.getMessager().printMessage(Kind.ERROR, 
                             "No such event method " + addListenerMethodName, ((DeclaredEventInfo) eventInfo).getDeclaration());
                 }
                 String removeListenerMethodName = eventInfo.getRemoveListenerMethodName();
@@ -561,10 +560,10 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                     if (methodNameSet.contains(removeListenerMethodName))
                         ((DeclaredEventInfo) eventInfo).setRemoveListenerMethodName(removeListenerMethodName);
                     else
-                        env.getMessager().printMessage(Kind.ERROR,
+                        processingEnv.getMessager().printMessage(Kind.ERROR,
                                 "No remove event listener method declared or found", ((DeclaredEventInfo) eventInfo).getDeclaration());
                 } else if (!methodNameSet.contains(removeListenerMethodName)) {
-                    env.getMessager().printMessage(Kind.ERROR, 
+                    processingEnv.getMessager().printMessage(Kind.ERROR, 
                             "No such event method " + removeListenerMethodName, ((DeclaredEventInfo) eventInfo).getDeclaration());
                 }
                 String getListenersMethodName = eventInfo.getGetListenersMethodName();
@@ -575,7 +574,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
             // If this is a component and it will generate a tag, determine its preferred renderer
-            env.getMessager().printMessage(Kind.NOTE, "Determining renderer...");
+            processingEnv.getMessager().printMessage(Kind.NOTE, "Determining renderer...");
             if (declaredClassInfo instanceof DeclaredComponentInfo && ((DeclaredComponentInfo) declaredClassInfo).isTag()) {
                 String rendererType = ((DeclaredComponentInfo) declaredClassInfo).getTagRendererType();
                 boolean rendererFound = false;
@@ -600,7 +599,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                     }
                 }
                 if (!rendererFound)
-                    this.env.getMessager().printMessage(Kind.WARNING,
+                    this.processingEnv.getMessager().printMessage(Kind.WARNING,
                             "No renderer found of correct renderer type and component family", declaredClassInfo.getDeclaration());
             }
         }
@@ -616,7 +615,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
             if (!found)
-                this.env.getMessager().printMessage(Kind.WARNING,
+                this.processingEnv.getMessager().printMessage(Kind.WARNING,
                         "No component found for tag's component type", this.declaredTagClassMap.get(componentType).getDeclaration());
         }
     }
@@ -632,7 +631,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                     e.printStackTrace();
                 }
             }
-            Filer filer = env.getFiler();
+            Filer filer = processingEnv.getFiler();
             if (this.debug) {
                 DebugGenerator debugGenerator = generatorFactory.getDebugGenerator();
                 debugGenerator.setNamespace(this.getNamespaceUri());
@@ -654,9 +653,9 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            env.getMessager().printMessage(Kind.ERROR, e.getMessage());
+            processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
         } catch (GeneratorException e) {
-            env.getMessager().printMessage(Kind.ERROR, e.getMessage());
+            processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
         }
     }
     /**
@@ -666,7 +665,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
      * @throws IOException 
      */
     private void processDesignTimeAnnotations(GeneratorFactory generatorFactory, Filer filer) throws IOException, GeneratorException {
-        env.getMessager().printMessage(Kind.NOTE, "Processing design time annotations...");
+        processingEnv.getMessager().printMessage(Kind.NOTE, "Processing design time annotations...");
         Map<String, PropertyBundleMap> propertyBundleMapsMap = new HashMap<String, PropertyBundleMap>();
         BeanInfoSourceGenerator beanInfoSourceGenerator = generatorFactory.getBeanInfoSourceGenerator();
         beanInfoSourceGenerator.setNamespace(this.getNamespaceUri());
@@ -710,7 +709,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
      * @throws GeneratorException 
      */
     private void processRuntimeAnnotatons(GeneratorFactory generatorFactory, Filer filer) throws IOException, GeneratorException {
-        env.getMessager().printMessage(Kind.NOTE, "Processing runtime annotations...");
+        processingEnv.getMessager().printMessage(Kind.NOTE, "Processing runtime annotations...");
         if (this.declaredComponentSet.size() > 0) {
             FacesConfigFileGenerator facesConfigGenerator = generatorFactory.getFacesConfigFileGenerator();
             facesConfigGenerator.setDeclaredComponentInfoSet(this.declaredComponentSet);
@@ -759,7 +758,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         }
                     }
                 } catch (Exception e) {
-                    this.env.getMessager().printMessage(Kind.ERROR, "Error occurred while processing input tag description file: "
+                    this.processingEnv.getMessager().printMessage(Kind.ERROR, "Error occurred while processing input tag description file: "
                             + e.getMessage());
                 }
             }
@@ -779,7 +778,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
      * @see FacesAnnotationProcessorFactory#getProcessorFor(java.util.Set, javax.annotation.processing.ProcessingEnvironment) 
      */
     public void configureOptions() {
-        Map<String, String> optionMap = env.getOptions();
+        Map<String, String> optionMap = processingEnv.getOptions();
         // Process options passed to the annotation processor tool. The tool should be
         // doing this processing, but the apt released with JDK 5 does not. 
         // TODO - cross verify with calls to apt on other platforms, and outside of ant
@@ -803,12 +802,12 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         break;
                     case GENERATOR_FACTORY_OPTION:
                         if (value == null || value.length() == 0) {
-                            env.getMessager().printMessage(Kind.ERROR, "Option " + GENERATOR_FACTORY_OPTION + " missing value");
+                            processingEnv.getMessager().printMessage(Kind.ERROR, "Option " + GENERATOR_FACTORY_OPTION + " missing value");
                         }
                         try {
                             Class factoryClass = Class.forName(value);
                             if (!GeneratorFactory.class.isAssignableFrom(factoryClass)) {
-                                env.getMessager().printMessage(Kind.ERROR, "Generator factory class must extend " + GeneratorFactory.class.toString());
+                                processingEnv.getMessager().printMessage(Kind.ERROR, "Generator factory class must extend " + GeneratorFactory.class.toString());
                             } else {
                                 setGeneratorFactoryClass(Class.forName(value));
                             }
@@ -819,19 +818,19 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                         break;
                     case NAMESPACE_URI_OPTION:
                         if (value == null || value.length() == 0) {
-                            env.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_URI_OPTION + " missing value");
+                            processingEnv.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_URI_OPTION + " missing value");
                         }
                         setNamespaceUri(value);
                         break;
                     case NAMESPACE_PREFIX_OPTION:
                         if (value == null || value.length() == 0) {
-                            env.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_PREFIX_OPTION + " missing value");
+                            processingEnv.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_PREFIX_OPTION + " missing value");
                         }
                         setNamespacePrefix(value);
                         break;
                     case TAGLIB_DOC_OPTION:
                         if (value == null || value.length() == 0) {
-                            env.getMessager().printMessage(Kind.ERROR, "Option " + TAGLIB_DOC_OPTION + " missing value");
+                            processingEnv.getMessager().printMessage(Kind.ERROR, "Option " + TAGLIB_DOC_OPTION + " missing value");
                         }
                         setTaglibDoc(value);
                         break;
@@ -1189,7 +1188,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 DeclaredInterfaceInfo interfaceInfo = this.declaredInterfaceMap.get(interfaceType.toString());
                 for (PropertyInfo propertyInfo : interfaceInfo.getPropertyInfoMap().values()) {
                     if (superPropertyInfoMap.containsKey(propertyInfo.getName())) {
-                        this.env.getMessager().printMessage(Kind.ERROR, 
+                        this.processingEnv.getMessager().printMessage(Kind.ERROR, 
                                 classInfo.getQualifiedName() + " inherits property " + propertyInfo.getName() + " more than once");
                     } else {
                         superPropertyInfoMap.put(propertyInfo.getName(), propertyInfo);
@@ -1205,19 +1204,19 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 PropertyInfo superPropertyInfo = superPropertyInfoMap.get(propertyInfo.getName());
                 boolean updateInheritedValues = true;
                 if (!propertyInfo.getType().equals(superPropertyInfo.getType())) {
-                    this.env.getMessager().printMessage(Kind.ERROR,
+                    this.processingEnv.getMessager().printMessage(Kind.ERROR,
                             "Property in sub class must be of same type as the property that it overrides", thisPropertyInfo.getDeclaration());
                     updateInheritedValues = false;
                 }
                 if (propertyInfo.getReadMethodName() != null && superPropertyInfo.getReadMethodName() != null
                         && !propertyInfo.getReadMethodName().equals(superPropertyInfo.getReadMethodName())) {
-                    this.env.getMessager().printMessage(Kind.ERROR,
+                    this.processingEnv.getMessager().printMessage(Kind.ERROR,
                             "Read method of property in sub class must have same name as the method that it overrides", thisPropertyInfo.getDeclaration());
                     updateInheritedValues = false;
                 }
                 if (propertyInfo.getWriteMethodName() != null && superPropertyInfo.getWriteMethodName() != null
                         && !propertyInfo.getWriteMethodName().equals(superPropertyInfo.getWriteMethodName())) {
-                    this.env.getMessager().printMessage(Kind.ERROR,
+                    this.processingEnv.getMessager().printMessage(Kind.ERROR,
                             "Write method of property in sub class must have same name as the method that it overrides", thisPropertyInfo.getDeclaration());
                     updateInheritedValues = false;
                 }
