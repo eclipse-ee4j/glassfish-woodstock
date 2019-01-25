@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,10 +43,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -59,7 +66,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleElementVisitor8;
-import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.StandardLocation;
 import javax.xml.parsers.SAXParser;
@@ -80,9 +86,23 @@ import org.xml.sax.helpers.DefaultHandler;
 // TODO - Make all XxxInfo classes immutable when seen by generators
 // TODO - Handle different versions of JSF (1.1 and 1.2)
 // TODO - Handle attribute annotations within a tag class
+@SupportedAnnotationTypes("com.sun.faces.annotation.*")
+@SupportedOptions({"localize", "javaee.version", "generate.runtime"})
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 class FacesAnnotationProcessor extends AbstractProcessor  {
     
+    
+    public static void main(String[] args) {
+        System.out.println("Processor main");
+        FacesAnnotationProcessor fap = new FacesAnnotationProcessor();
+        System.out.println("new processor made");
+    }
+    
+    // Properties
     ProcessingEnvironment env;
+    private String namespaceUri;
+    private String namespacePrefix;
+    private boolean initialized = false;
     
     /** Set of all packages that define the current compilation unit */
     Set<String> packageNameSet = new HashSet<String>();
@@ -109,36 +129,34 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     Set<String> javaeeResolverNameSet = new HashSet<String>();
     
     private static final String LOCALIZE_OPTION = "localize";
+    private static final String JAVAEE_VERSION_OPTION = "javaee.version";
+    private static final String GENERATE_RUNTIME_OPTION = "generate.runtime";
+    private static final String GENERATE_DESIGNTIME_OPTION = "generate.designtime";
+    private static final String GENERATOR_FACTORY_OPTION = "generatorfactory";
+    private static final String NAMESPACE_URI_OPTION = "namespace.uri";
+    private static final String NAMESPACE_PREFIX_OPTION = "namespace.prefix";
+    private static final String TAGLIB_DOC_OPTION = "taglibdoc";
+    private static final String DEBUG_OPTION = "debug";
     
-    private static final Set<String> SUPPORTED_OPTIONS = Collections.emptySet();
-    private Set<String> supportedAnnotations;
+    private static final Pattern optionPattern = Pattern.compile("-A\\s*([^\\s=]+)\\s*=?([^\\s=]*)");
     
-    public FacesAnnotationProcessor() {
-        SUPPORTED_OPTIONS.add(LOCALIZE_OPTION);
-        supportedAnnotations = new HashSet<String>();
-        supportedAnnotations.add(Attribute.class.getName());
-        supportedAnnotations.add(Component.class.getName());
-        supportedAnnotations.add(Event.class.getName());
-        supportedAnnotations.add(Localizable.class.getName());
-        supportedAnnotations.add(Property.class.getName());
-        supportedAnnotations.add(PropertyCategory.class.getName());
-        supportedAnnotations.add(Renderer.class.getName());
-        supportedAnnotations.add(Resolver.class.getName());
-        supportedAnnotations.add(Tag.class.getName());
-    }
+    public FacesAnnotationProcessor() {super();}
     
     /**
      * Create a new annotation processor for the processing environment specified.
      */
-    FacesAnnotationProcessor(ProcessingEnvironment env) {
+    public FacesAnnotationProcessor(ProcessingEnvironment env) {
         this();
         this.env = env;
+        configureOptions();
     }
     
-    
-    // Properties
-    
-    private String namespaceUri;
+    @Override
+    public void init(ProcessingEnvironment env) {
+        super.init(processingEnv);
+        this.env = env;
+        configureOptions();
+    }
     
     String getNamespaceUri() {
         return this.namespaceUri;
@@ -147,8 +165,6 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     void setNamespaceUri(String namespaceUri) {
         this.namespaceUri = namespaceUri;
     }
-    
-    private String namespacePrefix;
     
     String getNamespacePrefix() {
         return this.namespacePrefix;
@@ -206,15 +222,20 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
     // Processor methods
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        Messager envMessager = env.getMessager();
+        System.out.println("Entered annotation processing...");
+        envMessager.printMessage(Kind.NOTE, "Entered annotation processing...");
         
         //Are the supplied annotations ones that are supported by this?
-        if (!supportedAnnotations.containsAll(annotations)) {
-             return false;
-        }
+        //if (!supportedAnnotations.containsAll(annotations)) {
+        //    envMessager.printMessage(Kind.ERROR, "Processor does not support given annotations - " +  annotations.toString());
+        //    return false;
+        //}
         
         // Find all component classes in the compilation unit, creating a skeleton
         // ComponentInfo for each, then invoke a declaration classMemberVisitor that will
         // process all properties declared within each class or interface.
+        envMessager.printMessage(Kind.NOTE, "Visting component classes...");
         MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.env);
         classMemberVisitor.setCategoryMap(this.categoryMap);
         for (TypeElement typeDecl : annotations) {
@@ -349,6 +370,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
         // metadata. This is also the time to check annotations that contain cross
         // references: properties may refer to category descriptors, and they may
         // also refer to events; components may refer to renderer types.
+        envMessager.printMessage(Kind.NOTE, "Updating property metadata...");
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
             // Update metadata of overriding properties and events
             updateInheritedInfo(declaredClassInfo);
@@ -485,6 +507,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
             // Validate events, and supply event listener method names if defaulted
+            envMessager.printMessage(Kind.NOTE, "Validating events...");
             for (EventInfo eventInfo : declaredClassInfo.getEventInfoMap().values()) {
                 String addListenerMethodName = eventInfo.getAddListenerMethodName();
                 if (addListenerMethodName == null) {
@@ -518,6 +541,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
             // If this is a component and it will generate a tag, determine its preferred renderer
+            envMessager.printMessage(Kind.NOTE, "Determining renderer...");
             if (declaredClassInfo instanceof DeclaredComponentInfo && ((DeclaredComponentInfo) declaredClassInfo).isTag()) {
                 String rendererType = ((DeclaredComponentInfo) declaredClassInfo).getTagRendererType();
                 boolean rendererFound = false;
@@ -585,102 +609,12 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                     debugGenerator.generate();
                 }
             }
+            
             if (this.processDesignTime) {
-                // Generate BeanInfo base class files
-                Map<String,PropertyBundleMap> propertyBundleMapsMap = new HashMap<String,PropertyBundleMap>();
-                BeanInfoSourceGenerator beanInfoSourceGenerator = generatorFactory.getBeanInfoSourceGenerator();
-                beanInfoSourceGenerator.setNamespace(this.getNamespaceUri());
-                beanInfoSourceGenerator.setNamespacePrefix(this.getNamespacePrefix());
-                for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
-                    beanInfoSourceGenerator.setDeclaredComponentInfo(componentInfo);
-                    beanInfoSourceGenerator.setPrintWriter(filer.createSourceFile(beanInfoSourceGenerator.getQualifiedName()).openWriter());
-                    if (this.localize) {
-                        String packageName = componentInfo.getPackageName();
-                        PropertyBundleMap propertyBundleMap = propertyBundleMapsMap.get(packageName);
-                        if (propertyBundleMap == null) {
-                            String qualifiedName = packageName + ".BeanInfoBundle";
-                            propertyBundleMap = new PropertyBundleMap(qualifiedName);
-                            propertyBundleMapsMap.put(packageName, propertyBundleMap);
-                        }
-                        beanInfoSourceGenerator.setPropertyBundleMap(propertyBundleMap);
-                    }
-                    beanInfoSourceGenerator.generate();
-                }
-                if (this.localize) {
-                    for (PropertyBundleMap propertyBundleMap : propertyBundleMapsMap.values()) {
-                        if (propertyBundleMap.size() > 0) {
-                            String fileName = propertyBundleMap.getQualifiedName().replace('.', File.separatorChar) + ".properties";
-                            try (Writer printWriter = filer.createResource(StandardLocation.SOURCE_PATH, "", fileName).openWriter()) {
-                                for (Object key : propertyBundleMap.keyList()) {
-                                    Object value = propertyBundleMap.get(key);
-                                    printWriter.write(key.toString() + "=" + value.toString());
-                                    printWriter.write(System.lineSeparator());
-                                }
-                            }
-                        }
-                    }
-                }
+                processDesignTimeAnnotations(generatorFactory, filer);
             }
             if (this.processRunTime) {
-                // Generate faces configuration file
-                if (this.declaredComponentSet.size() > 0) {
-                    FacesConfigFileGenerator facesConfigGenerator = generatorFactory.getFacesConfigFileGenerator();
-                    facesConfigGenerator.setDeclaredComponentInfoSet(this.declaredComponentSet);
-                    facesConfigGenerator.setDeclaredRendererInfoSet(this.declaredRendererSet);
-                    facesConfigGenerator.setDeclaredPropertyResolverNameSet(this.propertyResolverNameSet);
-                    facesConfigGenerator.setDeclaredVariableResolverNameSet(this.variableResolverNameSet);
-                    facesConfigGenerator.setDeclaredJavaEEResolverNameSet(this.javaeeResolverNameSet);
-                    String fileName = facesConfigGenerator.getFileName();
-                    facesConfigGenerator.setPrintWriter(filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter());
-                    facesConfigGenerator.generate();
-                }
-                // Generate JSP tag class files, unless a hand-authored tag class exists
-                TagSourceGenerator tagSourceGenerator = generatorFactory.getTagSourceGenerator();
-                tagSourceGenerator.setNamespace(this.getNamespaceUri());
-                tagSourceGenerator.setNamespacePrefix(this.getNamespacePrefix());
-                for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
-                    if (!this.declaredTagClassMap.containsKey(componentInfo.getType()) && componentInfo.isTag()) {
-                        tagSourceGenerator.setDeclaredComponentInfo(componentInfo);
-                        tagSourceGenerator.setPrintWriter(filer.createSourceFile(tagSourceGenerator.getQualifiedName()).openWriter());
-                        tagSourceGenerator.generate();
-                    }
-                }
-                // Generate JSP tag library configuration file
-                if (this.declaredComponentSet.size() > 0) {
-                    if (this.taglibDoc != null) {
-                        try {
-                            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-                            TaglibDocHandler handler = new TaglibDocHandler();
-                            parser.parse(new File(this.taglibDoc), handler);
-                            Map<String,String> tagDescriptionMap = handler.getTagDescriptionMap();
-                            Map<String,Map> tagAttributeMap = handler.getTagAttributeMap();
-                            for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
-                                String tagName = componentInfo.getTagName();
-                                if (tagDescriptionMap.containsKey(tagName))
-                                    componentInfo.setTagDescription(tagDescriptionMap.get(tagName));
-                                if (tagAttributeMap.containsKey(tagName)) {
-                                    Map<String,String> attrDescriptionMap = tagAttributeMap.get(tagName);
-                                    for (PropertyInfo propertyInfo : componentInfo.getPropertyInfoMap().values()) {
-                                        AttributeInfo attrInfo = propertyInfo.getAttributeInfo();
-                                        if (attrInfo instanceof DeclaredAttributeInfo &&
-                                                attrInfo != null && attrDescriptionMap.containsKey(attrInfo.getName()))
-                                            ((DeclaredAttributeInfo) attrInfo).setDescription(attrDescriptionMap.get(attrInfo.getName()));
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            this.env.getMessager().printMessage(Kind.ERROR, "Error occurred while processing input tag description file: " +
-                                    e.getMessage());
-                        }
-                    }
-                    TagLibFileGenerator tagLibGenerator = generatorFactory.getTagLibFileGenerator();
-                    tagLibGenerator.setDeclaredComponentInfoSet(this.declaredComponentSet);
-                    tagLibGenerator.setNamespace(this.getNamespaceUri());
-                    tagLibGenerator.setNamespacePrefix(this.getNamespacePrefix());
-                    String fileName = tagLibGenerator.getFileName();
-                    tagLibGenerator.setPrintWriter(filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter());
-                    tagLibGenerator.generate();
-                }
+                processRuntimeAnnotatons(generatorFactory, filer);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -690,26 +624,203 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
         }
         return true;
     }
-
-    @Override
-    public Set<String> getSupportedOptions() {
-        return Collections.unmodifiableSet(SUPPORTED_OPTIONS);
+    
+    /**
+     * Generate BeanInfo base class files
+     * @param generatorFactory
+     * @param filer
+     * @throws IOException 
+     */
+    private void processDesignTimeAnnotations(GeneratorFactory generatorFactory, Filer filer) throws IOException, GeneratorException {
+        env.getMessager().printMessage(Kind.NOTE, "Processing design time annotations...");
+        Map<String, PropertyBundleMap> propertyBundleMapsMap = new HashMap<String, PropertyBundleMap>();
+        BeanInfoSourceGenerator beanInfoSourceGenerator = generatorFactory.getBeanInfoSourceGenerator();
+        beanInfoSourceGenerator.setNamespace(this.getNamespaceUri());
+        beanInfoSourceGenerator.setNamespacePrefix(this.getNamespacePrefix());
+        for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
+            beanInfoSourceGenerator.setDeclaredComponentInfo(componentInfo);
+            beanInfoSourceGenerator.setPrintWriter(filer.createSourceFile(beanInfoSourceGenerator.getQualifiedName()).openWriter());
+            if (this.localize) {
+                String packageName = componentInfo.getPackageName();
+                PropertyBundleMap propertyBundleMap = propertyBundleMapsMap.get(packageName);
+                if (propertyBundleMap == null) {
+                    String qualifiedName = packageName + ".BeanInfoBundle";
+                    propertyBundleMap = new PropertyBundleMap(qualifiedName);
+                    propertyBundleMapsMap.put(packageName, propertyBundleMap);
+                }
+                beanInfoSourceGenerator.setPropertyBundleMap(propertyBundleMap);
+            }
+            beanInfoSourceGenerator.generate();
+        }
+        if (this.localize) {
+            for (PropertyBundleMap propertyBundleMap : propertyBundleMapsMap.values()) {
+                if (propertyBundleMap.size() > 0) {
+                    String fileName = propertyBundleMap.getQualifiedName().replace('.', File.separatorChar) + ".properties";
+                    try (Writer printWriter = filer.createResource(StandardLocation.SOURCE_PATH, "", fileName).openWriter()) {
+                        for (Object key : propertyBundleMap.keyList()) {
+                            Object value = propertyBundleMap.get(key);
+                            printWriter.write(key.toString() + "=" + value.toString());
+                            printWriter.write(System.lineSeparator());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Generate faces configuration file
+     * @param generatorFactory
+     * @param filer
+     * @throws IOException
+     * @throws GeneratorException 
+     */
+    private void processRuntimeAnnotatons(GeneratorFactory generatorFactory, Filer filer) throws IOException, GeneratorException {
+        env.getMessager().printMessage(Kind.NOTE, "Processing runtime annotations...");
+        if (this.declaredComponentSet.size() > 0) {
+            FacesConfigFileGenerator facesConfigGenerator = generatorFactory.getFacesConfigFileGenerator();
+            facesConfigGenerator.setDeclaredComponentInfoSet(this.declaredComponentSet);
+            facesConfigGenerator.setDeclaredRendererInfoSet(this.declaredRendererSet);
+            facesConfigGenerator.setDeclaredPropertyResolverNameSet(this.propertyResolverNameSet);
+            facesConfigGenerator.setDeclaredVariableResolverNameSet(this.variableResolverNameSet);
+            facesConfigGenerator.setDeclaredJavaEEResolverNameSet(this.javaeeResolverNameSet);
+            String fileName = facesConfigGenerator.getFileName();
+            facesConfigGenerator.setPrintWriter(filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter());
+            facesConfigGenerator.generate();
+        }
+        // Generate JSP tag class files, unless a hand-authored tag class exists
+        TagSourceGenerator tagSourceGenerator = generatorFactory.getTagSourceGenerator();
+        tagSourceGenerator.setNamespace(this.getNamespaceUri());
+        tagSourceGenerator.setNamespacePrefix(this.getNamespacePrefix());
+        for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
+            if (!this.declaredTagClassMap.containsKey(componentInfo.getType()) && componentInfo.isTag()) {
+                tagSourceGenerator.setDeclaredComponentInfo(componentInfo);
+                tagSourceGenerator.setPrintWriter(filer.createSourceFile(tagSourceGenerator.getQualifiedName()).openWriter());
+                tagSourceGenerator.generate();
+            }
+        }
+        // Generate JSP tag library configuration file
+        if (this.declaredComponentSet.size() > 0) {
+            if (this.taglibDoc != null) {
+                try {
+                    SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+                    TaglibDocHandler handler = new TaglibDocHandler();
+                    parser.parse(new File(this.taglibDoc), handler);
+                    Map<String, String> tagDescriptionMap = handler.getTagDescriptionMap();
+                    Map<String, Map> tagAttributeMap = handler.getTagAttributeMap();
+                    for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
+                        String tagName = componentInfo.getTagName();
+                        if (tagDescriptionMap.containsKey(tagName)) {
+                            componentInfo.setTagDescription(tagDescriptionMap.get(tagName));
+                        }
+                        if (tagAttributeMap.containsKey(tagName)) {
+                            Map<String, String> attrDescriptionMap = tagAttributeMap.get(tagName);
+                            for (PropertyInfo propertyInfo : componentInfo.getPropertyInfoMap().values()) {
+                                AttributeInfo attrInfo = propertyInfo.getAttributeInfo();
+                                if (attrInfo instanceof DeclaredAttributeInfo
+                                        && attrInfo != null && attrDescriptionMap.containsKey(attrInfo.getName())) {
+                                    ((DeclaredAttributeInfo) attrInfo).setDescription(attrDescriptionMap.get(attrInfo.getName()));
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    this.env.getMessager().printMessage(Kind.ERROR, "Error occurred while processing input tag description file: "
+                            + e.getMessage());
+                }
+            }
+            TagLibFileGenerator tagLibGenerator = generatorFactory.getTagLibFileGenerator();
+            tagLibGenerator.setDeclaredComponentInfoSet(this.declaredComponentSet);
+            tagLibGenerator.setNamespace(this.getNamespaceUri());
+            tagLibGenerator.setNamespacePrefix(this.getNamespacePrefix());
+            String fileName = tagLibGenerator.getFileName();
+            tagLibGenerator.setPrintWriter(filer.createResource(StandardLocation.CLASS_OUTPUT, "", fileName).openWriter());
+            tagLibGenerator.generate();
+        }
+    }
+    
+    /**
+     * Configure the processor based on the options passed in,
+     * based on the old factory which previously did the configuration.
+     * @see FacesAnnotationProcessorFactory#getProcessorFor(java.util.Set, javax.annotation.processing.ProcessingEnvironment) 
+     */
+    public void configureOptions() {
+        Map<String, String> optionMap = env.getOptions();
+        // Process options passed to the annotation processor tool. The tool should be
+        // doing this processing, but the apt released with JDK 5 does not. 
+        // TODO - cross verify with calls to apt on other platforms, and outside of ant
+        for (String key : optionMap.keySet()) {
+            Matcher matcher = optionPattern.matcher(key);
+            if (matcher.matches()) {
+                String name = matcher.group(1);
+                String value = matcher.group(2);
+                switch (name) {
+                    case LOCALIZE_OPTION:
+                        setLocalize(true);
+                        break;
+                    // TODO - Add support for different versions of JavaEE
+                    case JAVAEE_VERSION_OPTION:
+                        break;
+                    case GENERATE_RUNTIME_OPTION:
+                        setProcessRunTime(true);
+                        break;
+                    case GENERATE_DESIGNTIME_OPTION:
+                        setProcessDesignTime(true);
+                        break;
+                    case GENERATOR_FACTORY_OPTION:
+                        if (value == null || value.length() == 0) {
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + GENERATOR_FACTORY_OPTION + " missing value");
+                        }
+                        try {
+                            Class factoryClass = Class.forName(value);
+                            if (!GeneratorFactory.class.isAssignableFrom(factoryClass)) {
+                                env.getMessager().printMessage(Kind.ERROR, "Generator factory class must extend " + GeneratorFactory.class.toString());
+                            } else {
+                                setGeneratorFactoryClass(Class.forName(value));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        break;
+                    case NAMESPACE_URI_OPTION:
+                        if (value == null || value.length() == 0) {
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_URI_OPTION + " missing value");
+                        }
+                        setNamespaceUri(value);
+                        break;
+                    case NAMESPACE_PREFIX_OPTION:
+                        if (value == null || value.length() == 0) {
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + NAMESPACE_PREFIX_OPTION + " missing value");
+                        }
+                        setNamespacePrefix(value);
+                        break;
+                    case TAGLIB_DOC_OPTION:
+                        if (value == null || value.length() == 0) {
+                            env.getMessager().printMessage(Kind.ERROR, "Option " + TAGLIB_DOC_OPTION + " missing value");
+                        }
+                        setTaglibDoc(value);
+                        break;
+                    case DEBUG_OPTION:
+                        setDebug(true);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        
     }
 
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        return Collections.unmodifiableSet(supportedAnnotations);
-    }
+    //@Override
+    //public Set<String> getSupportedOptions() {
+     //   return Collections.unmodifiableSet(SUPPORTED_OPTIONS);
+    //}
 
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_7;
-    }
-
-    @Override
-    public void init(ProcessingEnvironment processingEnv) {
-        env = processingEnv;
-    }
+    //@Override
+    //public Set<String> getSupportedAnnotationTypes() {
+    //    return Collections.unmodifiableSet(supportedAnnotations);
+    //}
 
 //    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //        // Find all component classes in the compilation unit, creating a skeleton
@@ -722,10 +833,10 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
 
     @Override
     public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Arrays.asList();
     }
-    
-    
+
+
     /**
      * Visitor implementation used to visit field and method declarations in a
      * class.
@@ -1044,7 +1155,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 DeclaredInterfaceInfo interfaceInfo = this.declaredInterfaceMap.get(interfaceType.toString());
                 for (PropertyInfo propertyInfo : interfaceInfo.getPropertyInfoMap().values()) {
                     if (superPropertyInfoMap.containsKey(propertyInfo.getName())) {
-                        this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, 
+                        this.env.getMessager().printMessage(Kind.ERROR, 
                                 classInfo.getQualifiedName() + " inherits property " + propertyInfo.getName() + " more than once");
                     } else {
                         superPropertyInfoMap.put(propertyInfo.getName(), propertyInfo);

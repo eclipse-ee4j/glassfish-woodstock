@@ -2,6 +2,7 @@
 <!--
 
     Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2019 Payara Services Ltd.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -234,14 +235,27 @@
         <pathconvert property="apt.sourcepath" pathsep=" ">
             <path refid="annotation-sourcepath"/>
         </pathconvert>
-        <mkdir dir="${classes}/designtime"/>
-        <javac srcdir="${generated-source-dir}"
-            destdir="${classes}/designtime" deprecation="false"
+        <pathconvert property="apt.processorpath">
+            <path refid="annotation-processor.jars"/>
+        </pathconvert>
+        <mkdir dir="${generated-source-dir}"/>
+        <mkdir dir="${generated-classes-dir}"/>
+        <!-- <javac srcdir="${generate-source-dir}"
+            destdir="${generated-output-dir}" deprecation="false"
             debug="${debug}"
             optimize="false"
-            source="1.8" target="1.8">
+            verbose="true"
+            includeantruntime="false"
+            source="1.7" target="1.7">
             <compilerarg line="-Xmaxwarns 1000"/>
-            <compilerarg line="-processor com.sun.faces.mirror.FacesAnnotationProcessor"/>
+            <compilerarg line="-XprintProcessorInfo"/>
+            <compilerarg line="-processor=com.sun.faces.mirror.FacesAnnotationProcessor"/>
+            <compilerarg value="-A${generate-option}"/>
+            <compilerarg value="-Anamespace.uri=${taglib-uri}"/>
+            <compilerarg value="-Anamespace.prefix=${taglib-prefix}"/>
+            <compilerarg value="-Ataglibdoc=src/runtime/conf/tag-descriptions.xml"/>
+            <compilerarg value="-Alocalize"/>
+            <compilerarg value="-proc:only"/>
             <classpath>
                 <path refid=""/>
                 <path refid="dataprovider.jars"/>
@@ -251,10 +265,30 @@
                 <path refid="jsfcl.jars"/>
                 <path refid="propertyeditors.jars"/>
                 <path refid="designtime.jars"/>
-                <!-- mbohm: add annotation-lib.jars -->
                 <path refid="annotation-lib.jars"/>
             </classpath>
-        </javac>
+        </javac> -->
+        <echo message="${apt.processorpath}"/>
+        <!-- <echo message="${apt.sourcepath}"/> -->
+        <exec executable="javac" failonerror="true">
+            <arg line="-processor com.sun.faces.mirror.FacesAnnotationProcessor"/>
+            <arg line="-processorpath ${apt.classpath}"/>
+            <arg value="-A${generate-option}"/>
+            <!-- <arg value="-verbose"/> -->
+            <arg value="-Xlint:processing"/>
+            <arg value="-Anamespace.uri=${taglib-uri}"/>
+            <arg value="-Anamespace.prefix=${taglib-prefix}"/>
+            <arg value="-Ataglibdoc=src/runtime/conf/tag-descriptions.xml"/>
+            <arg value="-Alocalize"/>  
+            <arg value="-XprintRounds"/>
+            <arg value="-XprintProcessorInfo"/>
+            <arg value="-proc:only"/>
+            <arg line="-classpath ${apt.classpath}"/>
+            <arg line="-s ${generated-source-dir}"/>
+            <arg line="-d ${generated-classes-dir}"/>
+            <arg line="${apt.sourcepath}"/>
+        </exec>
+        
         <!-- <exec executable="${apt.home}/bin/apt">
             <arg line="-s ${generated-source-dir}"/>
             <arg line="-d ${generated-classes-dir}"/>
@@ -292,7 +326,7 @@
             destdir="${classes}/runtime" deprecation="false"
             debug="${debug}"
             optimize="false"
-            source="1.8" target="1.8">
+            source="1.7" target="1.7">
             <compilerarg line="-Xmaxwarns 1000"/>
             <classpath>
                 <path refid="annotation-lib.jars"/>
@@ -324,7 +358,7 @@
             destdir="${classes}/designtime" deprecation="false"
             debug="${debug}"
             optimize="false"
-            source="1.8" target="1.8">
+            source="1.7" target="1.7">
             <compilerarg line="-Xmaxwarns 1000"/>
             <classpath>
                 <path refid="dataprovider.jars"/>

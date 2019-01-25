@@ -63,6 +63,8 @@ import javax.tools.Diagnostic.Kind;
  * to stdout, useful for debugging.</li>
  * </ul>
  *
+ * @deprecated All functionality is now included in {@link FacesAnnotationProcessor} 
+ * for javac annotation processing. To remove.
  * @author gjmurphy
  */
 // TODO - Implement javaee.version option.
@@ -79,14 +81,11 @@ public class FacesAnnotationProcessorFactory  {
     private static final String TAGLIB_DOC_OPTION = "taglibdoc";
     private static final String DEBUG_OPTION = "debug";
     
-    private static final Pattern optionPattern =
-            Pattern.compile("-A\\s*([^\\s=]+)\\s*=?([^\\s=]*)");
+    private static final Pattern optionPattern = Pattern.compile("-A\\s*([^\\s=]+)\\s*=?([^\\s=]*)");
     
-    private static final Collection<String> supportedOptions =
-            Collections.unmodifiableList(Arrays.asList(new String[] {LOCALIZE_OPTION}));
+    private static final Collection<String> supportedOptions = Collections.unmodifiableList(Arrays.asList(new String[] {LOCALIZE_OPTION}));
     
-    private static final Collection<String> supportedAnnotationTypes =
-            Collections.unmodifiableList(Arrays.asList(new String[] {"*"}));
+    private static final Collection<String> supportedAnnotationTypes = Collections.unmodifiableList(Arrays.asList(new String[] {"*"}));
     
     public Collection<String> supportedAnnotationTypes() {
         return supportedAnnotationTypes;

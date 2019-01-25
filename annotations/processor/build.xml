@@ -22,4 +22,7 @@
     <description>Builds the project Sun JSF Annotation Processor.</description>
     <import file="nbproject/build-impl.xml"/>
     
+    <target name="-post-jar">
+        <copy file="dist/jsfa-proc.jar" todir="../../webui/lib/annotations/" overwrite="true" verbose="true"/> 
+    </target>
 </project>
