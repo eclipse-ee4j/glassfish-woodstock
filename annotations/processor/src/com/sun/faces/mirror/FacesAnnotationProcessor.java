@@ -235,7 +235,39 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
         // Find all component classes in the compilation unit, creating a skeleton
         // ComponentInfo for each, then invoke a declaration classMemberVisitor that will
         // process all properties declared within each class or interface.
-        envMessager.printMessage(Kind.NOTE, "Visting component classes...");
+        visitComponentClasses(annotations, roundEnv);
+        
+        // Set super class info for all declared classes. If super class is in the current
+        // compilation unit, then we have already seen it; if not, then it must be
+        // introspected.
+        setSuperClassInfo();
+        
+        // Now that all annotations have been read and the inheritance hierachy has
+        // been established among all classes, update inherited and overridden property
+        // metadata. This is also the time to check annotations that contain cross
+        // references: properties may refer to category descriptors, and they may
+        // also refer to events; components may refer to renderer types.
+        updatePropertyMetadata();
+        
+        // Verify that all declared tag classes correspond to a component class in this
+        // compilation unit
+        verifyClasses();
+        
+        // Finally, if our toil hitherto has not been in vain, generate the source and config files
+        generateSourceAndConfig();
+        
+        return true;
+    }
+    
+    /**
+     * Find all component classes in the compilation unit, creating a skeleton
+     * ComponentInfo for each, then invoke a declaration classMemberVisitor that will
+     * process all properties declared within each class or interface.
+     * @param annotations
+     * @param roundEnv 
+     */
+    private void visitComponentClasses(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        env.getMessager().printMessage(Kind.NOTE, "Visting component classes...");
         MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.env);
         classMemberVisitor.setCategoryMap(this.categoryMap);
         for (TypeElement typeDecl : annotations) {
@@ -311,10 +343,15 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
         }
-        
-        // Set super class info for all declared classes. If super class is in the current
-        // compilation unit, then we have already seen it; if not, then it must be
-        // introspected.
+    }
+    
+    
+    /**
+     * Set super class info for all declared classes. If super class is in the current
+     * compilation unit, then we have already seen it; if not, then it must be
+     * introspected.
+     */
+    private void setSuperClassInfo() {
         Map<String,ClassInfo> introspectedClassMap = new HashMap<String,ClassInfo>();
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
             TypeMirror superClassType = env.getTypeUtils().directSupertypes(declaredClassInfo.asType()).get(0);
@@ -364,13 +401,10 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
         }
-        
-        // Now that all annotations have been read and the inheritance hierachy has
-        // been established among all classes, update inherited and overridden property
-        // metadata. This is also the time to check annotations that contain cross
-        // references: properties may refer to category descriptors, and they may
-        // also refer to events; components may refer to renderer types.
-        envMessager.printMessage(Kind.NOTE, "Updating property metadata...");
+    }
+       
+    private void updatePropertyMetadata() {
+        env.getMessager().printMessage(Kind.NOTE, "Updating property metadata...");
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
             // Update metadata of overriding properties and events
             updateInheritedInfo(declaredClassInfo);
@@ -507,7 +541,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
             // Validate events, and supply event listener method names if defaulted
-            envMessager.printMessage(Kind.NOTE, "Validating events...");
+            env.getMessager().printMessage(Kind.NOTE, "Validating events...");
             for (EventInfo eventInfo : declaredClassInfo.getEventInfoMap().values()) {
                 String addListenerMethodName = eventInfo.getAddListenerMethodName();
                 if (addListenerMethodName == null) {
@@ -541,7 +575,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 }
             }
             // If this is a component and it will generate a tag, determine its preferred renderer
-            envMessager.printMessage(Kind.NOTE, "Determining renderer...");
+            env.getMessager().printMessage(Kind.NOTE, "Determining renderer...");
             if (declaredClassInfo instanceof DeclaredComponentInfo && ((DeclaredComponentInfo) declaredClassInfo).isTag()) {
                 String rendererType = ((DeclaredComponentInfo) declaredClassInfo).getTagRendererType();
                 boolean rendererFound = false;
@@ -570,9 +604,9 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                             "No renderer found of correct renderer type and component family", declaredClassInfo.getDeclaration());
             }
         }
-        
-        // Verify that all declared tag classes correspond to a component class in this
-        // compilation unit
+    }
+    
+    private void verifyClasses() {
         for (String componentType : this.declaredTagClassMap.keySet()) {
             boolean found = false;
             for (DeclaredComponentInfo componentInfo : this.declaredComponentSet) {
@@ -585,8 +619,10 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
                 this.env.getMessager().printMessage(Kind.WARNING,
                         "No component found for tag's component type", this.declaredTagClassMap.get(componentType).getDeclaration());
         }
-        
-        // Finally, if our toil hitherto has not been in vain, generate the source and config files
+    }
+    
+    
+     private void generateSourceAndConfig() {
         try {
             GeneratorFactory generatorFactory = new GeneratorFactory();
             if (this.getGeneratorFactoryClass() != null) {
@@ -622,9 +658,7 @@ class FacesAnnotationProcessor extends AbstractProcessor  {
         } catch (GeneratorException e) {
             env.getMessager().printMessage(Kind.ERROR, e.getMessage());
         }
-        return true;
     }
-    
     /**
      * Generate BeanInfo base class files
      * @param generatorFactory
