@@ -87,7 +87,7 @@ import org.xml.sax.helpers.DefaultHandler;
 // TODO - Handle different versions of JSF (1.1 and 1.2)
 // TODO - Handle attribute annotations within a tag class
 @SupportedAnnotationTypes("com.sun.faces.annotation.*")
-@SupportedOptions({"localize", "javaee.version", "generate.runtime"})
+@SupportedOptions({"localize", "javaee.version", "generate.runtime", "namespace.uri", "namespace.prefix", "taglibdoc",  "debug"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class FacesAnnotationProcessor extends AbstractProcessor  {
     
@@ -269,76 +269,81 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
         processingEnv.getMessager().printMessage(Kind.NOTE, "Visting component classes...");
         MemberDeclarationVisitor classMemberVisitor = new MemberDeclarationVisitor(this.processingEnv);
         classMemberVisitor.setCategoryMap(this.categoryMap);
-        for (TypeElement typeDecl : annotations) {
-            this.packageNameSet.add(typeDecl.getEnclosingElement().getSimpleName().toString());
-            if (true) {
-                DeclaredTypeInfo typeInfo = null;
-                classMemberVisitor.reset();
-                typeDecl.accept(classMemberVisitor, processingEnv);
-                if (typeDecl.getKind() == ElementKind.CLASS) {
-                    if (typeDecl.getAnnotation(Component.class) != null) {
-                        // This is a component class
-                        Map<String,Object> annotationValueMap =
-                                getAnnotationValueMap(typeDecl, Component.class.getName());
-                        DeclaredComponentInfo componentInfo = new DeclaredComponentInfo(annotationValueMap, typeDecl);
-                        this.declaredComponentSet.add(componentInfo);
-                        this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), componentInfo);
-                        typeInfo = componentInfo;
-                    } else if (typeDecl.getAnnotation(Renderer.class) != null) {
-                        // This is a renderer class
-                        Map<String,Object> annotationValueMap =
-                                getAnnotationValueMap(typeDecl, Renderer.class.getName());
-                        DeclaredRendererInfo rendererInfo =
-                                new DeclaredRendererInfo(annotationValueMap, typeDecl);
-                        if (rendererInfo.getRenderings().isEmpty())
-                            this.processingEnv.getMessager().printMessage(Kind.WARNING, "No renderings declared in renderer annotation", typeDecl);
-                        this.declaredRendererSet.add(rendererInfo);
-                    } else if (typeDecl.getAnnotation(Tag.class) != null) {
-                        // This is a hand-authored tag class
-                        Map<String,Object> annotationValueMap =
-                                getAnnotationValueMap(typeDecl, Tag.class.getName());
-                        String componentType = (String) annotationValueMap.get("componentType");
-                        DeclaredClassInfo tagClassInfo = new DeclaredClassInfo(typeDecl);
-                        this.declaredTagClassMap.put(componentType, tagClassInfo);
-                    } else if (typeDecl.getAnnotation(Resolver.class) != null) {
-                        // This is a JSF property or variable resolver, or a JavaEE EL resolver
-                        TypeMirror superClassType = typeDecl.getSuperclass();
-                        while (superClassType != null) {
-                            String superClassName = superClassType.toString();
-                            switch (superClassName) {
-                                case "javax.faces.el.PropertyResolver":
-                                    this.propertyResolverNameSet.add(typeDecl.toString());
-                                    break;
-                                case "javax.faces.el.VariableResolver":
-                                    this.variableResolverNameSet.add(typeDecl.toString());
-                                    break;
-                                case "javax.el.ELResolver":
-                                    this.javaeeResolverNameSet.add(typeDecl.toString());
-                                    break;
-                                default:
-                                    break;
-                            }
+        for (TypeElement typeAnnotation : annotations) {
+            for (Element typeDecl : roundEnv.getElementsAnnotatedWith(typeAnnotation)) {
+
+                this.packageNameSet.add(typeDecl.getEnclosingElement().getSimpleName().toString());
+                if (true) {
+                    DeclaredTypeInfo typeInfo = null;
+                    classMemberVisitor.reset();
+                    typeDecl.accept(classMemberVisitor, processingEnv);
+                    if (typeDecl.getKind() == ElementKind.CLASS) {
+                        if (typeDecl.getAnnotation(Component.class) != null) {
+                            // This is a component class
                             
-                            superClassType = processingEnv.getTypeUtils().directSupertypes(superClassType).get(0);
+                            
+                            Map<String, Object> annotationValueMap = getAnnotationValueMap(typeDecl, Component.class.getName());
+                            DeclaredComponentInfo componentInfo = new DeclaredComponentInfo(annotationValueMap, typeDecl);
+                            this.declaredComponentSet.add(componentInfo);
+                            this.declaredClassMap.put(((TypeElement) typeDecl).getQualifiedName().toString(), componentInfo);
+                            typeInfo = componentInfo;
+                        } else if (typeDecl.getAnnotation(Renderer.class) != null) {
+                            // This is a renderer class
+                            Map<String, Object> annotationValueMap
+                                    = getAnnotationValueMap(typeDecl, Renderer.class.getName());
+                            DeclaredRendererInfo rendererInfo
+                                    = new DeclaredRendererInfo(annotationValueMap, typeDecl);
+                            if (rendererInfo.getRenderings().isEmpty()) {
+                                this.processingEnv.getMessager().printMessage(Kind.WARNING, "No renderings declared in renderer annotation", typeDecl);
+                            }
+                            this.declaredRendererSet.add(rendererInfo);
+                        } else if (typeDecl.getAnnotation(Tag.class) != null) {
+                            // This is a hand-authored tag class
+                            Map<String, Object> annotationValueMap
+                                    = getAnnotationValueMap(typeDecl, Tag.class.getName());
+                            String componentType = (String) annotationValueMap.get("componentType");
+                            DeclaredClassInfo tagClassInfo = new DeclaredClassInfo(typeDecl);
+                            this.declaredTagClassMap.put(componentType, tagClassInfo);
+                        } else if (typeDecl.getAnnotation(Resolver.class) != null) {
+                            // This is a JSF property or variable resolver, or a JavaEE EL resolver
+                            TypeMirror superClassType = typeDecl.getSuperclass();
+                            while (superClassType != null) {
+                                String superClassName = superClassType.toString();
+                                switch (superClassName) {
+                                    case "javax.faces.el.PropertyResolver":
+                                        this.propertyResolverNameSet.add(typeDecl.toString());
+                                        break;
+                                    case "javax.faces.el.VariableResolver":
+                                        this.variableResolverNameSet.add(typeDecl.toString());
+                                        break;
+                                    case "javax.el.ELResolver":
+                                        this.javaeeResolverNameSet.add(typeDecl.toString());
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                superClassType = processingEnv.getTypeUtils().directSupertypes(superClassType).get(0);
+                            }
+                        } else {
+                            // This is probably a base class that provides one or more properties
+                            // (possibly via its super class)
+                            DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo(typeDecl);
+                            this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), declaredClassInfo);
+                            typeInfo = declaredClassInfo;
                         }
                     } else {
-                        // This is probably a base class that provides one or more properties
-                        // (possibly via its super class)
-                        DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo(typeDecl);
-                        this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), declaredClassInfo);
-                        typeInfo = declaredClassInfo;
+                        // This is an interface that may provide one or more properties
+                        DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo(typeDecl);
+                        this.declaredInterfaceMap.put(typeDecl.getQualifiedName().toString(), declaredInterfaceInfo);
+                        typeInfo = declaredInterfaceInfo;
                     }
-                } else {
-                    // This is an interface that may provide one or more properties
-                    DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo(typeDecl);
-                    this.declaredInterfaceMap.put(typeDecl.getQualifiedName().toString(), declaredInterfaceInfo);
-                    typeInfo = declaredInterfaceInfo;
-                }
-                if (typeInfo != null) {
-                    Map<String,PropertyInfo> propertyInfoMap = classMemberVisitor.getPropertyInfoMap();
-                    typeInfo.setPropertyInfoMap(propertyInfoMap);
-                    Map<String,EventInfo> eventInfoMap = classMemberVisitor.getEventInfoMap();
-                    typeInfo.setEventInfoMap(eventInfoMap);
+                    if (typeInfo != null) {
+                        Map<String, PropertyInfo> propertyInfoMap = classMemberVisitor.getPropertyInfoMap();
+                        typeInfo.setPropertyInfoMap(propertyInfoMap);
+                        Map<String, EventInfo> eventInfoMap = classMemberVisitor.getEventInfoMap();
+                        typeInfo.setEventInfoMap(eventInfoMap);
+                    }
                 }
             }
         }

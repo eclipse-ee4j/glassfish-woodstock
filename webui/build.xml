@@ -101,6 +101,7 @@
         <pathelement location="${lib.annotations}/velocity-1.4.jar"/>
         <pathelement location="${lib.annotations}/velocity-engine-core-2.0.jar"/>
         <pathelement location="${lib.annotations}/slf4j-api-1.7.25.jar"/>
+        <pathelement location="${lib.annotations}/slf4j-simple-1.7.25.jar"/>
         <pathelement location="${lib.annotations}/commons-lang3-3.5.jar"/>
     </path>
     

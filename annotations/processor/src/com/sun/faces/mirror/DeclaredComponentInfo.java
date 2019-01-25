@@ -17,8 +17,6 @@
 
 package com.sun.faces.mirror;
 
-import com.sun.rave.designtime.CategoryDescriptor;
-import com.sun.rave.designtime.Constants;
 import java.util.Map;
 import javax.lang.model.element.TypeElement;
 
