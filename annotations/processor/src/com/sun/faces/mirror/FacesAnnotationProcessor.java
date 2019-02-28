@@ -35,7 +35,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -283,30 +282,27 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
                             
                             
                             Map<String, Object> annotationValueMap = getAnnotationValueMap(typeDecl, Component.class.getName());
-                            DeclaredComponentInfo componentInfo = new DeclaredComponentInfo(annotationValueMap, typeDecl);
+                            DeclaredComponentInfo componentInfo = new DeclaredComponentInfo(annotationValueMap, (TypeElement) typeDecl);
                             this.declaredComponentSet.add(componentInfo);
                             this.declaredClassMap.put(((TypeElement) typeDecl).getQualifiedName().toString(), componentInfo);
                             typeInfo = componentInfo;
                         } else if (typeDecl.getAnnotation(Renderer.class) != null) {
                             // This is a renderer class
-                            Map<String, Object> annotationValueMap
-                                    = getAnnotationValueMap(typeDecl, Renderer.class.getName());
-                            DeclaredRendererInfo rendererInfo
-                                    = new DeclaredRendererInfo(annotationValueMap, typeDecl);
+                            Map<String, Object> annotationValueMap = getAnnotationValueMap(typeDecl, Renderer.class.getName());
+                            DeclaredRendererInfo rendererInfo = new DeclaredRendererInfo(annotationValueMap, (TypeElement) typeDecl);
                             if (rendererInfo.getRenderings().isEmpty()) {
                                 this.processingEnv.getMessager().printMessage(Kind.WARNING, "No renderings declared in renderer annotation", typeDecl);
                             }
                             this.declaredRendererSet.add(rendererInfo);
                         } else if (typeDecl.getAnnotation(Tag.class) != null) {
                             // This is a hand-authored tag class
-                            Map<String, Object> annotationValueMap
-                                    = getAnnotationValueMap(typeDecl, Tag.class.getName());
+                            Map<String, Object> annotationValueMap = getAnnotationValueMap(typeDecl, Tag.class.getName());
                             String componentType = (String) annotationValueMap.get("componentType");
-                            DeclaredClassInfo tagClassInfo = new DeclaredClassInfo(typeDecl);
+                            DeclaredClassInfo tagClassInfo = new DeclaredClassInfo((TypeElement) typeDecl);
                             this.declaredTagClassMap.put(componentType, tagClassInfo);
                         } else if (typeDecl.getAnnotation(Resolver.class) != null) {
                             // This is a JSF property or variable resolver, or a JavaEE EL resolver
-                            TypeMirror superClassType = typeDecl.getSuperclass();
+                            TypeMirror superClassType = ((TypeElement) typeDecl).getSuperclass();
                             while (superClassType != null) {
                                 String superClassName = superClassType.toString();
                                 switch (superClassName) {
@@ -328,14 +324,16 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
                         } else {
                             // This is probably a base class that provides one or more properties
                             // (possibly via its super class)
-                            DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo(typeDecl);
-                            this.declaredClassMap.put(typeDecl.getQualifiedName().toString(), declaredClassInfo);
+                            DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo((TypeElement) typeDecl);
+                            this.declaredClassMap.put(((TypeElement) typeDecl).getQualifiedName().toString(), declaredClassInfo);
                             typeInfo = declaredClassInfo;
                         }
+                        
+                        
                     } else {
                         // This is an interface that may provide one or more properties
-                        DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo(typeDecl);
-                        this.declaredInterfaceMap.put(typeDecl.getQualifiedName().toString(), declaredInterfaceInfo);
+                        DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo((TypeElement) typeDecl);
+                        this.declaredInterfaceMap.put(((TypeElement) typeDecl).getQualifiedName().toString(), declaredInterfaceInfo);
                         typeInfo = declaredInterfaceInfo;
                     }
                     if (typeInfo != null) {
