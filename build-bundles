@@ -2,7 +2,9 @@
 
 # REMEMBER TO CHANGE THIS VERSION #!!!!!!
 
-WOODSTOCK_VERSION="4.0.2.14"
+#WOODSTOCK_VERSION="4.0.2.14"
+WOODSTOCK_VERSION=$1
+echo $WOODSTOCK_VERSION
 
 #====== remove existing copies=========
 rm -rf webui-jsf-*
@@ -25,18 +27,18 @@ cd ..
 
 rm -rf tmp__1 tmp__2
 
-gpg -ab webui-jsf-$WOODSTOCK_VERSION.pom
-gpg -ab webui-jsf-$WOODSTOCK_VERSION.jar
-gpg -ab webui-jsf-$WOODSTOCK_VERSION-javadoc.jar
-gpg -ab webui-jsf-$WOODSTOCK_VERSION-sources.jar
+#gpg -ab webui-jsf-$WOODSTOCK_VERSION.pom
+#gpg -ab webui-jsf-$WOODSTOCK_VERSION.jar
+#gpg -ab webui-jsf-$WOODSTOCK_VERSION-javadoc.jar
+#gpg -ab webui-jsf-$WOODSTOCK_VERSION-sources.jar
 
 rm -rf webui-jsf-bundle.jar
 
-jar -vcf webui-jsf-bundle.jar \
-   webui-jsf-$WOODSTOCK_VERSION.pom webui-jsf-$WOODSTOCK_VERSION.pom.asc \
-   webui-jsf-$WOODSTOCK_VERSION.jar webui-jsf-$WOODSTOCK_VERSION.jar.asc \
-   webui-jsf-$WOODSTOCK_VERSION-javadoc.jar webui-jsf-$WOODSTOCK_VERSION-javadoc.jar.asc \
-   webui-jsf-$WOODSTOCK_VERSION-sources.jar webui-jsf-$WOODSTOCK_VERSION-sources.jar.asc
+#jar -vcf webui-jsf-bundle.jar \
+#   webui-jsf-$WOODSTOCK_VERSION.pom webui-jsf-$WOODSTOCK_VERSION.pom.asc \
+#   webui-jsf-$WOODSTOCK_VERSION.jar webui-jsf-$WOODSTOCK_VERSION.jar.asc \
+ #  webui-jsf-$WOODSTOCK_VERSION-javadoc.jar webui-jsf-$WOODSTOCK_VERSION-javadoc.jar.asc \
+#   webui-jsf-$WOODSTOCK_VERSION-sources.jar webui-jsf-$WOODSTOCK_VERSION-sources.jar.asc
 
 #================  webui-jsf-suntheme jars =====================
 
@@ -46,18 +48,18 @@ cp ./master/build/ship/lib/webui-jsf-suntheme.jar  ./webui-jsf-suntheme-$WOODSTO
 cp ./master/build/ship/lib/webui-jsf-suntheme.jar  ./webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar
 cp ./themes/webui-jsf-suntheme-javadoc.jar ./webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar
 
-gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION.pom
-gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION.jar
-gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar
-gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar
+#gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION.pom
+#gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION.jar
+#gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar
+#gpg -ab webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar
 
 rm -rf webui-jsf-suntheme-bundle.jar
 
-jar -vcf webui-jsf-suntheme-bundle.jar \
-   webui-jsf-suntheme-$WOODSTOCK_VERSION.pom webui-jsf-suntheme-$WOODSTOCK_VERSION.pom.asc \
-   webui-jsf-suntheme-$WOODSTOCK_VERSION.jar webui-jsf-suntheme-$WOODSTOCK_VERSION.jar.asc \
-   webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar.asc \
-   webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar.asc
+#jar -vcf webui-jsf-suntheme-bundle.jar \
+#   webui-jsf-suntheme-$WOODSTOCK_VERSION.pom webui-jsf-suntheme-$WOODSTOCK_VERSION.pom.asc \
+#   webui-jsf-suntheme-$WOODSTOCK_VERSION.jar webui-jsf-suntheme-$WOODSTOCK_VERSION.jar.asc \
+#   webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar webui-jsf-suntheme-$WOODSTOCK_VERSION-javadoc.jar.asc \
+#   webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar webui-jsf-suntheme-$WOODSTOCK_VERSION-sources.jar.asc
 
 
 ###################################################################################
