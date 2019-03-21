@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This file was generated automatically on ${date}. -->
+
+<faces-config 
+  version="1.2"
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+    <application>
+#foreach ($name in $javaeeResolverNameSet)
+        <el-resolver>${name}</el-resolver>
+#end
+#foreach ($name in $propertyResolverNameSet)
+        <property-resolver>${name}</property-resolver>
+#end
+#foreach ($name in $variableResolverNameSet)
+        <variable-resolver>${name}</variable-resolver>
+#end
+    </application>
+#foreach ($componentInfo in $componentInfoSet)
+    <component>
+        <display-name>${componentInfo.displayName}</display-name>
+        <component-type>${componentInfo.type}</component-type>
+        <component-class>${componentInfo.qualifiedName}</component-class>
+    </component>
+#end
+    <render-kit>
+#foreach ($rendererInfo in $rendererInfoSet)
+#foreach ($rendering in $rendererInfo.getRenderings())
+#foreach ($componentFamily in $rendering.componentFamilies)
+        <renderer>
+            <component-family>${componentFamily}</component-family>
+            <renderer-type>${rendering.rendererType}</renderer-type>
+            <renderer-class>${rendererInfo.qualifiedName}</renderer-class>
+        </renderer>
+#end
+#end
+#end
+    </render-kit>
+</faces-config>
