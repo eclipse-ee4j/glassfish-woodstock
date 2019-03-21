@@ -64,6 +64,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.SimpleElementVisitor8;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.StandardLocation;
@@ -305,6 +306,9 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
                             TypeMirror superClassType = ((TypeElement) typeDecl).getSuperclass();
                             while (superClassType != null) {
                                 String superClassName = superClassType.toString();
+                                if (superClassName.equals(Object.class.getCanonicalName())){
+                                    break;
+                                }
                                 switch (superClassName) {
                                     case "javax.faces.el.PropertyResolver":
                                         this.propertyResolverNameSet.add(typeDecl.toString());
@@ -318,8 +322,11 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
                                     default:
                                         break;
                                 }
-
-                                superClassType = processingEnv.getTypeUtils().directSupertypes(superClassType).get(0);
+                                
+                                List<? extends TypeMirror> supertypes = processingEnv.getTypeUtils().directSupertypes(superClassType);
+                                if (!supertypes.isEmpty()) {
+                                    superClassType = processingEnv.getTypeUtils().directSupertypes(superClassType).get(0);
+                                }
                             }
                         } else {
                             // This is probably a base class that provides one or more properties
@@ -330,11 +337,16 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
                         }
                         
                         
-                    } else {
+                    } else if (typeDecl.getKind() == ElementKind.INTERFACE) {
                         // This is an interface that may provide one or more properties
                         DeclaredInterfaceInfo declaredInterfaceInfo = new DeclaredInterfaceInfo((TypeElement) typeDecl);
                         this.declaredInterfaceMap.put(((TypeElement) typeDecl).getQualifiedName().toString(), declaredInterfaceInfo);
                         typeInfo = declaredInterfaceInfo;
+                    } else if (typeDecl.getKind() == ElementKind.METHOD || typeDecl.getKind() == ElementKind.FIELD) {
+                        //The annotation is on a method or field, need to get the class that contains it
+                        DeclaredClassInfo declaredClassInfo = new DeclaredClassInfo((TypeElement) typeDecl.getEnclosingElement());
+                        this.declaredClassMap.put(declaredClassInfo.getQualifiedName().toString(), declaredClassInfo);
+                        typeInfo = declaredClassInfo;
                     }
                     if (typeInfo != null) {
                         Map<String, PropertyInfo> propertyInfoMap = classMemberVisitor.getPropertyInfoMap();
@@ -358,6 +370,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor  {
         for (DeclaredClassInfo declaredClassInfo : this.declaredClassMap.values()) {
             TypeMirror superClassType = processingEnv.getTypeUtils().directSupertypes(declaredClassInfo.asType()).get(0);
             String superClassName = superClassType.toString();
+            System.out.println("looking for " + superClassName);
             if (this.declaredClassMap.containsKey(superClassName)) {
                 declaredClassInfo.setSuperClassInfo(this.declaredClassMap.get(superClassName));
             } else if (introspectedClassMap.containsKey(superClassName)) {
