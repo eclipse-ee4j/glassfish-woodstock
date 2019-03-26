@@ -161,8 +161,7 @@ public class IntrospectedClassInfo extends ClassInfo {
 
     @Override
     public Name getQualifiedName() {
-        beanInfo.getBeanDescriptor().getBeanClass();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new NameInfo(beanInfo.getBeanDescriptor().getBeanClass().getName());
     }
 
     @Override
@@ -183,8 +182,7 @@ public class IntrospectedClassInfo extends ClassInfo {
 
     @Override
     public Name getSimpleName() {
-        beanInfo.getBeanDescriptor().getName();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new NameInfo(beanInfo.getBeanDescriptor().getBeanClass().getSimpleName());
     }
 
     @Override

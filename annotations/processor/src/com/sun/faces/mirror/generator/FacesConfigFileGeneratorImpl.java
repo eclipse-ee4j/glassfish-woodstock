@@ -19,10 +19,13 @@ package com.sun.faces.mirror.generator;
 
 import com.sun.faces.mirror.DeclaredComponentInfo;
 import com.sun.faces.mirror.DeclaredRendererInfo;
+import java.io.IOException;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -64,15 +67,17 @@ class FacesConfigFileGeneratorImpl extends FacesConfigFileGenerator {
             velocityContext.put("variableResolverNameSet", variableResolverNameSet);
             velocityContext.put("javaeeResolverNameSet", javaeeResolverNameSet);
             Template template = velocityEngine.getTemplate(TEMPLATE);
+            System.out.println("About to merge " + velocityContext.toString() + " with " + printWriter.toString() + " using " + template.toString());
             template.merge(velocityContext, printWriter);
         } catch (Exception e) {
             e.printStackTrace();
             throw new GeneratorException(e);
+            }
         }
-    }
     
     @Override
     public String getFileName() {
+        System.out.println("Got FacesConfigFile name");
         return "faces-config.xml";
     }
     
