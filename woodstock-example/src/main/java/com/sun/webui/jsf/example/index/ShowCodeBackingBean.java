@@ -76,7 +76,7 @@ public class ShowCodeBackingBean implements Serializable {
             } else if (sourceName.endsWith(".properties")) {
                 sourceName = RELATIVE_PATH + sourceName;
                 isJavaCode = false;
-            } else if (sourceName.endsWith(".jsp")
+            } else if (sourceName.endsWith(".jspx")
                     || sourceName.endsWith(".js")
                     || sourceName.endsWith(".xml")) {
                 isJavaCode = false;

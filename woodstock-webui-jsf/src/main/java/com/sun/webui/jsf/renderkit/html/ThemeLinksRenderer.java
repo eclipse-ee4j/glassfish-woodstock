@@ -78,13 +78,13 @@ public class ThemeLinksRenderer extends javax.faces.render.Renderer {
         JavaScriptUtilities.renderDojoInclude(component, writer);
 
         // Render JSON include.
-        JavaScriptUtilities.renderJsonInclude(component, writer);
+        //JavaScriptUtilities.renderJsonInclude(component, writer);
 
         // Render Prototype include before JSF Extensions.
         JavaScriptUtilities.renderPrototypeInclude(component, writer);
 
         // Render JSF Extensions include.
-        JavaScriptUtilities.renderJsfxInclude(component, writer);
+        //JavaScriptUtilities.renderJsfxInclude(component, writer);
 
         // Render module config after including dojo.
         JavaScriptUtilities.renderJavaScript(component, writer,

@@ -24,7 +24,7 @@
           xmlns:webuijsf="http://www.sun.com/webui/webuijsf">
           
 <jsp:directive.page contentType="text/html" /> 
-                    
+
 <!-- Page with Images and ImageHyperlink -->
 <f:view>
   <webuijsf:page id="page7" >
@@ -35,12 +35,12 @@
         </webuijsf:head>
         <webuijsf:body id="body7" >
             <webuijsf:form id="form7">
-            
+
             <!-- Masthead -->
               <webuijsf:masthead id="masthead" serverInfo="#{MastheadBean.server}" userInfo="#{MastheadBean.user}" 
                            productImageURL="/images/example_primary_masthead.png" productImageDescription="#{msgs.mastheadAltText}"/>
-                           
-              <!-- Breadcrumbs -->             
+
+              <!-- Breadcrumbs -->
               <webuijsf:breadcrumbs id="breadcrumbs">
                 <webuijsf:hyperlink id="hyp1" actionExpression="#{IndexBean.showIndex}" text="#{msgs.exampleTitle}"
                               toolTip="#{msgs.index_title}" immediate="true"
@@ -56,14 +56,14 @@
                               onMouseOut="javascript:window.status=''; return true"/>
                 <webuijsf:hyperlink id="hyp4" text="#{msgs.masthead_resultTitle}"/>
               </webuijsf:breadcrumbs>
-              
-              <br/>              
-              <!-- Alert -->              
+
+              <br/>
+              <!-- Alert -->
               <webuijsf:alert id="message" type="information" summary="#{MastheadBean.message}" rendered="#{MastheadBean.isRendered3}" />
-              
+
               <!-- Page Title -->
               <webuijsf:contentPageTitle id="pagetitle" title="#{msgs.masthead_resultTitle}" />
-              
+
               </webuijsf:form>
           </webuijsf:body> 
     </webuijsf:html>

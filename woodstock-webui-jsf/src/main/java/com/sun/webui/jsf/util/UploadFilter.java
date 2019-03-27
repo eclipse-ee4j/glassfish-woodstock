@@ -49,6 +49,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
  * <p>Use the UploadFilter if your application contains an Upload component 
@@ -144,9 +146,10 @@ public class UploadFilter implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) request;
 
-        if (FileUpload.isMultipartContent(req)) {
+        if (ServletFileUpload.isMultipartContent(req)) {
 
-            DiskFileUpload fu = new DiskFileUpload();
+            ServletFileUpload fu = new ServletFileUpload(
+                    new DiskFileItemFactory(sizeThreshold, new File(tmpDir)));
             // maximum size before a FileUploadException will be thrown
             // Store this in a context parameter perhaps?
 
@@ -154,11 +157,6 @@ public class UploadFilter implements Filter {
             // Note: do not set the maxSize to -1, which means no size limitation is enforced. 
             //       It is a big security hole to allow any file to be uploaded
             fu.setSizeMax(maxSize);
-
-            // maximum size that will be stored in memory
-            fu.setSizeThreshold(sizeThreshold);
-            // the location for saving data that is larger than getSizeThreshold()  
-            fu.setRepositoryPath(tmpDir);
 
             // files with names in other languages (like Japanese) are not
             // being uploaded with the proper names. Proper encoding has to 

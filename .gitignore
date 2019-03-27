@@ -1,11 +1,2 @@
-/webui/nbproject/private/
-/webui-suntheme/nbproject/private/
-/example/nbproject/
-/processor/target/
-/webui/target/
-/woodstock-dt/target/
-/woodstock-webui/target/
-/woodstock-webui-jsf/target/
-/woodstock-example/nbproject/
-/woodstock-webui-jsf-suntheme/target/
-/woodstock-example/target/
+target/
+nb-configuration.xml

@@ -205,10 +205,12 @@ public class BodyRenderer extends AbstractRenderer {
 
         // Instead of creating a global variable...
         Theme theme = ThemeUtilities.getTheme(context);
-        StringBuffer buff = new StringBuffer(128);
-        buff.append(JavaScriptUtilities.getModuleName("common.body")).append(" = new ") //NOI18N
-                .append(JavaScriptUtilities.getModuleName("body")) //NOI18N
-                .append("('") //NOI18N
+        StringBuilder buff = new StringBuilder(128);
+        buff.append("require([\"")
+                .append(JavaScriptUtilities.getModuleName("common"))
+                .append("\", \"")
+                .append(JavaScriptUtilities.getModuleName("body"))
+                .append("\"], function(common, body) { common.body = new body.body('")
                 .append(viewId).append("', '") //NOI18N
                 .append(urlString).append("'"); //NOI18N
 
@@ -254,7 +256,7 @@ public class BodyRenderer extends AbstractRenderer {
         //
         buff.append(",'") // NOI18N
                 .append(FocusManager.FOCUS_FIELD_ID).append("'") // NOI18N
-                .append(");"); //NOI18N
+                .append("); });"); //NOI18N
 
         // Render JavaScript.
         JavaScriptUtilities.renderJavaScript(component, writer,

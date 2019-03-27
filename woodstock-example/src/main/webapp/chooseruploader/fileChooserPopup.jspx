@@ -24,48 +24,49 @@
             <webuijsf:html>
                 <f:loadBundle basename="com.sun.webui.jsf.example.resources.Resources" var="msgs" />
                 <webuijsf:head id="filePopupHead" title="#{msgs.fileChooserPopup_title}">
+                    <webuijsf:script url="/fixup.js" />
                 </webuijsf:head>
                 <webuijsf:body>
                     <webuijsf:form id="fileFormPopup">
 
-                       <!-- Masthead -->
-                       <webuijsf:masthead id="Masthead" productImageURL="/images/example_primary_masthead.png"
-                         productImageDescription="#{msgs.mastheadAltText}" 
-                         userInfo="test_user"
-                         serverInfo="test_server" secondary="true"/>     
-                       
-                       <br />
-                       <!-- Alert for validator exception. -->
-                       <webuijsf:alert id="popupFileChooserAlert" rendered="#{ChooserUploaderBean.errorsOnPage}" type="error" 
-                                       summary="#{ChooserUploaderBean.summaryMsg}">                              
-                             <webuijsf:message for="fileChooser" showDetail="true"/>
-                       </webuijsf:alert>
-                     
-                       <!-- Page Title -->
-                       <webuijsf:contentPageTitle id="filePopupContent" title="#{msgs.fileChooserPopup_title}">                       
-                         <webuijsf:markup tag="div" styleClass="#{themeStyles.CONTENT_MARGIN}">                         
-                                                  
-                         <!-- File Chooser -->
-                         <f:verbatim><![CDATA[<table><tr><td>]]></f:verbatim>
-                           <webuijsf:fileChooser id="fileChooser"
-			                lookin="#{ChooserUploaderBean.fileChooserLookin}"
-                                        selected="#{ChooserUploaderBean.selected}"
-                                       sortField="size" descending="true" 
-                                        multiple="true"  folderChooser="false"/>
-                         <f:verbatim><![CDATA[</td></tr>]]></f:verbatim>
-                                                 
-                         <!--  Close button -->
-                         <f:verbatim><![CDATA[<tr><td>]]></f:verbatim>
-				<webuijsf:button id="close"
-                                     text="#{msgs.fileChooserPopup_closeButtonCaption}" 
-                                     toolTip="#{msgs.fileChooserPopup_closeButtonTooltip}"
-                                     onClick="window.close();"/>
-                         <f:verbatim><![CDATA[</td></tr></table>]]></f:verbatim>
-                         </webuijsf:markup>
-                      </webuijsf:contentPageTitle>
+                        <!-- Masthead -->
+                        <webuijsf:masthead id="Masthead" productImageURL="/images/example_primary_masthead.png"
+                                           productImageDescription="#{msgs.mastheadAltText}" 
+                                           userInfo="test_user"
+                                           serverInfo="test_server" secondary="true"/>
+
+                        <br />
+                        <!-- Alert for validator exception. -->
+                        <webuijsf:alert id="popupFileChooserAlert" rendered="#{ChooserUploaderBean.errorsOnPage}" type="error"
+                                        summary="#{ChooserUploaderBean.summaryMsg}">
+                            <webuijsf:message for="fileChooser" showDetail="true"/>
+                        </webuijsf:alert>
+
+                        <!-- Page Title -->
+                        <webuijsf:contentPageTitle id="filePopupContent" title="#{msgs.fileChooserPopup_title}">
+                            <webuijsf:markup tag="div" styleClass="#{themeStyles.CONTENT_MARGIN}">
+
+                                <!-- File Chooser -->
+                                <f:verbatim><![CDATA[<table><tr><td>]]></f:verbatim>
+                                <webuijsf:fileChooser id="fileChooser"
+                                                      lookin="#{ChooserUploaderBean.fileChooserLookin}"
+                                                      selected="#{ChooserUploaderBean.selected}"
+                                                      sortField="size" descending="true" 
+                                                      multiple="true"  folderChooser="false"/>
+                                <f:verbatim><![CDATA[</td></tr>]]></f:verbatim>
+
+                                <!--  Close button -->
+                                <f:verbatim><![CDATA[<tr><td>]]></f:verbatim>
+                                <webuijsf:button id="close"
+                                                 text="#{msgs.fileChooserPopup_closeButtonCaption}"
+                                                 toolTip="#{msgs.fileChooserPopup_closeButtonTooltip}"
+                                                 onClick="window.close();"/>
+                                <f:verbatim><![CDATA[</td></tr></table>]]></f:verbatim>
+                            </webuijsf:markup>
+                        </webuijsf:contentPageTitle>
                     </webuijsf:form>
-                </webuijsf:body> 
-            </webuijsf:html>  
+                </webuijsf:body>
+            </webuijsf:html>
         </webuijsf:page>
     </f:view>
 </jsp:root>

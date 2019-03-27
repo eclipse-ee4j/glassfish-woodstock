@@ -96,12 +96,10 @@
         <dependency>
             <groupId>com.sun.faces.extensions</groupId>
             <artifactId>jsf-extensions-dynamic-faces</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.faces.extensions</groupId>
+            <artifactId>jsf-extensions-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sun.woodstock.dependlibs</groupId>

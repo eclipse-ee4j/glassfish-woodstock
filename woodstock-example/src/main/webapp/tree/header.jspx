@@ -18,25 +18,26 @@
 -->
 
 <jsp:root version="2.0" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:webuijsf="http://www.sun.com/webui/webuijsf">
-<jsp:directive.page contentType="text/html"/>
-<f:view>    
-  <webuijsf:page frame="true">
-    <f:loadBundle basename="com.sun.webui.jsf.example.resources.Resources" var="msgs" />
-    <webuijsf:html id="html">  
-      <webuijsf:head id="head" title="#{msgs.tree_navTreeTitle}">
-	<webuijsf:link rel="shortcut icon" url="/images/favicon.ico" type="image/x-icon" />
-      </webuijsf:head>
+    <jsp:directive.page contentType="text/html"/>
+    <f:view>    
+        <webuijsf:page frame="true">
+            <f:loadBundle basename="com.sun.webui.jsf.example.resources.Resources" var="msgs" />
+            <webuijsf:html id="html">  
+                <webuijsf:head id="head" title="#{msgs.tree_navTreeTitle}">
+                    <webuijsf:link rel="shortcut icon" url="/images/favicon.ico" type="image/x-icon" />
+                    <webuijsf:script url="/fixup.js" />
+                </webuijsf:head>
 
-      <webuijsf:masthead id="masthead"
-        productImageURL="/images/example_primary_masthead.png"
-        productImageHeight="40"
-        productImageWidth="188"
-        userInfo="test_user" 
-        serverInfo="test_server"
-        productImageDescription="#{msgs.mastheadAltText}" />
+                <webuijsf:masthead id="masthead"
+                                   productImageURL="/images/example_primary_masthead.png"
+                                   productImageHeight="40"
+                                   productImageWidth="188"
+                                   userInfo="test_user" 
+                                   serverInfo="test_server"
+                                   productImageDescription="#{msgs.mastheadAltText}" />
 
-    </webuijsf:html>  
-  </webuijsf:page>
-</f:view>
+            </webuijsf:html>
+        </webuijsf:page>
+    </f:view>
 
 </jsp:root>

@@ -115,11 +115,12 @@ public class UploadRenderer extends FieldRenderer {
         String id = component.getClientId(context);
 
         StringBuilder jsString = new StringBuilder(256);
-        jsString.append(JavaScriptUtilities.getModuleName(
-                "upload.setEncodingType")); //NOI18N
-        jsString.append("(\'"); //NOI18N
-        jsString.append(id);
-        jsString.append("\');\n"); //NOI18N
+        jsString.append("require([\"")
+                .append(JavaScriptUtilities.getModuleName("upload")) //NOI18N
+                .append("\"], function(upload) {")
+                .append("upload.setEncodingType(\'") //NOI18N
+                .append(id)
+                .append("\'); });\n"); //NOI18N
 
         // Render JavaScript.
         ResponseWriter writer = context.getResponseWriter();

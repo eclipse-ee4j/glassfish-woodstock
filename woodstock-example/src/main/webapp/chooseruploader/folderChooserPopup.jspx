@@ -24,77 +24,77 @@
             <webuijsf:html>
                 <f:loadBundle basename="com.sun.webui.jsf.example.resources.Resources" var="msgs" />
                 <webuijsf:head id="folderChooserHead" title="#{msgs.folderChooser_title}">
-                <script>                  
-                 
-                   /**
-                     * This js function populates the directory field of parent screen.  
-                     * 
-                     */
-                    function fnPopulateDir(){
-             
-                    var dirPath=document.getElementById("folderFormPopup:folderContent:folderChooser:folderChooser_lookinField").value;
-                    var selfield = document.getElementById("folderFormPopup:folderContent:folderChooser:folderChooser_selectedField").value;
-                        if (selfield.length > 0) {
-                            if (((dirPath.lastIndexOf('\\')) == (dirPath.length-1))){
-                                     dirPath = dirPath + selfield;   
+                    <webuijsf:script url="/fixup.js" />
+                    <script>
 
-                            } else if ((dirPath.indexOf('\\')) >= 0 ) {
-                                     dirPath = dirPath + "\\" + selfield;  
-                            }
-                            if ( (dirPath.lastIndexOf('/')) == (dirPath.length-1)){
-                                     dirPath = dirPath + selfield;            
-                            } else if ((dirPath.lastIndexOf('/')) >= 0) {
-                                     dirPath = dirPath + "/" + selfield;
-                            }
+                        /**
+                        * This js function populates the directory field of parent screen.
+                        * 
+                        */
+                        function fnPopulateDir(){
+
+                        var dirPath=document.getElementById("folderFormPopup:folderContent:folderChooser:folderChooser_lookinField").value;
+                        var selfield = document.getElementById("folderFormPopup:folderContent:folderChooser:folderChooser_selectedField").value;
+                        if (selfield.length > 0) {
+                        if (((dirPath.lastIndexOf('\\')) == (dirPath.length-1))){
+                        dirPath = dirPath + selfield;
+
+                        } else if ((dirPath.indexOf('\\')) >= 0 ) {
+                        dirPath = dirPath + "\\" + selfield;
+                        }
+                        if ( (dirPath.lastIndexOf('/')) == (dirPath.length-1)){
+                        dirPath = dirPath + selfield;
+                        } else if ((dirPath.lastIndexOf('/')) >= 0) {
+                        dirPath = dirPath + "/" + selfield;
+                        }
                         }
                         window.opener.document.getElementById("uploaderFormPopup:dirPath_field").value = dirPath;
-                                window.close();    
-                    }
-               
-                 </script>
+                        window.close();
+                        }
+                    </script>
                 </webuijsf:head>
                 <webuijsf:body>
 
                     <webuijsf:form id="folderFormPopup">
 
-                   <!-- Masthead -->
-                   <webuijsf:masthead id="Masthead" productImageURL="/images/example_primary_masthead.png"
-                     productImageDescription="#{msgs.mastheadAltText}" 
-                     userInfo="test_user"
-                     serverInfo="test_server" secondary="true"/>     
+                        <!-- Masthead -->
+                        <webuijsf:masthead id="Masthead" productImageURL="/images/example_primary_masthead.png"
+                                           productImageDescription="#{msgs.mastheadAltText}"
+                                           userInfo="test_user"
+                                           serverInfo="test_server" secondary="true"/>
 
-                     <br />
-                     <!-- Alert for validator exception. -->
-                     <webuijsf:alert id="popupFolderChooserAlert" rendered="#{ChooserUploaderBean.errorsOnPage}" type="error" 
-                                     summary="#{ChooserUploaderBean.summaryMsg}">                              
-                          <webuijsf:message for="folderChooser" showDetail="true"/>
-                     </webuijsf:alert>
-                                                
-                     <!-- Page Title -->
-                     <webuijsf:contentPageTitle title="#{msgs.folderChooser_title}" id="folderContent">
-                       <webuijsf:markup tag="div" styleClass="#{themeStyles.CONTENT_MARGIN}">
-                            
-                       <!-- Folder Chooser -->
-                       <f:verbatim><![CDATA[<table><tr><td>]]></f:verbatim>
-                         <webuijsf:fileChooser id="folderChooser"
-			                 lookin="#{ChooserUploaderBean.lookin}"
-                                         selected="#{ChooserUploaderBean.selected}"
-                                         sortField="size" descending="true" 
-		                         multiple="false" folderChooser="true"/>
-                       <f:verbatim><![CDATA[</td></tr>]]></f:verbatim>
-                                                 
-                       <!--  Folder Chooser button -->
-                       <f:verbatim><![CDATA[<tr><td>]]></f:verbatim>
-                               <webuijsf:button id="select_folder"
-                                        text="#{msgs.folderChooser_buttonCaption}" 
-                                     onClick="fnPopulateDir()"
-                                     toolTip="#{msgs.folderChooser_buttonTooltip}"/>
-                       <f:verbatim><![CDATA[</td></tr></table>]]></f:verbatim>
-                       </webuijsf:markup>
-                     </webuijsf:contentPageTitle>
-                     <script>
-                         document.getElementById("folderForm:folderContent:folderChooser").setChooseButton("folderFormPopup:folderContent:select_folder");
-                     </script>
+                        <br />
+                        <!-- Alert for validator exception. -->
+                        <webuijsf:alert id="popupFolderChooserAlert" rendered="#{ChooserUploaderBean.errorsOnPage}" type="error"
+                                        summary="#{ChooserUploaderBean.summaryMsg}">
+                            <webuijsf:message for="folderChooser" showDetail="true"/>
+                        </webuijsf:alert>
+
+                        <!-- Page Title -->
+                        <webuijsf:contentPageTitle title="#{msgs.folderChooser_title}" id="folderContent">
+                            <webuijsf:markup tag="div" styleClass="#{themeStyles.CONTENT_MARGIN}">
+
+                                <!-- Folder Chooser -->
+                                <f:verbatim><![CDATA[<table><tr><td>]]></f:verbatim>
+                                <webuijsf:fileChooser id="folderChooser"
+                                                      lookin="#{ChooserUploaderBean.lookin}"
+                                                      selected="#{ChooserUploaderBean.selected}"
+                                                      sortField="size" descending="true" 
+                                                      multiple="false" folderChooser="true"/>
+                                <f:verbatim><![CDATA[</td></tr>]]></f:verbatim>
+
+                                <!--  Folder Chooser button -->
+                                <f:verbatim><![CDATA[<tr><td>]]></f:verbatim>
+                                <webuijsf:button id="select_folder"
+                                                 text="#{msgs.folderChooser_buttonCaption}" 
+                                                 onClick="fnPopulateDir()"
+                                                 toolTip="#{msgs.folderChooser_buttonTooltip}"/>
+                                <f:verbatim><![CDATA[</td></tr></table>]]></f:verbatim>
+                            </webuijsf:markup>
+                        </webuijsf:contentPageTitle>
+                        <script>
+                            document.getElementById("folderForm:folderContent:folderChooser").setChooseButton("folderFormPopup:folderContent:select_folder");
+                        </script>
                     </webuijsf:form>
                 </webuijsf:body> 
             </webuijsf:html>  

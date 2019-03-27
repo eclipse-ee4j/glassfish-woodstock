@@ -16,7 +16,7 @@
 
 define(["webui/suntheme/field"], function(field) {
     
-    return {    
+    return {
     /**
      * Use this function to get the HTML input element associated with the
      * Upload component.  
