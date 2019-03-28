@@ -106,7 +106,7 @@ public class ListboxRenderer extends ListRendererBase {
 
         String[] styles = new String[10];
         styles[0] = getOnChangeJavaScript((ListManager) component,
-                JavaScriptUtilities.getModuleName("listbox.changed"), //NOI18N
+                JavaScriptUtilities.getModuleName("listbox"), "changed",//NOI18N
                 context);
         if (monospace) {
             styles[1] = theme.getStyleClass(ThemeStyles.LIST_MONOSPACE);

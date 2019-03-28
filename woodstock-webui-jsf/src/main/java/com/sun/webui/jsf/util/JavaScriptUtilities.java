@@ -80,9 +80,6 @@ public class JavaScriptUtilities {
     /**
      * Get JavaScript used to configure module resources.
      *
-     * Note: Must be rendered before including widget.js in page, but after
-     * formElements.js.
-     *
      * @param writeIncludes Write includes for JavaScript debugging.
      */
     public static String getModuleConfig(boolean writeIncludes) {

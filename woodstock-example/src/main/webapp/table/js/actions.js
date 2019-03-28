@@ -27,24 +27,26 @@
 //
 // onClick="setTimeout('initAllRows(); disableActions()', 0)"
 function disableActions() {
-    // Disable table actions by default.
-    var table = document.getElementById("form1:table1");
-    var selections = table.getAllSelectedRowsCount(); // Hidden & visible selections.
-    var disabled = (selections > 0) ? false : true;
+    require(['webui/suntheme/dropDown'], function(dropDown){
+        // Disable table actions by default.
+        var table = document.getElementById("form1:table1");
+        var selections = table.getAllSelectedRowsCount(); // Hidden & visible selections.
+        var disabled = (selections > 0) ? false : true;
 
-    // Set disabled state for top actions.
-    document.getElementById("form1:table1:actionsTop:action1").setDisabled(disabled);
-    document.getElementById("form1:table1:actionsTop:action2").setDisabled(disabled);
-    document.getElementById("form1:table1:actionsTop:action3").setDisabled(disabled);
-    document.getElementById("form1:table1:actionsTop:action4").setDisabled(disabled);
-    webui.suntheme.dropDown.setDisabled("form1:table1:actionsTop:moreActions", disabled);
+        // Set disabled state for top actions.
+        document.getElementById("form1:table1:actionsTop:action1").setDisabled(disabled);
+        document.getElementById("form1:table1:actionsTop:action2").setDisabled(disabled);
+        document.getElementById("form1:table1:actionsTop:action3").setDisabled(disabled);
+        document.getElementById("form1:table1:actionsTop:action4").setDisabled(disabled);
+        dropDown.setDisabled("form1:table1:actionsTop:moreActions", disabled);
 
-    // Set disabled state for bottom actions.
-    document.getElementById("form1:table1:actionsBottom:action1").setDisabled(disabled);
-    document.getElementById("form1:table1:actionsBottom:action2").setDisabled(disabled);
-    document.getElementById("form1:table1:actionsBottom:action3").setDisabled(disabled);
-    document.getElementById("form1:table1:actionsBottom:action4").setDisabled(disabled);
-    webui.suntheme.dropDown.setDisabled("form1:table1:actionsBottom:moreActions", disabled);
+        // Set disabled state for bottom actions.
+        document.getElementById("form1:table1:actionsBottom:action1").setDisabled(disabled);
+        document.getElementById("form1:table1:actionsBottom:action2").setDisabled(disabled);
+        document.getElementById("form1:table1:actionsBottom:action3").setDisabled(disabled);
+        document.getElementById("form1:table1:actionsBottom:action4").setDisabled(disabled);
+        dropDown.setDisabled("form1:table1:actionsBottom:moreActions", disabled);
+    });
 }
 
 //

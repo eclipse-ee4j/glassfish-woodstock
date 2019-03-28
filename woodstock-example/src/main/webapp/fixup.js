@@ -15,9 +15,11 @@
  */
 
 // WORKAROUND for woostock butchered by the GlassFish admingui team...
-// define admingui.woodstock.HyperLinkSubmit
+// define admingui.woodstock.hyperLinkSubmit
+// // define admingui.woodstock.dropDownChanged
 admingui = {};
 admingui.woodstock = {};
-require(["webui/suntheme/hyperlink"], function(hyperlink) {
+require(["webui/suntheme/hyperlink", "webui/suntheme/dropDown"], function(hyperlink, dropDown) {
     admingui.woodstock.hyperLinkSubmit = hyperlink.submit;
+    admingui.woodstock.dropDownChanged = dropDown.changed;
 });

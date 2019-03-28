@@ -376,24 +376,31 @@ public abstract class ListRendererBase extends Renderer {
      * Append the webui component's own JavaScript function at the end
      * of any component-specific event handling code.
      * @param component The ListManager for which we create the function call
+     * @param moduleName The name of the dojo module
      * @param functionName The name of the function
      * @param context The FacesContext of this request
      */
     protected String getOnChangeJavaScript(ListManager component,
-            String functionName,
+            String moduleName, String functionName,
             FacesContext context) {
 
         String script = component.getOnChange();
         String id = component.getClientId(context);
-        StringBuffer onchangeBuffer = new StringBuffer(200);
+        StringBuilder onchangeBuffer = new StringBuilder(200);
         if (script != null) {
             onchangeBuffer.append(script).append(";");
         }
-        onchangeBuffer.append(functionName);
-        onchangeBuffer.append("(\'"); //NOI18N
-        onchangeBuffer.append(id);
-        onchangeBuffer.append("\'); "); //NOI18N
-        onchangeBuffer.append(" return false;"); //NOI18N
+        String functionCall = functionName + "('" + id + "');";
+        if(moduleName == null){
+            onchangeBuffer.append(functionCall);
+        } else {
+            onchangeBuffer.append("require(['")
+                    .append(moduleName)
+                    .append("'],function(list){ list.")
+                    .append(functionCall)
+                    .append("});") //NOI18N
+                    .append(" return false;"); //NOI18N
+        }
         return onchangeBuffer.toString();
     }
 

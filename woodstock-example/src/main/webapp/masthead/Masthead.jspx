@@ -86,7 +86,7 @@
 
                             <!-- Hyperlink to Popup window with Secondary Masthead -->
                             <webuijsf:hyperlink  id="hyperlinkpopup" text="#{msgs.masthead_link}" toolTip="#{msgs.masthead_linkToolTip}" immediate="true"
-                                                onClick="javascript: var popupWin = window.open('/example/faces/masthead/Popup.jsp','PopUpWindow','scrollbars,resizable,width=650,
+                                                onClick="javascript: var popupWin = window.open('/example/faces/masthead/Popup.jspx','PopUpWindow','scrollbars,resizable,width=650,
                              height=500,top='+((screen.height - (screen.height/1.618)) - (500/2))+',left='+((screen.width-650)/2) ); popupWin.focus();
                              if(window.focus){popupWin.focus();} return false;" />
                         </webuijsf:markup>

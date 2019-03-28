@@ -228,7 +228,7 @@ public class ButtonRenderer extends AbstractRenderer {
 
         try {
             // Append button properties.
-            StringBuffer buff = new StringBuffer(256);
+            StringBuilder buff = new StringBuilder(256);
             JSONObject json = new JSONObject();
             json.put("id", button.getClientId(context)).put("mini", button.isMini()).put("disabled", button.isDisabled()).put("secondary", !button.isPrimary()).put("icon", (button.getImageURL() != null || button.getIcon() != null));
 
@@ -472,8 +472,14 @@ public class ButtonRenderer extends AbstractRenderer {
         if (jsmethod == null) {
             return value;
         }
-        String event = "return this" + ".my" + jsmethod + "();"; //NOI18N
+        StringBuilder event = new StringBuilder();
+        event.append("require(['")
+                .append(JavaScriptUtilities.getModuleName("button"))
+                .append("'], function (button) {")
+                .append("button.addOnInitCallback(function(btnElt){btnElt.my")
+                .append(jsmethod)
+                .append("();});});");
 
-        return (value != null) ? value + ";" + event : event; //NOI18N
+        return (value != null) ? value + ";" + event.toString() : event.toString(); //NOI18N
     }
 }

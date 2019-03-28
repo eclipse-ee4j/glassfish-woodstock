@@ -14,7 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-//dojo.provide("webui.suntheme.cookie");
 define(function () {
 
     /**
@@ -42,13 +41,13 @@ define(function () {
             var cName = this.getValidCookieName(this.$cookieName);
             // Parse webui_ScrollCookie value.
             var pos = cookie.indexOf(cName + "=");
-            if (pos == -1) {
+            if (pos === -1) {
                 return null;
             }
 
             var start = pos + cName.length + 1;
             var end = cookie.indexOf(";", start);
-            if (end == -1) {
+            if (end === -1) {
                 end = cookie.length;
             }
 
@@ -62,7 +61,7 @@ define(function () {
         load: function () {
             // Get document cookie.
             var cookieVal = this.get();
-            if (cookieVal == null) {
+            if (cookieVal === null) {
                 return false;
             }
 
@@ -101,16 +100,16 @@ define(function () {
             // we'll use colons and ampersands for each variable we store.
             for (var prop in this) {
                 // Ignore properties that begin with '$' and methods.
-                if (prop.charAt(0) == '$' || typeof this[prop] == 'function') {
+                if (prop.charAt(0) === '$' || typeof this[prop] === 'function') {
                     continue;
                 }
-                if (cookieVal != "") {
+                if (cookieVal !== "") {
                     cookieVal += '&';
                 }
                 cookieVal += prop + ':' + escape(this[prop]);
             }
             var cookieString = this.getValidCookieName(this.$cookieName) + "=" + cookieVal;
-            if (this.$path != null) {
+            if (this.$path !== null) {
                 cookieString += ";path=" + this.$path;
             }
             // Store cookie value.
@@ -140,7 +139,7 @@ define(function () {
             this.load();
             scrollTo(this.left, this.top);
             return true;
-        }
+        };
 
         // This function will set the cookie value.
         this.set = function () {
@@ -154,14 +153,14 @@ define(function () {
             }
             // if the left and top scroll values are still null
             // try to extract it assuming the browser is IE
-            if (this.left == null && this.top == null) {
+            if (this.left === null && this.top === null) {
                 this.left = window.pageXOffset;
                 this.top = window.pageYOffset;
             }
             // Store cookie value.
             this.store();
             return true;
-        }
+        };
     };
 
     // Inherit cookie properties.
@@ -170,8 +169,6 @@ define(function () {
     return {
         cookie: cookie,
         scrollCookie: scrollCookie
-    }
+    };
 
 });
-
-//-->

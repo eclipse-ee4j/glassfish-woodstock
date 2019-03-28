@@ -14,114 +14,107 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-//dojo.provide("webui.suntheme.scheduler");
+require(["webui/suntheme/field"],function () {
 
-//dojo.require("webui.suntheme.formElements");
-define(["webui/suntheme/formElements"], function(formElements) {
-
-/** 
- * Define webui.suntheme.scheduler name space. 
- */ 
     return {
-    /**
-     * This function is used to initialize HTML element properties with the
-     * following Object literals.
-     *
-     * <ul>
-     *  <li>id</li>
-     *  <li>datePickerId</li>
-     *  <li>dateFieldId</li>
-     *  <li>dateClass</li>
-     *  <li>selectedClass</li>
-     *  <li>edgeClass</li>
-     *  <li>edgeSelectedClass</li>
-     *  <li>todayClass</li>
-     *  <li>dateFormat</li>
-     * </ul>
-     *
-     * Note: This is considered a private API, do not use.
-     *
-     * @param props Key-Value pairs of properties.
-     */
-    init: function(props) {
-        if (props == null || props.id == null) {
-            return false;
-        }
-        var domNode = document.getElementById(props.id);
-        if (domNode == null) {
-            return false;
-        }
-
-        // Set given properties on domNode.
-        Object.extend(domNode, props);
-        domNode.dateLinkId = props.datePickerId + ":dateLink"; 
-
-        // Set functions.
-        domNode.setSelected = this.setSelected;
-        domNode.setDateValue = this.setDateValue; 
-        domNode.isToday = this.isToday;	
-    },
-
-    setDateValue: function(value, link) {
-        thisfield.setValue(this.dateFieldId, value); 
-        this.setSelected(link);	
-    },
-
-    setSelected: function(link) {
-        if (link == null) {
-            return;
-        }
-
-        var dateLink;	
-        var linkNum = 0;	
-
-        // Remove any prior highlight 
-        while (linkNum < 42) {
-            dateLink = document.getElementById(this.dateLinkId + linkNum);  
-            if (dateLink == null) {
-                break;    
+        /**
+         * This function is used to initialize HTML element properties with the
+         * following Object literals.
+         *
+         * <ul>
+         *  <li>id</li>
+         *  <li>datePickerId</li>
+         *  <li>dateFieldId</li>
+         *  <li>dateClass</li>
+         *  <li>selectedClass</li>
+         *  <li>edgeClass</li>
+         *  <li>edgeSelectedClass</li>
+         *  <li>todayClass</li>
+         *  <li>dateFormat</li>
+         * </ul>
+         *
+         * Note: This is considered a private API, do not use.
+         *
+         * @param props Key-Value pairs of properties.
+         */
+        init: function (props) {
+            if (props === null || props.id === null) {
+                return false;
+            }
+            var domNode = document.getElementById(props.id);
+            if (domNode === null) {
+                return false;
             }
 
-            if (dateLink.className == this.edgeSelectedClass) {
-                dateLink.className = this.edgeClass;
-            } else if (dateLink.className == this.selectedClass) {
-                if (this.isToday(dateLink.title)) {
-                    dateLink.className = this.todayClass;
-                } else {
-                    dateLink.className = this.dateClass;
+            // Set given properties on domNode.
+            Object.extend(domNode, props);
+            domNode.dateLinkId = props.datePickerId + ":dateLink";
+
+            // Set functions.
+            domNode.setSelected = this.setSelected;
+            domNode.setDateValue = this.setDateValue;
+            domNode.isToday = this.isToday;
+        },
+
+        setDateValue: function (value, link) {
+            field.setValue(this.dateFieldId, value);
+            this.setSelected(link);
+        },
+
+        setSelected: function (link) {
+            if (link === null) {
+                return;
+            }
+
+            var dateLink;
+            var linkNum = 0;
+
+            // Remove any prior highlight 
+            while (linkNum < 42) {
+                dateLink = document.getElementById(this.dateLinkId + linkNum);
+                if (dateLink === null) {
+                    break;
                 }
+
+                if (dateLink.className === this.edgeSelectedClass) {
+                    dateLink.className = this.edgeClass;
+                } else if (dateLink.className === this.selectedClass) {
+                    if (this.isToday(dateLink.title)) {
+                        dateLink.className = this.todayClass;
+                    } else {
+                        dateLink.className = this.dateClass;
+                    }
+                }
+                linkNum++;
             }
-            linkNum++;
-        }
 
-        // apply the selected style to highlight the selected link
-        if (link.className == this.dateClass || 
-            link.className == this.todayClass) {	
-            link.className = this.selectedClass;
-        } else if (link.className = this.edgeClass) {
-            link.className = this.edgeSelectedClass;
-        }
-        this.currentSelection = link;	
-    },
+            // apply the selected style to highlight the selected link
+            if (link.className === this.dateClass ||
+                    link.className === this.todayClass) {
+                link.className = this.selectedClass;
+            } else if (link.className === this.edgeClass) {
+                link.className = this.edgeSelectedClass;
+            }
+            this.currentSelection = link;
+        },
 
-    // Find out if date is today's date
-    isToday: function(date) {
-        var todaysDate = new Date();
-        var pattern = new String(this.dateFormat); 
-        var yearIndex = pattern.indexOf("yyyy"); 
-        var monthIndex = pattern.indexOf("MM"); 
-        var dayIndex = pattern.indexOf("dd"); 
-        var currYear = todaysDate.getFullYear(); 
-        var currMonth = todaysDate.getMonth() + 1; 
-        var currDay = todaysDate.getDate(); 
+        // Find out if date is today's date
+        isToday: function (date) {
+            var todaysDate = new Date();
+            var pattern = new String(this.dateFormat);
+            var yearIndex = pattern.indexOf("yyyy");
+            var monthIndex = pattern.indexOf("MM");
+            var dayIndex = pattern.indexOf("dd");
+            var currYear = todaysDate.getFullYear();
+            var currMonth = todaysDate.getMonth() + 1;
+            var currDay = todaysDate.getDate();
 
-        if (currYear == parseInt(date.substr(yearIndex, 4))
-            && currMonth == parseInt(date.substr(monthIndex, 2))
-                && currDay == parseInt(date.substr(dayIndex, 2))) {
-            return true;
+            if (currYear === parseInt(date.substr(yearIndex, 4))
+                    && currMonth === parseInt(date.substr(monthIndex, 2))
+                    && currDay === parseInt(date.substr(dayIndex, 2))) {
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
-}
+    };
 });
-//-->

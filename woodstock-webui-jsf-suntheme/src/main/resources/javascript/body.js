@@ -14,10 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-//dojo.provide("webui.suntheme.body");
-
-//dojo.require("webui.suntheme.common");
-//dojo.require("webui.suntheme.cookie");
 define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, cookie) {
 
     return {
@@ -112,7 +108,7 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
              */
             this.setFocusById = function (fid) {
 
-                if (fid == null || fid.length == 0) {
+                if (fid === null || fid.length === 0) {
                     return false;
                 }
                 return this.setFocusByElement(window.document.getElementById(fid));
@@ -124,7 +120,7 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
              */
             this.setFocusByElement = function (focusElement) {
 
-                if (focusElement == null || !this.canAcceptFocus(focusElement)) {
+                if (focusElement === null || !this.canAcceptFocus(focusElement)) {
                     return false;
                 }
 
@@ -215,8 +211,8 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
             this.canAcceptFocus = function (element) {
                 var result = false;
                 try {
-                    result = element != null && element.focus && !element.disabled &&
-                            element.type != "hidden" &&
+                    result = element !== null && element.focus && !element.disabled &&
+                            element.type !== "hidden" &&
                             common.isVisible(element.id);
                 } catch (e) {
                 }
@@ -235,7 +231,7 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 // confused.
                 //
 
-                if (focusElement == null) {
+                if (focusElement === null) {
                     return false;
                 }
                 // Get the form that contains the focus element.
@@ -249,7 +245,7 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                     //
                     try {
                         var ffield = fform.elements[this.focusElementFieldId];
-                        if (ffield != null) {
+                        if (ffield !== null) {
                             ffield.value = focusElement.id;
                             continue;
                         }
@@ -292,7 +288,7 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 // # char found, anchor being used. forego scrolling.
                 // CR 6342635. 
                 //
-                if (window.location.href.indexOf('#') != -1) {
+                if (window.location.href.indexOf('#') !== -1) {
                     this.scrollCookie.restore();
                 }
             };
@@ -320,10 +316,10 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                     // We have to hard code "1" as the Node.ELEMENT_NODE in
                     // ie, because ie does not make the constant accessible.
                     //
-                    isElementNode = (node == null ? false : node.nodeType == 1);
+                    isElementNode = (node === null ? false : node.nodeType === 1);
                 } else {
                     node = evt.target;
-                    isElementNode = node.nodeType == Node.ELEMENT_NODE;
+                    isElementNode = node.nodeType === Node.ELEMENT_NODE;
                 }
 
                 if (isElementNode) {
@@ -366,7 +362,9 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 // hidden fields by catching the 'element.focus()' in
                 // setDefaultFocus
                 //
-                window.setTimeout(function(){ common.body.setDefaultFocus(); }
+                window.setTimeout(function () {
+                    common.body.setDefaultFocus();
+                }
                 , 10);
 
                 // Set up the scroll position after the focus has been
@@ -399,5 +397,3 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
         }
     }
 });
-
-//-->

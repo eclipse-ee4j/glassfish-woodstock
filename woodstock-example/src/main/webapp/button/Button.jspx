@@ -41,10 +41,12 @@
               //
               function disableButton(buttonID, hiddenFieldID, disable) {
                   (document.getElementById(theForm + ":" + buttonID)).setDisabled(disable);
-                  if (disable)
-                      webui.suntheme.field.setValue(theForm + ":" + hiddenFieldID, 'true');
-                  else
-                       webui.suntheme.field.setValue(theForm + ":" + hiddenFieldID, 'false');
+                  require(['webui/suntheme/field'], function(field){
+                    if (disable)
+                        field.setValue(theForm + ":" + hiddenFieldID, 'true');
+                    else
+                        field.setValue(theForm + ":" + hiddenFieldID, 'false');
+                  });
               }
 
               // Utility for setting enable/disable state for all buttons.
@@ -55,10 +57,12 @@
                   disableButton('PrimaryMiniButton','primaryMiniButtonDisabled', disable);
                   disableButton('SecondaryButton','secondaryButtonDisabled', disable);
                   disableButton('SecondaryMiniButton','secondaryMiniButtonDisabled', disable);
-                  webui.suntheme.checkbox.setChecked('form1:PrimaryCheckbox', !disable);
-                  webui.suntheme.checkbox.setChecked('form1:PrimaryMiniCheckbox', !disable);
-                  webui.suntheme.checkbox.setChecked('form1:SecondaryCheckbox', !disable);
-                  webui.suntheme.checkbox.setChecked('form1:SecondaryMiniCheckbox', !disable);
+                  require(['webui/suntheme/checkbox'], function(checkbox){
+                    checkbox.setChecked('form1:PrimaryCheckbox', !disable);
+                    checkbox.setChecked('form1:PrimaryMiniCheckbox', !disable);
+                    checkbox.setChecked('form1:SecondaryCheckbox', !disable);
+                    checkbox.setChecked('form1:SecondaryMiniCheckbox', !disable);
+                  });
               }
             </script>
           ]]></f:verbatim>
@@ -237,13 +241,16 @@
                             -->
                             <webuijsf:dropDown id="TestCaseMenu" items="#{ButtonBean.testCaseOptions}"
                                                actionExpression="#{ButtonBean.testCaseActionHandler}"
-                                               onChange="var selected=webui.suntheme.dropDown.getSelectedValue(theForm + ':TestCaseMenu');
-                        if (selected == 'button_testCase_disableAll') {
-                            disableAll(true);
-                        }
-                        if (selected == 'button_testCase_enableAll') {
-                            disableAll(false);
-                        }"
+                                               onChange="
+                            require(['webui/suntheme/dropDown'], function(dropDown){
+                                var selected=dropDown.getSelectedValue(theForm + ':TestCaseMenu');
+                                if (selected == 'button_testCase_disableAll') {
+                                    disableAll(true);
+                                }
+                                if (selected == 'button_testCase_enableAll') {
+                                    disableAll(false);
+                                }
+                            });"
                                                submitForm="true"
                                                forgetValue="true"/>
                         </webuijsf:markup>

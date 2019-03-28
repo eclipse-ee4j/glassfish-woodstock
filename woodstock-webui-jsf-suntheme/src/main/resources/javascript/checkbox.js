@@ -14,46 +14,46 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-define(["webui/suntheme/rbcb"], function(rbcb) {
-    
+define(["webui/suntheme/rbcb"], function (rbcb) {
+
     return {
-/**
-     * Set the disabled state for the given checkbox element Id. If the disabled 
-     * state is set to true, the element is shown with disabled styles.
-     *
-     * @param elementId The element Id
-     * @param disabled true or false
-     * @return true if successful; otherwise, false
-     */
-    setDisabled: function(elementId, disabled) {
-        return rbcb.setDisabled(elementId, disabled,
-            "checkbox", "Cb", "CbDis");
-    },
+        /**
+         * Set the disabled state for the given checkbox element Id. If the disabled 
+         * state is set to true, the element is shown with disabled styles.
+         *
+         * @param elementId The element Id
+         * @param disabled true or false
+         * @return true if successful; otherwise, false
+         */
+        setDisabled: function (elementId, disabled) {
+            return rbcb.setDisabled(elementId, disabled,
+                    "checkbox", "Cb", "CbDis");
+        },
 
-    /** 
-     * Set the disabled state for all the checkboxes in the check box
-     * group identified by controlName. If disabled
-     * is set to true, the check boxes are shown with disabled styles.
-     *
-     * @param controlName The checkbox group control name
-     * @param disabled true or false
-     * @return true if successful; otherwise, false
-     */
-    setGroupDisabled: function(controlName, disabled) {    
-        return rbcb.setGroupDisabled(controlName,
-            disabled, "checkbox", "Cb", "CbDis");
-    },
+        /** 
+         * Set the disabled state for all the checkboxes in the check box
+         * group identified by controlName. If disabled
+         * is set to true, the check boxes are shown with disabled styles.
+         *
+         * @param controlName The checkbox group control name
+         * @param disabled true or false
+         * @return true if successful; otherwise, false
+         */
+        setGroupDisabled: function (controlName, disabled) {
+            return rbcb.setGroupDisabled(controlName,
+                    disabled, "checkbox", "Cb", "CbDis");
+        },
 
-    /**
-     * Set the checked property for a checkbox with the given element Id.
-     *
-     * @param elementId The element Id
-     * @param checked true or false
-     * @return true if successful; otherwise, false
-     */
-    setChecked: function(elementId, checked) {
-        return rbcb.setChecked(elementId, checked,
-            "checkbox");
-    }
+        /**
+         * Set the checked property for a checkbox with the given element Id.
+         *
+         * @param elementId The element Id
+         * @param checked true or false
+         * @return true if successful; otherwise, false
+         */
+        setChecked: function (elementId, checked) {
+            return rbcb.setChecked(elementId, checked,
+                    "checkbox");
+        }
     };
 });

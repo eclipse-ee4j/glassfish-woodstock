@@ -640,10 +640,8 @@ public class EditableList extends WebuiInput implements ListManager,
         if (DEBUG) {
             log("initFieldFacet()"); //NOI18N
         }
-        // FIXME should use formElements.js function for return key
-        //
         String jsObjectName = getJavaScriptObjectName();
-        StringBuffer onkeypressBuffer = new StringBuffer(128);
+        StringBuilder onkeypressBuffer = new StringBuilder(128);
         onkeypressBuffer.append("if(event.keyCode == 13) { ");  //NOI18N      
         onkeypressBuffer.append(jsObjectName);
         onkeypressBuffer.append(ADD_FUNCTION);
@@ -651,14 +649,14 @@ public class EditableList extends WebuiInput implements ListManager,
 
         field.setOnKeyPress(onkeypressBuffer.toString());
 
-        StringBuffer onfocusBuffer = new StringBuffer(128);
+        StringBuilder onfocusBuffer = new StringBuilder(128);
         onfocusBuffer.append(jsObjectName);
         onfocusBuffer.append(SET_ADD_DISABLED_FUNCTION);
         onfocusBuffer.append("return false;"); //NOI18N
 
         field.setOnFocus(onfocusBuffer.toString());
 
-        StringBuffer onfocuslostBuffer = new StringBuffer(128);
+        StringBuilder onfocuslostBuffer = new StringBuilder(128);
         onfocuslostBuffer.append(jsObjectName);
         onfocuslostBuffer.append(ENABLE_ADD_FUNCTION);
         onfocuslostBuffer.append("return false;"); //NOI18N
@@ -750,7 +748,7 @@ public class EditableList extends WebuiInput implements ListManager,
         // The comma format READ_ONLY_SEPARATOR should be part of the theme
         // and/or configurable by the application
         //
-        StringBuffer valueBuffer = new StringBuffer(200);
+        StringBuilder valueBuffer = new StringBuilder(200);
 
         Iterator iterator = getListItems(context, false);
 
@@ -789,7 +787,7 @@ public class EditableList extends WebuiInput implements ListManager,
     }
 
     public String getOnChange() {
-        StringBuffer onchangeBuffer = new StringBuffer(128);
+        StringBuilder onchangeBuffer = new StringBuilder(128);
         onchangeBuffer.append(getJavaScriptObjectName());
         onchangeBuffer.append(ENABLE_REMOVE_FUNCTION);
         return onchangeBuffer.toString();

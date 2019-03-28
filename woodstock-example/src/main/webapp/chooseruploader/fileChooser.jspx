@@ -105,7 +105,11 @@
                             </webuijsf:markup>
                         </webuijsf:contentPageTitle>
                         <script>
-                            document.getElementById("fileForm:chooserContentPage:fileChooser").setChooseButton("fileForm:chooserContentPage:file_button");
+                            require(['webui/suntheme/fileChooser'], function(fileChooser) {
+                                fileChooser.addOnInitCallback(document.getElementById("fileForm:chooserContentPage:fileChooser"), function(elt){
+                                    elt.setChooseButton("fileForm:chooserContentPage:file_button");
+                                });
+                            });
                         </script>
                     </webuijsf:form>
                 </webuijsf:body>

@@ -38,8 +38,8 @@
                                            userInfo="test_user" 
                                            serverInfo="test_server"
                                            productImageDescription="#{msgs.mastheadAltText}" />
-          
-                        <!-- Breadcrumbs -->   
+
+                        <!-- Breadcrumbs -->
                         <webuijsf:breadcrumbs id="breadcrumbs">
                             <webuijsf:hyperlink id="indexLink"
                                                 text="#{msgs.index_title}"
@@ -49,17 +49,17 @@
                                                 onMouseOut="javascript: window.status=''; return true" />
                             <webuijsf:hyperlink id="exampleLink" text="#{msgs.menu_title}"/>
                         </webuijsf:breadcrumbs>
-          
+
                         <!-- Alert -->
                         <webuijsf:alert id="alert"
                                         summary="#{msgs.menu_alertElement}"
                                         type="info"
                                         rendered="#{MenuListBean.alertRendered}"
                                         detail="#{MenuListBean.alertDetail}" />
-            
+
                         <!-- Content Page Title -->
-                        <webuijsf:contentPageTitle id="contentPageTitle" title="#{msgs.menu_title}"/>           
-          
+                        <webuijsf:contentPageTitle id="contentPageTitle" title="#{msgs.menu_title}"/>
+
                         <webuijsf:markup tag="div" styleClass="#{themeStyles.CONTENT_MARGIN}">
                             <br />
                             <br />
@@ -68,25 +68,25 @@
                                     <td valign="top">
                                         <f:verbatim><![CDATA[ &nbsp; ]]></f:verbatim>
                                     </td>
-                                    <td>                
-                                        <!-- Action Jump Menu -->                     
+                                    <td>
+                                        <!-- Action Jump Menu -->
                                         <webuijsf:dropDown id="jumpMenu"
-                                                           toolTip="#{msgs.menu_jumpMenuTitle}"                 
+                                                           toolTip="#{msgs.menu_jumpMenuTitle}"
                                                            submitForm="true"
                                                            immediate="true"
                                                            forgetValue="true"
                                                            disabled="#{MenuListBean.jumpMenuDisabled}"
                                                            selected="#{MenuListBean.jumpMenuSelectedOption}"
-                                                           items="#{MenuListBean.jumpMenuOptions}"                      
-                                                           actionListenerExpression="#{MenuListBean.processJumpMenuSelection}" />                     
+                                                           items="#{MenuListBean.jumpMenuOptions}"
+                                                           actionListenerExpression="#{MenuListBean.processJumpMenuSelection}" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <f:verbatim><![CDATA[ &nbsp; ]]></f:verbatim>
                                     </td>
-                                    <td>                   
-                                        <webuijsf:helpInline id="jumpMenuHelp" type="field" text="#{msgs.menu_jumpMenuHelp}" />                                  
+                                    <td>
+                                        <webuijsf:helpInline id="jumpMenuHelp" type="field" text="#{msgs.menu_jumpMenuHelp}" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -100,29 +100,29 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top">                
-                                        <!-- Standard Menu Label --> 
+                                    <td valign="top">
+                                        <!-- Standard Menu Label -->
                                         <webuijsf:label id="standardMenuLabel"
                                                         for="standardMenu"
                                                         style="padding-right:10px;"
-                                                        text="#{msgs.menu_standardMenuLabel}" />                
+                                                        text="#{msgs.menu_standardMenuLabel}" />
                                     </td>
-                                    <td>                
-                                        <!-- Standard Menu -->                     
+                                    <td>
+                                        <!-- Standard Menu -->
                                         <webuijsf:dropDown id="standardMenu"
                                                            toolTip="#{msgs.menu_standardMenuTitle}"
                                                            disabled="#{MenuListBean.standardMenuDisabled}"
                                                            selected="#{MenuListBean.standardMenuSelectedOption}"
                                                            items="#{MenuListBean.standardMenuOptions}"
-                                                           actionListenerExpression="#{MenuListBean.processStandardMenuSelection}" />                     
+                                                           actionListenerExpression="#{MenuListBean.processStandardMenuSelection}" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <f:verbatim><![CDATA[ &nbsp; ]]></f:verbatim>
                                     </td>
-                                    <td>    
-                                        <webuijsf:helpInline id="standardMenuHelp" type="field" text="#{msgs.menu_standardMenuHelp}" />                
+                                    <td>
+                                        <webuijsf:helpInline id="standardMenuHelp" type="field" text="#{msgs.menu_standardMenuHelp}" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -136,28 +136,30 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top">                
-                                        <!-- Scrolling List Label -->  
+                                    <td valign="top">
+                                        <!-- Scrolling List Label -->
                                         <webuijsf:label id="scrollListLabel"
                                                         for="scrollList"
                                                         style="padding-right:10px;"
-                                                        text="#{msgs.menu_selectableListLabel}" />                
+                                                        text="#{msgs.menu_selectableListLabel}" />
                                     </td>
                                     <td>
-                                        <!-- Scrolling List -->                     
-                                        <webuijsf:listbox id="scrollList"                    
+                                        <!-- Scrolling List -->
+                                        <webuijsf:listbox id="scrollList"
                                                           toolTip="#{menu_selectableListTitle}"
                                                           selected="#{MenuListBean.listboxSelectedOption}"
-                                                          disabled="#{MenuListBean.listboxDisabled}"   
+                                                          disabled="#{MenuListBean.listboxDisabled}"
                                                           items="#{MenuListBean.listboxOptions}"
                                                           onChange="javascript:
-                                var value = webui.suntheme.listbox.getSelectedValue('form:scrollList');                                
-                                if (value == 'option_0_value') {
-                                    (document.getElementById('form:text')).innerHTML='#{msgs.menu_noOption}'; 
-                                } else {
-                                    (document.getElementById('form:text')).innerHTML='#{msgs.menu_staticText} ' + value;
-                                } 
-                                return true;" />                                      
+                                require(['webui/suntheme/listbox'], function(listbox){
+                                    var value = listbox.getSelectedValue('form:scrollList');
+                                    if (value == 'option_0_value') {
+                                        (document.getElementById('form:text')).innerHTML='#{msgs.menu_noOption}';
+                                    } else {
+                                        (document.getElementById('form:text')).innerHTML='#{msgs.menu_staticText} ' + value;
+                                    }
+                                });
+                                return true;" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -168,38 +170,38 @@
                                 <tr>
                                     <td>
                                         <f:verbatim><![CDATA[ &nbsp; ]]></f:verbatim>
-                                    </td>                
-                                    <td align="left">                                                       
-                                        <!-- Static Text for showing the value of the selected option. -->                    
-                                        <webuijsf:staticText id="text" text="" />                                        
                                     </td>
-                                </tr>                
+                                    <td align="left">
+                                        <!-- Static Text for showing the value of the selected option. -->
+                                        <webuijsf:staticText id="text" text="" />
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td colspan="2">
                                         <f:verbatim><![CDATA[ &nbsp; ]]></f:verbatim>
                                     </td>
-                                </tr>              
+                                </tr>
                             </table>
-               
-                            <webuijsf:panelGroup id="pageActionsGroup" block="true" style="padding:25px 0px 0px 0px;">     
-                                <!-- Submit Button -->            
-                                <webuijsf:button id="SubmitButton"                       
+
+                            <webuijsf:panelGroup id="pageActionsGroup" block="true" style="padding:25px 0px 0px 0px;">
+                                <!-- Submit Button -->
+                                <webuijsf:button id="SubmitButton"
                                                  text="#{msgs.menu_submitButton}"
                                                  actionExpression="#{MenuListBean.showMenuListResults}" />
-                  
-                                <!-- Test Case Menu -->                     
-                                <webuijsf:dropDown id="testCaseMenu"     
+
+                                <!-- Test Case Menu -->
+                                <webuijsf:dropDown id="testCaseMenu"
                                                    immediate="true"
                                                    submitForm="true"
-                                                   forgetValue="true"                     
+                                                   forgetValue="true"
                                                    items="#{MenuListBean.testCaseOptions}"
-                                                   actionListenerExpression="#{MenuListBean.processTestCaseMenuSelection}" /> 
-                            </webuijsf:panelGroup>     
-                            
-                        </webuijsf:markup>          
+                                                   actionListenerExpression="#{MenuListBean.processTestCaseMenuSelection}" />
+                            </webuijsf:panelGroup>
+
+                        </webuijsf:markup>
                     </webuijsf:form>
                 </webuijsf:body>
-            </webuijsf:html>  
+            </webuijsf:html>
         </webuijsf:page>
     </f:view>
 </jsp:root>

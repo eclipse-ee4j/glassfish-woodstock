@@ -18,16 +18,16 @@
 
 /* CHECKBOXES AND RADIO BUTTONS */
 .CbLbl_sun4, CbLblDis_sun4 {
-	vertical-align: 1px;
+    vertical-align: 1px;
 }
 .CbImg_sun4, .CbImgDis_sun4 {
-	vertical-align: -6px;
+    vertical-align: -6px;
 }
 
 /* PROPERTY SHEET */
 div.ConTblCl2Div_sun4 .CbSpn_sun4 .CbLbl_sun4 {
-	vertical-align:middle;
+    vertical-align:middle;
 }
 div.ConTblCl2Div_sun4 .CbSpn_sun4 input[type=checkbox] {
-	margin-top:-5px;
+    margin-top:-5px;
 }

@@ -484,14 +484,11 @@ public class EditableListRenderer extends ListRendererBase {
             log("getStyles()"); //NOI18N
         }
         Theme theme = ThemeUtilities.getTheme(context);
-
-        StringBuffer onchangeBuffer = new StringBuffer(128);
-        onchangeBuffer.append(((EditableList) component).getOnChange());
-        onchangeBuffer.append(JavaScriptUtilities.getModuleName("listbox.changed")); //NOI18N
-        onchangeBuffer.append("('"); //NOI18N
-        onchangeBuffer.append(component.getClientId(context));
-        onchangeBuffer.append("'); return false;"); //NOI18N
-
+        StringBuilder onchangeBuffer = new StringBuilder(128);
+        onchangeBuffer.append(((EditableList) component).getOnChange())
+                .append(        getOnChangeJavaScript((EditableList) component,
+                JavaScriptUtilities.getModuleName("listbox"), "changed", //NOI18N
+                context));
         String[] styles = new String[17];
         styles[0] = onchangeBuffer.toString(); //NOI18N
         styles[1] = theme.getStyleClass(ThemeStyles.LIST);

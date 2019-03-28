@@ -34,6 +34,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <dojo.version>1.15.0</dojo.version>
     </properties>
 
     <licenses>
@@ -75,6 +76,7 @@
         <module>woodstock-webui-jsf-suntheme</module>
         <module>woodstock-example</module>
         <module>woodstock-dt</module>
+        <module>woodstock-external</module>
     </modules>
 
     <build>
@@ -92,6 +94,16 @@
                             <arg>-Xlint:unchecked</arg>
                         </compilerArgs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -298,6 +310,11 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.woodstock.dependlibs</groupId>
+                <artifactId>prototype</artifactId>
+                <version>1.7.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

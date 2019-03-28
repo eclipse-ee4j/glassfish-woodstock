@@ -10,6 +10,4 @@ package com.sun.rave.designtime.faces;
  * @author rgrecour
  */
 public class FacetDescriptor {
-    
 }
-    

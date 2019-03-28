@@ -28,9 +28,8 @@
                     <script>
 
                         /**
-                        * This js function populates the directory field of parent screen.
-                        * 
-                        */
+                         * This js function populates the directory field of parent screen.
+                         */
                         function fnPopulateDir(){
 
                         var dirPath=document.getElementById("folderFormPopup:folderContent:folderChooser:folderChooser_lookinField").value;
@@ -93,7 +92,11 @@
                             </webuijsf:markup>
                         </webuijsf:contentPageTitle>
                         <script>
-                            document.getElementById("folderForm:folderContent:folderChooser").setChooseButton("folderFormPopup:folderContent:select_folder");
+                            require(['webui/suntheme/fileChooser'], function(fileChooser) {
+                                fileChooser.addOnInitCallback(document.getElementById("folderForm:folderContent:folderChooser"), function(elt){
+                                    elt.setChooseButton("folderFormPopup:folderContent:select_folder");
+                                });
+                            });
                         </script>
                     </webuijsf:form>
                 </webuijsf:body> 
