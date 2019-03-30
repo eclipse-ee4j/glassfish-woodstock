@@ -30,45 +30,32 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 /**
- * <p>This class is responsible for rendering the {@link Anchor} component for the
- * HTML Render Kit.</p> <p> The {@link Anchor} component can be used as an anchor</p>
+ * This class is responsible for rendering the {@link Anchor} component for the
+ * HTML Render Kit.
+ * The {@link Anchor} component can be used as an anchor.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Anchor"))
 public class AnchorRenderer extends AbstractRenderer {
 
-    // -------------------------------------------------------- Renderer Methods
     /**
-     * <p>Render the start of an anchor (Anchor) tag.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * start should be rendered
-     * @exception IOException if an input/output error occurs
+     * Id of the transparent image to be rendered for IE browsers.
      */
-    /*
-     *<p> Id of the transparent image to be rendered for IE browsers
+    private static final String ANCHOR_IMAGE = "_img";
+
+    /**
+     * Icon displayed during design time.
      */
-    private static String ANCHOR_IMAGE = "_img";   //NOI18N
+    private static final String DESIGN_TIME_ICON =
+            "/com/sun/webui/jsf/design/resources/AnchorIcon.gif";
 
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
 
         Anchor anchor = (Anchor) component;
-        writer.startElement("a", anchor); //NOI18N
-
+        writer.startElement("a", anchor);
     }
 
-    /**
-     * <p>Render the attributes for an anchor tag.  The onclick attribute will contain
-     * extra javascript that will appropriately submit the form if the URL field is
-     * not set.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * attributes should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderAttributes(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -80,21 +67,21 @@ public class AnchorRenderer extends AbstractRenderer {
         // Design time only behavior - display an icon so that this
         // component has a visual appearance in the IDE
         if (Beans.isDesignTime()) {
-            writer.startElement("img", anchor); // NOI18N
+            writer.startElement("img", anchor);
             try {
-                URL url = this.getClass().getResource("/com/sun/webui/jsf/design/resources/AnchorIcon.gif"); // NOI18N
-                writer.writeURIAttribute("src", url, null); // NOI18N
-            } catch (Exception e) {
+                URL url = this.getClass().getResource(DESIGN_TIME_ICON);
+                writer.writeURIAttribute("src", url, null);
+            } catch (IOException e) {
                 System.out.println("Error getting anchor icon: " + e);
                 e.printStackTrace(System.out);
             }
-            writer.endElement("img"); // NOI18N
+            writer.endElement("img");
         }
 
         // Render core and pass through attributes as necessary
         // NOTE - id is being rendered "as is" instead of the normal convention
         // that we render the client id.
-        writer.writeAttribute("id", id, "id"); //NOI8N
+        writer.writeAttribute("id", id, "id");
         String style = anchor.getStyle();
         String styleClass = anchor.getStyleClass();
         if (styleClass != null) {
@@ -106,18 +93,9 @@ public class AnchorRenderer extends AbstractRenderer {
 
         // XHTML requires that this been the same as the id and it may
         // removed.
-        writer.writeAttribute("name", id, null); //NO18N
-
+        writer.writeAttribute("name", id, null);
     }
 
-    /**
-     * <p>Close off the anchor tag.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * end should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -132,8 +110,7 @@ public class AnchorRenderer extends AbstractRenderer {
 
         // End the appropriate element
         Anchor anchor = (Anchor) component;
-        writer.endElement("a"); //NOI18N
+        writer.endElement("a");
 
     }
-    // --------------------------------------------------------- Private Methods
 }

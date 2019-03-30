@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import java.text.*;
@@ -21,11 +20,10 @@ import java.util.*;
 
 import javax.faces.context.FacesContext;
 
-
 /**
- * Factory class for retrieving server-side i18n messages within the JSF 
- * framework. Note that the ServletResponse locale, content type, and character 
- * encoding are not set here. Since tags may be used outside the Sun Web 
+ * Factory class for retrieving server-side i18n messages within the JSF
+ * framework. Note that the ServletResponse locale, content type, and character
+ * encoding are not set here. Since tags may be used outside the Sun Web
  * Console, that task will most likely be done in the console's session filter.
  * <p>
  * Example:
@@ -34,10 +32,12 @@ import javax.faces.context.FacesContext;
  * w.write(MessageUtil.getMessage("com.sun.webui.jsf.Resources", "key"));
  * </code>
  *
- * @author Dan Labrecque
  */
-public class MessageUtil extends Object {  
-    // Default constructor.
+public class MessageUtil {
+
+    /**
+     * Create a new instance.
+     */
     protected MessageUtil() {
     }
 
@@ -48,7 +48,8 @@ public class MessageUtil extends Object {
      * @param baseName The fully qualified name of the resource bundle.
      * @param key The key for the desired string.
      * @throws NullPointerException if context or baseName is null.
-     */     
+     * @return String
+     */
     public static String getMessage(FacesContext context, String baseName,
             String key) {
         return getMessage(context, baseName, key, null);
@@ -62,11 +63,12 @@ public class MessageUtil extends Object {
      * @param key The key for the desired string.
      * @param args The arguments to be inserted into the string.
      * @throws NullPointerException if context or baseName is null.
-     */    
-    public static String getMessage(FacesContext context, String baseName, 
+     * @return String
+     */
+    public static String getMessage(FacesContext context, String baseName,
             String key, Object args[]) {
         return getMessage(getLocale(context), baseName, key, args);
-    }  
+    }
 
     /**
      * Get a message from a desired resource bundle.
@@ -74,7 +76,8 @@ public class MessageUtil extends Object {
      * @param baseName The fully qualified name of the resource bundle.
      * @param key The key for the desired string.
      * @throws NullPointerException if baseName is null.
-     */    
+     * @return String
+     */
     public static String getMessage(String baseName, String key) {
         return getMessage(baseName, key, null);
     }
@@ -86,10 +89,11 @@ public class MessageUtil extends Object {
      * @param key The key for the desired string.
      * @param args The arguments to be inserted into the string.
      * @throws NullPointerException if baseName is null.
+     * @return String
      */
-    public static String getMessage(String baseName, String key, 
+    public static String getMessage(String baseName, String key,
             Object args[]) {
-	return getMessage(getLocale(), baseName, key, args);
+        return getMessage(getLocale(), baseName, key, args);
     }
 
     /**
@@ -100,11 +104,12 @@ public class MessageUtil extends Object {
      * @param key The key for the desired string.
      * @param args The arguments to be inserted into the string.
      * @throws NullPointerException if locale or baseName is null.
+     * @return String
      */
     public static String getMessage(Locale locale, String baseName, String key,
             Object args[]) {
-        ClassLoader loader =
-                ClassLoaderFinder.getCurrentLoader(MessageUtil.class);
+        ClassLoader loader
+                = ClassLoaderFinder.getCurrentLoader(MessageUtil.class);
         // First try the context CL
         return getMessage(locale, baseName, key, args, loader);
     }
@@ -118,54 +123,60 @@ public class MessageUtil extends Object {
      * @param args The arguments to be inserted into the string.
      * @param loader The class loader used to load the resource bundle.
      * @throws NullPointerException if locale, baseName, or loader is null.
+     * @return String
      */
-    public static String getMessage(Locale locale, String baseName, String key, 
+    public static String getMessage(Locale locale, String baseName, String key,
             Object args[], ClassLoader loader) {
-        if (key == null)
+        if (key == null) {
             return key;
-        else if (locale == null || baseName == null || loader == null)
+        } else if (locale == null || baseName == null || loader == null) {
             throw new NullPointerException("One or more parameters is null");
-                
-        ResourceBundle bundle = ResourceBundleManager.getInstance().getBundle(baseName, locale, 
-            loader);
-        
-	if (null == bundle)
+        }
+
+        ResourceBundle bundle = ResourceBundleManager.getInstance()
+                .getBundle(baseName, locale,
+                loader);
+
+        if (null == bundle) {
             throw new NullPointerException("Could not obtain resource bundle");
+        }
 
         String message = null;
-        
+
         try {
             message = bundle.getString(key);
-	} catch (MissingResourceException e) {
-	}
-	
+        } catch (MissingResourceException e) {
+        }
+
         return getFormattedMessage((message != null) ? message : key, args);
     }
-    
+
     /**
      * Format message using given arguments.
      *
      * @param message The string used as a pattern for inserting arguments.
      * @param args The arguments to be inserted into the string.
+     * @return String
      */
     protected static String getFormattedMessage(String message, Object args[]) {
         if ((args == null) || (args.length == 0)) {
             return message;
-	}
-        
+        }
+
         String result = null;
-        
+
         try {
             MessageFormat mf = new MessageFormat(message);
             result = mf.format(args);
         } catch (NullPointerException e) {
-        }        
+        }
 
         return (result != null) ? result : message;
     }
-    
+
     /**
      * Get locale from current FacesContext instance.
+     * @return Locale
      */
     protected static Locale getLocale() {
         return getLocale(FacesContext.getCurrentInstance());
@@ -175,28 +186,31 @@ public class MessageUtil extends Object {
      * Get locale from given FacesContext object.
      *
      * @param context The FacesContext object used to obtain locale.
+     * @return Locale
      */
     protected static Locale getLocale(FacesContext context) {
         if (context == null) {
-	    return Locale.getDefault();
-	}
-                
+            return Locale.getDefault();
+        }
+
         Locale locale = null;
-        
+
         // context.getViewRoot() may not have been initialized at this point.
-        if (context.getViewRoot() != null)
+        if (context.getViewRoot() != null) {
             locale = context.getViewRoot().getLocale();
-        
+        }
+
         return (locale != null) ? locale : Locale.getDefault();
     }
-    
+
     /**
      * Get current class loader from given object.
      *
-     * @param o Object used to obtain fallback class loader.
+     * @param obj Object used to obtain fallback class loader.
+     * @return ClassLoader
      */
-    public static ClassLoader getCurrentLoader(Object o) {
+    public static ClassLoader getCurrentLoader(Object obj) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	return (loader != null) ? loader : o.getClass().getClassLoader();
+        return (loader != null) ? loader : obj.getClass().getClassLoader();
     }
 }

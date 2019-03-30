@@ -17,33 +17,28 @@
 package com.sun.webui.jsf.renderkit.widget;
 
 import com.sun.faces.annotation.Renderer;
-
 import com.sun.webui.jsf.component.Button;
-import com.sun.webui.jsf.component.Widget;
-import com.sun.webui.theme.Theme;
-import com.sun.webui.jsf.theme.ThemeTemplates;
-import com.sun.webui.jsf.util.ConversionUtilities;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObjectBuilder;
+import java.io.IOException;
+
+import static com.sun.webui.jsf.util.ConversionUtilities.convertValueToString;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 
 /**
  * This class renders Table components.
  */
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.Button",
 componentFamily = "com.sun.webui.jsf.Button"))
-public class ButtonRenderer extends RendererBase {
+public final class ButtonRenderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
      */
-    private static final String attributes[] = {
+    private static final String ATTRIBUTES[] = {
         "alt",
         "align",
         "dir",
@@ -64,18 +59,6 @@ public class ButtonRenderer extends RendererBase {
         "tabIndex"
     };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer Methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Determine if this was the component that submitted the form.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
-     *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
         // Enforce NPE requirements in the Javadocs
@@ -95,46 +78,43 @@ public class ButtonRenderer extends RendererBase {
         Map map = context.getExternalContext().getRequestParameterMap();
 
         if (map.containsKey(clientId) ||
-                (map.containsKey(clientId + ".x") && map.containsKey(clientId + ".y"))) {
+                (map.containsKey(clientId + ".x")
+                && map.containsKey(clientId + ".y"))) {
             button.queueEvent(new ActionEvent(button));
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // RendererBase methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Get the Dojo modules required to instantiate the widget.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONArray getModules(FacesContext context, UIComponent component)
-            throws JSONException {
-        JSONArray json = new JSONArray();
-        json.put(JavaScriptUtilities.getModuleName("widget.button"));
-        return json;
+    @Override
+    protected String[] getModuleNames(UIComponent component) {
+        return new String[] {
+            "button"
+        };
     }
 
-    /** 
-     * Helper method to obtain component properties.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONObject getProperties(FacesContext context,
-            UIComponent component) throws JSONException {
-        Button button = (Button) component;
-        String templatePath = ((Widget) button).getHtmlTemplate(); // Get HTML template.
+    @Override
+    protected JsonObjectBuilder getProperties(FacesContext context,
+            UIComponent component) throws IOException {
 
-        JSONObject json = new JSONObject();
-        json.put("className", button.getStyleClass()).put("disabled", button.isDisabled()).put("mini", button.isMini()).put("name", button.getClientId(context)).put("primary", button.isPrimary()).put("templatePath", (templatePath != null)
-                ? templatePath
-                : getTheme().getPathToTemplate(ThemeTemplates.BUTTON)).put("title", button.getToolTip()).put("type", button.isReset() ? "reset" : "submit").put("visible", button.isVisible());
+        Button button = (Button) component;
+        JsonObjectBuilder jsonBuilder = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("className", button.getStyleClass())
+                .add("disabled", button.isDisabled())
+                .add("mini", button.isMini())
+                .add("name", button.getClientId(context))
+                .add("primary", button.isPrimary())
+                .add("title", button.getToolTip())
+                .add("visible", button.isVisible());
+
+        if (button.isReset()) {
+            jsonBuilder.add("type", "reset");
+
+        } else {
+            jsonBuilder.add("type", "submit");
+        }
 
         // Get the textual label of the button.
-        String text = ConversionUtilities.convertValueToString(button,
-                button.getText());
+        String text = convertValueToString(button, button.getText());
 
         // Pad the text, if needed.
         if (text != null && text.trim().length() > 0) {
@@ -142,27 +122,22 @@ public class ButtonRenderer extends RendererBase {
             // for Netscape 4.x. We may be able to do this with styles instead.
             if (!button.isNoTextPadding()) {
                 if (text.trim().length() <= 3) {
-                    text = "  " + text + "  "; //NOI18N
+                    text = "  " + text + "  ";
                 } else if (text.trim().length() == 4) {
-                    text = " " + text + " "; //NOI18N
+                    text = " " + text + " ";
                 }
             }
-            json.put("contents", text); // This is button label.
+            // This is button label.
+            jsonBuilder.add("contents", text);
         }
 
         // Add core and attribute properties.
-        addAttributeProperties(attributes, component, json);
-        setCoreProperties(context, component, json);
-
-        return json;
+        addAttributeProperties(ATTRIBUTES, component, jsonBuilder);
+        return jsonBuilder;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // Helper method to get Theme objects.
-    private Theme getTheme() {
-        return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+    @Override
+    protected void renderNestedContent(FacesContext context,
+            UIComponent component) throws IOException {
     }
 }

@@ -59,7 +59,7 @@ define(["webui/suntheme/common"], function (common) {
             // Hide panels on resize.
             window.onresize = function () {
                 domNode.windowResize();
-            }
+            };
         },
 
         // Hide all task sections.

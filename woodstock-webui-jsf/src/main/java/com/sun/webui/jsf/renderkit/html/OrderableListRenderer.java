@@ -34,11 +34,15 @@ import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.jsf.component.OrderableList;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.getDomNode;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
  *
@@ -50,10 +54,10 @@ public class OrderableListRenderer extends ListRendererBase {
     private final static boolean DEBUG = false;
 
     /**
-     * <p>Render the orderable list component
+     * Render the orderable list component.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be rendered
      * end should be rendered
      *
      * @exception IOException if an input/output error occurs
@@ -62,26 +66,25 @@ public class OrderableListRenderer extends ListRendererBase {
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
 
+        if(component == null){
+            return;
+        }
+
         if (DEBUG) {
-            log("encodeEnd()"); //NOI18N
+            log("encodeEnd()");
         }
         if (component instanceof OrderableList) {
             renderListComponent(context, (OrderableList) component,
                     getStyles(component, context));
         } else {
-            String message = "Component " + component.toString() + //NOI18N
-                    " has been associated with an OrderableListRenderer. " + //NOI18N
-                    " This renderer can only be used by components " + //NOI18N
-                    " that extend com.sun.webui.jsf.component.Selector."; //NOI18N
+            String message = "Component " + component.toString()
+                    + " has been associated with an OrderableListRenderer. "
+                    + " This renderer can only be used by components "
+                    + " that extend com.sun.webui.jsf.component.Selector.";
             throw new FacesException(message);
         }
     }
 
-    /*
-     * Retrieve user input from the UI. 
-     * @param context The FacesContext of this request
-     * @param component The component associated with the renderer
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
 
@@ -89,19 +92,19 @@ public class OrderableListRenderer extends ListRendererBase {
             log("decode()");
         }
 
-        String id = component.getClientId(context).concat(ListSelector.VALUE_ID);
+        String id = component.getClientId(context)
+                .concat(ListSelector.VALUE_ID);
         super.decode(context, component, id);
 
         if (DEBUG && ((OrderableList) component).getSubmittedValue() != null) {
             log("Submitted value is not null");
         }
-        return;
     }
 
     /**
-     * <p>This method determines whether the component should be
+     * This method determines whether the component should be
      * rendered as a standalone list, or laid out together with a
-     * label that was defined as part of the component.</p> 
+     * label that was defined as part of the component.
      *
      * <p>A label will be rendered if either of the following is
      * true:</p> 
@@ -128,6 +131,7 @@ public class OrderableListRenderer extends ListRendererBase {
      */
     private void renderListComponent(FacesContext context,
             OrderableList component, String[] styles) throws IOException {
+
         if (DEBUG) {
             log("renderListComponent()");
         }
@@ -138,34 +142,32 @@ public class OrderableListRenderer extends ListRendererBase {
         }
 
         ResponseWriter writer = context.getResponseWriter();
-        renderOpenEncloser(component, context, "div", styles[15]); //NOI18N
+        renderOpenEncloser(component, context, "div", styles[15]);
 
         // If the label goes on top, render it first... 
-
         UIComponent headerComponent = component.getHeaderComponent();
         if (headerComponent != null) {
             if (!component.isLabelOnTop()) {
-                writer.writeText("\n", null); //NOI18N
+                writer.writeText("\n", null);
                 writer.startElement("span", component);
                 writer.writeAttribute("class", styles[10], null);
-                writer.writeText("\n", null); //NOI18N
+                writer.writeText("\n", null);
 
-                RenderingUtilities.renderComponent(headerComponent, context);
-                writer.writeText("\n", null); //NOI18N
-                writer.endElement("span"); //NOI18N
-                writer.writeText("\n", null); //NOI18N              
+                renderComponent(headerComponent, context);
+                writer.writeText("\n", null);
+                writer.endElement("span");
+                writer.writeText("\n", null);
             } else {
-                RenderingUtilities.renderComponent(headerComponent, context);
-                writer.startElement("br", component); //NOI18N
-                writer.endElement("br"); //NOI18N
+                renderComponent(headerComponent, context);
+                writer.startElement("br", component);
+                writer.endElement("br");
             }
         }
 
         // First column: available items
         renderColumnTop(component, writer, styles[10]);
-        String id =
-                component.getClientId(context).concat(ListSelector.LIST_ID);
-
+        String id = component.getClientId(context)
+                .concat(ListSelector.LIST_ID);
 
         renderList(component, id, context, styles);
         renderColumnBottom(writer);
@@ -175,101 +177,87 @@ public class OrderableListRenderer extends ListRendererBase {
         renderButtons(component, context, writer, styles);
         renderColumnBottom(writer);
 
-        writer.startElement("div", component); //NOI18N
-        writer.writeAttribute("class", styles[11], null); //NOI18N
-        writer.endElement("div"); //NOI18N
+        writer.startElement("div", component);
+        writer.writeAttribute("class", styles[11], null);
+        writer.endElement("div");
 
         UIComponent footerComponent =
                 component.getFacet(OrderableList.FOOTER_FACET);
         if (footerComponent != null) {
-            writer.startElement("div", component); //NOI18N
-            writer.writeText("\n", null); //NOI18N
-            RenderingUtilities.renderComponent(footerComponent, context);
-            writer.writeText("\n", null); //NOI18N
-            writer.endElement("div"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.startElement("div", component);
+            writer.writeText("\n", null);
+            renderComponent(footerComponent, context);
+            writer.writeText("\n", null);
+            writer.endElement("div");
+            writer.writeText("\n", null);
         }
 
         String jsID = component.getClientId(context);
 
         // The value field
         // Call super renderValueField ?
-        //
-	/*
-        RenderingUtilities.renderHiddenField
-        (component, writer, jsID.concat(VALUES_ID),
-        component.getValueAsString(context, component.getSeparator()));
-         */
+        // renderHiddenField
+        // (component, writer, jsID.concat(VALUES_ID),
+        // component.getValueAsString(context, component.getSeparator()));
         renderHiddenValue(component, context, writer, styles[15]);
 
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
+        writer.endElement("div");
+        writer.writeText("\n", null);
+        writer.endElement("div");
+        writer.writeText("\n", null);
 
         renderJavaScript(component, context, writer, styles);
     }
 
     private void renderJavaScript(UIComponent component, FacesContext context,
             ResponseWriter writer, String[] styles) throws IOException {
-        try {
-            // Append properties.
-            StringBuffer buff = new StringBuffer(256);
-            JSONObject json = new JSONObject();
-            json.put("id", component.getClientId(context)).put("moveMessage", styles[14]);
 
-            // Append JavaScript.
-//            buff.append(JavaScriptUtilities.getModule("orderableList")).append("\n") // NOI18N
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("orderableList")).append("'], function (orderableList) {").append("\n") // NOI18N
-//                    .append(JavaScriptUtilities.getModuleName("orderableList.init")) // NOI18N
-                    .append("orderableList.init") // NOI18N
-                    .append("(") //NOI18N
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");\n") //NOI18N
-                    .append(JavaScriptUtilities.getDomNode(context, component)).append(OrderableList.UPDATEBUTTONS_FUNCTION);
-            buff.append("});");
+        JsonObject initProps = JSON_BUILDER_FACTORY.createObjectBuilder()
+                .add("id", component.getClientId(context))
+                .add("moveMessage", styles[14])
+                .build();
 
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        renderInitScriptTag(writer, "orderableList", initProps,
+                // ws_update_buttons
+                renderCall("update_buttons", "editableList",
+                    component.getClientId(context)));
     }
 
     private void renderColumnTop(OrderableList component, ResponseWriter writer,
             String style) throws IOException {
+
         // Render the available elements
-        writer.startElement("div", component); //NOI18N
-        writer.writeAttribute("class", style, null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("div", component);
+        writer.writeAttribute("class", style, null); 
+        writer.writeText("\n", null);
     }
 
     private void renderColumnBottom(ResponseWriter writer) throws IOException {
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
     private void renderButtons(OrderableList component, FacesContext context,
             ResponseWriter writer, String[] styles) throws IOException {
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
-        String style = "padding-left:10;padding-right:10"; //NOI18N
-        writer.writeAttribute("style", style, null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("table", component); //NOI18N
-        writer.writeAttribute("class", styles[12], null); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", component); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
-        writer.writeAttribute("align", "center", null);  //NOI18N
-        writer.writeAttribute("width", "125", null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        RenderingUtilities.renderComponent(
-                component.getMoveUpButtonComponent(context), context);
-        writer.writeText("\n", null); //NOI18N
+
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
+        String style = "padding-left:10;padding-right:10";
+        writer.writeAttribute("style", style, null); 
+        writer.writeText("\n", null);
+        writer.startElement("table", component);
+        writer.writeAttribute("class", styles[12], null);
+        writer.writeText("\n", null);
+        writer.startElement("tr", component);
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
+        writer.writeAttribute("align", "center", null); 
+        writer.writeAttribute("width", "125", null); 
+        writer.writeText("\n", null);
+        renderComponent(component.getMoveUpButtonComponent(context), context);
+        writer.writeText("\n", null);
 
         renderButton(component, component.getMoveDownButtonComponent(context),
                 styles[9], writer, context);
@@ -280,14 +268,14 @@ public class OrderableListRenderer extends ListRendererBase {
             renderButton(component, component.getMoveBottomButtonComponent(context),
                     styles[9], writer, context);
         }
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        writer.endElement("table");
+        writer.writeText("\n", null);
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
     private void renderButton(OrderableList list, UIComponent comp, String style,
@@ -296,31 +284,23 @@ public class OrderableListRenderer extends ListRendererBase {
             return;
         }
 
-        writer.startElement("div", list); //NOI18N
-        writer.writeAttribute("class", style, null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        RenderingUtilities.renderComponent(comp, context);
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("div", list);
+        writer.writeAttribute("class", style, null); 
+        writer.writeText("\n", null);
+        renderComponent(comp, context);
+        writer.writeText("\n", null);
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
-    /**
-     * Overrides encodeChildren of Renderer to do nothing. This
-     * renderer renders its own children, but not through this
-     * method. 
-     * @param context The FacesContext of the request
-     * @param component The component associated with the
-     * renderer. Must be a subclass of ListSelector.
-     */
     @Override
     public void encodeChildren(javax.faces.context.FacesContext context,
-            javax.faces.component.UIComponent component) throws java.io.IOException {
-        return;
+            javax.faces.component.UIComponent component)
+            throws java.io.IOException {
     }
 
     /**
-     * <p>Renders a component in a table row.</p>
+     * Renders a component in a table row.
      * @param component The component
      * @param context The FacesContext of the request
      * @throws java.io.IOException if the renderer fails to write to
@@ -328,26 +308,27 @@ public class OrderableListRenderer extends ListRendererBase {
      */
     private void addComponentSingleRow(OrderableList list,
             UIComponent component, FacesContext context) throws IOException {
+
         ResponseWriter writer = context.getResponseWriter();
-        writer.startElement("tr", list);                    //NOI18N
-        writer.writeText("\n", null);                       //NOI18N
-        writer.startElement("td", list);                    //NOI18N
-        RenderingUtilities.renderComponent(component, context);
-        writer.writeText("\n", null);                       //NOI18N
+        writer.startElement("tr", list);
+        writer.writeText("\n", null);
+        writer.startElement("td", list);
+        renderComponent(component, context);
+        writer.writeText("\n", null);
         // Perhaps this should depend on the dir?
         // writer.writeAttribute("align", "left", null);
-        writer.endElement("td");                            //NOI18N
-        writer.writeText("\n", null);                       //NOI18N
-        writer.endElement("tr");                            //NOI18N
-        writer.writeText("\n", null);                       //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
     }
 
     /**
-     * <p>Render the appropriate element end, depending on the value of the
-     * <code>type</code> property.</p>
+     * Render the appropriate element end, depending on the value of the
+     * {@code type} property.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param monospace <code>UIComponent</code> if true, use the monospace
+     * @param context {@code FacesContext} for the current request
+     * @param monospace {@code UIComponent} if true, use the mono space
      * styles to render the list.
      *
      * @exception IOException if an input/output error occurs
@@ -357,13 +338,12 @@ public class OrderableListRenderer extends ListRendererBase {
             log("getStyles()");
         }
 
-        Theme theme = ThemeUtilities.getTheme(context);
-        StringBuffer buff = new StringBuffer(256);
-        buff.append(JavaScriptUtilities.getDomNode(context, component)).append(OrderableList.ONCHANGE_FUNCTION).append(OrderableList.RETURN);
-
+        Theme theme = getTheme(context);
         String[] styles = new String[16];
-
-        styles[0] = buff.toString();
+        styles[0] = new StringBuilder()
+                .append(getDomNode(context, component))
+                .append(OrderableList.ONCHANGE_FUNCTION)
+                .append(OrderableList.RETURN).toString();
         styles[1] = theme.getStyleClass(ThemeStyles.LIST);
         styles[2] = theme.getStyleClass(ThemeStyles.LIST_DISABLED);
         styles[3] = theme.getStyleClass(ThemeStyles.LIST_OPTION);
@@ -377,9 +357,8 @@ public class OrderableListRenderer extends ListRendererBase {
         styles[11] = theme.getStyleClass(ThemeStyles.ADDREMOVE_HORIZONTAL_LAST);
         styles[12] = theme.getStyleClass(ThemeStyles.ADDREMOVE_BUTTON_TABLE);
         styles[13] = null;
-        styles[14] = theme.getMessage("OrderableList.moveMessage"); //NOI18N
+        styles[14] = theme.getMessage("OrderableList.moveMessage");
         styles[15] = theme.getStyleClass(ThemeStyles.HIDDEN);
         return styles;
     }
 }
-

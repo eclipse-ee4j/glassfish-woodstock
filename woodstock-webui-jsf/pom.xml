@@ -106,8 +106,9 @@
             <artifactId>dataprovider</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.woodstock.dependlibs</groupId>
-            <artifactId>json</artifactId>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

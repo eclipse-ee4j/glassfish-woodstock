@@ -17,47 +17,60 @@
 package com.sun.webui.jsf.theme;
 
 /**
- * <p> This class contains constants for style class names.</p>
- * TODO: Eventually these need to move to a theme-based
- * resource file.
+ * This class contains constants for style class names.
+ * TODO: Eventually these need to move to a theme-based resource file.
  */
-public class ThemeStyles {
+public final class ThemeStyles {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private ThemeStyles() {
+    }
 
     /** 
      * A properties file key whose value is a space separated list
      * of style sheet keys to include on every page.
      */
     public static final String GLOBAL = "global";
+
     /** 
-     * A master stylesheet to be included on every page.
+     * A master style sheet to be included on every page.
      */
     public static final String MASTER = "master";
+
     /** 
-     * Body Styles 
+     * Body Styles.
      */
     public static final String CONTENT_MARGIN = "CONTENT_MARGIN";
+
     /** 
-     * Body Styles 
+     * Body Styles.
      */
     public static final String DEFAULT_BODY = "DEFAULT_BODY";
+
     /**
-     * Hidden Style
+     * Hidden Style.
      */
     public static final String HIDDEN = "HIDDEN";
+
     /**
-     * Link Styles
+     * Link Styles.
      */
     public static final String LINK_DISABLED = "LINK_DISABLED";
+
     /**
-     *	Clear Style
+     * Clear Style.
      */
     public static final String CLEAR = "CLEAR";
+
     /**
-     *	Block Type Styles
+     * Block Type Styles.
      */
     public static final String FLOAT = "FLOAT";
+
     /** 
-     * Table Styles 
+     * Table Styles.
      */
     public static final String TABLE = "TABLE";
     public static final String TABLE_LITE = "TABLE_LITE";
@@ -99,12 +112,18 @@ public class ThemeStyles {
     public static final String TABLE_SELECT_ROW = "TABLE_SELECT_ROW";
     public static final String TABLE_HOVER_ROW = "TABLE_HOVER_ROW";
     public static final String TABLE_CUSTOM_FILTER_MENU = "TABLE_CUSTOM_FILTER_MENU";
-    /** Table footers */
+
+    /**
+     * Table footers.
+     */
     public static final String TABLE_FOOTER = "TABLE_FOOTER";
     public static final String TABLE_FOOTER_TEXT = "TABLE_FOOTER_TEXT";
     public static final String TABLE_FOOTER_LEFT = "TABLE_FOOTER_LEFT";
     public static final String TABLE_FOOTER_MESSAGE_SPAN = "TABLE_FOOTER_MESSAGE_SPAN";
-    /** Overall row group headers/footers */
+
+    /**
+     * Overall row group headers/footers.
+     */
     public static final String TABLE_GROUP_HEADER = "TABLE_GROUP_HEADER";
     public static final String TABLE_GROUP_HEADER_IMAGE = "TABLE_GROUP_HEADER_IMAGE";
     public static final String TABLE_GROUP_HEADER_LEFT = "TABLE_GROUP_HEADER_LEFT";
@@ -113,7 +132,10 @@ public class ThemeStyles {
     public static final String TABLE_GROUP_FOOTER = "TABLE_GROUP_FOOTER";
     public static final String TABLE_GROUP_FOOTER_TEXT = "TABLE_GROUP_FOOTER_TEXT";
     public static final String TABLE_GROUP_MESSAGE_TEXT = "TABLE_GROUP_MESSAGE_TEXT";
-    /** Calendar styles */
+
+    /**
+     * Calendar styles.
+     */
     public static final String CALENDAR_DIV = "CALENDAR_DIV";
     public static final String CALENDAR_DIV_SHOW = "CALENDAR_DIV_SHOW";
     public static final String CALENDAR_DIV_SHOW2 = "CALENDAR_DIV_SHOW2";
@@ -125,16 +147,25 @@ public class ThemeStyles {
     public static final String CALENDAR_CLOSE_LINK = "CALENDAR_CLOSE_LINK";
     public static final String CALENDAR_ROOT_TABLE = "CALENDAR_ROOT_TABLE";
     public static final String CALENDAR_CLOSE_BUTTON = "CALENDAR_CLOSE_BUTTON";
-    /** Column footers */
+
+    /**
+     * Column footers.
+     */
     public static final String TABLE_GROUP_COL_FOOTER = "TABLE_GROUP_COL_FOOTER";
     public static final String TABLE_GROUP_COL_FOOTER_TEXT = "TABLE_GROUP_COL_FOOTER_TEXT";
     public static final String TABLE_GROUP_COL_FOOTER_SORT = "TABLE_GROUP_COL_FOOTER_SORT";
-    /** Table column footers */
+
+    /**
+     * Table column footers.
+     */
     public static final String TABLE_COL_FOOTER = "TABLE_COL_FOOTER";
     public static final String TABLE_COL_FOOTER_TEXT = "TABLE_COL_FOOTER_TEXT";
     public static final String TABLE_COL_FOOTER_SORT = "TABLE_COL_FOOTER_SORT";
     public static final String TABLE_COL_FOOTER_SPACER = "TABLE_COL_FOOTER_SPACER";
-    /** Embedded panels */
+
+    /**
+     * Embedded panels.
+     */
     public static final String TABLE_PANEL_TD = "TABLE_PANEL_TD";
     public static final String TABLE_PANEL_LAYOUT_DIV = "TABLE_PANEL_LAYOUT_DIV";
     public static final String TABLE_PANEL_SHADOW3_DIV = "TABLE_PANEL_SHADOW3_DIV";
@@ -146,6 +177,7 @@ public class ThemeStyles {
     public static final String TABLE_PANEL_BUTTON_DIV = "TABLE_PANEL_BUTTON_DIV";
     public static final String TABLE_PANEL_HELP_TEXT = "TABLE_PANEL_HELP_TEXT";
     public static final String TABLE_PANEL_TABLE = "TABLE_PANEL_TABLE";
+
     /** 
      * Drop Down Menu Styles.
      */
@@ -162,6 +194,7 @@ public class ThemeStyles {
     public static final String MENU_STANDARD_OPTION_GROUP = "MENU_STANDARD_OPTION_GROUP";
     public static final String MENU_STANDARD_OPTION_SELECTED = "MENU_STANDARD_OPTION_SELECTED";
     public static final String MENU_STANDARD_OPTION_SEPARATOR = "MENU_STANDARD_OPTION_SEPARATOR";
+
     /** 
      * Selectable List Styles.
      */
@@ -175,6 +208,7 @@ public class ThemeStyles {
     public static final String LIST_OPTION_SELECTED = "LIST_OPTION_SELECTED";
     public static final String LIST_OPTION_SEPARATOR = "LIST_OPTION_SEPARATOR";
     public static final String LIST_ALIGN = "LIST_ALIGN";
+
     /** 
      * Primary Button Styles.
      */
@@ -186,6 +220,7 @@ public class ThemeStyles {
     public static final String BUTTON1_MINI = "BUTTON1_MINI";
     public static final String BUTTON1_MINI_HOVER = "BUTTON1_MINI_HOVER";
     public static final String BUTTON1_MINI_DISABLED = "BUTTON1_MINI_DISABLED";
+
     /** 
      * Secondary Button Styles.
      */
@@ -195,12 +230,14 @@ public class ThemeStyles {
     public static final String BUTTON2_MINI = "BUTTON2_MINI";
     public static final String BUTTON2_MINI_HOVER = "BUTTON2_MINI_HOVER";
     public static final String BUTTON2_MINI_DISABLED = "BUTTON2_MINI_DISABLED";
+
     /** 
      * Icon Button Styles.
      */
     public static final String BUTTON3 = "BUTTON3";
     public static final String BUTTON3_HOVER = "BUTTON3_HOVER";
     public static final String BUTTON3_DISABLED = "BUTTON3_DISABLED";
+
     /** 
      * Breadcrumb Styles.
      */
@@ -209,6 +246,7 @@ public class ThemeStyles {
     public static final String BREADCRUMB_GRAY_DIV = "BREADCRUMB_GRAY_DIV";
     public static final String BREADCRUMB_LINK = "BREADCRUMB_LINK";
     public static final String BREADCRUMB_SEPARATOR = "BREADCRUMB_SEPARATOR";
+
     /** 
      * Page Title Styles. 
      */
@@ -220,6 +258,7 @@ public class ThemeStyles {
     public static final String TITLE_VIEW_DIV = "TITLE_VIEW_DIV";
     public static final String TITLE_BUTTON_DIV = "TITLE_BUTTON_DIV";
     public static final String TITLE_BUTTON_BOTTOM_DIV = "TITLE_BUTTON_BOTTOM_DIV";
+
     /** 
      * Add and Remove Styles.
      */
@@ -237,6 +276,7 @@ public class ThemeStyles {
     public static final String ADDREMOVE_HORIZONTAL_BETWEEN = "ADDREMOVE_HORIZONTAL_BETWEEN";
     public static final String ADDREMOVE_HORIZONTAL_ALIGN = "ADDREMOVE_HORIZONTAL_ALIGN";
     public static final String ADDREMOVE_HORIZONTAL_LAST = "ADDREMOVE_HORIZONTAL_LAST";
+
     /** 
      * Checkbox Styles. 
      */
@@ -248,6 +288,7 @@ public class ThemeStyles {
     public static final String CHECKBOX_IMAGE_DISABLED = "CHECKBOX_IMAGE_DISABLED";
     public static final String CHECKBOX_SPAN = "CHECKBOX_SPAN";
     public static final String CHECKBOX_SPAN_DISABLED = "CHECKBOX_SPAN_DISABLED";
+
     /**
      * Checkbox Group Styles.
      */
@@ -259,6 +300,7 @@ public class ThemeStyles {
     public static final String CHECKBOX_GROUP_ROW_ODD = "CHECKBOX_GROUP_ROW_ODD";
     public static final String CHECKBOX_GROUP_CELL_EVEN = "CHECKBOX_GROUP_CELL_EVEN";
     public static final String CHECKBOX_GROUP_CELL_ODD = "CHECKBOX_GROUP_CELL_ODD";
+
     /** 
      * Radio Button Styles. 
      */
@@ -270,8 +312,9 @@ public class ThemeStyles {
     public static final String RADIOBUTTON_IMAGE_DISABLED = "RADIOBUTTON_IMAGE_DISABLED";
     public static final String RADIOBUTTON_SPAN = "RADIOBUTTON_SPAN";
     public static final String RADIOBUTTON_SPAN_DISABLED = "RADIOBUTTON_SPAN_DISABLED";
+
     /**
-     * Radio Button Group Styles
+     * Radio Button Group Styles.
      */
     public static final String RADIOBUTTON_GROUP = "RADIOBUTTON_GROUP";
     public static final String RADIOBUTTON_GROUP_CAPTION = "RADIOBUTTON_GROUP_CAPTION";
@@ -281,8 +324,9 @@ public class ThemeStyles {
     public static final String RADIOBUTTON_GROUP_ROW_ODD = "RADIOBUTTON_GROUP_ROW_ODD";
     public static final String RADIOBUTTON_GROUP_CELL_EVEN = "RADIOBUTTON_GROUP_CELL_EVEN";
     public static final String RADIOBUTTON_GROUP_CELL_ODD = "RADIOBUTTON_GROUP_CELL_ODD";
+
     /** 
-     * Inline Alert Styles. 
+     * Inline Alert Styles.
      */
     public static final String ALERT_LINK_DIV = "ALERT_LINK_DIV";
     public static final String ALERT_LINK = "ALERT_LINK";
@@ -300,6 +344,7 @@ public class ThemeStyles {
     public static final String ALERT_BOTTOM_LEFT_CORNER = "ALERT_BOTTOM_LEFT_CORNER";
     public static final String ALERT_BOTTOM_MIDDLE = "ALERT_BOTTOM_MIDDLE";
     public static final String ALERT_BOTTOM_RIGHT_CORNER = "ALERT_BOTTOM_RIGHT_CORNER";
+
     /** 
      * Full page Alert Styles.
      */
@@ -308,6 +353,7 @@ public class ThemeStyles {
     public static final String ALERT_HEADER_DIV = "ALERT_HEADER_DIV";
     public static final String ALERT_HEADER_TXT = "ALERT_HEADER_TXT";
     public static final String ALERT_FORM_DIV = "ALERT_FORM_DIV";
+
     /** 
      * Label Styles.
      */
@@ -316,16 +362,19 @@ public class ThemeStyles {
     public static final String LABEL_LEVEL_TWO_SMALL_TEXT = "LABEL_LEVEL_TWO_SMALL_TEXT";
     public static final String LABEL_LEVEL_THREE_TEXT = "LABEL_LEVEL_THREE_TEXT";
     public static final String LABEL_REQUIRED_DIV = "LABEL_REQUIRED_DIV";
+
     /** 
      * Text Field Styles.
      */
     public static final String TEXT_FIELD = "TEXT_FIELD";
     public static final String TEXT_FIELD_DISABLED = "TEXT_FIELD_DISABLED";
+
     /** 
      * Text Area Styles.
      */
     public static final String TEXT_AREA = "TEXT_AREA";
     public static final String TEXT_AREA_DISABLED = "TEXT_AREA_DISABLED";
+
     /** 
      * Help Styles.
      */
@@ -340,8 +389,9 @@ public class ThemeStyles {
     public static final String HELP_RESULT_DIV = "HELP_RESULT_DIV";
     public static final String HELP_SEARCH_DIV = "HELP_SEARCH_DIV";
     public static final String HELP_STEP_TAB = "HELP_STEP_TAB";
+
     /** 
-     * Masthead Styles. 
+     * Masthead Styles.
      */
     public static final String MASTHEAD_BDY = "MASTHEAD_BDY";
     public static final String MASTHEAD_DIV = "MASTHEAD_DIV";
@@ -376,6 +426,7 @@ public class ThemeStyles {
     public static final String MASTHEAD_SECONDARY_STYLE = "MASTHEAD_SECONDARY_STYLE";
     public static final String MASTHEAD_FOOTER = "MASTHEAD_FOOTER";
     public static final String MASTHEAD_BUTTON = "MASTHEAD_BUTTON";
+
     /** 
      * Tab Navigation Styles.
      */
@@ -403,6 +454,7 @@ public class ThemeStyles {
     public static final String TABGROUP = "TABGROUP";
     public static final String TABGROUPBOX = "TABGROUPBOX";
     public static final String TAB_PADDING = "TAB_PADDING";
+
     /** 
      * Mini Tabs Styles. 
      */
@@ -411,15 +463,18 @@ public class ThemeStyles {
     public static final String MINI_TAB_LINK = "MINI_TAB_LINK";
     public static final String MINI_TAB_SELECTED_TEXT = "MINI_TAB_SELECTED_TEXT";
     public static final String MINI_TAB_TABLE_SELECTED_TD = "MINI_TAB_TABLE_SELECTED_TD";
+
     /** 
      * Properties Page Jump Links Styles.
      */
     public static final String JUMP_LINK = "JUMP_LINK";
     public static final String JUMP_TOP_LINK = "JUMP_TOP_LINK";
+
     /**
-     * Property sheet styles
+     * Property sheet styles.
      */
     public static final String PROPERTY_SHEET = "PROPERTY_SHEET";
+
     /** 
      * Content Pages Styles.
      */
@@ -441,6 +496,7 @@ public class ThemeStyles {
     public static final String CONTENT_ERROR_LABEL_TEXT = "CONTENT_ERROR_LABEL_TEXT";
     public static final String CONTENT_EMBEDDED_TABLE_COL1_DIV = "CONTENT_EMBEDDED_TABLE_COL1_DIV";
     public static final String CONTENT_EMBEDDED_TABLE_COL2_DIV = "CONTENT_EMBEDDED_TABLE_COL2_DIV";
+
     /** 
      * File Chooser Styles. 
      */
@@ -467,8 +523,9 @@ public class ThemeStyles {
     public static final String FILECHOOSER_DATE_TIME_HDR = "FILECHOOSER_DATE_TIME_HDR";
     public static final String FILECHOOSER_LST_DIV = "FILECHOOSER_LST_DIV";
     public static final String FILECHOOSER_CONTROL_BTN = "FILECHOOSER_CONTROL_BTN";
+
     /** 
-     * Tree Styles. 
+     * Tree Styles.
      */
     public static final String TREE = "TREE";
     public static final String TREE_CONTENT = "TREE_CONTENT";
@@ -484,8 +541,9 @@ public class ThemeStyles {
     public static final String TREE_SELECTED_ROW = "TREE_SELECTED_ROW";
     public static final String TREE_SELECTED_TEXT = "TREE_SELECTED_TEXT";
     public static final String TREE_TITLE = "TREE_TITLE";
+
     /** 
-     * Version Styles. 
+     * Version Styles.
      */
     public static final String VERSION_BODY = "VERSION_BODY";
     public static final String VERSION_TEXT = "VERSION_TEXT";
@@ -498,11 +556,13 @@ public class ThemeStyles {
     public static final String VERSION_BUTTON_MARGIN_DIV = "VERSION_BUTTON_MARGIN_DIV";
     public static final String VERSION_MARGIN = "VERSION_MARGIN";
     public static final String VERSION_HEADER_TEXT = "VERSION_HEADER_TEXT";
+
     /**
      * Skip navigation links Styles.
      */
     public static final String SKIP_WHITE = "SKIP_WHITE";
     public static final String SKIP_MEDIUM_GREY1 = "SKIP_MEDIUM_GREY1";
+
     /** 
      * Wizard Styles.
      */
@@ -537,6 +597,7 @@ public class ThemeStyles {
     public static final String WIZARD_RIGHT = "WIZARD_RIGHT";
     public static final String WIZARD_BAR = "WIZARD_BAR";
     public static final String WIZARD_TITLE_BAR = "WIZARD_TITLE_BAR";
+
     /**
      * Date/Time Styles.
      */
@@ -557,8 +618,9 @@ public class ThemeStyles {
     public static final String DATE_TIME_SELECT_CONTENT = "DATE_TIME_SELECT_CONTENT";
     public static final String DATE_TIME_SELECT_TOP_MIDDLE = "DATE_TIME_SELECT_TOP_MIDDLE";
     public static final String DATE_TIME_SELECT_DATE = "DATE_TIME_SELECT_DATE";
+
     /**
-     * EditableList styles 
+     * EditableList styles.
      */
     public static final String EDITABLELIST_TABLE = "EDITABLELIST_TABLE";
     public static final String EDITABLELIST_FIELD_LABEL = "EDITABLELIST_FIELD_LABEL";
@@ -567,6 +629,7 @@ public class ThemeStyles {
     public static final String EDITABLELIST_LIST_LABEL = "EDITABLELIST_LIST_LABEL";
     public static final String EDITABLELIST_LIST = "EDITABLELIST_LIST";
     public static final String EDITABLELIST_REMOVE_BUTTON = "EDITABLELIST_REMOVE_BUTTON";
+
     /**
      * Message and Message Group Styles.
      */
@@ -590,9 +653,9 @@ public class ThemeStyles {
     // to preserve compatibility for now. Ideally want every component
     // to reference their own defined selectors even if the definition
     // is the same.
-    //
     public static final String TIMESTAMP_TEXT = "TIMESTAMP_TEXT";
-    /*
+
+    /**
      * Common Tasks Section Styles.
      */
     public static final String CTS_TASK = "CTS_TASK";
@@ -619,6 +682,7 @@ public class ThemeStyles {
     public static final String CTS_RIGHT_BORDER = "CTS_RIGHT_BORDER";
     public static final String CTS_PADDING = "CTS_PADDING";
     public static final String CTS_BACKGROUND = "CTS_BACKGROUND";
+
     /**
      * ProgressBar Styles.
      */
@@ -636,14 +700,6 @@ public class ThemeStyles {
     public static final String PROGRESSBAR_FAILED = "PROGRESSBAR_FAILED";
     public static final String PROGRESSBAR_FAILEDLABEL = "PROGRESSBAR_FAILEDLABEL";
     public static final String PROGRESSBAR_INDETERMINATE_PAUSED = "PROGRESSBAR_INDETERMINATE_PAUSED";
-
-    /**
-     * This private constructor prevents this class from being instantiated
-     * directly as its only purpose is to provide image constants.
-     */
-    private ThemeStyles() {
-        // do nothing
-    }
 }
 
 

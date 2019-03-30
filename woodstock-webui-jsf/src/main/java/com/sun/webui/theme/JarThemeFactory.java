@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import javax.faces.FactoryFinder;
@@ -43,40 +42,38 @@ import javax.faces.application.ApplicationFactory;
 import javax.faces.context.FacesContext;
 
 /**
- * <p>Factory class responsible for setting up the Sun Web Component
- * application's ThemeManager.</p>
+ * Factory class responsible for setting up the Sun Web Component
+ * application's ThemeManager.
  */
 public class JarThemeFactory implements ThemeFactory {
 
+    /**
+     * Warning message for not being able to load any themes.
+     */
+    private final static String WARNING_LOAD =
+            "WARNING: the Sun Web Components could not load any themes.";
+
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
+     * Theme manager.
+     */
     private ThemeManager themeManager;
 
+    /**
+     * Create a new instance.
+     */
     public JarThemeFactory() {
     }
 
-    // Private message variables
-    private final static String WARNING_LOAD =
-            "WARNING: the Sun Web Components could not load any themes.";
-    private final static String WARNING_BADFILE =
-            "WARNING: the Sun Web Components detected a corrupted theme configuration file:\n\t";
-    // Private attribute names
-    public final static String MANIFEST = "META-INF/MANIFEST.MF"; //NOI18N
-    public final static String FILENAME = "manifest-file"; //NOI18N
-    public final static String COMPONENTS_SECTION = "com/sun/webui/jsf/"; //NOI18N
-    public final static String THEME_SECTION = "com/sun/webui/jsf/theme/"; //NOI18N
-    public final static String THEME_VERSION_REQUIRED =
-            "X-SJWUIC-Theme-Version-Required"; //NOI18N
-    public final static String THEME_VERSION = "X-SJWUIC-Theme-Version"; //NOI18N
-    public final static String NAME = "X-SJWUIC-Theme-Name"; //NOI18N
-    public final static String PREFIX = "X-SJWUIC-Theme-Prefix"; //NOI18N
-    public final static String DEFAULT = "X-SJWUIC-Theme-Default"; //NOI18N
-    public final static String STYLESHEETS = "X-SJWUIC-Theme-Stylesheets"; //NOI18N
-    public final static String JSFILES = "X-SJWUIC-Theme-JavaScript"; //NOI18N
-    public final static String CLASSMAPPER = "X-SJWUIC-Theme-ClassMapper"; //NOI18N
-    public final static String IMAGES = "X-SJWUIC-Theme-Images"; //NOI18N
-    public final static String MESSAGES = "X-SJWUIC-Theme-Messages"; //NOI18N
-    public final static String TEMPLATES = "X-SJWUIC-Theme-Templates"; //NOI18N
-    private static final boolean DEBUG = false;
-
+    /**
+     * Get the theme attributes.
+     * @param classLoader class-loader to use
+     * @return theme attributes iterator.
+     */
     private Iterator getThemeAttributes(ClassLoader classLoader) {
 
         if (DEBUG) {
@@ -90,11 +87,11 @@ public class JarThemeFactory implements ThemeFactory {
             throw new ThemeConfigurationException(msg);
         }
 
-        URL url = null;
-        URLConnection conn = null;
+        URL url;
+        URLConnection conn;
         InputStream in = null;
-        Manifest manifest = null;
-        Attributes themeAttributes = null;
+        Manifest manifest;
+        Attributes themeAttributes;
         ArrayList<Attributes> themeProps = new ArrayList<Attributes>();
 
         Iterator<URL> it = manifests.iterator();
@@ -137,12 +134,12 @@ public class JarThemeFactory implements ThemeFactory {
             String propFile = themeAttributes.getValue(FILENAME);
 
             StringBuilder msgBuffer = new StringBuilder(300);
-            msgBuffer.append("ThemeConfiguration file "); //NOI18N
+            msgBuffer.append("ThemeConfiguration file ");
             if (propFile != null) {
                 msgBuffer.append(propFile);
-                msgBuffer.append(" "); //NOI18N
+                msgBuffer.append(" ");
             }
-            msgBuffer.append("does not contain required property \""); //NOI18N
+            msgBuffer.append("does not contain required property \"");
             msgBuffer.append(propName);
             msgBuffer.append("\".");
             throw new ThemeConfigurationException(msgBuffer.toString());
@@ -153,8 +150,7 @@ public class JarThemeFactory implements ThemeFactory {
     private void throwVersionException(String name, String version,
             String requiredThemeVersion) {
 
-        StringBuffer msgBuffer =
-                new StringBuffer(300); //NOI18N
+        StringBuilder msgBuffer = new StringBuilder(300);
         msgBuffer.append("\n\nTheme \"");
         msgBuffer.append(name);
         msgBuffer.append("\" is not up to date with the component library.\n");
@@ -167,7 +163,8 @@ public class JarThemeFactory implements ThemeFactory {
     }
 
     private static Application getApplication() {
-        ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
+        ApplicationFactory factory = (ApplicationFactory) FactoryFinder
+                .getFactory(FactoryFinder.APPLICATION_FACTORY);
         if (factory == null) {
             return null;
         }
@@ -214,8 +211,8 @@ public class JarThemeFactory implements ThemeFactory {
         // locale now
         if (localeSet.isEmpty()) {
             if (DEBUG) {
-                log("\tAdding default locale which is " + //NOI18N
-                        Locale.getDefault().toString());
+                log("\tAdding default locale which is "
+                        + Locale.getDefault().toString());
             }
             localeSet.add(Locale.getDefault());
         }
@@ -226,8 +223,8 @@ public class JarThemeFactory implements ThemeFactory {
             String bundleName) {
 
         String propFile = themeAttributes.getValue(FILENAME);
-        StringBuffer msgBuffer =
-                new StringBuffer("Invalid theme configuration file for theme ");
+        StringBuilder msgBuffer =
+                new StringBuilder("Invalid theme configuration file for theme ");
         msgBuffer.append(themeAttributes.getValue(NAME));
 
         if (propFile != null) {
@@ -241,21 +238,11 @@ public class JarThemeFactory implements ThemeFactory {
         return msgBuffer.toString();
     }
 
-    private static String processInitParameter(Object object) {
-
-        if (object == null) {
-            return null;
-        }
-        String string = object.toString();
-        // Unfortunately, the Creator simulated environment returns an
-        // empty string instead of null when the init parameter does
-        // not exist
-        if (string.length() == 0) {
-            return null;
-        }
-        return string;
-    }
-
+    /**
+     * Get the require theme version.
+     * @param classLoader class-loader to use
+     * @return String
+     */
     private String getRequiredThemeVersion(ClassLoader classLoader) {
 
         if (DEBUG) {
@@ -270,9 +257,9 @@ public class JarThemeFactory implements ThemeFactory {
             return null;
         }
 
-        URL url = null;
+        URL url;
+        Manifest manifest;
         InputStream in = null;
-        Manifest manifest = null;
         String themeVersion = null;
 
         Iterator<URL> it = manifests.iterator();
@@ -299,7 +286,7 @@ public class JarThemeFactory implements ThemeFactory {
                 }
             } catch (IOException ioex) {
                 ioex.printStackTrace();
-            // do nothing
+                // do nothing
             } finally {
                 try {
                     in.close();
@@ -366,19 +353,20 @@ public class JarThemeFactory implements ThemeFactory {
     }
 
     /**
-     * Return the default <code>Theme</code> for
-     * <code>locale</code> within the theme runtime environment of
-     * <code>themeContext</code>.
+     * Return the default {@code Theme} for
+     * {@code locale} within the theme run-time environment of
+     * {@code themeContext}.
      */
     public Theme getTheme(Locale locale, ThemeContext themeContext) {
         return getTheme(null, locale, themeContext);
     }
 
     /**
-     * Return the <code>themeName</code> <code>Theme</code> for
-     * <code>locale</code> within the theme runtime environment of
-     * <code>themeContext</code>.
+     * Return the {@code themeName} {@code Theme} for
+     * {@code locale} within the theme run-time environment of
+     * {@code themeContext}.
      */
+    @Override
     public Theme getTheme(String themeName, Locale locale,
             ThemeContext themeContext) {
 
@@ -391,9 +379,7 @@ public class JarThemeFactory implements ThemeFactory {
         return theme;
     }
 
-    /**
-     * Hack - this will go away
-     */
+    @Override
     public String getDefaultThemeName(ThemeContext themeContext) {
         if (themeManager == null) {
             themeManager = createThemeManager(themeContext);
@@ -446,7 +432,6 @@ public class JarThemeFactory implements ThemeFactory {
             // No explicitly supported themes ?
             // just add the default theme, assume it is one
             // of the supported themes if localeSet is not null
-            // May need to do this in ThemeContext.
             //
             if (localeSet == null) {
                 FacesContext ctx = FacesContext.getCurrentInstance();
@@ -465,7 +450,6 @@ public class JarThemeFactory implements ThemeFactory {
                 Locale locale = (Locale) (locales.next());
                 // createTheme throws a ThemeConfigurationException if
                 // it fails, in which case we abort
-                //
                 map.put(locale, createTheme(themeAttributes, locale,
                         themeContext));
             }
@@ -473,7 +457,6 @@ public class JarThemeFactory implements ThemeFactory {
 
             // If the theme context does not define a default theme name
             // make the first default theme jar the default theme.
-            //
             if (defaultThemeName == null) {
                 String isDefault = themeAttributes.getValue(DEFAULT);
                 if (isDefault != null &&
@@ -490,15 +473,14 @@ public class JarThemeFactory implements ThemeFactory {
             ThemeContext themeContext) throws ThemeConfigurationException {
 
         if (themeContext.getThemeServletContext() == null) {
-            String prefix = readAttribute(themeAttributes, PREFIX); //NOI18N
-            if (!prefix.startsWith("/")) { //NOI18N
-                prefix = "/".concat(prefix); //NOI18N
+            String prefix = readAttribute(themeAttributes, PREFIX);
+            if (!prefix.startsWith("/")) {
+                prefix = "/".concat(prefix);
             }
             themeContext.setThemeServletContext(prefix);
         }
 
         // Need to use themeContext for "translateURI" semantics.
-        //
         JarTheme theme = new JarTheme(locale);
 
         ResourceBundle override = null;

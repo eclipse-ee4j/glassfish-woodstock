@@ -18,94 +18,67 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Link;
-import com.sun.webui.jsf.util.RenderingUtilities;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
+
 /**
- * <p>This class is responsible for rendering the link component for the
- * HTML Render Kit.</p> <p> The link component can be used as an Link</p>
+ * This class is responsible for rendering the link component for the
+ * HTML Render Kit.
+ * The link component can be used as an Link.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Link"))
 public class LinkRenderer extends AbstractRenderer {
 
-    // -------------------------------------------------------- Static Variables
     /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
+     * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {"charset", "media", "rel", "type"}; //NOI18N
+    private static final String STRING_ATTRIBUTES[] = {
+        "charset",
+        "media",
+        "rel",
+        "type"
+    };
 
-    // -------------------------------------------------------- Renderer Methods
-    /**
-     * <p>Render the start of an Link (Link) tag.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * start should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
-        //intentionally empty
     }
 
-    /**
-     * <p>Render the attributes for an Link tag.  The onclick attribute will contain
-     * extra javascript that will appropriately submit the form if the URL field is
-     * not set.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * attributes should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderAttributes(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
-
-        //intentionally empty
     }
 
-    /**
-     * <p>Close off the Link tag.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * end should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
-        // End the appropriate element
 
+        // End the appropriate element
         Link link = (Link) component;
 
-        if (!RenderingUtilities.isPortlet(context)) {
+        if (!isPortlet(context)) {
             writer.startElement("link", link);
             addCoreAttributes(context, component, writer, null);
-            addStringAttributes(context, component, writer, stringAttributes);
+            addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
             String lang = link.getUrlLang();
             if (null != lang) {
-                writer.writeAttribute("hreflang", lang, "lang"); //NOI18N
+                writer.writeAttribute("hreflang", lang, "lang");
             }
             // the URL is the tough thing because it needs to be encoded:
-
             String url = link.getUrl();
 
             if (url != null) {
-                writer.writeAttribute("href", //NOI18N
-                        context.getApplication().getViewHandler().getResourceURL(context, url),
-                        "url"); //NOI18N
+                writer.writeAttribute("href",
+                        context.getApplication().getViewHandler()
+                                .getResourceURL(context, url),
+                        "url");
             }
-
-            writer.endElement("link"); //NOI18N
-            writer.write("\n"); //NOI18N
+            writer.endElement("link");
+            writer.write("\n");
         }
-
     }
-    // --------------------------------------------------------- Private Methods
 }

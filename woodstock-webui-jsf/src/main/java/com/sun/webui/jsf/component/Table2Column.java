@@ -18,7 +18,6 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 
-import java.util.Iterator;
 import javax.faces.component.NamingContainer;
 import javax.faces.context.FacesContext;
 
@@ -46,32 +45,8 @@ public class Table2Column extends TableColumn
         return "com.sun.webui.jsf.Table2Column";
     }
 
-    /**
-     * Get the type of widget represented by this component.
-     *
-     * @return The type of widget represented by this component.
-     */
+    @Override
     public String getWidgetType() {
-        return null; // Not implemented
+        return "table2";
     }
-
-    /**
-     * Get alternative HTML template to be used by this component.
-     */
-    public String getHtmlTemplate() {
-        return null; // Not implemented
-    }
-
-    /**
-     * Get the Dojo modules required to instantiate the widget.
-     *
-     * @return The module(s) required to render the widget.
-     */
-    public Iterator getModules() {
-        return null; // Not implemented
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

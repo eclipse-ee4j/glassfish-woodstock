@@ -16,10 +16,7 @@
 
 package com.sun.webui.jsf.renderkit.html;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.IOException;
-import java.util.Iterator;
 import java.beans.Beans;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -43,72 +40,109 @@ import com.sun.webui.jsf.component.CommonTasksSection;
 import com.sun.webui.jsf.component.ImageHyperlink;
 import com.sun.webui.jsf.component.ImageComponent;
 import com.sun.webui.jsf.component.Icon;
+import java.io.StringWriter;
+import javax.json.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * <p>Renderer for a {@link com.sun.webui.jsf.component.CommonTask} component.</p>
+ * Renderer for a {@link com.sun.webui.jsf.component.CommonTask} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CommonTask"))
 public class CommonTaskRenderer extends AbstractRenderer {
 
     /**
-     * <p>The set of integer pass-through attributes to be rendered.</p>
+     * The set of integer pass-through attributes to be rendered.
      */
-    private static final String integerAttributes[] = {"tabIndex"}; //NOI18N
+    private static final String INT_ATTRIBUTES[] = {
+        "tabIndex"
+    };
+
     /**
-     *<p> Tooltip to be rendered for the "i" image.
+     * Tool tip to be rendered for the "i" image.
      */
     private static final String INFO_IMAGE_TOOLTIP =
-            "commonTasks.infoImageTooltip";   //NOI18N
+            "commonTasks.infoImageTooltip";
+
     /**
-     *<p> Tooltip to be rendered for the close image.
+     *Tool tip to be rendered for the close image.
      */
     private static final String CLOSE_IMAGE_TOOLTIP =
-            "commonTasks.closeImageTooltip";   //NOI18N
-    /*
-     *<p> Tooltip to be rendered for the common task overview image.
+            "commonTasks.closeImageTooltip";
+
+    /**
+     *Tool tip to be rendered for the common task overview image.
      */
     private static final String OVERVIEW_IMAGE_TOOLTIP =
-            "commonTasks.overviewImageTooltip"; //NOI18N
+            "commonTasks.overviewImageTooltip";
+
     /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
+     * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {"onBlur", "onFocus", "onDblClick", "onKeyDown", "onKeyPress", "onMouseUp", //NOI18N
-        "onKeyUp", "onMouseDown", "onMouseMove", "onMouseOut", "onMouseOver"}; //NOI18N
+    private static final String STRING_ATTRIBUTES[] = {
+        "onBlur",
+        "onFocus",
+        "onDblClick",
+        "onKeyDown",
+        "onKeyPress",
+        "onMouseUp",
+        "onKeyUp",
+        "onMouseDown",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver"
+    };
+
     /**
-     *Append this string for the  id for "i" image
+     * Append this string for the  id for "i" image.
      */
     private static final String TOGGLE_IMAGE = "_toggleImg";
+    
+
     /**
-     *Append this string for the id for info panel close link.
+     * Append this string for the id for info panel close link.
      */
     private static final String CLOSE_IMAGE = "_closeImg";
+
     /**
-     *Append this string for the id for spacer image.
+     * Append this string for the id for spacer image.
      */
     private static final String SPACER_IMAGE = "_spacerImg";
+
     /**
-     *Append this string for the id of the toggle panel.
+     * Append this string for the id of the toggle panel.
      */
     private static final String INFO_DIV = "_info";
+
     /**
-     *Append this string for the id of title in info panel.
+     * Append this string for the id of title in info panel.
      */
     private static final String INFO_TITLE = "_infoTitle";
+
     /**
-     *Append this string for the id of text in info panel.
+     * Append this string for the id of text in info panel.
      */
     private static final String INFO_TEXT = "_infoText";
+
     /**
-     *Append this string for the id of the default hyperlink of commonTask
+     * Append this string for the id of the default hyperlink of commonTask.
      */
     private static final String COMMONTASK_LINK = "_link";
+
     /**
-     *Append this string for the id of div for the hyperlink in the info panel.
+     * Append this string for the id of div for the hyperlink in the info panel.
      */
     private static final String INFO_DIV_LINK = "_infoLinkDiv";
+
     /**
      * Ids that are appended for the spans that are present inside the
-     * hyperlink 
+     * hyperlink.
      */
     private static final String LEFT_BOTTOM = "_leftBottom_";
     private static final String LEFT_TOP = "_leftTop_";
@@ -116,16 +150,20 @@ public class CommonTaskRenderer extends AbstractRenderer {
     private static final String RIGHT_TOP = "_rightTop_";
     private static final String RIGHT_BORDER = "_rightBorder_";
     private static final String LINK_TEXT = "_linkText_";
+
     /**
-     *Info icon image link for the task.
+     * Info icon image link for the task.
      */
     private ImageHyperlink ihk;
+
     /**
-     *Spacer  image used while rendering a toggle panel.
+     * Spacer  image used while rendering a toggle panel.
      */
     private Icon spacer;
 
-    /** Creates a new instance of TaskRenderer */
+    /**
+     * Creates a new instance of TaskRenderer.
+     */
     public CommonTaskRenderer() {
     }
 
@@ -134,15 +172,6 @@ public class CommonTaskRenderer extends AbstractRenderer {
         return true;
     }
 
-    /**
-     * Render a common task.
-     * 
-     * @param context The current FacesContext
-     * @param component The CommonTask object to render
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -164,17 +193,18 @@ public class CommonTaskRenderer extends AbstractRenderer {
             return;
         }
 
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
         UIComponent comp = task.getTaskAction();
 
         String compId = task.getClientId(context);
         writer.startElement(HTMLElements.DIV, task);
-        writer.writeAttribute(HTMLAttributes.ID, task.getClientId(context), HTMLAttributes.ID); // NOI18N
+        writer.writeAttribute(HTMLAttributes.ID, task.getClientId(context),
+                HTMLAttributes.ID);
 
         String styles = RenderingUtilities.getStyleClasses(context, task,
                 theme.getStyleClass(ThemeStyles.CTS_TASK));
         writer.writeAttribute(HTMLAttributes.CLASS, styles,
-                HTMLAttributes.CLASS);          // NOI18N
+                HTMLAttributes.CLASS);
         styles = task.getStyle();
         if (styles != null) {
             writer.writeAttribute(HTMLAttributes.STYLE, styles,
@@ -188,10 +218,11 @@ public class CommonTaskRenderer extends AbstractRenderer {
                 HTMLAttributes.CELLSPACING);
         writer.writeAttribute(HTMLAttributes.CELLPADDING, "0",
                 HTMLAttributes.CELLPADDING);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_BACKGROUND), HTMLAttributes.CLASS);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_TASK_BACKGROUND),
+                HTMLAttributes.CLASS);
 
         writer.startElement(HTMLElements.TR, component);
-
 
         // If no facet has been defined, render the default taskAction.
         if (comp == null) {
@@ -219,9 +250,11 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * Renders the action item for a task. 
      * 
      * @param context The current FacesContext
+     * @param task component
      * @param component The action object to render
      * @param writer The current ResponseWriter
      * @param theme The theme used for the object 
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderActionItem(UIComponent component, UIComponent task,
             FacesContext context, Theme theme, ResponseWriter writer)
@@ -230,8 +263,9 @@ public class CommonTaskRenderer extends AbstractRenderer {
         writer.startElement(HTMLElements.TD, component);
         writer.writeAttribute(HTMLAttributes.WIDTH, "2%", HTMLAttributes.WIDTH);
         writer.writeAttribute(HTMLAttributes.VALIGN, "bottom",
-                HTMLAttributes.VALIGN);      // NOI18N
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_LEFT), null);
+                HTMLAttributes.VALIGN);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_TASK_LEFT), null);
 
 
         spacer = ThemeUtilities.getIcon(theme, ThemeImages.CTS_SPACER_IMAGE);
@@ -245,12 +279,14 @@ public class CommonTaskRenderer extends AbstractRenderer {
         writer.writeAttribute(HTMLAttributes.WIDTH, "100%",
                 HTMLAttributes.WIDTH);
 
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_CENTER), HTMLAttributes.CLASS);    // NOI18N
+        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(
+                ThemeStyles.CTS_TASK_CENTER), HTMLAttributes.CLASS);
 
         // If no facet is defined, render the default taskAction.
         // Else, render the component that has been specified in the fact.
         if (component instanceof CommonTask) {
-            renderDefaultTaskAction((CommonTask) component, writer, context, theme);
+            renderDefaultTaskAction((CommonTask) component, writer, context,
+                    theme);
         } else {
             RenderingUtilities.renderComponent(component, context);
         }
@@ -263,7 +299,8 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * @param context The current FacesContext
      * @param component The commonTask object
      * @param writer The current ResponseWriter
-     * @param theme The theme used for the object 
+     * @param theme The theme used for the object
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderPlaceHolderImage(UIComponent component, Theme theme,
             FacesContext context, ResponseWriter writer)
@@ -273,27 +310,31 @@ public class CommonTaskRenderer extends AbstractRenderer {
         writer.writeAttribute(HTMLAttributes.WIDTH, "3%",
                 HTMLAttributes.WIDTH);
         writer.writeAttribute(HTMLAttributes.ALIGN, "right",
-                HTMLAttributes.ALIGN);         // NOI18N
+                HTMLAttributes.ALIGN);   
         writer.writeAttribute(HTMLAttributes.VALIGN, "top",
-                HTMLAttributes.VALIGN);         // NOI18N 
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_RIGHT), HTMLAttributes.CLASS);  // NOI18N
+                HTMLAttributes.VALIGN);    
+        writer.writeAttribute(HTMLAttributes.CLASS, 
+                theme.getStyleClass(ThemeStyles.CTS_TASK_RIGHT),
+                HTMLAttributes.CLASS);
 
         String themeIcon = ThemeImages.CTS_RIGHT_TOGGLE_EMPTY;
         Icon icon = ThemeUtilities.getIcon(theme, themeIcon);
         icon.setParent(component);
-        icon.setId(TOGGLE_IMAGE);                         // NOI18N
+        icon.setId(TOGGLE_IMAGE);
         RenderingUtilities.renderComponent(icon, context);
         writer.endElement(HTMLElements.TD);
 
     }
 
     /**
-     *Render an info icon alongside the task. Clicking on this would
-     *open a pane which contains information about the task.
+     * Render an info icon alongside the taClicking on this would open a pane
+     * which contains information about the task.
+     *
      * @param context The current FacesContext
      * @param component The commonTask object
      * @param writer The current ResponseWriter
      * @param theme The theme used for the object
+     * @throws java.io.IOException if an error occurs
      */
     protected void renderInfoIcon(UIComponent component, Theme theme,
             FacesContext context, ResponseWriter writer) throws IOException {
@@ -302,17 +343,19 @@ public class CommonTaskRenderer extends AbstractRenderer {
         writer.writeAttribute(HTMLAttributes.WIDTH, "3%",
                 HTMLAttributes.WIDTH);
         writer.writeAttribute(HTMLAttributes.ALIGN, "right",
-                HTMLAttributes.ALIGN); // NOI18N
+                HTMLAttributes.ALIGN);
         writer.writeAttribute(HTMLAttributes.VALIGN, "top",
-                HTMLAttributes.VALIGN); // NOI18N
+                HTMLAttributes.VALIGN);
 
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_RIGHT), HTMLAttributes.CLASS);  // NOI18N
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_TASK_RIGHT),
+                HTMLAttributes.CLASS);
 
         ihk = new ImageHyperlink();
 
-        String themeIcon = null;
+        String themeIcon;
         themeIcon = ThemeImages.CTS_RIGHT_TOGGLE;
-        ihk.setId(TOGGLE_IMAGE);                          // NOI18N
+        ihk.setId(TOGGLE_IMAGE);
         ihk.setIcon(themeIcon);
         ihk.setParent(component);
         ihk.setToolTip(theme.getMessage(INFO_IMAGE_TOOLTIP));
@@ -327,30 +370,34 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * @param task The commonTask object
      * @param writer The current ResponseWriter
      * @param theme The theme used for the object 
+     * @param infoText the info text
+     * @param infoTitle the info title
+     * @param facet component
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderInfoText(CommonTask task, Theme theme,
             FacesContext context, ResponseWriter writer,
             String infoText, String infoTitle, UIComponent facet)
             throws IOException {
 
-        StringBuffer sb;
         ImageHyperlink close = new ImageHyperlink();
+
         // Start rendering the info menu..
         writer.startElement(HTMLElements.DIV, task);
         writer.writeAttribute(HTMLAttributes.ID,
-                task.getClientId(context) + INFO_DIV, HTMLAttributes.ID);// NOI18N
-        sb = new StringBuffer();
+                task.getClientId(context) + INFO_DIV, HTMLAttributes.ID);
 
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_INFOPANEL) + " " +
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_TASK_INFOPANEL) + " " +
                 theme.getStyleClass(ThemeStyles.HIDDEN),
-                HTMLAttributes.CLASS); // NOI18N
-        writer.startElement(HTMLElements.DIV, task);             // NOI18N
+                HTMLAttributes.CLASS);
+        writer.startElement(HTMLElements.DIV, task);
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.CTS_INFOPANEL_CLOSE),
                 HTMLAttributes.CLASS);
 
         close.setParent(task);
-        close.setId(CLOSE_IMAGE);                     // NOI18N
+        close.setId(CLOSE_IMAGE);
         close.setToolTip(theme.getMessage(CLOSE_IMAGE_TOOLTIP));
         close.setUrl("#");
         if (close.getParent() == null) {
@@ -362,12 +409,15 @@ public class CommonTaskRenderer extends AbstractRenderer {
 
         writer.endElement(HTMLElements.DIV);
         writer.startElement(HTMLElements.P, task);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_INFO), HTMLAttributes.CLASS);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_TASK_INFO),
+                HTMLAttributes.CLASS);
+
         // If the infoPanel facet exists then use it.
         // instead of the stuff that is given in the tag attribute.
         if (facet == null) {
-            writer.startElement(HTMLElements.SPAN, task);
 
+            writer.startElement(HTMLElements.SPAN, task);
             writer.writeAttribute(HTMLAttributes.CLASS,
                     theme.getStyleClass(ThemeStyles.CTS_HEADER),
                     HTMLAttributes.CLASS);
@@ -397,23 +447,23 @@ public class CommonTaskRenderer extends AbstractRenderer {
             renderBottomInfoPanel(task, facet, writer, theme, context);
         }
         writer.endElement(HTMLElements.DIV);
-        sb = new StringBuffer();
 
         UIComponent section = task.getParent();
-        if (section instanceof CommonTasksGroup && section.getParent() instanceof CommonTasksSection) {
+        if (section instanceof CommonTasksGroup
+                && section.getParent() instanceof CommonTasksSection) {
             section = section.getParent();
         }
 
-        try {
-            JSONObject json = getJSONProperties(context, theme, task, close,
-                    section);
+        JsonObject json = getJSONProperties(
+                context, theme, task, close, section);
 
-            sb.append(JavaScriptUtilities.getDomNode(context, section)).append(".addCommonTask(").append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");\n"); //NOI18N
-            JavaScriptUtilities.renderJavaScript(task, writer, sb.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        writer.write("\n"); // NOI18N   
+        StringWriter buff = new StringWriter();
+        buff.append(JavaScriptUtilities.getDomNode(context, section))
+                .append(".addCommonTask(");
+        writeJsonObject(json, buff);
+        buff.append(");\n");
+        JavaScriptUtilities.renderScripTag(writer, buff.toString());
+        writer.write("\n");
     }
 
     /**
@@ -423,131 +473,108 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * @param writer The response writer
      * @param context Faces context
      * @param theme Theme used for the object
+     * @throws java.io.IOException if an error occurs
      */
     protected void renderBottomInfoPanel(UIComponent task, UIComponent facet,
             ResponseWriter writer, Theme theme, FacesContext context)
             throws IOException {
+
         writer.startElement(HTMLElements.P, task);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TASK_MORE), HTMLAttributes.CLASS);// NOI18N
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_TASK_MORE),
+                HTMLAttributes.CLASS);
         writer.startElement(HTMLElements.IMG, task);
-        writer.writeAttribute(HTMLAttributes.BORDER, "0", HTMLAttributes.BORDER);
+        writer.writeAttribute(HTMLAttributes.BORDER, "0",
+                HTMLAttributes.BORDER);
         writer.writeAttribute(HTMLAttributes.SRC,
                 theme.getImagePath(ThemeImages.HREF_LINK),
                 HTMLAttributes.SRC);
         writer.endElement(HTMLElements.IMG);
         RenderingUtilities.renderComponent(facet, context);
         writer.endElement(HTMLElements.P);
-
     }
 
-    protected JSONObject getJSONProperties(FacesContext context, Theme theme,
+    protected JsonObject getJSONProperties(FacesContext context, Theme theme,
             UIComponent component, ImageHyperlink close, UIComponent section)
-            throws IOException, JSONException {
+            throws IOException{
 
-        StringBuffer tmp = new StringBuffer();
-        tmp.append(ihk.getClientId(context)).append(":").append(ihk.getId()).append("_image");
-        JSONObject json = new JSONObject();
-        // common task id
-        json.put("commonTaskId", component.getClientId(context)) // id of the close link that closes the info panel.
-                .put("closeId", close.getClientId(context)) // id of the spacer image used for determining the info panel position
-                .put("spacerId", SPACER_IMAGE) // id of the displayed "i" image
-                .put("infoIconId", tmp.toString()) // id of the info panel div's prefix.
-                .put("infoPanelVar", INFO_DIV) //id of the "i" link image
-                .put("imageLinkId", ihk.getClientId(context));
-
+        JsonObject json = JSON_BUILDER_FACTORY.createObjectBuilder()
+                // common task id
+                .add("commonTaskId", component.getClientId(context))
+                // id of the close link that closes the info panel.
+                .add("closeId", close.getClientId(context))
+                // id of the spacer image used for determining the info panel
+                // position
+                .add("spacerId", SPACER_IMAGE)
+                // id of the displayed "i" image
+                .add("infoIconId", new StringBuilder()
+                        .append(ihk.getClientId(context))
+                        .append(":")
+                        .append(ihk.getId())
+                        .append("_image")
+                        .toString())
+                // id of the info panel div's prefix.
+                .add("infoPanelVar", INFO_DIV)
+                //id of the "i" link image
+                .add("imageLinkId", ihk.getClientId(context))
+                .build();
         return json;
     }
 
-    /**
-     * Render a common task element.
-     * 
-     * @param context The current FacesContext
-     * @param component The CommonTask object to render
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer)
             throws IOException {
     }
 
-    protected void renderDefaultTaskAction(CommonTask task, ResponseWriter writer,
-            FacesContext context, Theme theme) throws IOException {
-        String onclick = task.getOnClick();
+    protected void renderDefaultTaskAction(CommonTask task,
+            ResponseWriter writer, FacesContext context, Theme theme)
+            throws IOException {
+
         String target = task.getTarget();
         String tooltip = task.getToolTip();
 
         writer.startElement(HTMLElements.A, task);
-        writer.writeAttribute(HTMLAttributes.ID, task.getClientId(context) + COMMONTASK_LINK, HTMLAttributes.ID);
+        writer.writeAttribute(HTMLAttributes.ID,
+                task.getClientId(context)
+                + COMMONTASK_LINK, HTMLAttributes.ID);
+
         UIComponent form = Util.getForm(context, task);
         if (form != null) {
             String formClientId = form.getClientId(context);
 
-            StringBuffer buff = new StringBuffer(200);
-            if (onclick != null) {
-                buff.append(onclick);
-                if (!onclick.endsWith(";")) { //NOI18N
-                    buff.append(";"); //NOI18N
-                }
-            }
-
-            buff.append("return ") //NOI18N
-                    .append(JavaScriptUtilities.getModuleName(
-                    "hyperlink.submit")) //NOI18N
-                    .append("(this, ") //NOI18N
-                    .append("'") //NOI18N
-                    .append(formClientId).append("'") //NOI18N
-                    .append(", "); //NOI18N
-
-            boolean didOnce = false;
-            Iterator kids = task.getChildren().iterator();
-            while (kids.hasNext()) {
-                UIComponent kid = (UIComponent) kids.next();
+            List<String> params = new ArrayList<String>();
+            for (UIComponent kid : task.getChildren()) {
                 if (!(kid instanceof UIParameter)) {
                     continue;
                 }
-
-                if (!didOnce) {
-                    buff.append("new Array(");
-                }
-                String name = (String) kid.getAttributes().get("name"); //NOI18N
-                String value = (String) kid.getAttributes().get("value"); //NOI18N
-                //add to map for later use.
-                if (!didOnce) {
-                    buff.append("'");
-                } else {
-                    buff.append(",'");
-                }
-                buff.append(name);
-                buff.append("','");
-                buff.append(value);
-                buff.append("'"); //NOI18N
-                didOnce = true;
+                params.add((String) kid.getAttributes().get("name"));
+                params.add((String) kid.getAttributes().get("value"));
             }
 
-            if (!didOnce) {
-                buff.append("null");
-            } else {
-                buff.append(")");
-            }
+            StringBuilder onClickBuff = new StringBuilder(200);
+            onClickBuff.append(renderCalls(task.getOnClick(),
+                    // ws_hyperlink_submit
+                    renderCall("hyperlink_submit", "this", formClientId,
+                            params)));
 
-            buff.append(");");
-            writer.writeAttribute(HTMLAttributes.ONCLICK, buff.toString(), null);
-            writer.writeAttribute(HTMLAttributes.HREF, "#", null); //NOI18N
-            writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_TEXT_BGROUND), null);
+            writer.writeAttribute(HTMLAttributes.ONCLICK,
+                    onClickBuff.toString(),
+                    null);
+            writer.writeAttribute(HTMLAttributes.HREF, "#", null);
+            writer.writeAttribute(HTMLAttributes.CLASS,
+                    theme.getStyleClass(ThemeStyles.CTS_TEXT_BGROUND), null);
         }
         if (null != target) {
-            writer.writeAttribute(HTMLAttributes.TARGET, target, null); //NOI18N
+            writer.writeAttribute(HTMLAttributes.TARGET, target, null);
         }
 
         if (null != tooltip) {
-            writer.writeAttribute(HTMLAttributes.TITLE, tooltip, null); //NOI18N
+            writer.writeAttribute(HTMLAttributes.TITLE, tooltip, null);
         }
 
-        addIntegerAttributes(context, task, writer, integerAttributes);
-        addStringAttributes(context, task, writer, stringAttributes);
+        addIntegerAttributes(context, task, writer, INT_ATTRIBUTES);
+        addStringAttributes(context, task, writer, STRING_ATTRIBUTES);
 
         // We need to display these styles only at runtime.
         // They do not lend themselves very well at design time.
@@ -556,7 +583,7 @@ public class CommonTaskRenderer extends AbstractRenderer {
         }
 
         // Used for rendering the image along with the text.
-        ImageComponent img = null;
+        ImageComponent img;
         // The icon attribute gets preference over the imageURL attribute.
         // So, first check if the icon attribute is set. If not, check
         // whether the imageUrl attribute is set and set the image component's
@@ -579,13 +606,16 @@ public class CommonTaskRenderer extends AbstractRenderer {
                 }
             }
         }
-// Used for rendering the image along with the text.
+
+        // Used for rendering the image along with the text.
         img.setId(task.getId() + "_img");
         img.setToolTip(theme.getMessage(OVERVIEW_IMAGE_TOOLTIP));
         img.setStyleClass(theme.getStyleClass(ThemeStyles.CTS_TASK_BULLET));
         writer.startElement(HTMLElements.SPAN, task);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_PADDING), null);
-        writer.writeAttribute(HTMLAttributes.ID, task.getClientId(context) + LINK_TEXT, null);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_PADDING), null);
+        writer.writeAttribute(HTMLAttributes.ID, task.getClientId(context)
+                + LINK_TEXT, null);
         if (img.getUrl() != null) {
             RenderingUtilities.renderComponent(img, context);
         }
@@ -603,35 +633,36 @@ public class CommonTaskRenderer extends AbstractRenderer {
 
         String clientId = component.getClientId(context);
         writer.startElement(HTMLElements.SPAN, component);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_LEFT_BOTTOM), null);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_LEFT_BOTTOM), null);
         writer.writeAttribute(HTMLAttributes.ID, clientId + LEFT_BOTTOM, null);
         writer.endElement(HTMLElements.SPAN);
 
         writer.startElement(HTMLElements.SPAN, component);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_LEFT_TOP), null);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_LEFT_TOP), null);
         writer.writeAttribute(HTMLAttributes.ID, clientId + LEFT_TOP, null);
         writer.endElement(HTMLElements.SPAN);
 
         writer.startElement(HTMLElements.SPAN, component);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_RIGHT_BOTTOM), null);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_RIGHT_BOTTOM), null);
         writer.writeAttribute(HTMLAttributes.ID, clientId + RIGHT_BOTTOM, null);
         writer.endElement(HTMLElements.SPAN);
 
         writer.startElement(HTMLElements.SPAN, component);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_RIGHT_TOP), null);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_RIGHT_TOP), null);
         writer.writeAttribute(HTMLAttributes.ID, clientId + RIGHT_TOP, null);
         writer.endElement(HTMLElements.SPAN);
 
         writer.startElement(HTMLElements.SPAN, component);
-        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(ThemeStyles.CTS_RIGHT_BORDER), null);
+        writer.writeAttribute(HTMLAttributes.CLASS,
+                theme.getStyleClass(ThemeStyles.CTS_RIGHT_BORDER), null);
         writer.writeAttribute(HTMLAttributes.ID, clientId + RIGHT_BORDER, null);
         writer.endElement(HTMLElements.SPAN);
     }
 
-    /**
-     * Decode the submitted component.
-     * 
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
 
@@ -640,12 +671,16 @@ public class CommonTaskRenderer extends AbstractRenderer {
             throw new NullPointerException();
         }
         CommonTask link = (CommonTask) component;
-        StringBuffer paramId = new StringBuffer();
         String clientId = component.getClientId(context);
-        paramId.append(clientId).append(COMMONTASK_LINK).append("_submittedField");
+        String paramId = new StringBuilder()
+                .append(clientId)
+                .append(COMMONTASK_LINK)
+                .append("_submittedField")
+                .toString();
 
-        String value = (String) context.getExternalContext().getRequestParameterMap().
-                get(paramId.toString());
+        String value = (String) context.getExternalContext()
+                .getRequestParameterMap()
+                .get(paramId);
 
         if ((value == null) || !value.equals(clientId +
                 COMMONTASK_LINK)) {

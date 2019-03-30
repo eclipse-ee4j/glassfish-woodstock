@@ -18,14 +18,12 @@ package com.sun.webui.jsf.validator;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List; 
 import javax.faces.application.FacesMessage;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import com.sun.webui.jsf.component.ListSelector;
@@ -34,91 +32,98 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- *  <p>	Use this validator to check the number of characters in a string when
- *	you need to set the validation messages.</p>
- *
- * @author avk
+ * Use this validator to check the number of characters in a string when
+ * you need to set the validation messages.
  */
 public class ValueMatchesOptionsValidator implements Validator, Serializable {
-    
+
     /**
-     * <p>The converter id for this converter.</p>
+     * The converter id for this converter.
      */
     public static final String VALIDATOR_ID = "com.sun.webui.jsf.ValueMatchesOptions";
+
     /**
      * Error message used if the value is not in the option. 
      */
     private String message = null;
-    
+
     private static final boolean DEBUG = false;
-    
-    /** Creates a new instance of StringLengthValidator */
+
+    /**
+     * Creates a new instance of StringLengthValidator
+     */
     public ValueMatchesOptionsValidator() {
     }
 
-    /**
-     *	<p> Validate the value with regard to a <code>UIComponent</code> and a
-     *	    <code>FacesContext</code>.</p>
-     *
-     *	@param	context	    The FacesContext
-     *	@param	component   The component to be validated
-     *	@param	value	    The submitted value of the component
-     *
-     * @exception ValidatorException if the value is not valid
-     */
+    @Override
     public void validate(FacesContext context,
             UIComponent  component,
             Object value) throws ValidatorException {
-        
-        if(DEBUG) log("validate()");
-        
+
+        if (DEBUG) {
+            log("validate()");
+        }
         if((context == null) || (component == null)) {
-            String message = "Context or component is null";
-            if(DEBUG) log("\t" + message);
-            throw new NullPointerException(message);
+            String msg = "Context or component is null";
+            if (DEBUG) {
+                log("\t" + msg);
+            }
+            throw new NullPointerException(msg);
         }
-        
+
         if(!(component instanceof ListSelector)) {
-            String message = this.getClass().getName() +
-                    " can only be used with components which subclass " +
-                    ListSelector.class.getName();
-            if(DEBUG) log("\t" + message);
-            throw new RuntimeException(message);
+            String msg = this.getClass().getName()
+                    + " can only be used with components which subclass "
+                    + ListSelector.class.getName();
+            if (DEBUG) {
+                log("\t" + msg);
+            }
+            throw new RuntimeException(msg);
         }
-        
+
         ListSelector list = (ListSelector)component;
-        Object valuesAsArray = null;
-        
+        Object valuesAsArray;
+
         if(value instanceof List) {
-            if(DEBUG) log("\tValue is list");
+            if(DEBUG) {
+                log("\tValue is list");
+            }
             valuesAsArray = ((List)value).toArray();
         } else if(value.getClass().isArray()) {
-            if(DEBUG) log("\tValue is array");
+            if (DEBUG) {
+                log("\tValue is array");
+            }
             valuesAsArray = value;
         } else {
-            if(DEBUG) log("\tValue is object");
+            if (DEBUG) {
+                log("\tValue is object");
+            }
             valuesAsArray = new Object[]{ value };
         }
-        
+
         int numValues = Array.getLength(valuesAsArray);
         if( numValues == 0) {
-            if(DEBUG) log("\tArray is empty - values are OK");
+            if (DEBUG) {
+                log("\tArray is empty - values are OK");
+            }
             return;
         }
-        
-        Object currentValue = null;
-        Iterator itemsIterator = null;
-        ListItem listItem = null;
-        Object listObject = null;
-        boolean foundValue = false;
+
+        Object currentValue;
+        Iterator itemsIterator;
+        ListItem listItem;
+        Object listObject;
+        boolean foundValue;
         boolean error = false;
-        
+
         for(int counter=0; counter< numValues; ++counter) {
             currentValue = Array.get(valuesAsArray, counter);
             itemsIterator = list.getListItems();
             foundValue = false;
-            
-            if(DEBUG) log("\tChecking: " + String.valueOf(currentValue));
+
+            if (DEBUG) {
+                log("\tChecking: " + String.valueOf(currentValue));
+            }
             while(itemsIterator.hasNext()) {
                 listObject = itemsIterator.next();
                 if(!(listObject instanceof ListItem)) {
@@ -138,7 +143,7 @@ public class ValueMatchesOptionsValidator implements Validator, Serializable {
                 break;
             }
         }
-        
+
         if(error) {
             if(message == null) {
                 Theme theme = ThemeUtilities.getTheme(context);
@@ -149,17 +154,19 @@ public class ValueMatchesOptionsValidator implements Validator, Serializable {
         }
     }
 
-    private void log(String s) { 
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
+    /**
+     * Log a message.
+     * @param msg message to log
+     */
+    private void log(String msg) { 
+        System.out.println(this.getClass().getName() + "::" + msg);
     }
 
-  
     /**
      * Getter for property message.
      * @return Value of property message.
      */
     public String getMessage() {
-
         return this.message;
     }
 
@@ -168,7 +175,6 @@ public class ValueMatchesOptionsValidator implements Validator, Serializable {
      * @param message New value of property message.
      */
     public void setMessage(String message) {
-
         this.message = message;
     } 
 }

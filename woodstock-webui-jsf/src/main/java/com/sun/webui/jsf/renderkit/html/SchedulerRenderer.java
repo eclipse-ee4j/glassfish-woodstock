@@ -37,92 +37,77 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.MessageUtil;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.ThemeUtilities.getIcon;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
- * <p>Renders a guidelines compliant Scheduler component.</p>
+ * Renders a guidelines compliant Scheduler component.
  *
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Scheduler"))
 public class SchedulerRenderer extends javax.faces.render.Renderer {
 
     // where is this used?
-    private static final String SPACE = "&nbsp;"; //NOI18N
+    private static final String SPACE = "&nbsp;";
     private static final boolean DEBUG = false;
 
-    /** No-op - everything happens in encodeEnd() **/
     @Override
     public void encodeBegin(FacesContext context, UIComponent component) {
-        return;
     }
 
-    /** This component manages its own children
-     * @return true
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    /**
-     * <p>While this renderer does render the Scheduler component's children, it
-     * doesn't do so in encodeChildren.</p>
-     *
-     * @param context The FacesContext of the request
-     * @param component The component associated with the
-     * renderer. Must be a subclass of ListSelector.
-     */
     @Override
     public void encodeChildren(FacesContext context, UIComponent component)
             throws java.io.IOException {
-        return;
     }
 
-    /**
-     * <p>Render the appropriate element start, depending on the value of the
-     * <code>type</code> property.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
 
+        if(component == null){
+            return;
+        }
         if (DEBUG) {
             log("encodeEnd");
         }
 
         if (!(component instanceof Scheduler)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                Scheduler.class.getName()};
+                Scheduler.class.getName()
+            };
             String message = MessageUtil.getMessage(
-                    "com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
         Scheduler scheduler = (Scheduler) component;
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
         ResponseWriter writer = context.getResponseWriter();
         String spacerPath = theme.getImagePath(ThemeImages.DOT);
 
         // render the outer div element.
         renderEnclosingDiv(scheduler, theme, context, writer);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         // open the table	
         renderOpenTable(scheduler, writer, null);
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", scheduler);//NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", scheduler);
+        writer.writeText("\n", null);
 
         // render date picker in the first column.
         renderDatePicker(scheduler, theme, spacerPath, writer, context);
@@ -131,15 +116,15 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         renderInputControls(context, scheduler, writer, theme, spacerPath);
 
         // close the table
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N       
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        writer.endElement("table");
+        writer.writeText("\n", null);
 
         // end the enclosing div element
-        writer.endElement("div"); //NOI18N
+        writer.endElement("div");
 
         renderJavaScript(context, scheduler, writer, theme);
     }
@@ -166,7 +151,7 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * <p>Render a layout table.</p>
+     * Render a layout table.
      *
      * @param writer The current ResponseWriter
      * @param comp The component instance
@@ -179,12 +164,12 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
 
         writer.startElement("table", comp);
         if (styleClass != null) {
-            writer.writeAttribute("class", styleClass, null); //NOI18N
+            writer.writeAttribute("class", styleClass, null);
         }
-        writer.writeAttribute("border", "0", null); //NOI18N
-        writer.writeAttribute("cellpadding", "0", null); //NOI18N
-        writer.writeAttribute("cellspacing", "0", null); //NOI18N
-        writer.writeAttribute("title", "", null); //NOI18N
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("title", "", null);
     }
 
     // Helper method to render the legend row. 
@@ -193,46 +178,45 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             throws IOException {
 
         // This row consists of the legend and nothing else. 
-        writer.writeText("\n", null);  //NOI18N
-        writer.startElement("tr", scheduler); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.startElement("td", scheduler); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", scheduler);
+        writer.writeText("\n", null);
+        writer.startElement("td", scheduler);
         renderSpacerImage(scheduler, spacerPath, 1, 30, writer);
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.startElement("td", scheduler); //NOI18N
-        writer.writeAttribute("colspan", "3", null); //NOI18N
-        writer.writeAttribute("height", "25", null); //NOI18N
-        writer.writeAttribute("valign", "top", null); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.startElement("td", scheduler);
+        writer.writeAttribute("colspan", "3", null);
+        writer.writeAttribute("height", "25", null);
+        writer.writeAttribute("valign", "top", null);
 
         if (scheduler.isRequiredLegend()) {
-            writer.writeText("\n", null);  //NOI18N
-            writer.startElement("div", scheduler); //NOI18N
-            writer.writeAttribute("align", "left", null); //NOI18N
-            writer.writeAttribute("class", //NOI18N
+            writer.writeText("\n", null);
+            writer.startElement("div", scheduler);
+            writer.writeAttribute("align", "left", null);
+            writer.writeAttribute("class",
                     theme.getStyleClass(ThemeStyles.LABEL_REQUIRED_DIV), null);
-            writer.writeText("\n", null);  //NOI18N
+            writer.writeText("\n", null);
 
-            Icon icon = ThemeUtilities.getIcon(theme,
+            Icon icon = getIcon(theme,
                     ThemeImages.LABEL_REQUIRED_ICON);
             icon.setId(scheduler.getId().concat(Scheduler.ICON_ID));
             // Need to set parent to get clientID
-            //
             icon.setParent(scheduler);
-            RenderingUtilities.renderComponent(icon, context);
-            writer.writeText("\n", null);  //NOI18N
-            writer.write(SPACE); //N0I18N
+            renderComponent(icon, context);
+            writer.writeText("\n", null);
+            writer.write(SPACE);//N0I18N
             writer.writeText(theme.getMessage("Scheduler.requiredLegend"),
-                    null);  //NOI18N
-            writer.writeText("\n", null);  //NOI18N
-            writer.endElement("div");   //NOI18N
+                    null);
+            writer.writeText("\n", null);
+            writer.endElement("div");
         } else {
-            writer.write(SPACE); //NOI18N
+            writer.write(SPACE);
         }
-        writer.endElement("td");    //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
     }
 
     // It must be possible to do this using a style on the row instead! 
@@ -241,28 +225,28 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             ResponseWriter writer)
             throws IOException {
 
-        writer.startElement("tr", component); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.startElement("td", component); //NOI18N
-        writer.writeAttribute("colspan", String.valueOf(colspan), null); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.startElement("tr", component);
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
+        writer.writeAttribute("colspan", String.valueOf(colspan), null);
+        writer.writeText("\n", null);
         renderSpacerImage(component, path, height, width, writer);
-        writer.endElement("td");      //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.endElement("tr");       //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
     }
 
     // Helper method to render a spacer image.
     private void renderSpacerImage(UIComponent component, String path,
             int height, int width, ResponseWriter writer) throws IOException {
 
-        writer.startElement("img", component); //NOI18N
-        writer.writeAttribute("src", path, null); //NOI18N
-        writer.writeAttribute("height", String.valueOf(height), null); //NOI18N
-        writer.writeAttribute("width", String.valueOf(width), null); //NOI18N
-        writer.writeAttribute("alt", "", null); //NOI18N
-        writer.endElement("img");      //NOI18N
+        writer.startElement("img", component);
+        writer.writeAttribute("src", path, null);
+        writer.writeAttribute("height", String.valueOf(height), null);
+        writer.writeAttribute("width", String.valueOf(width), null);
+        writer.writeAttribute("alt", "", null);
+        writer.endElement("img");
     }
 
     // Render date picker.
@@ -271,11 +255,11 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             throws IOException {
 
         writer.startElement("td", scheduler);
-        writer.writeAttribute("valign", "top", null); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        RenderingUtilities.renderComponent(scheduler.getDatePicker(), context);
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeAttribute("valign", "top", null);
+        writer.writeText("\n", null);
+        renderComponent(scheduler.getDatePicker(), context);
+        writer.endElement("td");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -294,8 +278,8 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             throws IOException {
 
         writer.startElement("td", scheduler);
-        writer.writeAttribute("valign", "top", null); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeAttribute("valign", "top", null);
+        writer.writeText("\n", null);
 
         // the input controls go in another layout table
         String styleClass = theme.getStyleClass(
@@ -357,9 +341,9 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             renderPreviewRow(context, scheduler, writer, theme);
         }
 
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
+        writer.endElement("table");
+        writer.writeText("\n", null);
     }
 
     private void renderTimeRow(Scheduler scheduler, UIComponent label,
@@ -375,7 +359,7 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
 
         // tr td span
         renderInputRowStart(scheduler, writer, theme);
-        RenderingUtilities.renderComponent(label, context);
+        renderComponent(label, context);
         writer.writeText("\n", null);
         writer.endElement("span");
         writer.endElement("td");
@@ -387,7 +371,7 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
         writer.startElement("td", scheduler);
         writer.writeText("\n", null);
-        RenderingUtilities.renderComponent(time, context);
+        renderComponent(time, context);
         writer.endElement("td");
         writer.writeText("\n", null);
         writer.endElement("tr");
@@ -405,49 +389,49 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         // private vs public facets!
         UIComponent label = scheduler.getDateLabelComponent(theme);
 
-        writer.startElement("tr", scheduler); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.startElement("tr", scheduler);
+        writer.writeText("\n", null);
 
         // Spacer cell
         writer.startElement("td", scheduler);
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
         renderSpacerImage(scheduler, spacerPath, 1, 30, writer);
-        writer.endElement("td");       //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
 
         // Label cell
         writer.startElement("td", scheduler);
-        writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        RenderingUtilities.renderComponent(label, context);
+        writer.writeAttribute("nowrap", "nowrap", null);
+        writer.writeText("\n", null);
+        renderComponent(label, context);
         writer.endElement("td");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
 
         // Spacer cell
         writer.startElement("td", scheduler);
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
         renderSpacerImage(scheduler, spacerPath, 1, 10, writer);
         writer.endElement("td");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
 
         // Field and help text cell
         writer.startElement("td", scheduler);
-        writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        RenderingUtilities.renderComponent(date, context);
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeAttribute("nowrap", "nowrap", null);
+        writer.writeText("\n", null);
+        renderComponent(date, context);
+        writer.writeText("\n", null);
         writer.startElement("span", scheduler);//NOI18N
         String styleClass = theme.getStyleClass(ThemeStyles.HELP_FIELD_TEXT);
-        writer.writeAttribute("class", styleClass, null); //NOI18N
+        writer.writeAttribute("class", styleClass, null);
         writer.write(SPACE);
         writer.write(SPACE);
         writer.writeText(getPattern(scheduler, theme), null);
-        writer.endElement("span"); //NOI18N
+        writer.endElement("span");
         writer.endElement("td");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
 
         writer.endElement("tr");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
     }
 
     private String getPattern(Scheduler scheduler, Theme theme) {
@@ -458,14 +442,15 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
                 String pattern = scheduler.getDatePicker().getDateFormatPattern();
                 hint = theme.getMessage("calendar.".concat(pattern));
             } catch (MissingResourceException mre) {
-                hint = ((SimpleDateFormat) (scheduler.getDateFormat())).toLocalizedPattern().toLowerCase();
+                hint = ((SimpleDateFormat) (scheduler.getDateFormat()))
+                        .toLocalizedPattern().toLowerCase();
             }
         }
         return hint;
     }
 
     /**
-     * <p>Render the "Preview in Browser" button.</p>
+     * Render the "Preview in Browser" button.
      *
      * @param context The current FacesContext
      * @param scheduler The Scheduler component instance
@@ -476,16 +461,17 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
      */
     private void renderPreviewRow(FacesContext context, Scheduler scheduler,
             ResponseWriter writer, Theme theme) throws IOException {
+
         writer.startElement("tr", scheduler);
         writer.writeText("\n", null);
         writer.startElement("td", scheduler);
-        writer.writeAttribute("colspan", "3", null); //NOI18N
+        writer.writeAttribute("colspan", "3", null);
         writer.write(SPACE);
         writer.endElement("td");
         writer.writeText("\n", null);
         writer.startElement("td", scheduler);
         UIComponent button = scheduler.getPreviewButtonComponent();
-        RenderingUtilities.renderComponent(button, context);
+        renderComponent(button, context);
         writer.endElement("td");
         writer.writeText("\n", null);
         writer.endElement("tr");
@@ -501,31 +487,31 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
 
         // Spacer and label cells 
         renderInputRowStart(scheduler, writer, theme);
-        RenderingUtilities.renderComponent(label, context);
-        writer.writeText("\n", null);  //NOI18N
+        renderComponent(label, context);
+        writer.writeText("\n", null);
         writer.endElement("span");
         writer.endElement("td");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
 
         // Spacer cell
         writer.startElement("td", scheduler);
         writer.write(SPACE);
-        writer.endElement("td");       //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
 
         // Field cell
         writer.startElement("td", scheduler);
-        writer.writeText("\n", null);  //NOI18N
-        RenderingUtilities.renderComponent(menu, context);
+        writer.writeText("\n", null);
+        renderComponent(menu, context);
         writer.endElement("td");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
 
         writer.endElement("tr");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
     }
 
     /**
-     * <p>Convenience function to render the start of an input control row.<p>
+     * Convenience function to render the start of an input control row.
      *
      * @param scheduler The Scheduler component instance
      * @param writer The current ResponseWriter
@@ -533,27 +519,28 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderInputRowStart(Scheduler scheduler, ResponseWriter writer,
-            Theme theme) throws IOException {
+    private void renderInputRowStart(Scheduler scheduler,
+            ResponseWriter writer, Theme theme) throws IOException {
+
         writer.startElement("tr", scheduler);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         writer.startElement("td", scheduler);
         writer.write(SPACE);
         writer.endElement("td");
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement("td", scheduler);
-        writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeAttribute("nowrap", "nowrap", null);
+        writer.writeText("\n", null);
         writer.startElement("span", scheduler);
         String styleClass =
                 theme.getStyleClass(ThemeStyles.DATE_TIME_LABEL_TEXT);
-        writer.writeAttribute("class", styleClass, null); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeAttribute("class", styleClass, null);
+        writer.writeText("\n", null);
     }
 
     /**
-     * <p>Render the repeat limit row.</p>
+     * Render the repeat limit row.
      *
      * @param context The current FacesContext
      * @param scheduler The Scheduler component instance
@@ -572,19 +559,19 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
 
         // Spacer and label cells 
         renderInputRowStart(scheduler, writer, theme);
-        RenderingUtilities.renderComponent(label, context);
+        renderComponent(label, context);
         writer.endElement("span");
         writer.endElement("td");
-        writer.writeText("\n", null);  //NOI18N
+        writer.writeText("\n", null);
 
         writer.startElement("td", scheduler);
         writer.write(SPACE);
         writer.endElement("td");
         writer.writeText("\n", null);
         writer.startElement("td", scheduler);
-        RenderingUtilities.renderComponent(field, context);
+        renderComponent(field, context);
         writer.writeText("\n", null);
-        RenderingUtilities.renderComponent(menu, context);
+        renderComponent(menu, context);
         writer.endElement("td");
         writer.writeText("\n", null);
 
@@ -604,50 +591,52 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.endElement("td");
         writer.writeText("\n", null);
 
-        writer.startElement("td", scheduler); //NOI18N
+        writer.startElement("td", scheduler);
         writer.write(SPACE);
-        writer.endElement("td"); //NOI18N
-        writer.write("\n"); //NOI18N
+        writer.endElement("td");
+        writer.write("\n");
 
-        writer.startElement("td", scheduler); //NOI18N
-        writer.writeAttribute("nowrap", "nowrap", null);   //NOI18N
-        writer.startElement("div", scheduler);  //NOI18N
-        writer.writeAttribute("class", //NOI18N
+        writer.startElement("td", scheduler);
+        writer.writeAttribute("nowrap", "nowrap", null);
+        writer.startElement("div", scheduler);
+        writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.HELP_FIELD_TEXT), null);
-        writer.writeText(theme.getMessage("Scheduler.blankForWhat"), //NOI18N
+        writer.writeText(theme.getMessage("Scheduler.blankForWhat"),
                 null);
-        writer.write("\n");  //NOI18N
-        writer.endElement("div");  //NOI18N
-        writer.endElement("td"); //NOI18N
-        writer.write("\n");  //NOI18N
+        writer.write("\n");
+        writer.endElement("div");
+        writer.endElement("td");
+        writer.write("\n");
 
-        writer.endElement("tr"); //NOI18N
-        writer.write("\n");  //NOI18N
+        writer.endElement("tr");
+        writer.write("\n");
     }
 
     private void renderJavaScript(FacesContext context, Scheduler scheduler,
             ResponseWriter writer, Theme theme) throws IOException {
-        try {
-            // Append properties.
-            StringBuffer buff = new StringBuffer(256);
-            JSONObject json = new JSONObject();
-            json.put("id", scheduler.getClientId(context)).put("datePickerId", scheduler.getDatePicker().getClientId(context)).put("dateFieldId", scheduler.getDateComponent().getClientId(context)).put("dateClass", theme.getStyleClass(ThemeStyles.DATE_TIME_LINK)).put("selectedClass", theme.getStyleClass(ThemeStyles.DATE_TIME_BOLD_LINK)).put("edgeClass", theme.getStyleClass(ThemeStyles.DATE_TIME_OTHER_LINK)).put("edgeSelectedClass", theme.getStyleClass(ThemeStyles.DATE_TIME_OTHER_BOLD_LINK)).put("todayClass", theme.getStyleClass(ThemeStyles.DATE_TIME_TODAY_LINK)).put("dateFormat", scheduler.getDatePicker().getDateFormatPattern());
 
-            // Append JavaScript.
-//            buff.append(JavaScriptUtilities.getModule("scheduler")).append("\n") // NOI18N
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("scheduler")).append("'], function (scheduler) {").append("\n") // NOI18N
-//                    .append(JavaScriptUtilities.getModuleName("scheduler.init")) // NOI18N
-                    .append("scheduler.init") // NOI18N
-                    .append("(") //NOI18N
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");"); //NOI18N
-            buff.append("});");
+        // Append properties.
+        JsonObject initProps = JSON_BUILDER_FACTORY.createObjectBuilder()
+                .add("id", scheduler.getClientId(context))
+                .add("datePickerId", scheduler.getDatePicker()
+                        .getClientId(context))
+                .add("dateFieldId", scheduler.getDateComponent()
+                        .getClientId(context))
+                .add("dateClass", theme.getStyleClass(
+                        ThemeStyles.DATE_TIME_LINK))
+                .add("selectedClass", theme.getStyleClass(
+                        ThemeStyles.DATE_TIME_BOLD_LINK))
+                .add("edgeClass", theme.getStyleClass(
+                        ThemeStyles.DATE_TIME_OTHER_LINK))
+                .add("edgeSelectedClass", theme.getStyleClass(
+                        ThemeStyles.DATE_TIME_OTHER_BOLD_LINK))
+                .add("todayClass", theme.getStyleClass(
+                        ThemeStyles.DATE_TIME_TODAY_LINK))
+                .add("dateFormat", scheduler.getDatePicker()
+                        .getDateFormatPattern())
+                .build();
 
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(scheduler, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        renderInitScriptTag(writer, "scheduler", initProps);
     }
 
     @Override

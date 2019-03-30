@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import java.io.BufferedInputStream;
@@ -27,24 +26,27 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- *  <p>	This <code>InputStream</code> looks for lines beginning with
- *	"#include '<em>filename</em>'" where filename is the name of a file to
- *	include.  It replaces the "#include" line with contents of the
- *	specified file.  Any other line beginning with '#' is illegal.</p>
+ * <p>
+ * This <code>InputStream</code> looks for lines beginning with "#include
+ * '<em>filename</em>'" where filename is the name of a file to include. It
+ * replaces the "#include" line with contents of the specified file. Any other
+ * line beginning with '#' is illegal.</p>
  */
 public class IncludeInputStream extends FilterInputStream {
 
     /**
-     *	<p> Constructor.</p>
+     * <p>
+     * Constructor.</p>
      */
     public IncludeInputStream(InputStream input) {
         super(input);
     }
 
     /**
-     *	<p> This overriden method implements the include feature.</p>
+     * <p>
+     * This overriden method implements the include feature.</p>
      *
-     *	@return	The next character.
+     * @return The next character.
      */
     public int read() throws IOException {
         int intChar = -1;
@@ -92,8 +94,8 @@ public class IncludeInputStream extends FilterInputStream {
     public int read(byte[] bytes, int off, int len) throws IOException {
         if (bytes == null) {
             throw new NullPointerException();
-        } else if ((off < 0) || (off > bytes.length) || (len < 0) ||
-                ((off + len) > bytes.length) || ((off + len) < 0)) {
+        } else if ((off < 0) || (off > bytes.length) || (len < 0)
+                || ((off + len) > bytes.length) || ((off + len) < 0)) {
             throw new IndexOutOfBoundsException();
         } else if (len == 0) {
             return 0;
@@ -192,16 +194,16 @@ public class IncludeInputStream extends FilterInputStream {
     }
 
     /**
-     *	<p> This method converts a context-root relative path to the actual
-     *	    path using the ServletContext or PortletContext.  This requires
-     *	    the application to be running in a Servlet or Portlet
-     *	    environment... and further requires that it be running in JSF
-     *	    environment (which is used to access the Servlet or Portlet
-     *	    Context).</p>
+     * <p>
+     * This method converts a context-root relative path to the actual path
+     * using the ServletContext or PortletContext. This requires the application
+     * to be running in a Servlet or Portlet environment... and further requires
+     * that it be running in JSF environment (which is used to access the
+     * Servlet or Portlet Context).</p>
      *
-     *	@param	filename    The relative filename to convert to a full path.
+     * @param filename The relative filename to convert to a full path.
      *
-     *	@return	The full path based on the app's context root.
+     * @return The full path based on the app's context root.
      */
     @SuppressWarnings("unchecked")
     protected String convertRelativePath(String filename) {
@@ -249,12 +251,13 @@ public class IncludeInputStream extends FilterInputStream {
     }
 
     /**
-     *	<p> Simple test case (requires a test file).</p>
+     * <p>
+     * Simple test case (requires a test file).</p>
      */
     public static void main(String args[]) {
         try {
-            IncludeInputStream stream =
-                    new IncludeInputStream(new FileInputStream(args[0]));
+            IncludeInputStream stream
+                    = new IncludeInputStream(new FileInputStream(args[0]));
             int ch = '\n';
             while (ch != -1) {
                 System.out.print((char) ch);
@@ -266,12 +269,11 @@ public class IncludeInputStream extends FilterInputStream {
     }
     private boolean eol = true;
     private IncludeInputStream redirStream = null;
-    private static final Class[] GET_REAL_PATH_ARGS =
-            new Class[]{String.class};
+    private static final Class[] GET_REAL_PATH_ARGS
+            = new Class[]{String.class};
     private static final String INCLUDE = "include";
     private static final int INCLUDE_LEN = INCLUDE.length();
     private static Class FACES_CONTEXT;
-
 
     static {
         try {

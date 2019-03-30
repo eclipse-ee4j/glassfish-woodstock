@@ -28,7 +28,7 @@ require([
     "dijit/_WidgetBase",
     "dijit/_OnDijitClickMixin",
     "dijit/_TemplatedMixin",
-    "webui/../text!./templates/table2.html"
+    "dojo/text!webui/suntheme../templates/table2.html"
 ], function (common, widgetCommon, declare, _WidgetBase,
         _OnDijitClickMixin, _TemplatedMixin, template) {
 

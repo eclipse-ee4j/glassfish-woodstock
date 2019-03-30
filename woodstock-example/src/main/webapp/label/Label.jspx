@@ -26,6 +26,17 @@
                 <webuijsf:head title="#{msgs.label_title}">
                     <webuijsf:link rel="shortcut icon" url="/images/favicon.ico" type="image/x-icon" />
                     <webuijsf:script url="/fixup.js" />
+                    <f:verbatim><![CDATA[
+    <script type="text/javascript">
+        function openPopup(){
+            var top = screen.height - (screen.height/1.618) - (500/2);
+            var left = (screen.width-650)/2;
+            var specs = 'height=500,width=750,top='+top+',left='+left+', resizable';
+            var win = window.open('','help_window', specs);
+            win.focus();
+        }
+    </script>
+          ]]></f:verbatim>
                 </webuijsf:head>
                 <webuijsf:body>
                     <webuijsf:form id="form1">
@@ -82,7 +93,7 @@
                                                              text="#{msgs.label_morePageHelp}"
                                                              onMouseOver="javascript:window.status='#{msgs.label_helpTooltip  }'; return true;"
                                                              onMouseOut="javascript: window.status=''; return true"
-                                                             onClick="javascript: var win = window.open('','help_window','height=500,width=750,top='+((screen.height-(screen.height/1.618))-(500/2))+',left='+((screen.width-650)/2)+',resizable'); win.focus();"/>
+                                                             onClick="openPopup();"/>
                                 </webuijsf:helpInline>
                             </f:facet>
                         </webuijsf:contentPageTitle>
@@ -190,7 +201,7 @@
                             updated. -->
                             <webuijsf:button id="OrderButton" text="#{msgs.label_orderButton}"
                                              actionExpression="#{LabelBean.placeOrder}"/>
-                           
+
                         </webuijsf:markup>
                     </webuijsf:form>
                 </webuijsf:body>

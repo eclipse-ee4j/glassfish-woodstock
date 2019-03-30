@@ -24,29 +24,29 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 /**
- * The Servlet implementation of <code>ThemeContext</code>.
- * This implementation uses the Servlet runtime environment to persist an
- * instance of a <code>ThemeContext/code> as a <code>ServletContext</code>
+ * The Servlet implementation of {@code ThemeContext}.
+ * This implementation uses the Servlet run-time environment to persist an
+ * instance of a {@code ThemeContext/code> as a {@code ServletContext}
  * attribute.
  * <p>
- * A <code>ServletThemeContext</code> instance is created based on the 
- * context-param values, defined as <code>ThemeContext</code> constants.
+ * A {@code ServletThemeContext} instance is created based on the 
+ * context-param values, defined as {@code ThemeContext} constants.
  * </p>
  * <p>
  * <ul>
- * <li><code>ThemeContext.DEFAULT_LOCALE</code> - defines the
+ * <li>{@code ThemeContext.DEFAULT_LOCALE} - defines the
  * default locale for this application.(optional)</li>
- * <li><code>ThemeContext.DEFAULT_THEME</code> - define the theme name
+ * <li>{@code ThemeContext.DEFAULT_THEME} - define the theme name
  * for the theme that this application may depend on.(optional)</li>
- * <li><code>ThemeContext.DEFAULT_THEME_VERSION</code> - define the theme
+ * <li>{@code ThemeContext.DEFAULT_THEME_VERSION} - define the theme
  * version this application may depend on.(optional)</li>
- * <li><code>ThemeContext.THEME_RESOURECES</code> - a space separated list
+ * <li>{@code ThemeContext.THEME_RESOURECES} - a space separated list
  * of resources bundles containing theme resources that augment any theme
  * referenced by this application.</li>
- * <li><code>ThemeContext.THEME_FACTORY_CLASS_NAME</code> - the name
- * of the class that implements <code>com.sun.webui.theme.ThemeFactory</code>
+ * <li>{@code ThemeContext.THEME_FACTORY_CLASS_NAME} - the name
+ * of the class that implements {@code com.sun.webui.theme.ThemeFactory}
  * to instantiate to obtain theme instances for this application.</li>
- * <li><code>ThemeContext.THEME_SERVLET_CONTEXT</code> - the value of
+ * <li>{@code ThemeContext.THEME_SERVLET_CONTEXT} - the value of
  * the url-pattern element of the theme servlet's servlet-mapping, less the
  * terminating "/*".</li>
  * </ul>
@@ -57,14 +57,14 @@ public class ServletThemeContext extends ThemeContext {
     /**
      * An object to synchronize with.
      */
-    private static Object synchObj = new Object();
+    private static final Object LOCK = new Object();
 
     /**
-     * Contstuctor controlled in <code>getInstance</code> and
-     * for subclasses.
-     * In non servlet environments like JSF, which could be 
-     * servlet or portlet, accept a <code>Map</code> containing
-     * initialization parameters.
+     * Constructor controlled in {@code getInstance} and for subclasses.In non
+     * servlet environments like JSF, which could be servlet or portlet, accept
+     * a {@code Map} containing initialization parameters.
+     *
+     * @param initParamMap init map
      */
     protected ServletThemeContext(Map initParamMap) {
         super();
@@ -107,7 +107,8 @@ public class ServletThemeContext extends ThemeContext {
     }
 
     /**
-     * Constructor controlled in <code>getInstance</code>.
+     * Constructor controlled in {@code getInstance}.
+     * @param context theme servlet
      */
     protected ServletThemeContext(ServletContext context) {
         super();
@@ -150,7 +151,9 @@ public class ServletThemeContext extends ThemeContext {
     }
 
     /**
-     * Return an instance of <code>ThemeContext</code>.
+     * Return an instance of {@code ThemeContext}.
+     * @param context servelt context
+     * @return ThemeContext
      */
     public static ThemeContext getInstance(ServletContext context) {
 
@@ -160,22 +163,13 @@ public class ServletThemeContext extends ThemeContext {
         //
         // Should there be a JSFThemeServlet to complement the
         // JSFThemeContext's use of "ApplicationMap" ?
-        //
-        // I think we need synchronization here.
-        //
-        ThemeContext themeContext =
-                (ThemeContext) context.getAttribute(THEME_CONTEXT);
-        if (themeContext == null) {
-
-            //FIXME synchronization on a non-final field
-            synchronized (synchObj) {
-                // Need to make sure another thread didn't just finish
-                //
-                themeContext = (ThemeContext) context.getAttribute(THEME_CONTEXT);
-                if (themeContext == null) {
-                    themeContext = new ServletThemeContext(context);
-                    context.setAttribute(THEME_CONTEXT, themeContext);
-                }
+        ThemeContext themeContext;
+        synchronized (LOCK) {
+            // Need to make sure another thread didn't just finish
+            themeContext = (ThemeContext) context.getAttribute(THEME_CONTEXT);
+            if (themeContext == null) {
+                themeContext = new ServletThemeContext(context);
+                context.setAttribute(THEME_CONTEXT, themeContext);
             }
         }
         return themeContext;
@@ -189,7 +183,6 @@ public class ServletThemeContext extends ThemeContext {
 
         String[] localeArray = locales.split(LOCALE_SEPARATOR);
         Set<Locale> localeSet = new HashSet<Locale>();
-
 
         for (int counter = 0; counter < localeArray.length; ++counter) {
 

@@ -27,29 +27,36 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Page;
 import com.sun.webui.jsf.util.MessageUtil;
-import com.sun.webui.jsf.util.RenderingUtilities;
+
+import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
 
 /**
- * <p>Renderer for a {@link Page} component.</p>
+ * Renderer for a {@link Page} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Page"))
 public class PageRenderer extends javax.faces.render.Renderer {
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
-
-        return;
+    public void encodeEnd(FacesContext context, UIComponent component)
+            throws IOException {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
+    public void encodeBegin(FacesContext context, UIComponent component)
+            throws IOException {
 
+        if (component == null){
+            return;
+        }
         if (!(component instanceof Page)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                Page.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                Page.class.getName()
+            };
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
@@ -57,31 +64,31 @@ public class PageRenderer extends javax.faces.render.Renderer {
 
         ResponseWriter writer = context.getResponseWriter();
 
-        if (!RenderingUtilities.isPortlet(context)) {
+        if (!isPortlet(context)) {
             //write the doctype stuff
             if (page.isXhtml()) {
                 if (page.isFrame()) {
                     //xhtml transitional frames
-                    writer.write("<!DOCTYPE html PUBLIC \"" +
-                            "-//W3C//DTD XHTML 1.0 Frameset//EN\" " +
-                            "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
+                    writer.write("<!DOCTYPE html PUBLIC \""
+                            + "-//W3C//DTD XHTML 1.0 Frameset//EN\" "
+                            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
                 } else {
                     //html transitional
-                    writer.write("<!DOCTYPE html PUBLIC \"" +
-                            "-//W3C//DTD XHTML 1.0 Transitional//EN\" " +
-                            "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+                    writer.write("<!DOCTYPE html PUBLIC \""
+                            + "-//W3C//DTD XHTML 1.0 Transitional//EN\" "
+                            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
                 }
             } else {
                 if (page.isFrame()) {
                     //html transitional frames
-                    writer.write("<!DOCTYPE html PUBLIC \"" +
-                            "-//W3C//DTD HTML 4.01 Frameset//EN\" " +
-                            "\"http://www.w3.org/TR/html4/frameset.dtd\">");
+                    writer.write("<!DOCTYPE html PUBLIC \""
+                            + "-//W3C//DTD HTML 4.01 Frameset//EN\" "
+                            + "\"http://www.w3.org/TR/html4/frameset.dtd\">");
                 } else {
                     //html transitional
-                    writer.write("<!DOCTYPE html PUBLIC \"" +
-                            "-//W3C//DTD HTML 4.01 Transitional//EN\" " +
-                            "\"http://www.w3.org/TR/html4/loose.dtd\">");
+                    writer.write("<!DOCTYPE html PUBLIC \""
+                            + "-//W3C//DTD HTML 4.01 Transitional//EN\" "
+                            + "\"http://www.w3.org/TR/html4/loose.dtd\">");
                 }
             }
             writer.write("\n");

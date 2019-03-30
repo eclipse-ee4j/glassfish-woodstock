@@ -25,12 +25,14 @@ import javax.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.ThemeLinks;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.MessageUtil;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderHeaderScriptTags;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleSheetInline;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleSheetLink;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * <p>Renderer for a {@link Theme} component.</p>
+ * Renderer for a {@link Theme} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.ThemeLinks"))
 public class ThemeLinksRenderer extends javax.faces.render.Renderer {
@@ -38,18 +40,23 @@ public class ThemeLinksRenderer extends javax.faces.render.Renderer {
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
-        return;
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
+    public void encodeBegin(FacesContext context, UIComponent component)
+            throws IOException {
+
+        if(component == null){
+            return;
+        }
         if (!(component instanceof ThemeLinks)) {
             Object[] params = {component.toString(),
                 this.getClass().getName(),
                 ThemeLinks.class.getName()
             };
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
@@ -57,41 +64,21 @@ public class ThemeLinksRenderer extends javax.faces.render.Renderer {
         ResponseWriter writer = context.getResponseWriter();
 
         // Link and Scripts
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
         if (themeLinks.isStyleSheetInline()) {
-            RenderingUtilities.renderStyleSheetInline(themeLinks, theme, context, writer);
+            renderStyleSheetInline(themeLinks, theme, context, writer);
         } else if (themeLinks.isStyleSheetLink()) {
-            RenderingUtilities.renderStyleSheetLink(themeLinks, theme, context, writer);
+            renderStyleSheetLink(themeLinks, theme, context, writer);
         }
 
-        // Do not render any JavaScript.
+        // Do not render any JS.
         if (!themeLinks.isJavaScript()) {
             return;
         }
 
-        // Render Dojo config.
-        JavaScriptUtilities.renderJavaScript(component, writer,
-                JavaScriptUtilities.getDojoConfig(themeLinks.isDebug(),
-                themeLinks.isParseWidgets()));
-
-        // Render Dojo include.
-        JavaScriptUtilities.renderDojoInclude(component, writer);
-
-        // Render JSON include.
-        //JavaScriptUtilities.renderJsonInclude(component, writer);
-
-        // Render Prototype include before JSF Extensions.
-        JavaScriptUtilities.renderPrototypeInclude(component, writer);
-
-        // Render JSF Extensions include.
-        //JavaScriptUtilities.renderJsfxInclude(component, writer);
-
-        // Render module config after including dojo.
-        JavaScriptUtilities.renderJavaScript(component, writer,
-                JavaScriptUtilities.getModuleConfig(themeLinks.isDebug()));
-
-        // Render global include.
-        JavaScriptUtilities.renderGlobalInclude(component, writer);
+        // Render script tags
+        renderHeaderScriptTags(themeLinks.isDebug(),
+                themeLinks.isParseWidgets(), writer);
     }
 
     @Override
@@ -100,7 +87,7 @@ public class ThemeLinksRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
-        return;
+    public void encodeChildren(FacesContext context, UIComponent component)
+            throws IOException {
     }
 }

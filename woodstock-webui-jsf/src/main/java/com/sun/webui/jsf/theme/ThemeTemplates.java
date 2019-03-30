@@ -17,34 +17,35 @@
 package com.sun.webui.jsf.theme;
 
 /**
- * <p> This class contains HTML template related theme constants.</p>
+ * This class contains HTML template related theme constants.
+ * TODO remove this class. (now part of the theme widget JS code).
  */
-public class ThemeTemplates {
+public final class ThemeTemplates {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private ThemeTemplates() {
+    }
 
     /**
      * A template file that contains HTML for the Button component.
      */
     public static final String BUTTON = "button";
+
     /**
      * A template file that contains HTML for the Table2 component.
      */
     public static final String TABLE2 = "table2";
+
     /**
      * A template file that contains HTML for the Table2RowGroup component.
      */
     public static final String TABLE2ROWGROUP = "table2RowGroup";
+
     /**
      * A template file that contains HTML for the ProgressBar component.
      */
     public static final String PROGRESSBAR = "progressBar";
 
-    /**
-     * This private constructor prevents this class from being instantiated
-     * directly as its only purpose is to provide image constants.
-     */
-    private ThemeTemplates() {
-        // do nothing
-    }
 }
-
-

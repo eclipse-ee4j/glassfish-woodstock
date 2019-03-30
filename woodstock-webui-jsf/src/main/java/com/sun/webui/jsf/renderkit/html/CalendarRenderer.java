@@ -32,14 +32,18 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.JavaScriptUtilities;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 
 /**
- * <p>Renders an instance of the Calendar component.</p>
+ * Renders an instance of the Calendar component.
  *
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Calendar"))
@@ -47,27 +51,35 @@ public class CalendarRenderer extends FieldRenderer {
 
     private final static boolean DEBUG = false;
 
-    /** Creates a new instance of CalendarRenderer. */
+    /**
+     * Creates a new instance of CalendarRenderer.
+     */
     public CalendarRenderer() {
     }
 
     /**
      * <p>Render the component end element.</p>
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be rendered
      * @exception IOException if an input/output error occurs
      */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
 
+        if(component == null){
+            return;
+        }
         if (!(component instanceof Calendar)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                Calendar.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                Calendar.class.getName()
+            };
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
@@ -89,9 +101,7 @@ public class CalendarRenderer extends FieldRenderer {
             renderCellEnd(writer);
         }
 
-
         // Table cell for the field and the date format string
-
         if (readOnly) {
             renderCellStart(calendar, styles[6], writer);
             UIComponent text = calendar.getReadOnlyComponent(context);
@@ -101,7 +111,7 @@ public class CalendarRenderer extends FieldRenderer {
             }
         } else {
             renderCellStart(calendar, styles[4], writer);
-            renderInput(calendar, "text", clientId.concat(calendar.INPUT_ID),
+            renderInput(calendar, "text", clientId.concat(Calendar.INPUT_ID),
                     false, styles, context, writer);
             writer.write("\n");
             renderPattern(calendar, styles[7], styles[2], context, writer);
@@ -112,47 +122,47 @@ public class CalendarRenderer extends FieldRenderer {
         if (!readOnly) {
 
             // Start of table cell
-            writer.startElement("td", calendar); //NOI18N
-            writer.writeAttribute("valign", "top", null);//NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.startElement("td", calendar);
+            writer.writeAttribute("valign", "top", null);
+            writer.writeText("\n", null);
 
             // Create a common CSS containing block used for positioning
-            writer.startElement("div", calendar); //NOI18N
+            writer.startElement("div", calendar);
             // Use relative so that icon is considered in normal flow
-            writer.writeAttribute("style", "position: relative;", null);// NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.writeAttribute("style", "position: relative;", null);
+            writer.writeText("\n", null);
 
             // This is the span for the link
-            writer.startElement("span", calendar); //NOI18N
-            writer.writeAttribute("class", styles[5], null); //NOI18N
+            writer.startElement("span", calendar);
+            writer.writeAttribute("class", styles[5], null);
 
             ImageHyperlink link =
                     calendar.getDatePickerLink(context);
             if (calendar.isDisabled()) {
                 writer.writeAttribute("style", "display:none;", null);
             }
-            writer.write("\n"); //NOI18N
+            writer.write("\n");
 
             link.setIcon(styles[14]);
             link.setToolTip(styles[13]);
             RenderingUtilities.renderComponent(link, context);
 
             // Close link span
-            writer.endElement("span"); //NOI18N
+            writer.endElement("span");
             writer.write("\n");
 
             renderDatePicker(context, writer, styles, calendar);
 
             // Close the remaining div and table cell 
-            writer.endElement("div"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
-            writer.endElement("td"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.endElement("div");
+            writer.writeText("\n", null);
+            writer.endElement("td");
+            writer.writeText("\n", null);
         }
 
         // End the table
         renderTableEnd(writer);
-        writer.writeText("\n", null); //NO18N
+        writer.writeText("\n", null);
     }
 
     // <rave> Fix popup so that it always appears near button. eeg 2005-11-04
@@ -189,33 +199,32 @@ public class CalendarRenderer extends FieldRenderer {
             throws IOException {
 
         writer.startElement("table", calendar);
-        writer.writeAttribute("border", "0", null); // NOI18N
-        writer.writeAttribute("cellspacing", "0", null); // NOI18N
-        writer.writeAttribute("cellpadding", "0", null); // NOI18N
-        writer.writeAttribute("title", "", null); // NOI18N
-        writer.writeAttribute("id", calendar.getClientId(context), "id"); //NOI18N
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("title", "", null);
+        writer.writeAttribute("id", calendar.getClientId(context), "id");
         String style = calendar.getStyle();
         if (style != null && style.length() > 0) {
-            writer.writeAttribute("style", style, "style"); //NOI18N
+            writer.writeAttribute("style", style, "style");
         }
 
         style = getStyleClass(calendar, hiddenStyle);
 
         // Append a styleclass to top level table element so we can use it to
         // fix a pluto portal bug by restoring the initial width value
-        //
         if (style == null) {
             style = rootStyle;
         } else {
-            style += " " + rootStyle; //NOI18N
+            style += " " + rootStyle;
         }
         if (style != null) {
-            writer.writeAttribute("class", style, "class"); //NOI18N
+            writer.writeAttribute("class", style, "class");
         }
 
-        writer.writeText("\n", null);//NOI18N
-        writer.startElement("tr", calendar);//NOI18N
-        writer.writeText("\n", null);//NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", calendar);
+        writer.writeText("\n", null);
     }
 
     private void renderCellStart(Calendar calendar, String style,
@@ -223,10 +232,10 @@ public class CalendarRenderer extends FieldRenderer {
             throws IOException {
 
         writer.startElement("td", calendar);
-        writer.writeAttribute("valign", "top", null);//NOI18N
+        writer.writeAttribute("valign", "top", null);
         writer.writeText("\n", null);
         writer.startElement("span", calendar);
-        writer.writeAttribute("class", style, null); //NOI18N
+        writer.writeAttribute("class", style, null);
         writer.writeText("\n", null);
     }
 
@@ -243,10 +252,10 @@ public class CalendarRenderer extends FieldRenderer {
     private void renderTableEnd(ResponseWriter writer)
             throws IOException {
 
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        writer.endElement("table");
+        writer.writeText("\n", null);
     }
 
     private void renderPattern(Calendar calendar, String styleClass,
@@ -256,76 +265,100 @@ public class CalendarRenderer extends FieldRenderer {
         String hint = calendar.getDateFormatPatternHelp();
         if (hint == null) {
             try {
-                String pattern = calendar.getDatePicker().getDateFormatPattern();
-                hint = ThemeUtilities.getTheme(context).getMessage("calendar.".concat(pattern));
+                String pattern = calendar.getDatePicker()
+                        .getDateFormatPattern();
+                hint = ThemeUtilities.getTheme(context).getMessage(
+                        "calendar.".concat(pattern));
             } catch (MissingResourceException mre) {
-                hint = ((SimpleDateFormat) (calendar.getDateFormat())).toLocalizedPattern().toLowerCase();
+                hint = ((SimpleDateFormat) (calendar.getDateFormat()))
+                        .toLocalizedPattern()
+                        .toLowerCase();
             }
         }
         if (hint != null) {
-            writer.startElement("div", calendar); //NOI18N
+            writer.startElement("div", calendar);
             String id = calendar.getClientId(context);
             id = id.concat(Calendar.PATTERN_ID);
-            writer.writeAttribute("id", id, null); //NOI18N
+            writer.writeAttribute("id", id, null);
             String style = styleClass;
             if (calendar.isDisabled()) {
                 style = style.concat(" ").concat(hiddenStyle);
             }
-            writer.writeAttribute("class", style, null); //NOI18N
+            writer.writeAttribute("class", style, null);
             writer.writeText(hint, null);
-            writer.endElement("div"); //NOI18N
+            writer.endElement("div");
         }
     }
 
     private void renderJavaScript(FacesContext context, Calendar calendar,
             ResponseWriter writer, String[] styles) throws IOException {
         if (DEBUG) {
-            log("renderJavaScript()"); //NOI18N
+            log("renderJavaScript()");
         }
+
         // First argument is the first day of the week
-
-        int firstDay = calendar.getDatePicker().getCalendar().getFirstDayOfWeek();
+        int firstDay = calendar.getDatePicker().getCalendar()
+                .getFirstDayOfWeek();
         String day = null;
-        if (firstDay == java.util.Calendar.SUNDAY) {
-            day = "0";
-        } else if (firstDay == java.util.Calendar.MONDAY) {
-            day = "1";
-        } else if (firstDay == java.util.Calendar.FRIDAY) {
-            day = "5";
-        } else if (firstDay == java.util.Calendar.SATURDAY) {
-            day = "6";
-        } else if (firstDay == java.util.Calendar.TUESDAY) {
-            day = "2";
-        } else if (firstDay == java.util.Calendar.WEDNESDAY) {
-            day = "3";
-        } else if (firstDay == java.util.Calendar.THURSDAY) {
-            day = "4";
+        switch (firstDay) {
+            case java.util.Calendar.SUNDAY:
+                day = "0";
+                break;
+            case java.util.Calendar.MONDAY:
+                day = "1";
+                break;
+            case java.util.Calendar.FRIDAY:
+                day = "5";
+                break;
+            case java.util.Calendar.SATURDAY:
+                day = "6";
+                break;
+            case java.util.Calendar.TUESDAY:
+                day = "2";
+                break;
+            case java.util.Calendar.WEDNESDAY:
+                day = "3";
+                break;
+            case java.util.Calendar.THURSDAY:
+                day = "4";
+                break;
+            default:
+                break;
         }
 
-        try {
-            // Append properties.
-            StringBuffer buff = new StringBuffer(256);
-            JSONObject json = new JSONObject();
-            String datePickerId = calendar.getDatePicker().getClientId(context);
-            json.put("id", calendar.getClientId(context)).put("firstDay", day).put("fieldId", calendar.getClientId(context).concat(Calendar.INPUT_ID)).put("patternId", calendar.getClientId(context).concat(Calendar.PATTERN_ID)).put("calendarToggleId", calendar.getDatePickerLink(context).getClientId(context)).put("datePickerId", datePickerId).put("monthMenuId", calendar.getDatePicker().getMonthMenu().getClientId(context)).put("yearMenuId", calendar.getDatePicker().getYearMenu().getClientId(context)).put("rowId", datePickerId + ":row5").put("showButtonSrc", styles[8]).put("hideButtonSrc", styles[9]).put("dateFormat", calendar.getDatePicker().getDateFormatPattern()).put("dateClass", styles[10]).put("edgeClass", styles[11]).put("selectedClass", styles[15]).put("edgeSelectedClass", styles[16]).put("todayClass", styles[17]).put("hiddenClass", styles[2]);
+        String clientId = calendar.getClientId(context);
+        CalendarMonth datePicker = calendar.getDatePicker();
+        String datePickerId = datePicker.getClientId(context);
 
-            // Append JavaScript.
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("calendar")).append("'], function (calendar) {").append("\n") // NOI18N
-//                    .append(JavaScriptUtilities.getModuleName("calendar.init")) // NOI18N
-                    .append("calendar.init")
-                    .append("(") //NOI18N
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");"); //NOI18N
-            buff.append("});");
+        // Append properties.
+        JsonObject initProps = JSON_BUILDER_FACTORY.createObjectBuilder()
+                .add("id", calendar.getClientId(context))
+                .add("firstDay", day)
+                .add("fieldId", clientId.concat(Calendar.INPUT_ID))
+                .add("patternId", clientId.concat(Calendar.PATTERN_ID))
+                .add("calendarToggleId", calendar.getDatePickerLink(context)
+                        .getClientId(context))
+                .add("datePickerId", datePickerId)
+                .add("monthMenuId", datePicker.getMonthMenu()
+                        .getClientId(context))
+                .add("yearMenuId", datePicker.getYearMenu()
+                        .getClientId(context))
+                .add("rowId", datePickerId + ":row5")
+                .add("showButtonSrc", styles[8])
+                .add("hideButtonSrc", styles[9])
+                .add("dateFormat", datePicker.getDateFormatPattern())
+                .add("dateClass", styles[10])
+                .add("edgeClass", styles[11])
+                .add("selectedClass", styles[15])
+                .add("edgeSelectedClass", styles[16])
+                .add("todayClass", styles[17])
+                .add("hiddenClass", styles[2])
+                .build();
 
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(calendar, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            renderInitScriptTag(writer, "calendar", initProps);
     }
 
-    String[] getStyles(Calendar calendar, FacesContext context) {
+    private String[] getStyles(Calendar calendar, FacesContext context) {
         Theme theme = ThemeUtilities.getTheme(context);
         String[] styles = new String[19];
         styles[0] = theme.getStyleClass(ThemeStyles.TEXT_FIELD);

@@ -23,7 +23,7 @@ require([
     "dijit/_WidgetBase",
     "dijit/_OnDijitClickMixin",
     "dijit/_TemplatedMixin",
-    "dojo/text!./templates/table2RowGroup.html"
+    "dojo/text!webui/suntheme../templates/table2RowGroup.html"
 ], function (common, widgetCommon, topic, on, declare, _WidgetBase,
         _OnDijitClickMixin, _TemplatedMixin, template) {
 
@@ -188,6 +188,7 @@ require([
      * This closure is used to process resize events.
      */
     resize = {
+
         /**
          * Helper function to create callback for resize event.
          *
@@ -223,7 +224,7 @@ require([
 
                 // Get row node.
                 var rowNode = document.getElementById(colId);
-                if (rowNode == null) {
+                if (rowNode === null) {
                     continue;
                 }
 
@@ -242,7 +243,7 @@ require([
 
             // Set group header/footer width.
             var widget = dojo.widget.byId(this.id);
-            if (widget == null) {
+            if (widget === null) {
                 return false;
             }
             widget.groupHeaderNode.style.width = this.scrollWidth + "px";
@@ -261,7 +262,7 @@ require([
         var offset = 0;
         for (var i = this._currentRow; i < this._currentRow + this._props.maxRows; i++) {
             var rowContainer = document.getElementById(this.id + ":" + i);
-            if (rowContainer != null) {
+            if (rowContainer !== null) {
                 offset += rowContainer.offsetHeight;
             } else {
                 break;

@@ -34,11 +34,11 @@ import com.sun.webui.jsf.theme.ThemeJavascript;
 
 /**
  * <p>The Sun Java Web UI Components rely on non-Java resources 
- * such a message files, image files, CSS stylesheets and JavaScript 
+ * such a message files, image files, CSS style sheets and JavaScript 
  * files to render correctly. These resources are collectively 
  * known as a "Theme" and are bundled together in a Jar file.
  * Themes are swappable, so you can switch from one Theme to another
- * by placing a different Theme jar in the web application's classpath.<p> 
+ * by placing a different Theme jar in the web application's class-path.<p> 
  * 
  *<p> Themes consist of both of resources that are used directly 
  * by the Java classes at runtime (for example property files) and 
@@ -79,11 +79,14 @@ public class JarTheme implements Theme {
     private ResourceBundle templates = null;
     private String[] globalJSFiles = null;
     private String[] globalStylesheets = null;
+
     /**
-     * Attribute name used to store the user's theme name in the Session
+     * Attribute name used to store the user's theme name in the Session.
      */
     public static final String THEME_ATTR = "com.sun.webui.jsf.Theme";
-    /** The context parameter name used to specify a console path, if one is 
+
+    /**
+     * The context parameter name used to specify a console path, if one is 
      * used.
      */
     public static final String RESOURCE_PATH_ATTR = "com.sun.web.console.resource_path";
@@ -98,7 +101,7 @@ public class JarTheme implements Theme {
     //private boolean realServer = true;
 
     void setThemeContext(ThemeContext themeContext) {
-        this.themeContext.set(themeContext);
+        JarTheme.themeContext.set(themeContext);
     }
 
     ThemeContext getThemeContext() {

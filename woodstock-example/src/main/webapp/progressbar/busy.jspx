@@ -46,7 +46,7 @@
                                                 onMouseOut="javascript: window.status=''; return true" />
                             <webuijsf:hyperlink id="progressBarIndex" toolTip="#{msgs.progressbar_example}"
                                                 actionExpression="#{ProgressBarBean.showProgressBarIndex}"
-                                                text="#{msgs.progressbar_example}"/>          
+                                                text="#{msgs.progressbar_example}"/>
                             <webuijsf:hyperlink id="progressBarLink" text="#{msgs.progressbar_busyText}"/>
                         </webuijsf:breadcrumbs>
 

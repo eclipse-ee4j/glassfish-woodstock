@@ -16,14 +16,12 @@
 
 package com.sun.webui.jsf.renderkit.html;
 
+import com.sun.faces.annotation.Renderer;
 import java.util.Iterator;
 import com.sun.webui.jsf.component.Tree;
 import com.sun.webui.jsf.component.TreeNode;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.LogUtil;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
@@ -32,28 +30,24 @@ import javax.faces.context.ResponseWriter;
 import javax.faces.application.FacesMessage;
 import com.sun.webui.html.HTMLAttributes;
 import com.sun.webui.html.HTMLElements;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderAnchor;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderSkipLink;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * <p>Renderer for a {@link Tree} component.</p>
+ * Renderer for a {@link Tree} component.
  */
-@com.sun.faces.annotation.Renderer(@com.sun.faces.annotation.Renderer.Renders(componentFamily = "com.sun.webui.jsf.Tree"))
+@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Tree"))
 public class TreeRenderer extends TreeNodeRenderer {
 
     private static final String SKIPTREE_LINK = "skipTreeLink";
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer Methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Does nothing
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
-     *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
         if (context == null || component == null) {
@@ -61,14 +55,6 @@ public class TreeRenderer extends TreeNodeRenderer {
         }
     }
 
-    /**
-     * Render a property component.
-     *
-     * @param context The current FacesContext
-     * @param component The Property object to render
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
@@ -93,20 +79,21 @@ public class TreeRenderer extends TreeNodeRenderer {
         ResponseWriter writer = context.getResponseWriter();
         Tree node = (Tree) component;
 
-        // Get the theme
-        //
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
 
-        // The title bar can be defined with either ui:tree tag attributes or facets. 
-        // The title bar is rendered if the tree component includes imageURL property 
-        // for the graphic, the text property for the title text, the content facet, 
+        // The title bar can be defined with either ui:tree tag attributes or
+        // facets. 
+        // The title bar is rendered if the tree component includes imageURL
+        // property 
+        // for the graphic, the text property for the title text, the content
+        // facet, 
         // or the image facet.
 
         // render outermost div of the tree.
-
         writer.write("\n\n\n");
         writer.startElement(HTMLElements.DIV, node);
-        writer.writeAttribute(HTMLAttributes.ID, node.getClientId(context), null);
+        writer.writeAttribute(HTMLAttributes.ID, node.getClientId(context),
+                null);
         String nodeStyleClass = theme.getStyleClass(ThemeStyles.TREE);
         if (!node.isVisible()) {
             nodeStyleClass = theme.getStyleClass(ThemeStyles.HIDDEN);
@@ -115,14 +102,15 @@ public class TreeRenderer extends TreeNodeRenderer {
         }
         writer.writeAttribute(HTMLAttributes.CLASS, nodeStyleClass, null);
         if (node.getStyle() != null) {
-            writer.writeAttribute(HTMLAttributes.STYLE, node.getStyle(), null);
+            writer.writeAttribute(HTMLAttributes.STYLE, node.getStyle(),
+                    null);
         }
         writer.write("\n");
 
         // render the skip hyper link to support A11Y
-        RenderingUtilities.renderSkipLink(SKIPTREE_LINK,
+        renderSkipLink(SKIPTREE_LINK,
                 theme.getStyleClass(ThemeStyles.SKIP_WHITE), null,
-                theme.getMessage("tree.skipTagAltText"), // NOI18N
+                theme.getMessage("tree.skipTagAltText"),
                 null, node, context);
         writer.write("\n");
 
@@ -135,20 +123,24 @@ public class TreeRenderer extends TreeNodeRenderer {
         boolean hasRootImageFacet =
                 (node.getFacet(Tree.TREE_IMAGE_FACET_NAME) != null);
 
-        if ((rootText != null && rootText.length() > 0) ||
-                rootImageURL != null ||
-                hasRootImageFacet || hasRootContentFacet) {
+        if ((rootText != null && rootText.length() > 0)
+                || rootImageURL != null
+                || hasRootImageFacet
+                || hasRootContentFacet) {
 
-            String titlebarSpacerDivID = node.getClientId(context) + "TitleBarSpacer";
+            String titlebarSpacerDivID = node.getClientId(context)
+                    + "TitleBarSpacer";
             String titlebarDivID = node.getClientId(context) + "TitleBar";
             String lineImageDivID = node.getClientId(context) + "LineImages";
             String lineTxtDivID = node.getClientId(context) + "LineText";
 
             // title bar spacer
             writer.startElement(HTMLElements.DIV, node);
-            writer.writeAttribute(HTMLAttributes.ID, titlebarSpacerDivID, null);
+            writer.writeAttribute(HTMLAttributes.ID, titlebarSpacerDivID,
+                    null);
             writer.writeAttribute(HTMLAttributes.CLASS,
-                    theme.getStyleClass(ThemeStyles.TREE_ROOT_ROW_HEADER), null);
+                    theme.getStyleClass(ThemeStyles.TREE_ROOT_ROW_HEADER),
+                    null);
             writer.endElement(HTMLElements.DIV);
             writer.write("\n"); // NOI18N
 
@@ -183,72 +175,44 @@ public class TreeRenderer extends TreeNodeRenderer {
         Iterator<UIComponent> iter = node.getChildren().iterator();
 
         //writer.writeText("\n", null);
-        String clientID = node.getClientId(context);
+        String clientId = node.getClientId(context);
         writer.startElement(HTMLElements.DIV, node);
         writer.writeAttribute(HTMLAttributes.ID,
-                clientID + "_children", null);
+                clientId + "_children", null);
         while (iter.hasNext()) {
-	    RenderingUtilities.renderComponent(iter.next(), context);
+            renderComponent(iter.next(), context);
         }
 
         writer.endElement(HTMLElements.DIV);
         //writer.writeText("\n", null);
 
-        String nodeID = null;
+        String nodeId = null;
         if (node.getSelected() != null) {
             String childID = (String) node.getSelected();
             TreeNode childNode = node.getChildNode(childID);
             if (childNode != null) {
-                nodeID = childNode.getClientId(context);
+                nodeId = childNode.getClientId(context);
             }
         }
 
-        try {
-            // Render JavaScript to initialize tree.
-            StringBuffer buff = new StringBuffer(256);
-            JSONObject json = new JSONObject();
-            json.put("id", clientID);
+        JsonObject initProps = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("id", clientId)
+                .build();
 
-            // Append JavaScript.
-            String jsObject = JavaScriptUtilities.getDomNode(context, node);
-//            buff.append(JavaScriptUtilities.getModule("tree")).append("\n") // NOI18N
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("tree")).append("'], function (tree) {").append("\n") // NOI18N
-//                    .append(JavaScriptUtilities.getModuleName("tree.init")) // NOI18N
-                    .append("tree.init") // NOI18N
-                    .append("(") //NOI18N
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");\n"); //NOI18N
+        renderScripTag(writer,
+                // ws_init_tree
+                renderCall("init_tree", initProps, clientId, nodeId));
 
-            if (nodeID != null) {
-                buff.append("tree").append(".selectTreeNode('").append(nodeID).append("');");
-            } else {
-                buff.append("tree").append(".updateHighlight('").append(clientID).append("');");
-            }
-            buff.append("});");
-
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    buff.toString());
-
-            // Render skip anchor.
-            RenderingUtilities.renderAnchor(SKIPTREE_LINK, node, context);
-            writer.write("\n"); // NOI18N
-            writer.endElement(HTMLElements.DIV);
-        } catch (Exception e) {
-            LogUtil.warning(e.getMessage(), e);
-        }
+        // Render skip anchor.
+        renderAnchor(SKIPTREE_LINK, node, context);
+        writer.write("\n");
+        writer.endElement(HTMLElements.DIV);
     }
 
-    /**
-     * Does nothing.
-     * 
-     * @param context The current FacesContext
-     * @param component The Property object to render
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     public void encodeChildren(FacesContext context, UIComponent component)
             throws IOException {
-        // Do nothing...          
+        // Do nothing...
     }
 }

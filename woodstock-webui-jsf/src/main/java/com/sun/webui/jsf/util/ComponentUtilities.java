@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: ComponentUtilities.java,v 1.1.6.1 2009-12-29 04:59:21 jyeary Exp $
- */
 package com.sun.webui.jsf.util;
 
 import javax.faces.component.UIComponent;
@@ -26,16 +23,18 @@ import javax.faces.component.UIComponent;
  */
 public class ComponentUtilities {
 
-    private final static String USCORE = "_"; //NOI18N
+    private final static String USCORE = "_";
 
-    /** Creates a new instance of ComponentUtilities. */
+    /**
+     * Creates a new instance of ComponentUtilities.
+     */
     public ComponentUtilities() {
     }
 
     /**
      * Store an internally created component utilizing the 
      * internal facet naming convention by mapping the facet
-     * to the name returned by <code>createPrivateFacetName()</code>.
+     * to the name returned by {@code createPrivateFacetName()}.
      * Add the component to the parent's facets map.
      *
      * @param parent the component that created the facet
@@ -54,7 +53,7 @@ public class ComponentUtilities {
     /**
      * Remove an internally created component utilizing the 
      * internal facet naming convention by mapping the facet
-     * to the name returned by <code>createPrivateFacetName()</code>.
+     * to the name returned by {@code createPrivateFacetName()}.
      * Remove the component from the parent's facets map.
      *
      * @param parent the component that created the facet
@@ -70,19 +69,18 @@ public class ComponentUtilities {
     }
 
     /**
-     * Return a private facet from the the parent component's facet map.
-     * Look for a private facet name by calling
-     * <code>createPrivateFacetName()</code> on the facetName parameter.
-     * <p>
-     * If the matchId parameter is true, verify that the facet that is found
-     * has an id that matches the value of  
-     * <code>getPrivateFacetId(parent.getId(), facetName)</code>.
-     * If the id's do not match return null and remove the existing facet.</br>
+     * Return a private facet from the the parent component's facet map.Look for
+     * a private facet name by calling {@code createPrivateFacetName()} on the
+     * facetName parameter.
+     * If the matchId parameter is true, verify that the facet that is found has
+     * an id that matches the value of
+     * {@code getPrivateFacetId(parent.getId(), facetName)}. If the id's do not
+     * match return null and remove the existing facet.<br>
      * If matchId is false, return the facet if found or null.
      *
      * @param parent the component that contains the facet
      * @param facetName the public facet name
-     * @parem matchId verify a the id of the facet
+     * @param matchId verify a the id of the facet
      * @return a UIComponent if the facet is found else null.
      */
     public static UIComponent getPrivateFacet(UIComponent parent,
@@ -103,7 +101,6 @@ public class ComponentUtilities {
         }
 
         // Will never be null as long as facetName is not null.
-        //
         String id = createPrivateFacetId(parent, facetName);
         if (!id.equals(facet.getId())) {
             parent.getFacets().remove(pfacetName);
@@ -123,9 +120,8 @@ public class ComponentUtilities {
     }
 
     /**
-     * Return an id using the convention</br>
-     * <code>parent.getId() + "_" + facetName</code>
-     * If <code>parent.getId()</code> is null, <code>"_" + facetName </code>
+     * Return an id using the convention: {@code parent.getId() + "_" + facetName}.
+     * If {@code parent.getId()} is {@code null}, {@code "_" + facetName }
      * is returned.
      *
      * @param parent the component that contains the facet

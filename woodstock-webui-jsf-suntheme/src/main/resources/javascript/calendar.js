@@ -251,7 +251,7 @@ define([
             //set selected
             var yearMenuValue = parseInt(this.yearMenu.value);
             var monthMenuValue = parseInt(this.monthMenu.value);
-            if (this.currentValue !== null && selectedYear == yearMenuValue &&
+            if (this.currentValue !== null && selectedYear === yearMenuValue &&
                     selectedMonth === monthMenuValue) {
                 selected = selectedDay;
             }
@@ -290,7 +290,7 @@ define([
             // In JavaScript (unlike java.util.Calendar), Sunday is 0. 
             if (firstDay !== this.firstDay) {
                 var backDays = (firstDay - this.firstDay + 7) % 7;
-                var oneDayInMs = 86400000 // 1000 * 60 * 60 * 24;
+                var oneDayInMs = 86400000; // 1000 * 60 * 60 * 24;
                 var day = new Date(first.getTime() - backDays * oneDayInMs);
                 // assert day == first day of week of previous month
                 while (day.getMonth() !== month) {
@@ -682,6 +682,5 @@ define([
             // Redraw the popup grid with the date numbers
             this.redrawCalendar(false);
         }
-
     };
 });

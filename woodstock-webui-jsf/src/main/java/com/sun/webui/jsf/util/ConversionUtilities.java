@@ -14,14 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: ConversionUtilities.java,v 1.1.20.1 2009-12-29 04:59:21 jyeary Exp $
- */
-/*
- * ConversionUtilities.java
- *
- * Created on December 16, 2004, 8:19 AM
- */
 package com.sun.webui.jsf.util;
 
 import java.lang.reflect.Array;
@@ -35,6 +27,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.el.ValueExpression;
+import javax.faces.FacesException;
 
 /**
  * The ConversionUtilities class provides utility method for
@@ -48,12 +41,12 @@ public class ConversionUtilities {
     private static final boolean DEBUG = false;
 
     /**
-     * <p>Convert the values of a component with a 
+     * Convert the values of a component with a 
      * single (non-list, non-array) value. Use this 
-     * method if<p>
+     * method if
      * <ul>
      * <li>the component always binds the user input to 
-     * a single object (e.g. a textfield component); 
+     * a single object (e.g. a text field component); 
      * or </li> 
      * <li>to handle the single object case when the 
      * component may bind the user input to a single 
@@ -66,14 +59,12 @@ public class ConversionUtilities {
      * @param rawValue The submitted value of the component
      * @param context The FacesContext of the request
      * @throws ConverterException if the conversion fails
-     * @return An Object representing the converted value. If rawValue ==
-     * <code>null</code> return null.
+     * @return An Object representing the converted value. If rawValue is
+     * {@code null} return {@code null}.
      * @see ValueTypeEvaluator
      */
     public static Object convertValueToObject(UIComponent component,
-            String rawValue,
-            FacesContext context)
-            throws ConverterException {
+            String rawValue, FacesContext context) throws ConverterException {
 
         if (DEBUG) {
             log("convertValueToObject()");
@@ -95,10 +86,10 @@ public class ConversionUtilities {
 
         if (converter == null) {
 
-            Class clazz = null;
+            Class clazz;
             // Determine the type of the component's value object
             ValueExpression valueBinding =
-                    component.getValueExpression("value"); //NOI18
+                    component.getValueExpression("value");
             if (valueBinding == null) {
                 Object value = valueHolder.getValue();
                 if (value == null) {
@@ -113,7 +104,9 @@ public class ConversionUtilities {
             // String/Object for the whole app (as opposed to for the
             // individual component). In this case we just
             // return the String.
-            if (clazz == null || clazz.equals(String.class) || clazz.equals(Object.class)) {
+            if (clazz == null
+                    || clazz.equals(String.class)
+                    || clazz.equals(Object.class)) {
                 return rawValue;
             }
 
@@ -126,18 +119,18 @@ public class ConversionUtilities {
         }
         if (DEBUG) {
             log("Raw value was: " + rawValue);
-            log("Converted value is: " + // NOI18N
-                    converter.getAsObject(context, component, rawValue));
+            log("Converted value is: "
+                    + converter.getAsObject(context, component, rawValue));
         }
         return converter.getAsObject(context, component, rawValue);
     }
 
     /**
-     * <p>Convert a String array of submitted values to the appropriate
+     * Convert a String array of submitted values to the appropriate
      * type of Array for the value Object. This method assumes that
      * the value binding for the value of the component has been
      * determined to be an array (and as a consequence that the
-     * component implements ValueHolder).</p>
+     * component implements ValueHolder).
      * 
      * <p>To evaluate the valueBinding, use the ValueTypeEvaluator 
      * class.</p>
@@ -169,7 +162,7 @@ public class ConversionUtilities {
         // component's value binding for its value has been determined
         // to be an array, as this is a condition of invoking this
         // method.
-        Class clazz = null;
+        Class clazz;
 
         // Get any converter specified by the page author
         Converter converter = ((ValueHolder) component).getConverter();
@@ -287,12 +280,8 @@ public class ConversionUtilities {
             // exception.
             String valueString = "";
             for (counter = 0; counter < rawValues.length; counter++) {
-                valueString = valueString + " " + rawValues[counter]; //NOI18N
+                valueString = valueString + " " + rawValues[counter];
             }
-            Object[] params = {
-                valueString,
-                "null Converter"
-            };
 
             String message = "Could not find converter for " + valueString;
             throw new ConverterException(message);
@@ -311,10 +300,10 @@ public class ConversionUtilities {
             }
         } else {
             for (counter = 0; counter < arraySize; ++counter) {
-                Array.set(valueArray, counter, converter.getAsObject(context, (UIComponent) component, rawValues[counter]));
+                Array.set(valueArray, counter, converter.getAsObject(context,
+                        (UIComponent) component, rawValues[counter]));
             }
         }
-
         return valueArray;
     }
 
@@ -329,178 +318,39 @@ public class ConversionUtilities {
         Object valueObject =
                 converter.getAsObject(context, component, rawValue);
         if (clazz.equals(Boolean.TYPE)) {
-            boolean value = ((Boolean) valueObject).booleanValue();
+            boolean value = ((Boolean) valueObject);
             Array.setBoolean(valueArray, arrayIndex, value);
         } else if (clazz.equals(Byte.TYPE)) {
-            byte value = ((Byte) valueObject).byteValue();
+            byte value = ((Byte) valueObject);
             Array.setByte(valueArray, arrayIndex, value);
         } else if (clazz.equals(Double.TYPE)) {
-            double value = ((Double) valueObject).doubleValue();
+            double value = ((Double) valueObject);
             Array.setDouble(valueArray, arrayIndex, value);
         } else if (clazz.equals(Float.TYPE)) {
-            float value = ((Float) valueObject).floatValue();
+            float value = ((Float) valueObject);
             Array.setFloat(valueArray, arrayIndex, value);
         } else if (clazz.equals(Integer.TYPE)) {
-            int value = ((Integer) valueObject).intValue();
+            int value = ((Integer) valueObject);
             Array.setInt(valueArray, arrayIndex, value);
         } else if (clazz.equals(Character.TYPE)) {
-            char value = ((Character) valueObject).charValue();
+            char value = ((Character) valueObject);
             Array.setChar(valueArray, arrayIndex, value);
         } else if (clazz.equals(Short.TYPE)) {
-            short value = ((Short) valueObject).shortValue();
+            short value = ((Short) valueObject);
             Array.setShort(valueArray, arrayIndex, value);
         } else if (clazz.equals(Long.TYPE)) {
-            long value = ((Long) valueObject).longValue();
+            long value = ((Long) valueObject);
             Array.setLong(valueArray, arrayIndex, value);
         }
     }
 
-    /*
-     * <p>Convert a String array of submitted values to the appropriate
-     * type of List for the value Object. This method assumes that
-     * the value binding for the value of the component has been
-     * determined to be a subclass of java.util.List, and as a
-     * consequence, that the component implements ValueHolder.</p>
-     * 
-     * <p>To evaluate the valueBinding, use the ValueTypeEvaluator 
-     * class.</p>
-     * @param component The component whose submitted values are to be
-     * converted
-     * @param rawValues The submitted value of the component
-     * @param context The FacesContext of the request
-     * @see ValueTypeEvaluator
-     * @throws ConverterException if the conversion fails
-     * 
-     * @return A List of converted values
-    public static Object convertValueToList(UIComponent component, 
-    String[] rawValues,
-    FacesContext context)
-    throws ConverterException {
-
-    if(DEBUG) {
-    log("::convertValueToList()");
-    }
-
-    // By definition Converter returns null if the value to
-    // convert is null. Do so here.
-    //
-    if (rawValues == null) {
-    return null;
-    }
-
-    // Get the class of the array members. We expect that the
-    // component's value binding for its value has been determined
-    // to be an array, as this is a condition of invoking this
-    // method.
-    Class clazz = null;
-
-    // Get any converter specified by the page author
-    Converter converter = ((ValueHolder)component).getConverter();
-
-    try {
-    clazz = component.getValueExpression("value").
-    getType(context.getELContext()).getComponentType(); //NOI18N
-    }
-    catch(Exception ex) {
-    // This may fail because we don't have a valuebinding (the
-    // developer may have used the binding attribute)
-
-    Object value = ((ValueHolder)component).getValue();
-    if(value == null) {
-    // Now we're on thin ice. If there is a converter, we'll
-    // try to set this as an object array; if not, we'll just
-    // go for String.
-    if(converter != null) {
-    if(DEBUG) log("\tNo class info, converter present - using object...");
-    clazz = Object.class;
-    }
-    else {
-    if(DEBUG) log("\tNo class info, no converter - using String...");
-    clazz = String.class;
-    }
-
-    }
-    else {
-    clazz = value.getClass().getComponentType();
-    if(DEBUG) log("\tClass is " + clazz.getName());
-    }
-    }
-
-    java.util.List list = null;
-    try {
-    list = (java.util.List)(clazz.newInstance());
-    }
-    catch(Throwable problem) {
-    // clazz is either abstract or an interface.
-    // we'll try a couple of reasonable List implementations
-    if(clazz.isAssignableFrom(ArrayList.class)) {
-    list = new ArrayList();
-    }
-    else if(clazz.isAssignableFrom(LinkedList.class)) {
-    list = new LinkedList();
-    }
-    else if(clazz.isAssignableFrom(Vector.class)) {
-    list = new Vector();
-    }
-    else {
-    String message =
-    "Unable to convert the value of component " + //NOI18N
-    component.toString() + ". The type of the " + //NOI18N
-    "value object must be a class that can be " + //NOI18N
-    "instantiated, or it must be assignable " +   //NOI18N
-    "from ArrayList, LinkedList or Vector.";      //NOI18N
-    throw new ConverterException(message, problem);
-    }
-    }
-
-    // We know rawValues is not null
-    //
-    int listSize = 0;
-    listSize = rawValues.length;
-    // If there are no new values, return an empty array
-    if(listSize == 0) {
-    if(DEBUG) log("\tEmpty value array, return new empty list");
-    return list;
-    }
-
-    // Populate the list by converting each of the raw values
-
-    int arrayIndex;
-
-    if(converter == null) {
-    if(DEBUG) log("No converter, add the values as Strings");
-    for(arrayIndex = 0; arrayIndex <listSize; ++arrayIndex) {
-    list.add(rawValues[arrayIndex]);
-    }
-    }
-    else {
-    if(DEBUG)
-    log("Using converter " + converter.getClass().getName());
-
-    for(arrayIndex = 0; arrayIndex < listSize; ++arrayIndex) {
-
-    if(DEBUG) {
-    Object converted =
-    converter.getAsObject(context, component,
-    rawValues[arrayIndex]);
-    log("String value: " + rawValues[arrayIndex] +    //NOI18N
-    " converts to : " + converted.toString()); //NOI18N
-    }
-    list.add(converter.getAsObject(context, component,
-    rawValues[arrayIndex]));
-
-    }
-    }
-    return list;
-    }
-     */
     /**
      * Converts an Object (which may or may not be the value of the
      * component) to a String using the converter associated
      * with the component. This method can be used to convert the
      * value of the component, or the value of an Object associated
      * with the component, such as the objects representing the
-     * options for a listbox or a checkboxgroup.
+     * options for a list box or a check box group.
      * @param component The component that needs to display the value
      * as a String
      * @param realValue The object that the component is to display
@@ -578,7 +428,7 @@ public class ConversionUtilities {
                     FactoryFinder.APPLICATION_FACTORY);
             Application application = aFactory.getApplication();
             return (application.createConverter(converterClass));
-        } catch (Exception e) {
+        } catch (FacesException e) {
             return (null);
         }
     }
@@ -588,11 +438,14 @@ public class ConversionUtilities {
     }
 
     /**
-     * Return the converted value of submittedValue.
-     * If submittedValue is null, return null.
-     * If submittedValue is "", check the rendered value. If the
-     * the value that was rendered was null, return null
-     * else continue to convert.
+     * Return the converted value of submittedValue.If submittedValue is null,
+     * return null.If submittedValue is "", check the rendered value.If the the
+     * value that was rendered was null, return null else continue to convert.
+     *
+     * @param context faces context
+     * @param submittedValue value
+     * @param component UI component
+     * @return Object
      */
     public static Object convertRenderedValue(FacesContext context,
             Object submittedValue, UIComponent component)
@@ -603,12 +456,10 @@ public class ConversionUtilities {
         // If the component has a converter we can't assume that
         // "" should be returned if "" was rendered or "" was rendered
         // for null.
-        //
         if (converter == null) {
             // See if we rendered null.
             // If we rendered null and the submitted value was ""
             // return null
-            //
             if (renderedNull(component) && submittedValue instanceof String &&
                     ((String) submittedValue).length() == 0) {
                 return null;
@@ -616,7 +467,6 @@ public class ConversionUtilities {
         }
         // If submittedValue is null, convertValueToObject returns null
         // as does Converter by definition.
-        //
         return ConversionUtilities.convertValueToObject(component,
                 (String) submittedValue, context);
     }
@@ -653,18 +503,22 @@ public class ConversionUtilities {
     /**
      * Return true if the stored rendered value on the specified
      * component was null.
+     * @param component UI component
+     * @return {@code true} if rendered the value, {@code false} otherwise
      */
     public static boolean renderedNull(UIComponent component) {
         return (Boolean) component.getAttributes().get(
-                ConversionUtilities.RENDERED_NULL_VALUE) == null ? false : true;
+                ConversionUtilities.RENDERED_NULL_VALUE) != null;
     }
 
     /**
      * Remove the stored rendered value from the specified component.
+     * @param component UI component
      */
     public static void removeRenderedValue(UIComponent component) {
         component.getAttributes().remove(RENDERED_NULL_VALUE);
     }
+
     private final static String RENDERED_TABLE_NULL_VALUES =
             "_RENDERED_TABLE_NULL_VALUES_";
 
@@ -727,6 +581,7 @@ public class ConversionUtilities {
      * Remove the storage for the "virtual" for the specified
      * component used to save the rendered value for the "virtual"
      * instances of this component when used in a table. 
+     * @param component UI component
      */
     public static void removeSavedRenderedValueState(UIComponent component) {
         component.getAttributes().remove(RENDERED_TABLE_NULL_VALUES);

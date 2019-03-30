@@ -13,24 +13,20 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/*
- * Utilities for retrieving messages from FacesMessages
+/**
+ * Utilities for retrieving messages from FacesMessages.
  * TODO: Move to a superclass for Message and MessageGroup only
  */
-
 public class FacesMessageUtils {
 
     /**
@@ -44,48 +40,47 @@ public class FacesMessageUtils {
      * @return an Iterator over FacesMessages that are queued.
      */
     public static Iterator getMessageIterator(FacesContext context,
-    	    String forComponentId, UIComponent msgComponent) {
-	
-        Iterator messageIterator = null;
+            String forComponentId, UIComponent msgComponent) {
 
-	// Return messages for the specified component
-	if (forComponentId != null) {
-	    if (forComponentId.length() == 0) {
-		// Return global messages - not associated with any component.
-		messageIterator = context.getMessages(null);
-	    } else {
-		// Get messages for the specified component only.
-		UIComponent forComponent = getForComponent(context, 
-							   forComponentId,
-							   msgComponent);
-		if (forComponent != null) {
-		    String clientId = forComponent.getClientId(context);
-		    messageIterator = context.getMessages(clientId);
-		} else {
-		    messageIterator = Collections.EMPTY_LIST.iterator();
-		}
-	    }
-	} else {
-	    // No component specified return all messages.
-	    messageIterator = context.getMessages();
-	}
+        Iterator messageIterator;
 
-	return messageIterator;
+        // Return messages for the specified component
+        if (forComponentId != null) {
+            if (forComponentId.length() == 0) {
+                // Return global messages - not associated with any component.
+                messageIterator = context.getMessages(null);
+            } else {
+                // Get messages for the specified component only.
+                UIComponent forComponent = getForComponent(context,
+                        forComponentId,
+                        msgComponent);
+                if (forComponent != null) {
+                    String clientId = forComponent.getClientId(context);
+                    messageIterator = context.getMessages(clientId);
+                } else {
+                    messageIterator = Collections.EMPTY_LIST.iterator();
+                }
+            }
+        } else {
+            // No component specified return all messages.
+            messageIterator = context.getMessages();
+        }
+
+        return messageIterator;
     }
-
 
     /**
      * Walk the component tree looking for the specified component.
      *
      * @param context The FacesContext of the request
      * @param forComponentId The component to look for
-     * @param msgComponent The Message, MessageGroup component to start 
-     * the search.
+     * @param msgComponent The Message, MessageGroup component to start the
+     * search.
      *
      * @return the matching component, or null if no match is found.
      */
     private static UIComponent getForComponent(FacesContext context,
-    	    String forComponentId, UIComponent msgComponent) {
+            String forComponentId, UIComponent msgComponent) {
 
         if (forComponentId == null || forComponentId.length() == 0) {
             return null;
@@ -100,39 +95,38 @@ public class FacesMessageUtils {
                 // If the current component is a NamingContainer,
                 // see if it contains what we're looking for.
                 forComponent = currentParent.findComponent(forComponentId);
-                if (forComponent != null)
+                if (forComponent != null) {
                     break;
+                }
                 // if not, start checking further up in the view
                 currentParent = currentParent.getParent();
-            }                   
-	    // Note that this following clause will never happen
-	    // because JSF throws IllegalArgumentException
-	    // and therefore if the component isn't found goes
-	    // right to the "catch". So what was the point ?
+            }
+            // Note that this following clause will never happen
+            // because JSF throws IllegalArgumentException
+            // and therefore if the component isn't found goes
+            // right to the "catch". So what was the point ?
 
             // no hit from above, scan for a NamingContainer
-            // that contains the component we're looking for from the root.    
+            // that contains the component we're looking for from the root.
             if (forComponent == null) {
-                forComponent =
-                    findUIComponentBelow(context.getViewRoot(), forComponentId);
+                forComponent = findUIComponentBelow(context.getViewRoot(),
+                                forComponentId);
             }
         } catch (Throwable t) {
-	    // Keep this looking like jsf
-	    // ignore and log message below
-
+            // Keep this looking like jsf
+            // ignore and log message below
         }
 
         if (forComponent == null) {
-	    // Log a message.
-	    if (LogUtil.warningEnabled(FacesMessageUtils.class)) {
-		LogUtil.warning(FacesMessageUtils.class, 
-			"FacesMesageUtils.componentNotFound",
-			forComponentId);
-	    }
+            // Log a message.
+            if (LogUtil.warningEnabled(FacesMessageUtils.class)) {
+                LogUtil.warning(FacesMessageUtils.class,
+                        "FacesMesageUtils.componentNotFound",
+                        forComponentId);
+            }
         }
         return forComponent;
     }
-
 
     /**
      * Recursively searches for NamingContainers from the top of the tree
@@ -142,16 +136,19 @@ public class FacesMessageUtils {
      * @param forComponentId the component to search for
      *
      * @return the matching component, or null if no match is found.
-     * 
      */
     private static UIComponent findUIComponentBelow(UIComponent startComponent,
-	String forComponentId) {
+            String forComponentId) {
 
         UIComponent forComponent = null;
         List children = startComponent.getChildren();
 
         for (int i = 0, size = children.size(); i < size; i++) {
             UIComponent comp = (UIComponent) children.get(i);
+
+            if(comp == null){
+                continue;
+            }
 
             if (comp instanceof NamingContainer) {
                 forComponent = comp.findComponent(forComponentId);
@@ -163,8 +160,9 @@ public class FacesMessageUtils {
                 }
             }
 
-            if (forComponent != null)
+            if (forComponent != null) {
                 break;
+            }
         }
         return forComponent;
     }

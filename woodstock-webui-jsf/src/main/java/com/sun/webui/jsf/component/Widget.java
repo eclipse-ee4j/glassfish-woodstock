@@ -26,13 +26,6 @@ package com.sun.webui.jsf.component;
 public interface Widget {
 
     /**
-     * Get alternative HTML template to be used by this component.
-     *
-     * @return The alternative HTML template to be used by this component.
-     */
-    public String getHtmlTemplate();
-
-    /**
      * Get the type of widget represented by this component.
      *
      * @return The type of widget represented by this component.

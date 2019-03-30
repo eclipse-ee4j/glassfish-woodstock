@@ -16,11 +16,7 @@
 package com.sun.webui.jsf.example.index;
 
 import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-
 import com.sun.webui.jsf.example.common.MessageUtil;
-import com.sun.webui.jsf.example.index.JavaHtmlConverter;
-
 import java.util.Map;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,27 +45,26 @@ public class ShowCodeBackingBean implements Serializable {
 
     /**
      * Get file name.
+     * @return String
      */
     public String getFileName() {
-        // Get hyperlink parameter      
+        // Get hyperlink parameter
         Map map = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
         String param = (String) map.get("param");
         this.fileName = (param != null) ? param
                 : MessageUtil.getMessage("index_noFileName");
-
         return this.fileName;
     }
 
     /**
-     * Get the source code in the form of html.
-     *
+     * Get the source code in the form of HTML.
+     * @return
      */
     public String getSourceCode() {
         try {
             boolean isJavaCode = false;
             String sourceName = this.fileName;
-
             if (sourceName.endsWith(".java")) {
                 sourceName = RELATIVE_PATH + sourceName;
                 isJavaCode = true;
@@ -79,6 +74,7 @@ public class ShowCodeBackingBean implements Serializable {
             } else if (sourceName.endsWith(".jspx")
                     || sourceName.endsWith(".js")
                     || sourceName.endsWith(".xml")) {
+                sourceName = "/" + sourceName;
                 isJavaCode = false;
             } else {
                 throw new Exception("Unknown file type");

@@ -13,23 +13,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
-import java.io.*;
-import java.util.*;
-
 /**
- *  <p>	An object that can convert a value to a different type.</p>
- *
- *  @author	Todd Fast, todd.fast@sun.com
- *  @author	Mike Frisino, michael.frisino@sun.com
+ * An object that can convert a value to a different type.
  */
-public interface TypeConversion
-{
+public interface TypeConversion {
+
     /**
-     *	<p> Converts the provided value to the type represented by the
-     *	    implementor if this interface.</p>
+     * Converts the provided value to the type represented by the implementation
+     * of this interface.
+     * @param value value to convert
+     * @return Object converted valued
      */
     public Object convertValue(Object value);
 }

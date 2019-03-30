@@ -14,15 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: AbstractRenderer.java,v 1.1.12.1 2009-12-29 04:52:46 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.webui.jsf.model.Markup;
-import com.sun.webui.jsf.util.RenderingUtilities;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 import javax.faces.application.Application;
 import javax.faces.component.EditableValueHolder;
@@ -35,48 +30,69 @@ import javax.faces.convert.Converter;
 import javax.el.ValueExpression;
 import javax.faces.render.Renderer;
 
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleClass;
+
 /**
- * <p>Abstract base class for concrete implementations of
- * <code>javax.faces.render.Renderer</code> for JavaServer Faces
- * component libraries.</p>
+ * Abstract base class for concrete implementations of
+ * {@code javax.faces.render.Renderer} for JavaServer Faces component libraries.
  */
 public abstract class AbstractRenderer extends Renderer {
 
-    // ------------------------------------------------------ Manifest Constants
     /**
-     * <p>Base naem of the resource bundle we will use for localization.</p>
+     * Base name of the resource bundle we will use for localization.
      */
-    protected static final String BUNDLE =
-            "com.sun.webui.jsf.renderkit.html.Bundle"; // NOI18N
-    /**
-     * <p>The list of attribute names in the HTML 4.01 Specification that
-     * correspond to the entity type <em>%events;</em>.</p>
-     */
-    public static final String EVENTS_ATTRIBUTES[] = {"onClick", "onDblClick", "onChange", // NOI18N
-        "onMouseDown", "onMouseUp", "onMouseOver", "onMouseMove", "onMouseOut", // NOI18N
-        "onKeyPress", "onKeyDown", "onKeyUp", // NOI18N
-    };
-    /**
-     * <p>The list of attribute names in the HTML 4.01 Specification that
-     * correspond to the entity type <em>%i18n;</em>.</p>
-     */
-    public static final String I18N_ATTRIBUTES[] = {"dir", "lang",}; // NOI18N
+    protected static final String BUNDLE
+            = "com.sun.webui.jsf.renderkit.html.Bundle";
 
-    // -------------------------------------------------------- Static Variables
-    // ---------------------------------------------------------- Public Methods
     /**
-     * <p>Decode any new state of the specified <code>UIComponent</code>
-     * from the request contained in the specified <code>FacesContext</code>,
-     * and store that state on the <code>UIComponent</code>.</p>
+     * The list of attribute names in the HTML 4.01 Specification that
+     * correspond to the entity type <em>%events;</em>.
+     */
+    public static final String EVENTS_ATTRIBUTES[] = {
+        "onClick",
+        "onDblClick",
+        "onChange",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseOver",
+        "onMouseMove",
+        "onMouseOut",
+        "onKeyPress",
+        "onKeyDown",
+        "onKeyUp",
+    };
+
+    /**
+     * The list of attribute names in the HTML 4.01 Specification that
+     * correspond to the entity type <em>%i18n;</em>.
+     */
+    public static final String I18N_ATTRIBUTES[] = {
+        "dir",
+        "lang"
+    };
+
+    /**
+     * Core attributes that are simple pass through.
+     */
+    private static final String CORE_ATTRIBUTES[] = {
+        "style",
+        "title"
+    };
+
+    /**
+     * Decode any new state of the specified {@code UIComponent} from the
+     * request contained in the specified {@code FacesContext}, and store that
+     * state on the {@code UIComponent}.
      *
-     * <p>The default implementation calls <code>setSubmittedValue()</code>
-     * on components that implement EditableValueHolder (i.e. input fields)</p>
+     * The default implementation calls {@code setSubmittedValue()} on
+     * components that implement EditableValueHolder (i.e. input fields).
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be decoded
      *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
+     * @exception NullPointerException if {@code context} or {@code component}
+     * is {@code null}
      */
     @Override
     public void decode(FacesContext context, UIComponent component) {
@@ -95,18 +111,17 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Render the beginning of the specified <code>UIComponent</code>
-     * to the output stream or writer associated with the response we are
-     * creating.</p>
+     * Render the beginning of the specified {@code UIComponent} to the output
+     * stream or writer associated with the response we are creating.
      *
-     * <p>The default implementation calls <code>renderStart()</code> and
-     * <code>renderAttributes()</code>.</p>
+     * The default implementation calls {@code renderStart()} and
+     * {@code renderAttributes()}
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be decoded
      *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
+     * @exception NullPointerException if {@code context} or {@code component}
+     * is {@code null}
      *
      * @exception IOException if an input/output error occurs
      */
@@ -126,7 +141,6 @@ public abstract class AbstractRenderer extends Renderer {
         ", rendererType=" + component.getRendererType() + ")");
         }
          */
-
         // Render the element and attributes for this component
         if (component.isRendered()) {
             ResponseWriter writer = context.getResponseWriter();
@@ -137,27 +151,25 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Render the children of the specified <code>UIComponent</code>
-     * to the output stream or writer associated with the response we are
-     * creating.</p>
+     * Render the children of the specified {@code UIComponent} to the output
+     * stream or writer associated with the response we are creating.
      *
-     * <p>The default implementation iterates through the children of
-     * this component and renders them.</p>
+     * The default implementation iterates through the children of this
+     * component and renders them.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
-     *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
-     *
-     * @exception IOException if an input/output error occurs
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be decoded
+     * @throws NullPointerException if {@code context} or {@code component}
+     * is {@code null}
+     * @throws IOException if an input/output error occurs
      */
-    // We shouldn't bother with a default implementation - this is exactly
-    // what happens when you rendersChildren = false. Why duplicate the
-    // code here?
     @Override
     public void encodeChildren(FacesContext context, UIComponent component)
             throws IOException {
+
+        // We shouldn't bother with a default implementation - this is exactly
+        // what happens when you rendersChildren = false. Why duplicate the
+        // code here?
 
         // Enforce NPE requirements in the Javadocs
         if (context == null || component == null) {
@@ -171,31 +183,24 @@ public abstract class AbstractRenderer extends Renderer {
         ", rendererType=" + component.getRendererType() + ")");
         }
          */
-
         if (component.isRendered()) {
-            Iterator kids = component.getChildren().iterator();
-            while (kids.hasNext()) {
-                UIComponent kid = (UIComponent) kids.next();
-                RenderingUtilities.renderComponent(kid, context);
+            for (UIComponent kid : component.getChildren()) {
+                renderComponent(kid, context);
             }
         }
-
     }
 
     /**
-     * <p>Render the ending of the specified <code>UIComponent</code>
-     * to the output stream or writer associated with the response we are
-     * creating.</p>
+     * Render the ending of the specified {@code UIComponent} to the output
+     * stream or writer associated with the response we are creating.
      *
-     * <p>The default implementation calls <code>renderEnd()</code>.</p>
+     * The default implementation calls {@code renderEnd()}.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
-     *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
-     *
-     * @exception IOException if an input/output error occurs
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be decoded
+     * @throws NullPointerException if {@code context} or {@code component}
+     * is {@code null}
+     * @throws IOException if an input/output error occurs
      */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
@@ -213,7 +218,6 @@ public abstract class AbstractRenderer extends Renderer {
         ", rendererType=" + component.getRendererType() + ")");
         }
          */
-
         // Render the element closing for this component
         if (component.isRendered()) {
             ResponseWriter writer = context.getResponseWriter();
@@ -222,27 +226,23 @@ public abstract class AbstractRenderer extends Renderer {
 
     }
 
-    // --------------------------------------------------------- Package Methods
-    // ------------------------------------------------------- Protected Methods
     /**
-     * <p>Render any boolean attributes on the specified list that have
-     * <code>true</code> values on the corresponding attribute of the
-     * specified <code>UIComponent</code>.  Attribute names are
-     * converted to lower case in the rendered output.</p>
+     * Render any {@code boolean} attributes on the specified list that have
+     * {@code true} values on the corresponding attribute of the specified
+     * {@code UIComponent}. Attribute names are converted to lower case in the
+     * rendered output.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
      * @param names List of attribute names to be passed through
-     *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     protected void addBooleanAttributes(FacesContext context,
-            UIComponent component,
-            ResponseWriter writer,
-            String names[]) throws IOException {
+            UIComponent component, ResponseWriter writer, String names[])
+            throws IOException {
 
         if (names == null) {
             return;
@@ -250,89 +250,79 @@ public abstract class AbstractRenderer extends Renderer {
         Map attributes = component.getAttributes();
         boolean flag;
         Object value;
-        for (int i = 0; i < names.length; i++) {
-            value = attributes.get(names[i]);
+        for (String name : names) {
+            value = attributes.get(name);
             if (value != null) {
                 if (value instanceof String) {
-                    flag = Boolean.valueOf((String) value).booleanValue();
+                    flag = Boolean.parseBoolean((String) value);
                 } else {
-                    flag = Boolean.valueOf(value.toString()).booleanValue();
+                    flag = Boolean.parseBoolean(value.toString());
                 }
                 if (flag) {
-                    writer.writeAttribute(names[i].toLowerCase(),
-                            names[i].toLowerCase(), names[i]);
-                    flag = false;
+                    writer.writeAttribute(name.toLowerCase(),
+                            name.toLowerCase(), name);
                 }
             }
         }
 
     }
-    // Core attributes that are simple pass throughs
-    private static final String coreAttributes[] = {"style", "title"};
 
     /**
-     * <p>Render the "core" set of attributes for this <code>UIComponent</code>.
-     * The default implementation conditionally generates the following
-     * attributes with values as specified.</p>
+     * Render the "core" set of attributes for this {@code UIComponent}. The
+     * default implementation conditionally generates the following attributes
+     * with values as specified.
      * <ul>
-     * <li><strong>id</strong> - If this component has a non-<code>null</code>
-     *     <code>id</code> property, and the identifier does not start with
-     *     <code>UIViewRoot.UNIQUE_ID_PREFIX</code>, render the
-     *     <code>clientId</code>.</li>
-     * <li><strong>class</strong> - If this component has a
-     *     non-<code>null</code> <code>styleClass</code> attribute, render its
-     *     value, combined with the syles parameter (if any).</li>
-     * <li><strong>style</strong> - If this component has a
-     *     non-<code>null</code> <code>style</code> attribute, render its
-     *     value.</li>
-     * <li><strong>title</strong> - If this component has a
-     *     non-<code>null</code> <code>title</code> attribute, render its
-     *     value.</li>
+     * <li><strong>id</strong> - If this component has a non-{@code null}
+     * {@code id} property, and the identifier does not start with
+     * {@code UIViewRoot.UNIQUE_ID_PREFIX}, render the {@code clientId}.</li>
+     * <li><strong>class</strong> - If this component has a non-{@code null}
+     * {@code styleClass} attribute, render its value, combined with the syles
+     * parameter (if any).</li>
+     * <li><strong>style</strong> - If this component has a non-{@code null}
+     * {@code style} attribute, render its value.</li>
+     * <li><strong>title</strong> - If this component has a non-{@code null}
+     * {@code title} attribute, render its value.</li>
      * </ul>
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     * @param styles Space-separated list of CSS style classes to add
-     *  to the <code>class</code> attribute, or <code>null</code> for none
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
+     * @param styles Space-separated list of CSS style classes to add to the
+     * {@code class} attribute, or {@code null} for none
      *
      * @exception IOException if an input/output error occurs
      */
     protected void addCoreAttributes(FacesContext context,
-            UIComponent component,
-            ResponseWriter writer,
-            String styles) throws IOException {
+            UIComponent component, ResponseWriter writer, String styles)
+            throws IOException {
 
         String id = component.getId();
-
         writer.writeAttribute("id", component.getClientId(context), "id");
 
-        RenderingUtilities.renderStyleClass(context, writer, component, styles);
-        addStringAttributes(context, component, writer, coreAttributes);
+        renderStyleClass(context, writer, component, styles);
+        addStringAttributes(context, component, writer, CORE_ATTRIBUTES);
 
     }
 
     /**
-     * <p>Render any Integer attributes on the specified list that do not have
-     * Integer.MIN_VALUE values on the corresponding attribute of the
-     * specified <code>UIComponent</code>.  Attribute names are converted to
-     * lower case in the rendered output.</p>
+     * Render any Integer attributes on the specified list that do not have
+     * Integer.MIN_VALUE values on the corresponding attribute of the specified
+     * {@code UIComponent}. Attribute names are converted to lower case in the
+     * rendered output.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
      * @param names List of attribute names to be passed through
-     *
-     * @exception IOException if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     protected void addIntegerAttributes(FacesContext context,
-            UIComponent component,
-            ResponseWriter writer,
-            String names[]) throws IOException {
+            UIComponent component, ResponseWriter writer, String names[])
+            throws IOException {
 
         if (names == null) {
             return;
@@ -340,12 +330,12 @@ public abstract class AbstractRenderer extends Renderer {
         Map attributes = component.getAttributes();
         boolean flag;
         Object value;
-        for (int i = 0; i < names.length; i++) {
-            value = attributes.get(names[i]);
+        for (String name : names) {
+            value = attributes.get(name);
             if ((value != null) && (value instanceof Integer)) {
                 Integer ivalue = (Integer) value;
-                if (!(ivalue.intValue() == Integer.MIN_VALUE)) {
-                    writer.writeAttribute(names[i].toLowerCase(), ivalue, names[i]);
+                if (!(ivalue == Integer.MIN_VALUE)) {
+                    writer.writeAttribute(name.toLowerCase(), ivalue, name);
                 }
             }
         }
@@ -353,66 +343,65 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Add any attributes on the specified list directly to the
-     * specified <code>ResponseWriter</code> for which the specified
-     * <code>UIComponent</code> has a non-<code>null</code> String value.
-     * This method may be used to "pass through" commonly used attribute
-     * name/value pairs with a minimum of code.  Attribute names are
-     * converted to lower case in the rendered output.</p>
+     * Add any attributes on the specified list directly to the specified
+     * {@code ResponseWriter} for which the specified {@code UIComponent} has a
+     * non-{@code null} String value. This method may be used to "pass through"
+     * commonly used attribute name/value pairs with a minimum of code.
+     * Attribute names are converted to lower case in the rendered output.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
      * @param names List of attribute names to be passed through
      *
      * @exception IOException if an input/output error occurs
      */
     protected static void addStringAttributes(FacesContext context,
-            UIComponent component,
-            ResponseWriter writer,
-            String names[]) throws IOException {
+            UIComponent component, ResponseWriter writer, String names[])
+            throws IOException {
 
         if (names == null) {
             return;
         }
         Map attributes = component.getAttributes();
         Object value;
-        for (int i = 0; i < names.length; i++) {
-            value = attributes.get(names[i]);
+        for (String name : names) {
+            value = attributes.get(name);
             if (value != null) {
                 if (value instanceof String) {
-                    writer.writeAttribute(names[i].toLowerCase(),
-                            (String) value, names[i]);
+                    writer.writeAttribute(name.toLowerCase(),
+                            (String) value, name);
                 } else {
-                    writer.writeAttribute(names[i].toLowerCase(),
-                            value.toString(), names[i]);
+                    writer.writeAttribute(name.toLowerCase(),
+                            value.toString(), name);
                 }
             }
         }
     }
 
     /**
-     * <p>Return the <code>Application</code> instance for this
-     * web application.</p>
+     * Get the {@code Application} instance for this web application.
+     * @return Application
      */
     protected Application getApplication() {
         return getFacesContext().getApplication();
     }
 
     /**
-     * <p>Return the value to be stored, as an Object that has been
-     * converted from the String representation (if necessary), or
-     * <code>null</code> if the String representation is null.</p>
+     * Return the value to be stored, as an Object that has been converted from
+     * the String representation (if necessary), or {@code null} if the String
+     * representation is null.
      *
      * @param context FacesContext for the current request
-     * @param component Component whose value is being processed
-     *  (must be a component that implements ValueHolder
+     * @param component Component whose value is being processed (must be a
+     * component that implements ValueHolder
      * @param value String representation of the value
+     * @return Object
      */
-    protected Object getAsObject(FacesContext context, UIComponent component,
-            String value) {
+    protected final Object getAsObject(FacesContext context,
+            UIComponent component, String value) {
 
         if (value == null) {
             return null;
@@ -423,8 +412,7 @@ public abstract class AbstractRenderer extends Renderer {
             if (vb != null) {
                 Class clazz = vb.getType(context.getELContext());
                 if (clazz != null) {
-                    converter =
-                            getApplication().createConverter(clazz);
+                    converter = getApplication().createConverter(clazz);
                 }
             }
         }
@@ -437,17 +425,22 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Return the value to be rendered, as a String (converted
-     * if necessary), or <code>null</code> if the value is null.</p>
-     *
+     * Get the value to be rendered, as a String (converted if necessary).
      * @param context FacesContext for the current request
-     * @param component Component whose value is to be retrieved (must be
-     *  a component that implements ValueHolder)
+     * @param component Component whose value is to be retrieved (must be a
+     * component that implements ValueHolder)
+     * @return converted value, pr {@code null} if the value is null
      */
     @SuppressWarnings("unchecked")
-    protected String getAsString(FacesContext context, UIComponent component) {
+    protected final String getAsString(FacesContext context,
+            UIComponent component) {
+
+        if(component == null){
+            return null;
+        }
         if (component instanceof EditableValueHolder) {
-            Object submittedValue = ((EditableValueHolder) component).getSubmittedValue();
+            Object submittedValue = ((EditableValueHolder) component)
+                    .getSubmittedValue();
             if (submittedValue != null) {
                 return (String) submittedValue;
             }
@@ -471,77 +464,72 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Return the <code>ExternalContext</code> instance for the current
-     * request.</p>
+     * Get the {@code ExternalContext} instance for the current request.
+     * @return ExternalContext
      */
-    protected ExternalContext getExternalContext() {
+    protected final ExternalContext getExternalContext() {
         return (FacesContext.getCurrentInstance().getExternalContext());
     }
 
     /**
-     * <p>Return the <code>FacesContext</code> instance for the current
-     * request.</p>
+     * Get the {@code FacesContext} instance for the current request.
+     * @return FacesContext
      */
-    protected FacesContext getFacesContext() {
+    protected final FacesContext getFacesContext() {
         return (FacesContext.getCurrentInstance());
     }
 
     /**
-     * <p>Retrieve the submitted value from the request parameters for
-     * this request.  The default implementation retrieves the parameter
-     * value that corresponds to the client identifier of this component.</p>
+     * Retrieve the submitted value from the request parameters for this
+     * request.The default implementation retrieves the parameter value that
+     * corresponds to the client identifier of this component.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> whose
-     *  submitted value is to be retrieved
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} whose submitted value is to be
+     * retrieved
+     * @return Object
      */
-    protected Object getSubmittedValue(FacesContext context, UIComponent component) {
+    protected Object getSubmittedValue(FacesContext context,
+            UIComponent component) {
+
         String clientId = component.getClientId(context);
         Map parameters = context.getExternalContext().getRequestParameterMap();
         return parameters.get(clientId);
     }
 
     /**
-     * <p>Return <code>true</code> if the specified component is disabled.</p>
+     * Test if the specified component is disabled.
      *
-     * @param component <code>UIComponent</code> to be checked
+     * @param component {@code UIComponent} to be checked
+     * @return {@code true} if disabled, {@code false} otherwise
      */
-    protected boolean isDisabled(UIComponent component) {
+    protected final boolean isDisabled(UIComponent component) {
 
         Object disabled = component.getAttributes().get("disabled");
         if (disabled == null) {
             return (false);
         }
         if (disabled instanceof String) {
-            return (Boolean.valueOf((String) disabled).booleanValue());
+            return (Boolean.parseBoolean((String) disabled));
         } else {
             return (disabled.equals(Boolean.TRUE));
         }
     }
 
     /**
-     * <p>Return <code>true</code> if we are we running in a portlet
-     * environment, as opposed to a servlet based web application.</p>
+     * Test if the specified component is read.
      *
-     * @param context <code>FacesContext</code> for the current request
+     * @param component {@code UIComponent} to be checked
+     * @return {@code true} if ready, {@code false} otherwise
      */
-    protected boolean isPortlet(FacesContext context) {
-        return false; // TODO - implement a dynamic check
-    }
-
-    /**
-     * <p>Return <code>true</code> if the specified component is read only.</p>
-     *
-     * @param component <code>UIComponent</code> to be checked
-     */
-    protected boolean isReadOnly(UIComponent component) {
+    protected final boolean isReadOnly(UIComponent component) {
 
         Object readonly = component.getAttributes().get("readonly");
         if (readonly == null) {
             return (false);
         }
         if (readonly instanceof String) {
-            return (Boolean.valueOf((String) readonly).booleanValue());
+            return (Boolean.parseBoolean((String) readonly));
         } else {
             return (readonly.equals(Boolean.TRUE));
         }
@@ -549,19 +537,19 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Render the element attributes for the generated markup related to this
-     * component.  Simple renderers that create a single markup element
-     * for this component should override this method and include calls to
-     * to <code>writeAttribute()</code> and <code>writeURIAttribute</code>
-     * on the specified <code>ResponseWriter</code>.</p>
+     * Render the element attributes for the generated markup related to this
+     * component. Simple renderers that create a single markup element for this
+     * component should override this method and include calls to to
+     * {@code writeAttribute()} and {@code writeURIAttribute} on the specified
+     * {@code ResponseWriter}.
      *
-     * <p>The default implementation does nothing.</p>
+     * The default implementation does nothing.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
      *
      * @exception IOException if an input/output error occurs
      */
@@ -570,19 +558,18 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Render the element end for the generated markup related to this
-     * component.  Simple renderers that create a single markup element
-     * for this component should override this method and include a call
-     * to <code>endElement()</code> on the specified
-     * <code>ResponseWriter</code>.</p>
+     * Render the element end for the generated markup related to this
+     * component. Simple renderers that create a single markup element for this
+     * component should override this method and include a call to
+     * {@code endElement()} on the specified {@code ResponseWriter}.
      *
-     * <p>The default implementation does nothing.</p>
+     * The default implementation does nothing.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
      *
      * @exception IOException if an input/output error occurs
      */
@@ -591,13 +578,14 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Render the specified markup to the current response.</p>
+     * Render the specified markup to the current response.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> associated with this markup
-     * @param writer <code>ResponseWriter</code> to which the markup
-     *  should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} associated with this markup
+     * @param writer {@code ResponseWriter} to which the markup should be
+     * rendered
      * @param markup {@link Markup} to be rendered
+     * @throws java.io.IOException if an input/output error occurs
      */
     protected void renderMarkup(FacesContext context, UIComponent component,
             ResponseWriter writer, Markup markup)
@@ -608,19 +596,18 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>Render the element start for the generated markup related to this
-     * component.  Simple renderers that create a single markup element
-     * for this component should override this method and include a call
-     * to <code>startElement()</code> on the specified
-     * <code>ResponseWriter</code>.</p>
+     * Render the element start for the generated markup related to this
+     * component. Simple renderers that create a single markup element for this
+     * component should override this method and include a call to
+     * {@code startElement()} on the specified {@code ResponseWriter}.
      *
-     * <p>The default implementation does nothing.</p>
+     * The default implementation does nothing.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
+     * @param writer {@code ResponseWriter} to which the element start should be
+     * rendered
      *
      * @exception IOException if an input/output error occurs
      */
@@ -629,26 +616,27 @@ public abstract class AbstractRenderer extends Renderer {
     }
 
     /**
-     * <p>If a submitted value was included on this request, store it in the
-     * component as appropriate.</p>
+     * If a submitted value was included on this request, store it in the
+     * component as appropriate.
      *
-     * <p>The default implementation determines whether this component
-     * implements <code>EditableValueHolder</code>.  If so, it checks for a
-     * request parameter with the same name as the <code>clientId</code>
-     * of this <code>UIComponent</code>.  If there is such a parameter, its
-     * value is passed (as a String) to the <code>setSubmittedValue()</code>
-     * method on the <code>EditableValueHolder</code> component.</p>
+     * The default implementation determines whether this component implements
+     * {@code EditableValueHolder}. If so, it checks for a request parameter
+     * with the same name as the {@code clientId} of this {@code UIComponent}.
+     * If there is such a parameter, its value is passed (as a String) to the
+     * {@code setSubmittedValue()} method on the {@code EditableValueHolder}
+     * component.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose submitted
+     * value is to be stored
      */
-    protected void setSubmittedValue(FacesContext context, UIComponent component) {
+    protected void setSubmittedValue(FacesContext context,
+            UIComponent component) {
 
         if (!(component instanceof EditableValueHolder)) {
             return;
         }
-        component.getAttributes().put("submittedValue", // NOI18N
+        component.getAttributes().put("submittedValue",
                 getSubmittedValue(context, component));
     }
 }

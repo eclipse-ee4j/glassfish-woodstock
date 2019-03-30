@@ -54,7 +54,6 @@ require([
 
         // FIX: Remove "display:block" from barContainer class and
         // use common.setVisibleElement.
-
         var widget = dojo.widget.byId(this.id);
         if (show === false) {
             widget.barContainer.style.display = "none";
@@ -480,7 +479,8 @@ require([
             this.setLogMsgVisible(false);
 
             if (props.failedStateText !== null) {
-                var text = props.failedStateText + " " + props.progress + this._props.percentChar;
+                var text = props.failedStateText + " " + props.progress
+                        + this._props.percentChar;
                 widgetCommon.addFragment(widget.failedLabelContainer, text);
                 common.setVisibleElement(widget.failedLabelContainer, true);
                 common.setVisibleElement(widget.failedStateContainer, true);

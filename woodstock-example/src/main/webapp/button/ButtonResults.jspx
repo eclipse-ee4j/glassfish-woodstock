@@ -39,14 +39,14 @@
                         <!-- Bread Crumb Component -->
                         <webuijsf:breadcrumbs id="breadcrumbs">
                             <webuijsf:hyperlink actionExpression="#{ButtonBean.showExampleIndex}" text="#{msgs.exampleTitle}"
-                                                onMouseOver="javascript:window.status='#{msgs.index_breadcrumbMouseOver}'; return true;"
+                                                onMouseOver="javascript:window.status='#{msgs.index_breadcrumbMouseOver}';"
                                                 onMouseOut="javascript: window.status=''; return true" />
                             <webuijsf:hyperlink actionExpression="showButton" text="#{msgs.button_title}"
-                                                onMouseOver="javascript:window.status='#{msgs.button_breadcrumbMouseOver}'; return true;"
-                                                onMouseOut="javascript: window.status=''; return true" />
+                                                onMouseOver="javascript:window.status='#{msgs.button_breadcrumbMouseOver}';"
+                                                onMouseOut="javascript: window.status='';" />
                             <webuijsf:hyperlink text="#{msgs.button_resultsTitle}"/>
                         </webuijsf:breadcrumbs>
-                       
+
                         <!-- Page Title -->
                         <webuijsf:contentPageTitle title="#{msgs.button_resultsTitle}"
                                                    helpText="#{msgs.button_resultsHelpText}">
@@ -70,7 +70,6 @@
                             <webuijsf:staticText id="secondaryMini" text="#{ButtonBean.secondaryMiniResult}"/>
                             <br/>
                         </webuijsf:markup>
-
                     </webuijsf:form>
                 </webuijsf:body>
             </webuijsf:html>

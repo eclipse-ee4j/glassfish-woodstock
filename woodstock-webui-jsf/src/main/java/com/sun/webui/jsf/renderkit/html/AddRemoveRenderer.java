@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: AddRemoveRenderer.java,v 1.1.12.1 2009-12-29 04:52:45 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -35,27 +32,25 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.html.HTMLAttributes;
 import com.sun.webui.html.HTMLElements;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.getDomNode;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderHiddenField;
+import static com.sun.webui.jsf.util.RenderingUtilities.writeStringAttributes;
 
 /**
- * <p>Renderer for a {@link com.sun.webui.jsf.component.AddRemove} component.</p>
+ * Renderer for a {@link com.sun.webui.jsf.component.AddRemove} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.AddRemove"))
 public class AddRemoveRenderer extends ListRendererBase {
 
     private final static boolean DEBUG = false;
-    private final static String ITEMS_ID = "_item_list"; //NOI18N
+    private final static String ITEMS_ID = "_item_list";
 
-    /**
-     * <p>Render the list.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * end should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
@@ -64,21 +59,26 @@ public class AddRemoveRenderer extends ListRendererBase {
             log("encodeEnd()");
         }
 
+        if (component == null) {
+            return;
+        }
+
         if (component instanceof AddRemove) {
-            renderListComponent((AddRemove) component, context, getStyles(context));
+            renderListComponent((AddRemove) component, context,
+                    getStyles(context));
         } else {
-            String message = "Component " + component.toString() + //NOI18N
-                    " has been associated with a ListboxRenderer. " + //NOI18N
-                    " This renderer can only be used by components " + //NOI18N
-                    " that extend com.sun.webui.jsf.component.Selector."; //NOI18N
+            String message = "Component " + component.toString()
+                    + " has been associated with a ListboxRenderer. "
+                    + " This renderer can only be used by components "
+                    + " that extend com.sun.webui.jsf.component.Selector.";
             throw new FacesException(message);
         }
     }
 
     /**
-     * <p>This method determines whether the component should be
+     * This method determines whether the component should be
      * rendered as a standalone list, or laid out together with a
-     * label that was defined as part of the component.</p> 
+     * label that was defined as part of the component.
      *
      * <p>A label will be rendered if either of the following is
      * true:</p> 
@@ -112,9 +112,7 @@ public class AddRemoveRenderer extends ListRendererBase {
             return;
         }
 
-        Theme theme = ThemeUtilities.getTheme(context);
         ResponseWriter writer = context.getResponseWriter();
-
         renderOpenEncloser(component, context, HTMLElements.DIV, styles[19]);
 
         if (component.isVertical()) {
@@ -127,89 +125,70 @@ public class AddRemoveRenderer extends ListRendererBase {
                 component.getFacet(AddRemove.FOOTER_FACET);
         if (footerComponent != null) {
             writer.startElement(HTMLElements.DIV, component);
-            writer.writeText("\n", null); //NOI18N
-            RenderingUtilities.renderComponent(footerComponent, context);
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
+            renderComponent(footerComponent, context);
+            writer.writeText("\n", null);
             writer.endElement(HTMLElements.DIV);
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
         }
 
         String id = component.getClientId(context);
-        RenderingUtilities.renderHiddenField(component, writer,
-                id.concat(ITEMS_ID), component.getAllValues());
-        writer.writeText("\n", null); //NOI18N
+        renderHiddenField(component, writer, id.concat(ITEMS_ID),
+                component.getAllValues());
+        writer.writeText("\n", null);
 
         // Value field
         renderHiddenValue(component, context, writer, styles[19]);
 
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         renderDivEnd(writer);
 
-        try {
-            // Append properties.
-            StringBuffer buff = new StringBuffer(256);
-            JSONObject json = new JSONObject();
-            json.put("id", id).put("separator", component.getSeparator()).put("sort", component.isSorted());
-            String jsObject = JavaScriptUtilities.getDomNode(context, component);
+        JsonObject initProps = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("id", id)
+                .add("separator", component.getSeparator())
+                .add("sort", component.isSorted())
+                .build();
 
-            // Append JavaScript.
-//            buff.append(JavaScriptUtilities.getModule("addRemove")).append("\n") // NOI18N
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("addRemove")).append("'], function (addRemove) {").append("\n")
-//                    .append(JavaScriptUtilities.getModuleName("addRemove.init")) // NOI18N
-                    .append("addRemove.init") // NOI18N
-                    .append("(") //NOI18N
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");\n") //NOI18N
-                    .append(jsObject).append(AddRemove.UPDATEBUTTONS_FUNCTION);
-
-            if (component.isDuplicateSelections()) {
-                buff.append("\n") //NOI18N
-                        .append(jsObject).append(AddRemove.MULTIPLEADDITIONS_FUNCTION);
-            }
-            buff.append("});");
-
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        renderInitScriptTag(writer, "addRemove", initProps,
+            // ws_update_buttons
+            renderCall("update_buttons", "addRemove",
+                    component.getClientId(context)));
     }
 
     private void renderHorizontalAddRemove(AddRemove component,
-            FacesContext context,
-            ResponseWriter writer,
-            String[] styles)
-            throws IOException {
+            FacesContext context, ResponseWriter writer,
+            String[] styles) throws IOException {
 
         // Put the columns into a table so that they can be 
         // displayed horizontally
         // in a table cell as in portlet. See bug 6299233
 
         writer.startElement(HTMLElements.TABLE, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement(HTMLElements.TR, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         // If the component has a label, render it first...
         UIComponent headerComponent = component.getHeaderComponent();
         if (headerComponent != null) {
             writer.startElement(HTMLElements.TD, component);
             if (!component.isLabelOnTop()) {
-                writer.writeAttribute(HTMLAttributes.VALIGN, "top", null); //NOI18N
+                writer.writeAttribute(HTMLAttributes.VALIGN, "top", null);
             } else {
-                writer.writeAttribute(HTMLAttributes.COLSPAN, "3", null); //NOI18N
+                writer.writeAttribute(HTMLAttributes.COLSPAN, "3", null);
             }
-            writer.writeText("\n", null); //NOI18N	
+            writer.writeText("\n", null);	
             renderDivBegin(component, writer, styles[21]);
-            RenderingUtilities.renderComponent(headerComponent, context);
+            renderComponent(headerComponent, context);
             renderDivEnd(writer);
             renderTableCellEnd(writer);
 
             if (component.isLabelOnTop()) {
                 writer.endElement(HTMLElements.TR);
-                writer.writeText("\n", null); //NOI18N              
+                writer.writeText("\n", null);
                 writer.startElement(HTMLElements.TR, component);
-                writer.writeText("\n", null); //NOI18N
+                writer.writeText("\n", null);
             }
         }
 
@@ -217,7 +196,7 @@ public class AddRemoveRenderer extends ListRendererBase {
         renderTableCellStart(component, writer);
         renderDivBegin(component, writer, styles[17]);
 
-        RenderingUtilities.renderComponent(component.getAvailableLabelComponent(), context);
+        renderComponent(component.getAvailableLabelComponent(), context);
         renderAvailableList(component, context, styles);
 
         renderDivEnd(writer);
@@ -236,7 +215,7 @@ public class AddRemoveRenderer extends ListRendererBase {
         renderTableCellStart(component, writer);
         renderDivBegin(component, writer, styles[17]);
 
-        RenderingUtilities.renderComponent(component.getSelectedLabelComponent(), context);
+        renderComponent(component.getSelectedLabelComponent(), context);
         renderSelectedList(component, context, styles);
 
         renderDivEnd(writer);
@@ -244,9 +223,9 @@ public class AddRemoveRenderer extends ListRendererBase {
 
         // Close the table 
         writer.endElement(HTMLElements.TR);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.endElement(HTMLElements.TABLE);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         writer.startElement(HTMLElements.DIV, component);
         writer.writeAttribute(HTMLAttributes.CLASS, styles[18], null);
@@ -255,14 +234,17 @@ public class AddRemoveRenderer extends ListRendererBase {
 
     private void renderTableCellStart(AddRemove component,
             ResponseWriter writer) throws IOException {
+
         writer.startElement(HTMLElements.TD, component);
-        writer.writeAttribute(HTMLAttributes.VALIGN, "top", null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.VALIGN, "top", null);
+        writer.writeText("\n", null);
     }
 
-    private void renderTableCellEnd(ResponseWriter writer) throws IOException {
+    private void renderTableCellEnd(ResponseWriter writer)
+            throws IOException {
+
         writer.endElement(HTMLElements.TD);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
     }
 
     private void renderVerticalAddRemove(AddRemove component,
@@ -273,37 +255,37 @@ public class AddRemoveRenderer extends ListRendererBase {
 
         // Render the header and list for available items in a table
         writer.startElement(HTMLElements.TABLE, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement(HTMLElements.TR, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         // If the component has a label, render it first... 
         UIComponent headerComponent = component.getHeaderComponent();
         if (headerComponent != null) {
             writer.startElement(HTMLElements.TD, component);
 
-            writer.writeText("\n", null); //NOI18N	
+            writer.writeText("\n", null);	
             renderDivBegin(component, writer, styles[21]);
             RenderingUtilities.renderComponent(headerComponent, context);
             renderDivEnd(writer);
             renderTableCellEnd(writer);
 
             writer.endElement(HTMLElements.TR);
-            writer.writeText("\n", null); //NOI18N              
+            writer.writeText("\n", null);
             writer.startElement(HTMLElements.TR, component);
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
 
         }
         writer.startElement(HTMLElements.TD, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         renderDivBegin(component, writer, styles[21]);
-        RenderingUtilities.renderComponent(component.getAvailableLabelComponent(), context);
+        renderComponent(component.getAvailableLabelComponent(), context);
         renderAvailableList(component, context, styles);
         renderDivEnd(writer);
         renderTableCellEnd(writer);
         writer.endElement(HTMLElements.TR);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.endElement(HTMLElements.TABLE);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         // Render add/remove buttons
         renderDivBegin(component, writer, styles[21]);
@@ -315,20 +297,20 @@ public class AddRemoveRenderer extends ListRendererBase {
 
         // render the header and list for selected items in a table
         writer.startElement(HTMLElements.TABLE, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement(HTMLElements.TR, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement(HTMLElements.TD, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         renderDivBegin(component, writer, styles[21]);
-        RenderingUtilities.renderComponent(component.getSelectedLabelComponent(), context);
+        renderComponent(component.getSelectedLabelComponent(), context);
         renderSelectedList(component, context, styles);
         renderDivEnd(writer);
         renderTableCellEnd(writer);
         writer.endElement(HTMLElements.TR);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.endElement(HTMLElements.TABLE);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         // render move up/down buttons
         if (component.isMoveButtons()) {
@@ -343,22 +325,22 @@ public class AddRemoveRenderer extends ListRendererBase {
         renderDivEnd(writer);
 
         // close the div
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
     }
 
-    private void renderDivBegin(AddRemove addRemove, ResponseWriter writer, String style)
-            throws IOException {
+    private void renderDivBegin(AddRemove addRemove, ResponseWriter writer,
+            String style) throws IOException {
 
         writer.startElement(HTMLElements.DIV, addRemove);
         writer.writeAttribute(HTMLAttributes.CLASS, style, null);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
     }
 
     private void renderDivEnd(ResponseWriter writer)
             throws IOException {
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.endElement(HTMLElements.DIV);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
     }
 
     private void renderButtons(AddRemove component, FacesContext context,
@@ -367,18 +349,18 @@ public class AddRemoveRenderer extends ListRendererBase {
 
         writer.startElement(HTMLElements.TABLE, component);
         writer.writeAttribute(HTMLAttributes.CLASS, styles[10], null);
-        writer.writeText("\n", null); //NOI18N 
+        writer.writeText("\n", null); 
         writer.startElement(HTMLElements.TR, component);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement(HTMLElements.TD, component);
-        writer.writeAttribute(HTMLAttributes.ALIGN, "center", null);  //NOI18N
-        writer.writeAttribute(HTMLAttributes.WIDTH, "125px", null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.ALIGN, "center", null);
+        writer.writeAttribute(HTMLAttributes.WIDTH, "125px", null);
+        writer.writeText("\n", null);
 
         // Render the add button
         renderButton(component, component.getAddButtonComponent(),
                 styles[14], writer, context);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         if (component.isSelectAll()) {
             renderButton(component, component.getAddAllButtonComponent(),
@@ -390,8 +372,8 @@ public class AddRemoveRenderer extends ListRendererBase {
         } else {
             buttonStyle = styles[14];
         }
-        renderButton(component, component.getRemoveButtonComponent(), buttonStyle,
-                writer, context);
+        renderButton(component, component.getRemoveButtonComponent(),
+                buttonStyle, writer, context);
         if (component.isSelectAll()) {
             renderButton(component, component.getRemoveAllButtonComponent(),
                     styles[14], writer, context);
@@ -405,9 +387,9 @@ public class AddRemoveRenderer extends ListRendererBase {
         }
 
         writer.endElement(HTMLElements.TD);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.endElement(HTMLElements.TR);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.endElement(HTMLElements.TABLE);
     }
 
@@ -433,11 +415,8 @@ public class AddRemoveRenderer extends ListRendererBase {
         }
     }
 
-    private void renderMoveButtonRow(AddRemove component,
-            FacesContext context,
-            ResponseWriter writer,
-            String[] styles)
-            throws IOException {
+    private void renderMoveButtonRow(AddRemove component, FacesContext context,
+            ResponseWriter writer, String[] styles) throws IOException {
 
         renderButtonVertical(component, component.getMoveUpButtonComponent(),
                 styles[11], writer, context);
@@ -458,15 +437,12 @@ public class AddRemoveRenderer extends ListRendererBase {
 
         renderDivBegin(addRemove, writer, style);
         RenderingUtilities.renderComponent(comp, context);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         renderDivEnd(writer);
     }
 
-    private void renderButtonVertical(AddRemove addRemove,
-            UIComponent comp,
-            String style,
-            ResponseWriter writer,
-            FacesContext context)
+    private void renderButtonVertical(AddRemove addRemove, UIComponent comp,
+            String style, ResponseWriter writer, FacesContext context)
             throws IOException {
 
         if (comp == null) {
@@ -475,7 +451,7 @@ public class AddRemoveRenderer extends ListRendererBase {
 
         renderDivBegin(addRemove, writer, style);
         RenderingUtilities.renderComponent(comp, context);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         renderDivEnd(writer);
     }
 
@@ -504,10 +480,13 @@ public class AddRemoveRenderer extends ListRendererBase {
      * the response
      */
     protected void renderAvailableList(AddRemove component, FacesContext context,
-            String[] styles)
-            throws IOException {
+            String[] styles) throws IOException {
 
-        String id = null;
+        if (component == null){
+            return;
+        }
+
+        String id;
         if (component instanceof ComplexComponent) {
             id = component.getLabeledElementId(context);
         } else {
@@ -539,28 +518,32 @@ public class AddRemoveRenderer extends ListRendererBase {
         writer.writeAttribute(HTMLAttributes.ID, id, null);
         writer.writeAttribute(HTMLAttributes.NAME, id, null);
 
-        String jsObject = JavaScriptUtilities.getDomNode(context, component);
+        String jsObject = getDomNode(context, component);
 
         StringBuffer jsBuffer = new StringBuffer(256);
-        jsBuffer.append(jsObject).append(AddRemove.ADD_FUNCTION).append(AddRemove.RETURN);
+        jsBuffer.append(jsObject)
+                .append(AddRemove.ADD_FUNCTION)
+                .append(AddRemove.RETURN);
         writer.writeAttribute(HTMLAttributes.ONDBLCLICK, jsBuffer.toString(),
                 null);
 
         jsBuffer = new StringBuffer(200);
-        jsBuffer.append(jsObject).append(AddRemove.AVAILABLE_ONCHANGE_FUNCTION).append(AddRemove.RETURN);
+        jsBuffer.append(jsObject)
+                .append(AddRemove.AVAILABLE_ONCHANGE_FUNCTION)
+                .append(AddRemove.RETURN);
         writer.writeAttribute(HTMLAttributes.ONCHANGE, jsBuffer.toString(),
                 null);
 
         int size = component.getRows();
         writer.writeAttribute(HTMLAttributes.SIZE, String.valueOf(size),
-                null); //NOI18N
+                null);
         writer.writeAttribute(HTMLAttributes.MULTIPLE, "multiple",
-                null); //NOI18N
+                null);
 
         if (component.isDisabled()) {
             writer.writeAttribute(HTMLAttributes.DISABLED,
-                    "disabled", //NOI18N
-                    "disabled"); //NOI18N
+                    "disabled",
+                    "disabled");
         }
 
         String tooltip = component.getToolTip();
@@ -571,26 +554,23 @@ public class AddRemoveRenderer extends ListRendererBase {
         if (DEBUG) {
             log("Setting onchange event handler");
         }
-        //writer.writeAttribute("onchange", script, null);    //NOI18N
+        //writer.writeAttribute("onchange", script, null);
 
         int tabindex = component.getTabIndex();
         if (tabindex > 0 && tabindex < 32767) {
             writer.writeAttribute(HTMLAttributes.TABINDEX,
                     String.valueOf(tabindex),
-                    "tabindex");              //NOI18N
+                    "tabindex");
         }
 
-        RenderingUtilities.writeStringAttributes(component, writer,
-                STRING_ATTRIBUTES);
-
-
-        writer.writeText("\n", null); //NOI18N
+        writeStringAttributes(component, writer, STRING_ATTRIBUTES);
+        writer.writeText("\n", null);
 
         renderListOptions(component, component.getListItems(context, true),
                 writer, styles);
 
-        writer.endElement(HTMLElements.SELECT);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement(HTMLElements.SELECT);
+        writer.writeText("\n", null);
     }
 
     /**
@@ -618,9 +598,7 @@ public class AddRemoveRenderer extends ListRendererBase {
      * the response
      */
     protected void renderSelectedList(AddRemove component,
-            FacesContext context,
-            String[] styles)
-            throws IOException {
+            FacesContext context, String[] styles) throws IOException {
 
         String id =
                 component.getClientId(context).concat(AddRemove.SELECTED_ID);
@@ -644,13 +622,12 @@ public class AddRemoveRenderer extends ListRendererBase {
         //currentValue = "";
         //}
 
-
         writer.startElement(HTMLElements.SELECT, component);
         writer.writeAttribute(HTMLAttributes.CLASS, styleClass, null);
         writer.writeAttribute(HTMLAttributes.ID, id, null);
         writer.writeAttribute(HTMLAttributes.SIZE,
                 String.valueOf(component.getRows()), null);
-        writer.writeAttribute(HTMLAttributes.MULTIPLE, "multiple", //NOI18N
+        writer.writeAttribute(HTMLAttributes.MULTIPLE, "multiple",
                 null);
 
         String jsObject = JavaScriptUtilities.getDomNode(context, component);
@@ -672,14 +649,14 @@ public class AddRemoveRenderer extends ListRendererBase {
         if (component.isDisabled()) {
             writer.writeAttribute(HTMLAttributes.DISABLED,
                     "disabled", //NOI18N
-                    "disabled"); //NOI18N
+                    "disabled");
         }
 
         // TODO
-	/*
+        /*
         String tooltip = component.getToolTip();
         if(tooltip != null) {
-        writer.writeAttribute("title", tooltip, null); //NOI18N
+        writer.writeAttribute("title", tooltip, null);
         }
          */
 
@@ -691,47 +668,51 @@ public class AddRemoveRenderer extends ListRendererBase {
         getJavaScript(component.getOnChange(),
         styles[0],
         id);
-        writer.writeAttribute("onchange", script, null);    //NOI18N
+        writer.writeAttribute("onchange", script, null);
          */
 
         int tabindex = component.getTabIndex();
         if (tabindex > 0 && tabindex < 32767) {
             writer.writeAttribute(HTMLAttributes.TABINDEX,
                     String.valueOf(tabindex),
-                    "tabindex");              //NOI18N
+                    "tabindex");
         }
 
-        RenderingUtilities.writeStringAttributes(component, writer,
-                STRING_ATTRIBUTES);
-        writer.writeText("\n", null); //NOI18N
+        writeStringAttributes(component, writer, STRING_ATTRIBUTES);
+        writer.writeText("\n", null);
         renderListOptions(component, component.getSelectedListItems(),
                 writer, styles);
         writer.endElement(HTMLElements.SELECT);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
     }
 
-    /**
-     * Overrides encodeChildren of Renderer to do nothing. This
-     * renderer renders its own children, but not through this
-     * method.
-     * @param context The FacesContext of the request
-     * @param component The component associated with the
-     * renderer. Must be a subclass of ListSelector.
-     * @throws java.io.IOException if something goes wrong while writing the children
-     */
     @Override
     public void encodeChildren(javax.faces.context.FacesContext context,
             javax.faces.component.UIComponent component)
             throws java.io.IOException {
-        return;
+    }
+
+    @Override
+    public void decode(FacesContext context, UIComponent component) {
+
+        if (DEBUG) {
+            log("decode()");
+        }
+
+        if (component == null){
+            return;
+        }
+
+        super.decode(context, component, component.getClientId(context)
+                .concat(ListSelector.VALUE_ID));
     }
 
     /**
-     * <p>Render the appropriate element end, depending on the value of the
-     * <code>type</code> property.</p>
+     * Render the appropriate element end, depending on the value of the
+     * {@code type} property.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param monospace <code>UIComponent</code> if true, use the monospace
+     * @param context {@code FacesContext} for the current request
+     * @param monospace {@code UIComponent} if true, use the mono space
      * styles to render the list.
      *
      * @exception IOException if an input/output error occurs
@@ -745,7 +726,7 @@ public class AddRemoveRenderer extends ListRendererBase {
         Theme theme = ThemeUtilities.getTheme(context);
 
         String[] styles = new String[23];
-        styles[0] = JavaScriptUtilities.getModuleName("listbox.changed"); //NOI18N
+        styles[0] = JavaScriptUtilities.getModuleName("listbox.changed");
         styles[1] = theme.getStyleClass(ThemeStyles.LIST);
         styles[2] = theme.getStyleClass(ThemeStyles.LIST_DISABLED);
         styles[3] = theme.getStyleClass(ThemeStyles.LIST_OPTION);
@@ -769,22 +750,6 @@ public class AddRemoveRenderer extends ListRendererBase {
         styles[21] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_DIV);
         styles[22] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_CLEAR);
         return styles;
-    }
-
-    /**
-     * Decodes the value of the component
-     * @param context The FacesContext of the request
-     * @param component The component instance to be decoded
-     */
-    @Override
-    public void decode(FacesContext context, UIComponent component) {
-
-        if (DEBUG) {
-            log("decode()");
-        }
-
-        String id = component.getClientId(context).concat(ListSelector.VALUE_ID);
-        super.decode(context, component, id);
     }
 }
 

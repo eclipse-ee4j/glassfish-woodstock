@@ -31,10 +31,19 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.StringWriter;
+import javax.faces.render.ResponseStateManager;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.getModuleName;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitCall;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.getStyleClasses;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.ThemeUtilities.getIcon;
 
 /**
  * Render a Wizard component. This renderer is responsible for rendering
@@ -48,13 +57,13 @@ import org.json.JSONObject;
  * above the main body</li>
  * <li>A step detail appearing below the step title.</li>
  * <li>The step body appearing below the step detail and to the right
- * of the step list and help pane containg the elements for the current
+ * of the step list and help pane containing the elements for the current
  * step.</li>
  * <li>Sequencing controls appearing below the main body.</li>
  * </ul>
  * <p>
  * There are also some decorative rules that
- * separate the different areas. Scrollbars are provided as
+ * separate the different areas. {@code Scrollbars} are provided as
  * determined by the size of the content in each area.
  * </p>
  * <p>
@@ -77,193 +86,125 @@ import org.json.JSONObject;
  * encodeEnd(...)
  *   renderEnd(...)
  *     renderWizard(...)
- *     
  *        renderTitle(...)
- *     	    renderTitleBegin(...)
- *     	    renderTitleText(...)
- *     	    renderTitleEnd(...)
- *
- *	  renderStepsBar(..)
- *              renderTabsBar(...) 
- *
- *		or
- *		
- *		renderEmptyBar(..)
- *
+*           renderTitleBegin(...)
+ *          renderTitleText(...)
+ *          renderTitleEnd(...)
+ *        renderStepsBar(..)
+ *          renderTabsBar(...) 
+ *           or
+ *          renderEmptyBar(..)
  *        renderStepsPane(...)
- *     		renderStepListBegin(...)
- *     		renderStepList(...)
- *     		    renderSubstep(...) // For each step
- *     		        renderStepNumber(...)
- *     			renderStepSummary(...)
- *
- *		    or
- *
- *		    renderStep(...)
- *     		        renderStepNumber(...)
- *     		        renderStepSummary(...)
- *		    or
- *
- *     		    renderCurrentStep(...)
- * 		        renderCurrentStepIndicator(...)
- *			renderStep(...)
- *     			    renderStepNumber(...)
- *     			    renderStepSummary(...)
- *		    or
- *
- *     		    renderBranchStep(...)
- *			renderPlaceholderText(...)
- *     		renderStepListEnd(...)
- *
- *     		or
- *
- *     		renderStepHelp(...)
- *     		    renderStepHelpBegin(...)
- *     		    renderStepHelpText(...)
- *     		    renderStepHelpEnd(...)
- *
+ *          renderStepListBegin(...)
+ *          renderStepList(...)
+ *          renderSubstep(...) // For each step
+ *          renderStepNumber(...)
+ *          renderStepSummary(...)
+ *          or
+ *          renderStep(...)
+ *              renderStepNumber(...)
+ *              renderStepSummary(...)
+ *              or
+ *              renderCurrentStep(...)
+ *                 renderCurrentStepIndicator(...)
+ *                 renderStep(...)
+ *                     renderStepNumber(...)
+ *                     renderStepSummary(...)
+ *                 or
+ *                 renderBranchStep(...)
+ *                 renderPlaceholderText(...)
+ *          renderStepListEnd(...)
+ *          or
+ *          renderStepHelp(...)
+ *              renderStepHelpBegin(...)
+ *              renderStepHelpText(...)
+ *              renderStepHelpEnd(...)
  *        renderTask(context, component, theme, writer);
- *     	    renderTaskBegin(...)
- *     		renderSkipAnchor(...)
- *     	    renderTaskHeader(...)
- *     		renderStepTitle(...)
- *     		    renderStepTitleBegin(...)
- *     	 	    renderStepTitleLabelText(...)
- *     		    renderStepTitleText(...)
- *     		    renderStepTitleEnd(...)
- *     		renderStepDetail(...)
- *     		    renderStepDetailBegin(...)
- *     		    renderStepDetailText(...)
- *     		    renderStepDetailEnd(...)
- *     	    renderStepTask(...)
- *     		renderStepTaskBegin(...)
- *     		// dispatch subview
- *     		renderStepTaskEnd(...)
- *     	    renderTaskEnd(...)
- *
+ *          renderTaskBegin(...)
+ *          renderSkipAnchor(...)
+ *          renderTaskHeader(...)
+ *          renderStepTitle(...)
+ *              renderStepTitleBegin(...)
+ *              renderStepTitleLabelText(...)
+ *              renderStepTitleText(...)
+ *              renderStepTitleEnd(...)
+ *          renderStepDetail(...)
+ *              renderStepDetailBegin(...)
+ *              renderStepDetailText(...)
+ *              renderStepDetailEnd(...)
+ *              renderStepTask(...)
+ *          renderStepTaskBegin(...)
+ *          // dispatch subview
+ *          renderStepTaskEnd(...)
+ *          renderTaskEnd(...)
  *        renderControlBar(...)
- *     	    renderControlBarBegin(...)
- *          renderControlBarSpacer(...)  	    
- *     	    renderLeftControlBar(...)
- *     		renderLeftControlBarBegin(...)
- *     		renderPreviousControl(...)
- *     		renderNextControl(...)
- *     		or
- *     		renderFinishControl(...)
- *     		renderLeftControlBarEnd(...)
- *     	    renderRightControlBar(...)
- *     		renderRightControlBarBegin(...)
- *     		    renderCancelControl(...)
- *     		    or
- *     		    renderCloseControl(...)
- *     		renderRightControlBarEnd(...)
- *     	    renderControlBarEnd(...)
- *
+ *          renderControlBarBegin(...)
+ *          renderControlBarSpacer(...)
+ *          renderLeftControlBar(...)
+ *          renderLeftControlBarBegin(...)
+ *          renderPreviousControl(...)
+ *          renderNextControl(...)
+ *          or
+ *          renderFinishControl(...)
+ *          renderLeftControlBarEnd(...)
+ *          renderRightControlBar(...)
+ *          renderRightControlBarBegin(...)
+ *              renderCancelControl(...)
+ *              or
+ *              renderCloseControl(...)
+ *              renderRightControlBarEnd(...)
+ *          renderControlBarEnd(...)
  *      renderWizardEnd(context, component, theme, writer);
- *
  * <em>refer to HCI wizard guidelines for details.</em>
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Wizard"))
 public class WizardRenderer extends AbstractRenderer {
 
     /**
-     * Construct a <code>WizardRenderer</code>.
+     * Construct a {@code WizardRenderer}.
      */
     public WizardRenderer() {
     }
 
-    /**
-     * The <code>WizardRenderer</code> is responsible for rendering the
-     * <code>WizardStep</code> children.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
     /**
-     * <p>A wizard can be rendered in a popup or inline within a primary
-     * application page.
-     * </p>
-     * <p>
-     * When the wizard is in a popup it must be closed. This is accomplished
-     * by rendering some javascript to close the popup and if necessary
-     * forwarding to another application page.
-     * When the wizard is not in a popup then only forwarding is performed
-     * if necessary.
-     * </p>
+     * Render JS to close the popup window. Output JS specified
+     * in the {@code onPopupDismiss} property.If the property is empty
+     * render a call to the Wizard JS  object closePopup() function.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
-     * writer.
-     */
-    /*
-    protected void renderWizardClose(FacesContext context,
-    UIComponent component, Theme theme,
-    ResponseWriter writer) throws IOException {
-
-    // Assumes that the wizard javascript has been included
-    // and a wizard js object has been created
-    //
-    writer.startElement(SCRIPT, component);
-    writer.writeAttribute(TYPE, TEXT_JAVASCRIPT, null);
-
-    renderJsClose(context, component, writer);
-
-    writer.endElement(SCRIPT);
-    }
-     */
-    /**
-     * Render javascript to close the popup window. Output javascript
-     * specified in the <code>onPopupDismiss</code> property.
-     * If the property is empty render an call to the Wizard javascript
-     * object closePopup() function.
-     *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
-     * writer.
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @return String
+     * @throws java.io.IOException if an IO error occurs
      */
     protected String getWizardCloseJavaScript(FacesContext context,
             UIComponent component) throws IOException {
+
         String onPopupDismiss = (String) component.getAttributes().get(
                 ONPOPUPDISMISS);
 
         if (onPopupDismiss == null || onPopupDismiss.length() == 0) {
-            Object[] args = new Object[]{
-                JavaScriptUtilities.getModuleName("wizard")
-            };
-            onPopupDismiss = MessageFormat.format(CLOSEPOPUPJS, args);
+            onPopupDismiss = MessageFormat.format(CLOSEPOPUPJS,
+                    new Object[]{ getModuleName("wizard") });
         }
         return onPopupDismiss;
     }
 
-    /**
-     * If the component is not a <code>Wizard</code> component throw
-     * <code>IllegalArgumentException</code> otherwise begin rendering
-     * the component. Call the wizard component's isComplete() method to
-     * determine if the wizard has completed and proceed appropriately if the
-     * wizard was rendered in a popup or inline one browser page.
-     *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
-     * writer.
-     * @throws IllegalArgumentException
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
 
         // Is component "isa" Wizard ?
-        //
         if (!(component instanceof Wizard)) {
             throw new IllegalArgumentException(
                     getMessage(MSG_COMPONENT_NOT_WIZARD));
         }
 
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
 
         // Always render outer div tags for HTML element functions to be valid.
         // User may need to inokve document.getElementById(id).closeAndForward(...)
@@ -276,36 +217,15 @@ public class WizardRenderer extends AbstractRenderer {
     //
     // We could consider this the Wizard Body and treat Step's as
     // children here.
-    //
-    /**
-     *  Does nothing.
-     *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     */
     @Override
     public void encodeChildren(FacesContext context, UIComponent component) {
-
-        /*
-        if (((Wizard)component).isComplete()) {
-        return;
-        }
-         */
     }
 
-    /**
-     * Render the majority of the wizard component.
-     * Return immediately if isComplete() returns true.
-     *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
-     * writer.
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
-        Theme theme = ThemeUtilities.getTheme(context);
+
+        Theme theme = getTheme(context);
         if (!((Wizard) component).isComplete()) {
             renderWizard(context, component, theme, writer);
         }
@@ -315,11 +235,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout container for the entire Wizard.
      * 
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderWizardBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -328,9 +249,7 @@ public class WizardRenderer extends AbstractRenderer {
         String wizId = component.getClientId(context);
 
         // Enclose the whole wizard in a div
-        //
         // Not in Lockhart Wizard
-        //
         writer.startElement(DIV, component);
         writer.writeAttribute(ID, wizId, ID);
 
@@ -339,7 +258,7 @@ public class WizardRenderer extends AbstractRenderer {
             writer.writeAttribute(STYLE, style, STYLE);
         }
 
-        String styles = RenderingUtilities.getStyleClasses(context,
+        String styles = getStyleClasses(context,
                 component, theme.getStyleClass(ThemeStyles.WIZARD));
         writer.writeAttribute(CLASS, styles, null);
 
@@ -349,7 +268,6 @@ public class WizardRenderer extends AbstractRenderer {
         //
         // Use clientId for the anchor text, so it should be
         // unique if there is  more than one wizard on a page.
-        //
         String toolTip = (String) component.getAttributes().get(TOOLTIP);
         if (toolTip == null) {
             toolTip = theme.getMessage(WIZARD_SKIP_LINK_ALT);
@@ -359,9 +277,7 @@ public class WizardRenderer extends AbstractRenderer {
     }
 
     /**
-     * Render the five main areas of the wizard.
-     *
-     * <ul>
+     * Render the five main areas of the wizard.<ul>
      * <li>Wizard Title</li>
      * <li>Wizard Steps Bar</li>
      * <li>Steps Pane</li>
@@ -369,11 +285,12 @@ public class WizardRenderer extends AbstractRenderer {
      * <li>Navigation Buttons</li>
      * </ul>
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderWizard(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -389,66 +306,45 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the end of the layout container for the entire Wizard.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderWizardEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
             throws IOException {
 
         // Enclose the whole wizard in a div
-        //
         writer.endElement(DIV);
 
-        try {
-            // Append properties.
-            StringBuffer buff = new StringBuffer(256);
-            JSONObject json = new JSONObject();
-            json.put("id", component.getClientId(context));
-            json.put("facesViewState",
-                    javax.faces.render.ResponseStateManager.VIEW_STATE_PARAM);
+        JsonObject initProps = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("id", component.getClientId(context))
+                .add("facesViewState", ResponseStateManager.VIEW_STATE_PARAM)
+                .build();
 
-            // Append JavaScript.
-//            buff.append(JavaScriptUtilities.getModule("wizard")).append("\n") // NOI18N
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("wizard")).append("'], function (wizard) {").append("\n") // NOI18N
-//                    .append(JavaScriptUtilities.getModuleName("wizard.init")) // NOI18N
-                    .append("wizard.init") // NOI18N
-                    .append("(") //NOI18N
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");"); //NOI18N
-            
-            // Render JavaScript to close wizard after init function is called.
-            if (((Wizard) component).isComplete()) {
-                buff.append(getWizardCloseJavaScript(context, component));
-            }
-            
-            buff.append("});");
-
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        renderInitScriptTag(writer, "wizard", initProps);
     }
 
     /**
      * Render the Wizard title and structural layout that surrounds the
      * title text.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTitle(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
             throws IOException {
 
         // Don't output anything if there is no title
-        //
         if (!show(component, SHOWTITLE)) {
             return;
         }
@@ -461,11 +357,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout container for the Wizard title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTitleBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -478,11 +375,11 @@ public class WizardRenderer extends AbstractRenderer {
 
     /**
      * Render the actual Wizard title text
-     *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTitleText(FacesContext context,
             UIComponent component, ResponseWriter writer)
@@ -491,18 +388,19 @@ public class WizardRenderer extends AbstractRenderer {
         Wizard wizard = (Wizard) component;
         UIComponent title = wizard.getTitleComponent();
         if (title != null) {
-            RenderingUtilities.renderComponent(title, context);
+            renderComponent(title, context);
         }
     }
 
     /**
      * Render the end of the layout container for the Wizard title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTitleEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -514,11 +412,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the content of the steps bar. 
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepsBar(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -527,10 +426,9 @@ public class WizardRenderer extends AbstractRenderer {
         Wizard wizard = (Wizard) component;
 
         // See if the steps bar is owned by the application
-        //
         UIComponent stepsBar = wizard.getStepsBarComponent();
         if (stepsBar != null) {
-            RenderingUtilities.renderComponent(stepsBar, context);
+            renderComponent(stepsBar, context);
             return;
         }
 
@@ -541,7 +439,6 @@ public class WizardRenderer extends AbstractRenderer {
         //
         // See if step help is turned off for the wizard
         // If no step help don't render any tabs, just an empty bar.
-        //
         if (wizard.hasStepHelp() && show(component, SHOWSTEPHELP)) {
             renderTabsBar(context, component, theme, writer);
         } else {
@@ -552,11 +449,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the content of the steps pane layout container.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepsPane(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -572,13 +470,12 @@ public class WizardRenderer extends AbstractRenderer {
         //
         UIComponent stepsPane = wizard.getStepsPaneComponent();
         if (stepsPane != null) {
-            RenderingUtilities.renderComponent(stepsPane, context);
+            renderComponent(stepsPane, context);
             return;
         }
 
         // Step tab always active if there is no help
         // Always returns true if no help is available
-        //
         if (wizard.isStepsTabActive()) {
             renderStepListBegin(context, component, theme, writer);
             // If no step help, include a steps pane title before rendering the
@@ -597,18 +494,18 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the beginning of the layout container for the Wizard
      * Steps list.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepListBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
             throws IOException {
 
         Wizard wizard = (Wizard) component;
-
         String paneId =
                 component.getClientId(context).concat(STEPS_PANE_SUFFIX);
 
@@ -622,11 +519,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the step list and help tabs in a bar.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTabsBar(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -643,8 +541,7 @@ public class WizardRenderer extends AbstractRenderer {
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_TAB), null);
 
         // Looks like tabs is outputting extra div.
-        //
-        RenderingUtilities.renderComponent(tabs, context);
+        renderComponent(tabs, context);
 
         writer.endElement(DIV); // Tabs DIV
     }
@@ -652,9 +549,10 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render an empty bar for the wizard with no help.
      *
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderEmptyBar(UIComponent component, Theme theme,
             ResponseWriter writer) throws IOException {
@@ -668,11 +566,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the steps pane title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepsPaneTitle(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -687,27 +586,26 @@ public class WizardRenderer extends AbstractRenderer {
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_TITLE), null);
-
-        RenderingUtilities.renderComponent(stepsPaneTitle, context);
-
+        renderComponent(stepsPaneTitle, context);
         writer.endElement(DIV);
     }
 
     /**
      * Render the step list for the Wizard.
      * If a UIComponent exists that represents the step list
-     * render it. Other wise obtain a <code>Wizard.StepList</code>
+     * render it. Other wise obtain a {@code Wizard.StepList}
      * iterator from the wizard. The iterator returns instances of
-     * <code>WizardStepListItem</code>. It can be determined from
+     * {@code WizardStepListItem}. It can be determined from
      * this object whether the step is the current step, a substep
      * or a branch. A component to render for each step can be
      * obtained from the wizard component.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepList(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -717,10 +615,9 @@ public class WizardRenderer extends AbstractRenderer {
 
         // If there is a component responsible for the complete
         // list render it.
-        //
         UIComponent stepList = wizard.getStepListComponent();
         if (stepList != null) {
-            RenderingUtilities.renderComponent(stepList, context);
+            renderComponent(stepList, context);
             return;
         }
 
@@ -753,11 +650,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the indicator that identifies a step as being the current step.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderCurrentStepIndicator(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -766,23 +664,24 @@ public class WizardRenderer extends AbstractRenderer {
         Wizard wizard = (Wizard) component;
         UIComponent stepIndicator = wizard.getStepIndicatorComponent();
         if (stepIndicator != null) {
-            RenderingUtilities.renderComponent(stepIndicator, context);
+            renderComponent(stepIndicator, context);
         }
 
     }
 
     /**
-     * Render a substep. Typically this has a step number of the form
-     * "n.m" where "n" is the previous step number and "m" is the substep.
+     * Render a sub step. Typically this has a step number of the form
+     * "n.m" where "n" is the previous step number and "m" is the sub step.
      * It is indented from the normal step number.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this
-     * substep.
+     * @param step {@code WizardStepListItem} information about this
+     * sub step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderSubstep(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -790,7 +689,9 @@ public class WizardRenderer extends AbstractRenderer {
 
         boolean isCurrentStep = step.isCurrentStep();
 
-        String stepTextStyle = isCurrentStep ? theme.getStyleClass(ThemeStyles.WIZARD_STEP_CURRENT_TEXT) : theme.getStyleClass(ThemeStyles.WIZARD_STEP_LINK);
+        String stepTextStyle = isCurrentStep
+                ? theme.getStyleClass(ThemeStyles.WIZARD_STEP_CURRENT_TEXT)
+                : theme.getStyleClass(ThemeStyles.WIZARD_STEP_LINK);
 
         writer.startElement(TR, component);
 
@@ -814,7 +715,6 @@ public class WizardRenderer extends AbstractRenderer {
             writer.endElement(TD);
         } else {
             // An empty cell if its not the current step.
-            //
             writer.startElement(TD, component);
             writer.writeAttribute(VALIGN, TOP, null);
             writer.endElement(TD);
@@ -822,7 +722,6 @@ public class WizardRenderer extends AbstractRenderer {
 
         // The cell for the step nummber. It has a different
         // style if it is the current step.
-        //
         writer.startElement(TD, component);
         writer.writeAttribute(VALIGN, TOP, null);
 
@@ -870,20 +769,20 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render a Branch step with place holder text.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this
+     * @param step {@code WizardStepListItem} information about this
      * branch step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderBranchStep(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
             WizardStepListItem step) throws IOException {
 
         // Start a branch with an emtpy cell
-        //
         writer.startElement(TR, component);
         writer.startElement(TD, component);
 
@@ -902,7 +801,6 @@ public class WizardRenderer extends AbstractRenderer {
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_TEXT_DIV), null);
 
         // This will be placeholder text for a branch step
-        //
         renderStepPlaceholderText(context, component, theme, writer, step);
 
         writer.endElement(DIV);
@@ -914,26 +812,25 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the current step in the step list. This step typically appears
      * with an icon to the left of the step number, indicating the current step.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this 
+     * @param step {@code WizardStepListItem} information about this 
      * branch step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderCurrentStep(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
             WizardStepListItem step) throws IOException {
 
         // Begin step row
-        //
         writer.startElement(TR, component);
 
         // Current Step Indicator Cell
         // Should this markup be part of renderCurrentStepIndicator ?
         // But WIZARD_STEP_ARROW_DIV needs to include the number
-        //
         writer.startElement(TD, component);
         writer.writeAttribute(VALIGN, TOP, null);
         writer.writeAttribute(NOWRAP, NOWRAP, null);
@@ -948,7 +845,6 @@ public class WizardRenderer extends AbstractRenderer {
         // How about WizardStepPane.renderStep(stepNumber, WizardStep.text)
         // How about WizardStepPane.renderBranch(WizardStep.branch)
         // COMPONENT TEXT : stepNumber "1."
-        //
         renderStepNumber(context, component, theme, writer, step,
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_CURRENT_TEXT));
 
@@ -956,7 +852,6 @@ public class WizardRenderer extends AbstractRenderer {
         writer.endElement(TD);
 
         // Should this markup be part of renderStepSummary ?
-        //
         writer.startElement(TD, component);
         writer.writeAttribute(VALIGN, TOP, null);
 
@@ -965,7 +860,6 @@ public class WizardRenderer extends AbstractRenderer {
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_TEXT_DIV), null);
 
         // APPLICATION TEXT : "Type number of users");
-        //
         renderStepSummary(context, component, theme, writer, step,
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_CURRENT_TEXT));
 
@@ -977,14 +871,15 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render a step's sequence number in the step list.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> the information about this
+     * @param step {@code WizardStepListItem} the information about this
      * step.
      * @param styleClass The styleClass for this component
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepNumber(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -997,19 +892,21 @@ public class WizardRenderer extends AbstractRenderer {
             return;
         }
         number.getAttributes().put(STYLE_CLASS, styleClass);
-        RenderingUtilities.renderComponent(number, context);
+        renderComponent(number, context);
     }
 
     /**
      * Render a step's summary in the step list.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this
+     * @param step {@code WizardStepListItem} information about this
      * step.
+     * @param styleClass CSS class
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepSummary(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1022,19 +919,20 @@ public class WizardRenderer extends AbstractRenderer {
             return;
         }
         text.getAttributes().put(STYLE_CLASS, styleClass);
-        RenderingUtilities.renderComponent(text, context);
+        renderComponent(text, context);
     }
 
     /**
-     * Render a baranch step's placeholder text in the step list.
+     * Render a branch step's placeholder text in the step list.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this
+     * @param step {@code WizardStepListItem} information about this
      * step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepPlaceholderText(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1048,19 +946,20 @@ public class WizardRenderer extends AbstractRenderer {
         }
         text.getAttributes().put(STYLE_CLASS,
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_TEXT));
-        RenderingUtilities.renderComponent(text, context);
+        renderComponent(text, context);
     }
 
     /**
      * Render a step in the step list.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this
+     * @param step {@code WizardStepListItem} information about this
      * step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStep(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1102,11 +1001,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the help for the current Step in the Wizard.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepHelp(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1114,7 +1014,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent stepHelp = ((Wizard) component).getStepHelpComponent();
         if (stepHelp != null) {
-            RenderingUtilities.renderComponent(stepHelp, context);
+            renderComponent(stepHelp, context);
         }
 
         WizardStep step = ((Wizard) component).getCurrentStep();
@@ -1127,12 +1027,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout for the step help.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> the current step.
+     * @param step {@code WizardStep} the current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepHelpBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1143,7 +1044,6 @@ public class WizardRenderer extends AbstractRenderer {
                 theme.getStyleClass(ThemeStyles.WIZARD_HELP_DIV), null);
 
         // Probably shouldn't include the para
-        //
         writer.startElement(PARA, component);
         writer.writeAttribute(CLASS,
                 theme.getStyleClass(ThemeStyles.WIZARD_HELP_TEXT), null);
@@ -1152,12 +1052,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the step help text.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> the current step.
+     * @param step {@code WizardStep} the current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepHelpText(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1165,22 +1066,22 @@ public class WizardRenderer extends AbstractRenderer {
             throws IOException {
 
         // Assumes current step.
-        //
         UIComponent stepHelp = ((Wizard) component).getStepHelpTextComponent();
         if (stepHelp != null) {
-            RenderingUtilities.renderComponent(stepHelp, context);
+            renderComponent(stepHelp, context);
         }
     }
 
     /**
      * Render the end of the layout for the step help.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> the current step.
+     * @param step {@code WizardStep} the current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepHelpEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1195,11 +1096,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the end of the layout container for the Wizard
      * Steps list.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepListEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1213,11 +1115,12 @@ public class WizardRenderer extends AbstractRenderer {
      * step detail or instruction, and the components that make up the
      * current wizard step.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTask(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1225,7 +1128,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent task = ((Wizard) component).getTaskComponent();
         if (task != null) {
-            RenderingUtilities.renderComponent(task, context);
+            renderComponent(task, context);
             return;
         }
         WizardStep step = ((Wizard) component).getCurrentStep();
@@ -1244,11 +1147,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the beginning of the layout container step task area.
      * This includes an anchor from the beginning of the steps pane.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTaskBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1263,7 +1167,6 @@ public class WizardRenderer extends AbstractRenderer {
         writer.writeAttribute(CLASS, idandclass, null);
 
         // The skip link anchor
-        //
         renderSkipAnchor(context, component, theme, writer,
                 component.getClientId(context));
     }
@@ -1271,11 +1174,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the end of the layout container for the Wizard step task area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTaskEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1287,12 +1191,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the step title and step detail for the current step.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTaskHeader(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1301,7 +1206,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent taskHeader = ((Wizard) component).getTaskHeaderComponent();
         if (taskHeader != null) {
-            RenderingUtilities.renderComponent(taskHeader, context);
+            renderComponent(taskHeader, context);
             return;
         }
         renderStepTitle(context, component, theme, writer, step);
@@ -1311,12 +1216,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the step title label.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTitleLabelText(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1328,19 +1234,20 @@ public class WizardRenderer extends AbstractRenderer {
         if (titleLabel != null) {
             titleLabel.getAttributes().put(STYLE_CLASS,
                     theme.getStyleClass(ThemeStyles.WIZARD_SUB_TITLE_TEXT));
-            RenderingUtilities.renderComponent(titleLabel, context);
+            renderComponent(titleLabel, context);
         }
     }
 
     /**
      * Render the step title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTitle(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1349,7 +1256,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent stepTitle = ((Wizard) component).getStepTitleComponent();
         if (stepTitle != null) {
-            RenderingUtilities.renderComponent(stepTitle, context);
+            renderComponent(stepTitle, context);
             return;
         }
 
@@ -1362,12 +1269,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout for the step title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTitleBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1382,12 +1290,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the step title text.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTitleText(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1398,19 +1307,20 @@ public class WizardRenderer extends AbstractRenderer {
         if (stepTitle != null) {
             stepTitle.getAttributes().put(STYLE_CLASS,
                     theme.getStyleClass(ThemeStyles.WIZARD_SUB_TITLE_TEXT));
-            RenderingUtilities.renderComponent(stepTitle, context);
+            renderComponent(stepTitle, context);
         }
     }
 
     /**
      * Render the end of the layout for the step title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTitleEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1425,12 +1335,13 @@ public class WizardRenderer extends AbstractRenderer {
      * Each step may have optional detail text that appears
      * below the current step title.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepDetail(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1439,7 +1350,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent stepDetail = ((Wizard) component).getStepDetailComponent();
         if (stepDetail != null) {
-            RenderingUtilities.renderComponent(stepDetail, context);
+            renderComponent(stepDetail, context);
             return;
         }
         renderStepDetailBegin(context, component, theme, writer, step);
@@ -1450,12 +1361,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout container for the step detail.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepDetailBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1464,18 +1376,20 @@ public class WizardRenderer extends AbstractRenderer {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
-                theme.getStyleClass(ThemeStyles.WIZARD_CONTENT_HELP_TEXT), null);
+                theme.getStyleClass(ThemeStyles.WIZARD_CONTENT_HELP_TEXT),
+                null);
     }
 
     /**
      * Render the step detail text.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepDetailText(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1485,19 +1399,20 @@ public class WizardRenderer extends AbstractRenderer {
         UIComponent stepDetail =
                 ((Wizard) component).getStepDetailTextComponent();
         if (stepDetail != null) {
-            RenderingUtilities.renderComponent(stepDetail, context);
+            renderComponent(stepDetail, context);
         }
     }
 
     /**
      * Render the end of the layout container for the step detail.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepDetailEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1510,12 +1425,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout container for the step components.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTaskBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1530,12 +1446,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the step components.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTask(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1544,10 +1461,9 @@ public class WizardRenderer extends AbstractRenderer {
 
         // This probably over kill ?
         // Wrapper for a WizardStep ?
-        //
         UIComponent task = ((Wizard) component).getTaskStepComponent();
         if (task != null) {
-            RenderingUtilities.renderComponent(task, context);
+            renderComponent(task, context);
             return;
         }
 
@@ -1559,12 +1475,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the end of the layout container for the step components
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTaskEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -1579,10 +1496,12 @@ public class WizardRenderer extends AbstractRenderer {
      * This area contains the Previous, Next, Finish, Cancel and Close
      * buttons.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @param theme theme in use
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderControlBar(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1594,7 +1513,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent controlBar = ((Wizard) component).getControlBarComponent();
         if (controlBar != null) {
-            RenderingUtilities.renderComponent(controlBar, context);
+            renderComponent(controlBar, context);
             return;
         }
         renderControlBarBegin(context, component, theme, writer);
@@ -1616,11 +1535,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout container for the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderControlBarBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1634,11 +1554,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the end of the layout container for the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderControlBarEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1650,11 +1571,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render spacer for the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderControlBarSpacer(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1669,16 +1591,18 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the beginning of the layout container for the left side of
      * the control area. The area containing the sequencing controls is
-     * split into two sections: Left and Right.</br>
+     * split into two sections: Left and Right.
+     *
      * The left side of the control area contains the Previous,
      * Next or Finish controls. The right area contains the
      * Cancel or Close control.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderLeftControlBar(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1688,12 +1612,11 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent leftControlBar = wizard.getLeftControlBarComponent();
         if (leftControlBar != null) {
-            RenderingUtilities.renderComponent(leftControlBar, context);
+            renderComponent(leftControlBar, context);
             return;
         }
 
         renderLeftControlBarBegin(context, component, theme, writer);
-
         if (wizard.hasPrevious()) {
             renderPreviousControl(context, component, theme, writer);
         }
@@ -1703,7 +1626,6 @@ public class WizardRenderer extends AbstractRenderer {
         } else if (wizard.hasFinish()) {
             renderFinishControl(context, component, theme, writer);
         }
-
         renderLeftControlBarEnd(context, component, theme, writer);
     }
 
@@ -1711,11 +1633,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the beginning of the layout container for the
      * left side of the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderLeftControlBarBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1729,11 +1652,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the control that directs the Wizard to the previous step.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderPreviousControl(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1751,11 +1675,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the control that directs the Wizard to the next step.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderNextControl(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1773,11 +1698,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the control that directs the Wizard to the perform task.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderFinishControl(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1796,11 +1722,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the end of the layout container for the 
      * left side of the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderLeftControlBarEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1813,11 +1740,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the beginning of the layout container for the
      * right side of the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderRightControlBar(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1827,7 +1755,7 @@ public class WizardRenderer extends AbstractRenderer {
 
         UIComponent rightControlBar = wizard.getRightControlBarComponent();
         if (rightControlBar != null) {
-            RenderingUtilities.renderComponent(rightControlBar, context);
+            renderComponent(rightControlBar, context);
             return;
         }
 
@@ -1846,11 +1774,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the beginning of the layout container for the
      * right side of the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderRightControlBarBegin(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1864,11 +1793,12 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render the control that cancels the Wizard task.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderCancelControl(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1887,11 +1817,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the control that directs the Wizard to the end the
      * Wizard task.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderCloseControl(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1910,11 +1841,12 @@ public class WizardRenderer extends AbstractRenderer {
      * Render the end of the layout container for the
      * right side of the control area.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderRightControlBarEnd(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer)
@@ -1927,11 +1859,11 @@ public class WizardRenderer extends AbstractRenderer {
      * Create an invisible "skip" link to an anchor as an accessibility feature
      * to navigate to the main task area in a Wizard from the steps pane.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param theme <code>Theme</code> to use for style, images, and text.
+     * @param theme {@code Theme} to use for style, images, and text.
      * @param alt the text that will appear to screen readers.
      */
     private void renderSkipLink(FacesContext context,
@@ -1957,13 +1889,13 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * The anchor target of the "skip" link.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param theme <code>Theme</code> to use for style, images, and text.
+     * @param theme {@code Theme} to use for style, images, and text.
      * @param anchor the text that will appear to screen readers, specified as
-     * <code>link</code> in a previous <code>renderSkipLink</code> call.
+     * {@code link} in a previous {@code renderSkipLink} call.
      */
     private void renderSkipAnchor(FacesContext context,
             UIComponent component, Theme theme,
@@ -1985,11 +1917,11 @@ public class WizardRenderer extends AbstractRenderer {
      * 
      * NOTE: Need to determine if CSS can be used for this purpose.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param theme <code>Theme</code> to use for style, images, and text.
+     * @param theme {@code Theme} to use for style, images, and text.
      * @param width the width of the rule.
      * @param height the height of the rule.
      * @param alt the text that will appear if the dot image cannot be
@@ -2000,7 +1932,7 @@ public class WizardRenderer extends AbstractRenderer {
             int width, int height, String alt)
             throws IOException {
 
-        Icon icon = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
+        Icon icon = getIcon(theme, ThemeImages.DOT);
 
         // Originally alt was written out if it was "", does this
         // still make sense ?
@@ -2010,37 +1942,33 @@ public class WizardRenderer extends AbstractRenderer {
         }
         icon.setHeight(height);
         icon.setWidth(width);
-        RenderingUtilities.renderComponent(icon, context);
+        renderComponent(icon, context);
     }
 
     /**
      * Return true if the feature has been configured to be displayed,
      * false otherwise.
      * 
-     * @param component the <code>UIComponent</code> being rendered.
+     * @param component the {@code UIComponent} being rendered.
      * @param feature the attribute that controls a feature.
      */
     private boolean show(UIComponent component, String feature) {
 
         // Don't show controls if turned off
         // Default is true
-        //
-	/* Not supported yet
-        Boolean showIt = (Boolean)component.getAttributes().get(feature);
-        return showIt == null || showIt.booleanValue();
-         */
         return true;
     }
 
     /**
      * Render the current WizardStep component.
      *
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStep</code> current step.
+     * @param step {@code WizardStep} current step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepTaskComponents(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -2048,49 +1976,10 @@ public class WizardRenderer extends AbstractRenderer {
 
         // This could be a component tree
         // Children of the step, an iterator, a jsp page, ...
-        //
-	/* 
-        Object task = step.getStepTaskComponents();
-        if (task == null) {
-        task = ((Wizard)component).getStepTaskComponents();
-        }
-        if (task == null) {
-        // fake it
-        return;
-        }
-        // URL to a jsp page
-        //
-        if (task instanceof String) {
-        RenderingUtilities.includeJsp(context, writer, task);
-        } else
-        // component tree
-        //
-        if (task instanceof UIComponent) {
-        RenderingUtilities.renderComponent(task, context);
-        } else
-        // Array, List, or Map
-        //
-        if (task instanceof List) {
-        } else
-        if (task instanceof Array) {
-        } else
-        if (task instanceof Map) {
-        } else
-        if (step.getChildren() != null) {
-        }
-
-        String jspPath = step.getStepURL();
-
-        // Checks for null
-        //
-        RenderingUtilities.includeJsp(context, writer, jspPath);
-         */
-
-        RenderingUtilities.renderComponent(step, context);
+        renderComponent(step, context);
     }
 
     // This isn't perfect
-    //
     private String mergeStyle(String styles, String newStyle) {
 
         if (newStyle == null) {
@@ -2099,7 +1988,7 @@ public class WizardRenderer extends AbstractRenderer {
         if (styles == null) {
             return newStyle;
         }
-        StringBuffer sb = new StringBuffer(styles);
+        StringBuilder sb = new StringBuilder(styles);
         String[] splitStyles = styles.split(SPACE);
         for (int i = 0; i < splitStyles.length; ++i) {
             if (splitStyles[i].equals(newStyle)) {
@@ -2113,11 +2002,9 @@ public class WizardRenderer extends AbstractRenderer {
     private void renderControl(FacesContext context, Theme theme,
             UIComponent control) throws IOException {
 
-        RenderingUtilities.renderComponent(control, context);
+        renderComponent(control, context);
     }
 
-    // Nothing so far
-    //
     @Override
     public void decode(FacesContext context, UIComponent component) {
         // Enforce NPE requirements in the Javadocs
@@ -2128,75 +2015,75 @@ public class WizardRenderer extends AbstractRenderer {
 
     // Helpful constants.
     // Elements
-    private static final String ANCHOR = "a"; //NOI18N
-    private static final String DIV = "div"; //NOI18N
-    private static final String IMG = "img"; //NOI18N
-    private static final String INPUT = "input"; //NOI18N
-    private static final String PARA = "p"; //NOI18N
-    private static final String SCRIPT = "script"; //NOI18N
-    private static final String SPAN = "span"; //NOI18N
-    private static final String TABLE = "table"; //NOI18N
-    private static final String TD = "td"; //NOI18N
-    private static final String TR = "tr"; //NOI18N
+    private static final String ANCHOR = "a";
+    private static final String DIV = "div";
+    private static final String IMG = "img";
+    private static final String INPUT = "input";
+    private static final String PARA = "p";
+    private static final String SCRIPT = "script";
+    private static final String SPAN = "span";
+    private static final String TABLE = "table";
+    private static final String TD = "td";
+    private static final String TR = "tr";
 
     // Attributes
-    private static final String ALIGN = "align"; //NOI18N
-    private static final String ALT = "alt"; //NOI18N
-    private static final String BORDER = "border"; //NOI18N
-    private static final String CELLPADDING = "cellpadding"; //NOI18N
-    private static final String CELLSPACING = "cellspacing"; //NOI18N
-    private static final String CLASS = "class"; //NOI18N
-    private static final String STYLE_CLASS = "styleClass"; //NOI18N
-    private static final String DISABLED = "disabled"; //NOI18N
-    private static final String HEIGHT = "height"; //NOI18N
-    private static final String HREF = "href"; //NOI18N
-    private static final String HSPACE = "hspace"; //NOI18N
-    private static final String ID = "id"; //NOI18N
-    private static final String NAME = "name"; //NOI18N
-    private static final String NOWRAP = "nowrap"; //NOI18N
-    private static final String ONBLUR = "onblur"; //NOI18N
-    private static final String ONCLICK = "onclick"; //NOI18N
-    private static final String ONFOCUS = "onfocus"; //NOI18N
-    private static final String ONMOUSEOVER = "onmouseover"; //NOI18N
-    private static final String ONMOUSEOUT = "onmouseout"; //NOI18N
-    private static final String SRC = "src"; //NOI18N
-    private static final String STYLE = "style"; //NOI18N
-    private static final String TITLE = "title"; //NOI18N
-    private static final String TYPE = "type"; //NOI18N
-    private static final String VALIGN = "valign"; //NOI18N
-    private static final String VALUE = "valign"; //NOI18N
-    private static final String WIDTH = "width"; //NOI18N
+    private static final String ALIGN = "align";
+    private static final String ALT = "alt";
+    private static final String BORDER = "border";
+    private static final String CELLPADDING = "cellpadding";
+    private static final String CELLSPACING = "cellspacing";
+    private static final String CLASS = "class";
+    private static final String STYLE_CLASS = "styleClass";
+    private static final String DISABLED = "disabled";
+    private static final String HEIGHT = "height";
+    private static final String HREF = "href";
+    private static final String HSPACE = "hspace";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String NOWRAP = "nowrap";
+    private static final String ONBLUR = "onblur";
+    private static final String ONCLICK = "onclick";
+    private static final String ONFOCUS = "onfocus";
+    private static final String ONMOUSEOVER = "onmouseover";
+    private static final String ONMOUSEOUT = "onmouseout";
+    private static final String SRC = "src";
+    private static final String STYLE = "style";
+    private static final String TITLE = "title";
+    private static final String TYPE = "type";
+    private static final String VALIGN = "valign";
+    private static final String VALUE = "valign";
+    private static final String WIDTH = "width";
 
     // Values
-    private static final String _1_PERCENT = "1%"; //NOI18N
-    private static final String _90_PERCENT = "90%"; //NOI18N
-    private static final String _99_PERCENT = "99%"; //NOI18N
-    private static final String _100_PERCENT = "100%"; //NOI18N
-    private static final String BOTTOM = "bottom"; //NOI18N
-    private static final String LEFT = "left"; //NOI18N
-    private static final String RIGHT = "right"; //NOI18N
-    private static final String SUBMIT = "submit"; //NOI18N
-    private static final String TOP = "top"; //NOI18N
-    private static final String TEXT_JAVASCRIPT = "text/javascript"; //NOI18N
-    private static final String NBSP = "&nbsp;"; //NOI18N
+    private static final String _1_PERCENT = "1%";
+    private static final String _90_PERCENT = "90%";
+    private static final String _99_PERCENT = "99%";
+    private static final String _100_PERCENT = "100%";
+    private static final String BOTTOM = "bottom";
+    private static final String LEFT = "left";
+    private static final String RIGHT = "right";
+    private static final String SUBMIT = "submit";
+    private static final String TOP = "top";
+    private static final String TEXT_JAVASCRIPT = "text/javascript";
+    private static final String NBSP = "&nbsp;";
     // Constants
-    private static final String STEPS_PANE_SUFFIX = "_stepspane"; //NOI18N
-    private static final String SPACE = " "; //NOI18N
-    private static final String EMPTY_STRING = ""; //NOI18N
-    private static final String USCORE = "_"; //NOI18N
-    private static final String WIZARD_JSOBJECT_CLASS = "Wizard"; //NOI18N
-    private static final String SQUOTE = "'"; //NOI18N
-    private static final String CLOSEPOPUPJS = "{0}.closePopup();"; //NOI18N
+    private static final String STEPS_PANE_SUFFIX = "_stepspane";
+    private static final String SPACE = " ";
+    private static final String EMPTY_STRING = "";
+    private static final String USCORE = "_";
+    private static final String WIZARD_JSOBJECT_CLASS = "Wizard";
+    private static final String SQUOTE = "'";
+    private static final String CLOSEPOPUPJS = "{0}.closePopup();";
     // Wizard attributes
-    private static final String TOOLTIP = "toolTip"; //NOI18N
-    private static final String SHOWCONTROLS = "showControls"; //NOI18N
-    private static final String SHOWSTEPSPANE = "showStepsPane"; //NOI18N
-    private static final String SHOWSTEPHELP = "showStepHelp"; //NOI18N
-    private static final String SHOWTITLE = "showTitle"; //NOI18N
-    private static final String ONPOPUPDISMISS = "onPopupDismiss"; //NOI18N
-    private static final String WIZARD_SKIP_LINK_ALT = "Wizard.skipLinkAlt"; //NOI18N
+    private static final String TOOLTIP = "toolTip";
+    private static final String SHOWCONTROLS = "showControls";
+    private static final String SHOWSTEPSPANE = "showStepsPane";
+    private static final String SHOWSTEPHELP = "showStepHelp";
+    private static final String SHOWTITLE = "showTitle";
+    private static final String ONPOPUPDISMISS = "onPopupDismiss";
+    private static final String WIZARD_SKIP_LINK_ALT = "Wizard.skipLinkAlt";
     private static final String MSG_COMPONENT_NOT_WIZARD =
-            "WizardLayoutRenderer only renders Wizard components."; //NOI18N
+            "WizardLayoutRenderer only renders Wizard components.";
 
     private String getMessage(String key) {
         return key;
@@ -2213,14 +2100,15 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Render a step's sequence number in the step list.
      *
-     * @deprecated See {@link renderStepNumber(FacesContext,UIComponent,Theme,ResponseWriter,WizardStepListItem, String styleClass)}
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @deprecated See {@link renderStepNumber(FacesContext,UIComponent,Theme,
+     * ResponseWriter,WizardStepListItem, String styleClass)}
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> the information about this
-     * step.
+     * @param step {@code WizardStepListItem} the information about this step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepNumber(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -2232,20 +2120,21 @@ public class WizardRenderer extends AbstractRenderer {
             // Should log or throw something here.
             return;
         }
-        RenderingUtilities.renderComponent(number, context);
+        renderComponent(number, context);
     }
 
     /**
      * Render a step's summary in the step list.
      *
-     * @deprecated See {@link renderStepSummary(FacesContext,UIComponent,Theme,ResponseWriter,WizardStepListItem, String styleClass)}
-     * @param context <code>FacesContext</code> for the current request.
-     * @param component <code>UIComponent</code> a Wizard or Wizard subclass.
-     * @param theme <code>Theme</code> to use for style, images, and text.
-     * @param writer <code>ResponseWriter</code> write the response using this
+     * @deprecated See {@link renderStepSummary(FacesContext,UIComponent,
+     * Theme,ResponseWriter, WizardStepListItem, String styleClass)}
+     * @param context {@code FacesContext} for the current request.
+     * @param component {@code UIComponent} a Wizard or Wizard subclass.
+     * @param theme {@code Theme} to use for style, images, and text.
+     * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step <code>WizardStepListItem</code> information about this
-     * step.
+     * @param step {@code WizardStepListItem} information about this step.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderStepSummary(FacesContext context,
             UIComponent component, Theme theme, ResponseWriter writer,
@@ -2257,6 +2146,6 @@ public class WizardRenderer extends AbstractRenderer {
         if (text == null) {
             return;
         }
-        RenderingUtilities.renderComponent(text, context);
+        renderComponent(text, context);
     }
 }

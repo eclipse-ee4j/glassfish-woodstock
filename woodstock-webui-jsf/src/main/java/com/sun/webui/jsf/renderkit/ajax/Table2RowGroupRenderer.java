@@ -26,9 +26,13 @@ import java.io.IOException;
 import java.util.Iterator;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.parseJsonObject;
+import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 
 /**
  * This class renders Table2RowGroup components.
@@ -36,35 +40,12 @@ import org.json.JSONObject;
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.ajax.Table2RowGroup",
 componentFamily = "com.sun.webui.jsf.Table2RowGroup"))
 public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    /**
-     * Render the beginning of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
     public void encodeBegin(FacesContext context, UIComponent component) {
         // Do nothing...
     }
 
-    /**
-     * Render the children of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
     public void encodeChildren(FacesContext context, UIComponent component)
             throws IOException {
@@ -79,69 +60,48 @@ public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
             return;
         }
 
-        try {
-            Table2RowGroup group = (Table2RowGroup) component;
-            JSONObject json = new JSONObject(xjson);
+        JsonObject json = parseJsonObject(xjson);
+        Table2RowGroup group = (Table2RowGroup) component;
 
-            // Set first and max rows.
-            if (json != null) {
-                Integer first = (Integer) json.get("first");
-                if (first != null) {
-                    // To do: move to decode method.
-                    group.setFirst(first.intValue());
-                }
+        // Set first and max rows.
+        if (json != null) {
+            Integer first = json.getInt("first", -1);
+            if (first >= 0) {
+                // To do: move to decode method.
+                group.setFirst(first);
             }
+        }
 
-            // To do: Need algorithm to retrieve rows
-            int maxRows = group.getRows();
-            group.setRows(maxRows * 2);
-            JSONArray rows = getRows(context, group);
-            group.setRows(maxRows);
+        // TODO: Need algorithm to retrieve rows
+        int maxRows = group.getRows();
+        group.setRows(maxRows * 2);
+        JsonArray rows = getRows(context, group);
+        group.setRows(maxRows);
 
-            if (rows != null) {
-                rows.write(context.getResponseWriter());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (rows != null) {
+            writeJsonObject(json, context.getResponseWriter());
         }
     }
 
-    /**
-     * Render the ending of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component) {
         // Do nothing...
     }
 
-    /**
-     * Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns false.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Helper method to render rows.
      *
      * @param context FacesContext for the current request.
      * @param component UIComponent to be rendered.
      */
-    private JSONArray getRows(FacesContext context, Table2RowGroup component)
+    private JsonArray getRows(FacesContext context, Table2RowGroup component)
             throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }
@@ -160,36 +120,34 @@ public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
             return null;
         }
 
-        JSONArray json = new JSONArray();
-        try {
-            // Iterate over the rendered RowKey objects.
-            for (int i = 0; i < rowKeys.length; i++) {
-                component.setRowKey(rowKeys[i]);
-                if (!component.isRowAvailable()) {
-                    break;
-                }
+        JsonArrayBuilder rowBuilder = JSON_BUILDER_FACTORY
+                .createArrayBuilder();
 
-                // Render Table2Column components.
-                JSONArray cols = new JSONArray();
-                Iterator kids = component.getTable2ColumnChildren();
-                while (kids.hasNext()) {
-                    Table2Column col = (Table2Column) kids.next();
-                    if (!col.isRendered()) {
-                        continue;
-                    }
-                    // Render Table2Column children.
-                    Iterator grandKids = col.getChildren().iterator();
-                    while (grandKids.hasNext()) {
-                        WidgetUtilities.addProperties(cols,
-                                WidgetUtilities.renderComponent(context, (UIComponent) grandKids.next()));
-                    }
-                }
-                json.put(cols);
+        // Iterate over the rendered RowKey objects.
+        for (RowKey rowKey : rowKeys) {
+            component.setRowKey(rowKey);
+            if (!component.isRowAvailable()) {
+                break;
             }
-            component.setRowKey(null); // Clean up.
-        } catch (JSONException e) {
-            e.printStackTrace();
+            // Render Table2Column components.
+            JsonArrayBuilder cols = JSON_BUILDER_FACTORY
+                    .createArrayBuilder();
+            Iterator kids = component.getTable2ColumnChildren();
+            while (kids.hasNext()) {
+                Table2Column col = (Table2Column) kids.next();
+                if (!col.isRendered()) {
+                    continue;
+                }
+                // Render Table2Column children.
+                Iterator grandKids = col.getChildren().iterator();
+                while (grandKids.hasNext()) {
+                    cols.add(WidgetUtilities.renderComponent(context,
+                            (UIComponent) grandKids.next()));
+                }
+            }
+            rowBuilder.add(cols);
         }
-        return json;
+            component.setRowKey(null); // Clean up.
+        return rowBuilder.build();
     }
 }

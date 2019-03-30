@@ -17,27 +17,24 @@
 package com.sun.webui.jsf.util;
 
 /**
- * Strategies for finding the current ClassLoader such as
- * <code>Thread.currentThread().getContextClassLoader()</code>
- * do not work during design time, where the notion of the 
- * classpath is more constrained. Please make sure you use 
- * this utility when you need to get hold of the current loader.
+ * Strategies for finding the current ClassLoader. For example,
+ * {@code Thread.currentThread().getContextClassLoader()}
+ * does not work during design time, where the notion of the  class-path is more
+ * constrained. Make sure you use this utility when you need to get hold of
+ * the current loader.
  */
 public class ClassLoaderFinder {
 
     /**
-     * <p>Optional Special ClassLoader to use. For example, at
-     * designtime the Creator IDE will set it to the project classloader - 
-     * and will reset it whenever
-     * <code>FacesContainer.initialize()</code> is called.</p>
+     * Optional Special ClassLoader to use.
      */
     private static ClassLoader customClassLoader = null;
 
     /**
-     * <p>Set a preferred ClassLoader to use for loading resources such
+     * Set a preferred ClassLoader to use for loading resources such
      * as themes and messages (via {@link #getCurrentLoader}). If not set 
      * (e.g. is null), the current thread's context class loader will be 
-     * used.</p>
+     * used.
      * @param customClassLoader The new class loader to use
      */
     public static void setCustomClassLoader(ClassLoader customClassLoader) {
@@ -45,10 +42,9 @@ public class ClassLoaderFinder {
     }
 
     /**
-     * <p>Return the best class loader to use for loading resources.
+     * Return the best class loader to use for loading resources.
      * This is normally the thread context class loader but can 
      * overridden using {@link #setCustomClassLoader}.
-     * </p>
      * @param fallbackClass If there is no context class loader, fall
      * back to using the class loader for the given object
      * @return A ClassLoader to use for loading resources
@@ -64,4 +60,3 @@ public class ClassLoaderFinder {
         return loader;
     }
 }
-

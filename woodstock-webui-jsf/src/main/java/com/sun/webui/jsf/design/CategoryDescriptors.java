@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.design;
 
 import com.sun.rave.designtime.CategoryDescriptor;
@@ -21,60 +20,125 @@ import com.sun.faces.annotation.PropertyCategory;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Definition for category descriptors processed at build time by the annotation
+ * processor.
+ */
 public class CategoryDescriptors {
 
-    private static final ResourceBundle bundle =
-      ResourceBundle.getBundle("com.sun.webui.jsf.design.Bundle", // NOI18N
-                               Locale.getDefault(),
-                               CategoryDescriptors.class.getClassLoader());
+    /**
+     * The resource bundle to use for the category descriptors.
+     */
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(
+            "com.sun.webui.jsf.design.Bundle",
+            Locale.getDefault(),
+            CategoryDescriptors.class.getClassLoader());
 
-    @PropertyCategory(name="Accessibility", sortKey="h")
-    public static final CategoryDescriptor ACCESSIBILITY = new CategoryDescriptor(
-        bundle.getString("accessibility"), bundle.getString("accessibilityCatDesc"), false); //NOI18N
+    /**
+     * Create a new {@code CategoryDescriptor} instance.
+     * @param nameKey bundle key for the category name
+     * @param descKey bundle key for the category description
+     * @param expand expand flag
+     * @return CategoryDescriptor
+     */
+    private static CategoryDescriptor newCD(String nameKey,
+            String descKey, boolean expand){
 
-    @PropertyCategory(name="Advanced", sortKey="j")
-    public static final CategoryDescriptor ADVANCED = new CategoryDescriptor(
-        bundle.getString("adv"), bundle.getString("advCatDesc"), false); //NOI18N
+        return new CategoryDescriptor(BUNDLE.getString(nameKey),
+                BUNDLE.getString(descKey), expand);
+    }
 
-    @PropertyCategory(name="Appearance", sortKey="b")
-    public static final CategoryDescriptor APPEARANCE = new CategoryDescriptor(
-        bundle.getString("appear"), bundle.getString("appearCatDesc"), true); //NOI18N
+    /**
+     * Category descriptor for Accessibility.
+     */
+    @PropertyCategory(name = "Accessibility", sortKey = "h")
+    public static final CategoryDescriptor ACCESSIBILITY = newCD(
+            "accessibility", "accessibilityCatDesc", false);
 
-    @PropertyCategory(name="Behavior", sortKey="g")
-    public static final CategoryDescriptor BEHAVIOR = new CategoryDescriptor(
-        bundle.getString("behavior"), bundle.getString("behaviorCatDesc"), false); //NOI18N
+    /**
+     * Category descriptor for Advanced.
+     */
+    @PropertyCategory(name = "Advanced", sortKey = "j")
+    public static final CategoryDescriptor ADVANCED = newCD(
+            "adv", "advCatDesc", false);
 
-    @PropertyCategory(name="Data", sortKey="d")
-    public static final CategoryDescriptor DATA = new CategoryDescriptor(
-        bundle.getString("data"), bundle.getString("dataCatDesc"), true); //NOI18N
+    /**
+     * Category descriptor for Appearance.
+     */
+    @PropertyCategory(name = "Appearance", sortKey = "b")
+    public static final CategoryDescriptor APPEARANCE = newCD(
+            "appear", "appearCatDesc", false);
 
-    @PropertyCategory(name="Events", sortKey="e")
-    public static final CategoryDescriptor EVENTS = new CategoryDescriptor(
-        bundle.getString("events"), bundle.getString("eventsCatDesc"), true); //NOI18N
+    /**
+     * Category descriptor for Behavior.
+     */
+    @PropertyCategory(name = "Behavior", sortKey = "g")
+    public static final CategoryDescriptor BEHAVIOR = newCD(
+            "behavior", "behaviorCatDesc", false);
 
-    @PropertyCategory(name="General", sortKey="a")
-    public static final CategoryDescriptor GENERAL = new CategoryDescriptor(
-        bundle.getString("general"), bundle.getString("generalCatDesc"), true); //NOI18N
+    /**
+     * Category descriptor for Data.
+     */
+    @PropertyCategory(name = "Data", sortKey = "d")
+    public static final CategoryDescriptor DATA = newCD(
+            "data", "dataCatDesc", false);
 
-    @PropertyCategory(name="Internal", sortKey="k")
-    public static final CategoryDescriptor INTERNAL = new CategoryDescriptor(
-        bundle.getString("internal"), bundle.getString("internalCatDesc"), false); //NOI18N
+    /**
+     * Category descriptor for Events.
+     */
+    @PropertyCategory(name = "Events", sortKey = "e")
+    public static final CategoryDescriptor EVENTS =  newCD(
+            "events", "eventsCatDesc", false);
 
-    @PropertyCategory(name="Javascript", sortKey="i")
-    public static final CategoryDescriptor JAVASCRIPT = new CategoryDescriptor(
-        bundle.getString("javascript"), bundle.getString("javascriptCatDesc"), false); //NOI18N
-    
-    @PropertyCategory(name="Layout", sortKey="c")
-    public static final CategoryDescriptor LAYOUT = new CategoryDescriptor(
-        bundle.getString("layout"), bundle.getString("layoutCatDesc"), false); //NOI18N
+    /**
+     * Category descriptor for General.
+     */
+    @PropertyCategory(name = "General", sortKey = "a")
+    public static final CategoryDescriptor GENERAL = newCD(
+            "general", "generalCatDesc", false);
 
-    @PropertyCategory(name="Navigation", sortKey="f")
-    public static final CategoryDescriptor NAVIGATION = new CategoryDescriptor(
-        bundle.getString("navigation"), bundle.getString("navigationCatDesc"), false); //NOI18N
+    /**
+     * Category descriptor for Internal.
+     */
+    @PropertyCategory(name = "Internal", sortKey = "k")
+    public static final CategoryDescriptor INTERNAL = newCD(
+            "internal", "internalCatDesc", false);
 
-    private static CategoryDescriptor defaultCategoryDescriptors[] = {
-            GENERAL, APPEARANCE, LAYOUT, DATA, EVENTS, NAVIGATION, BEHAVIOR, ACCESSIBILITY,
-            JAVASCRIPT, ADVANCED, INTERNAL
-        };
+    /**
+     * Category descriptor for Javascript.
+     */
+    @PropertyCategory(name = "Javascript", sortKey = "i")
+    public static final CategoryDescriptor JAVASCRIPT = newCD(
+            "javascript", "javascriptCatDesc", false);
 
+    /**
+     * Category descriptor for Layout.
+     */
+    @PropertyCategory(name = "Layout", sortKey = "c")
+    public static final CategoryDescriptor LAYOUT = newCD(
+            "layout", "layoutCatDesc", false);
+
+    /**
+     * Category descriptor for Navigation.
+     */
+    @PropertyCategory(name = "Navigation", sortKey = "f")
+    public static final CategoryDescriptor NAVIGATION = newCD(
+            "navigation", "navigationCatDesc", false);
+
+    /**
+     * Default category descriptors.
+     */
+    private static final CategoryDescriptor DEFAULT_CATEGORY_DESCRIPTOR[] = {
+        GENERAL,
+        APPEARANCE,
+        LAYOUT,
+        DATA,
+        EVENTS,
+        NAVIGATION,
+        BEHAVIOR,
+        ACCESSIBILITY,
+        JAVASCRIPT,
+        ADVANCED,
+        INTERNAL
+    };
 }

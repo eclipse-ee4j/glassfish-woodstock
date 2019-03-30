@@ -109,131 +109,154 @@ public class EditableList extends WebuiInput implements ListManager,
         NamingContainer {
 
     /**
-     * The component id for the ADD button
+     * The component id for the ADD button.
      */
-    public static final String ADD_BUTTON_ID = "_addButton"; //NOI18N
+    public static final String ADD_BUTTON_ID = "_addButton";
+
     /**
-     * The add button facet name
+     * The add button facet name.
      */
-    public static final String ADD_BUTTON_FACET = "addButton"; //NOI18N
+    public static final String ADD_BUTTON_FACET = "addButton";
+
     /**
      * The add button text key.
      */
-    public static final String ADD_BUTTON_TEXT_KEY = "EditableList.add"; //NOI18N
+    public static final String ADD_BUTTON_TEXT_KEY = "EditableList.add";
+
     /**
-     * The component ID for the remove button
+     * The component ID for the remove button.
      */
-    public static final String REMOVE_BUTTON_ID = "_removeButton"; //NOI18N
+    public static final String REMOVE_BUTTON_ID = "_removeButton";
+
     /**
-     * The remove button facet name
+     * The remove button facet name.
      */
-    public static final String REMOVE_BUTTON_FACET = "removeButton"; //NOI18N
+    public static final String REMOVE_BUTTON_FACET = "removeButton";
+
     /**
      * The remove button text key.
      */
-    public static final String REMOVE_BUTTON_TEXT_KEY = "EditableList.remove"; //NOI18N
+    public static final String REMOVE_BUTTON_TEXT_KEY = "EditableList.remove";
+
     /**
-     * The component ID for the textfield
+     * The component ID for the text field.
      */
-    public static final String FIELD_ID = "_field"; //NOI18N
+    public static final String FIELD_ID = "_field";
+
     /**
      * The input field facet name.
      */
-    public static final String FIELD_FACET = "field"; //NOI18N
+    public static final String FIELD_FACET = "field";
+
     /**
      * The text key for the StringLengthValidator "too long" message.
      */
     public static final String SLV_TOOLONG_KEY =
-            "EditableList.itemTooLong"; //NOI18N
+            "EditableList.itemTooLong";
+
     /**
      * The text key for the StringLengthValidator "too short" message.
      */
     public static final String SLV_TOOSHORT_KEY =
-            "EditableList.fieldEmpty"; // NOI18N
+            "EditableList.fieldEmpty";
+
     /**
-     * The component ID for the textfield
+     * The component ID for the text field.
      */
-    public static final String LIST_LABEL_ID = "_listLabel"; //NOI18N
+    public static final String LIST_LABEL_ID = "_listLabel";
+
     /**
      * The list label facet name.
      */
-    public static final String LIST_LABEL_FACET = "listLabel"; //NOI18N
+    public static final String LIST_LABEL_FACET = "listLabel";
+
     /**
      * The list default label text key.
      */
     public static final String LIST_LABEL_TEXT_KEY =
-            "EditableList.defaultListLabel"; //NOI18N
+            "EditableList.defaultListLabel";
+
     /**
-     * The component ID for the textfield
+     * The component ID for the text field.
      */
-    public static final String FIELD_LABEL_ID = "_fieldLabel"; //NOI18N
+    public static final String FIELD_LABEL_ID = "_fieldLabel";
+
     /**
      * The input field label facet name.
      */
-    public static final String FIELD_LABEL_FACET = "fieldLabel"; //NOI18N
+    public static final String FIELD_LABEL_FACET = "fieldLabel";
+
     /**
      * The default field label text key.
      */
     public static final String FIELD_LABEL_TEXT_KEY =
-            "EditableList.defaultFieldLabel"; //NOI18N
+            "EditableList.defaultFieldLabel";
+
     /**
-     * The component ID for the textfield
+     * The component ID for the text field.
      */
-    public static final String READ_ONLY_ID = "_readOnly"; //NOI18N
+    public static final String READ_ONLY_ID = "_readOnly";
+
     /**
      * The read only facet name.
      */
-    public static final String READ_ONLY_FACET = "readOnly"; //NOI18N
+    public static final String READ_ONLY_FACET = "readOnly";
+
     /**
-     * Facet name for the header facet
+     * Facet name for the header facet.
      */
-    public static final String HEADER_FACET = "header"; //NOI18N
+    public static final String HEADER_FACET = "header";
+
     /**
-     * Facet name for the footer facet
+     * Facet name for the footer facet.
      */
-    public static final String FOOTER_FACET = "footer"; //NOI18N
+    public static final String FOOTER_FACET = "footer";
+
     /**
-     * Name of the JavaScript function which is responsible for adding elements from the availble list to the selected list
+     * Name of the JavaScript function which is responsible for adding elements
+     * from the available list to the selected list.
      */
     public static final String ADD_FUNCTION = ".add(); ";
+
     /**
      * Name of the JavaScript function which is responsible for
-     * enabling/disabling the add button
+     * enabling/disabling the add button.
      */
     public static final String ENABLE_ADD_FUNCTION = ".enableAdd(); ";
+
     /**
      * Name of the JavaScript function which is responsible for
-     * enabling/disabling the add button
+     * enabling/disabling the add button.
      */
     public static final String SET_ADD_DISABLED_FUNCTION = ".setAddDisabled(false);";
+
     /**
      * Name of the JavaScript function which is responsible for
-     * enabling/disabling the remove button
+     * enabling/disabling the remove button.
      */
     public static final String ENABLE_REMOVE_FUNCTION = ".enableRemove(); ";
+
     /**
-     * Name of the JavaScript function that updates the buttons
+     * Name of the JavaScript function that updates the buttons.
      */
     public static final String UPDATE_BUTTONS_FUNCTION = ".updateButtons(); ";
 
     // FIXME: This should be part of the theme.
-    //
     /**
-     * Read only separator string
+     * Read only separator string.
      */
-    private static final String READ_ONLY_SEPARATOR = ", "; //NOI18N
+    private static final String READ_ONLY_SEPARATOR = ", ";
+
     /**
-     * Facet name for the search facet
+     * Facet name for the search facet.
      */
-    public static final String SEARCH_FACET = "search"; //NOI18N
+    public static final String SEARCH_FACET = "search";
 
     // FIXME: This should be part of the theme.
-    //
-    public static final String SPACER_STRING = "_"; //NOI18N
-    private static final String KEY_STRING = "a"; //NOI18N
-    private static final String DUP_STRING = "\t"; //NOI18N
+    public static final String SPACER_STRING = "_";
+    private static final String KEY_STRING = "a";
+    private static final String DUP_STRING = "\t";
     // FIXME: This should be part of the theme.
-    //
     private static final int MIN_LENGTH = 20;
     private static final boolean DEBUG = false;
     private TreeMap<String, ListItem> listItems = null;
@@ -295,7 +318,7 @@ public class EditableList extends WebuiInput implements ListManager,
     public UIComponent getAddButtonComponent() {
 
         if (DEBUG) {
-            log("getAddButtonComponent()"); //NOI18N
+            log("getAddButtonComponent()");
         }
         return getButtonFacet(ADD_BUTTON_FACET, false,
                 getTheme().getMessage(ADD_BUTTON_TEXT_KEY), new AddListener());
@@ -317,7 +340,7 @@ public class EditableList extends WebuiInput implements ListManager,
     public UIComponent getRemoveButtonComponent() {
 
         if (DEBUG) {
-            log("getRemoveButtonComponent()"); //NOI18N
+            log("getRemoveButtonComponent()");
         }
         return getButtonFacet(REMOVE_BUTTON_FACET, false,
                 getTheme().getMessage(REMOVE_BUTTON_TEXT_KEY),
@@ -353,7 +376,7 @@ public class EditableList extends WebuiInput implements ListManager,
         UIComponent buttonComponent = getFacet(facetName);
         if (buttonComponent != null) {
             if (DEBUG) {
-                log("\tFound facet"); //NOI18N
+                log("\tFound facet");
             }
             return buttonComponent;
         }
@@ -389,7 +412,7 @@ public class EditableList extends WebuiInput implements ListManager,
     private void initButtonFacet(Button button, boolean primary, String text) {
 
         if (DEBUG) {
-            log("initButtonFacet()"); //NOI18N
+            log("initButtonFacet()");
         }
         button.setText(text);
         int tindex = getTabIndex();
@@ -419,7 +442,7 @@ public class EditableList extends WebuiInput implements ListManager,
     public UIComponent getListLabelComponent() {
 
         if (DEBUG) {
-            log("getListLabelComponent()"); //NOI18N
+            log("getListLabelComponent()");
         }
         String labelString = getListLabel();
         if (labelString == null || labelString.length() == 0) {
@@ -444,7 +467,7 @@ public class EditableList extends WebuiInput implements ListManager,
     public UIComponent getFieldLabelComponent() {
 
         if (DEBUG) {
-            log("getFieldLabelComponent()"); //NOI18N
+            log("getFieldLabelComponent()");
         }
         String labelString = getFieldLabel();
         if (labelString == null || labelString.length() == 0) {
@@ -487,7 +510,7 @@ public class EditableList extends WebuiInput implements ListManager,
         UIComponent labelComponent = getFacet(facetName);
         if (labelComponent != null) {
             if (DEBUG) {
-                log("\tFound facet"); //NOI18N
+                log("\tFound facet");
             }
             return labelComponent;
         }
@@ -524,7 +547,7 @@ public class EditableList extends WebuiInput implements ListManager,
             String forComponentId) {
 
         if (DEBUG) {
-            log("initLabelFacet()"); //NOI18N
+            log("initLabelFacet()");
         }
         if (labelString == null || labelString.length() < 1) {
             // TODO - maybe print a default?
@@ -557,7 +580,7 @@ public class EditableList extends WebuiInput implements ListManager,
         UIComponent fieldComponent = getFacet(FIELD_FACET);
         if (fieldComponent != null) {
             if (DEBUG) {
-                log("\tFound facet"); //NOI18N
+                log("\tFound facet");
             }
             return fieldComponent;
         }
@@ -597,7 +620,7 @@ public class EditableList extends WebuiInput implements ListManager,
         UIComponent fieldComponent = getFacet(FIELD_FACET);
         if (fieldComponent != null) {
             if (DEBUG) {
-                log("\tFound facet"); //NOI18N
+                log("\tFound facet");
             }
             return fieldComponent;
         }
@@ -611,7 +634,7 @@ public class EditableList extends WebuiInput implements ListManager,
                 FIELD_FACET, true);
         if (field == null) {
             if (DEBUG) {
-                log("create Field"); //NOI18N
+                log("create Field");
             }
             field = new TextField();
             field.setId(ComponentUtilities.createPrivateFacetId(this,
@@ -638,28 +661,28 @@ public class EditableList extends WebuiInput implements ListManager,
 
     private void initFieldFacet(TextField field) {
         if (DEBUG) {
-            log("initFieldFacet()"); //NOI18N
+            log("initFieldFacet()");
         }
         String jsObjectName = getJavaScriptObjectName();
         StringBuilder onkeypressBuffer = new StringBuilder(128);
         onkeypressBuffer.append("if(event.keyCode == 13) { ");  //NOI18N      
         onkeypressBuffer.append(jsObjectName);
         onkeypressBuffer.append(ADD_FUNCTION);
-        onkeypressBuffer.append("return false; } "); //NOI18N
+        onkeypressBuffer.append("return false; } ");
 
         field.setOnKeyPress(onkeypressBuffer.toString());
 
         StringBuilder onfocusBuffer = new StringBuilder(128);
         onfocusBuffer.append(jsObjectName);
         onfocusBuffer.append(SET_ADD_DISABLED_FUNCTION);
-        onfocusBuffer.append("return false;"); //NOI18N
+        onfocusBuffer.append("return false;");
 
         field.setOnFocus(onfocusBuffer.toString());
 
         StringBuilder onfocuslostBuffer = new StringBuilder(128);
         onfocuslostBuffer.append(jsObjectName);
         onfocuslostBuffer.append(ENABLE_ADD_FUNCTION);
-        onfocuslostBuffer.append("return false;"); //NOI18N
+        onfocuslostBuffer.append("return false;");
 
         field.setOnBlur(onfocuslostBuffer.toString());
 
@@ -702,14 +725,14 @@ public class EditableList extends WebuiInput implements ListManager,
     public UIComponent getReadOnlyValueComponent() {
 
         if (DEBUG) {
-            log("getReadOnlyValueComponent()"); //NOI18N
+            log("getReadOnlyValueComponent()");
         }
         // Check if the page author has defined the facet
         //
         UIComponent textComponent = getFacet(READ_ONLY_FACET);
         if (textComponent != null) {
             if (DEBUG) {
-                log("\tFound facet"); //NOI18N
+                log("\tFound facet");
             }
             return textComponent;
         }
@@ -717,7 +740,7 @@ public class EditableList extends WebuiInput implements ListManager,
         // Just create it every time.
         //
         if (DEBUG) {
-            log("create StaticText"); //NOI18N
+            log("create StaticText");
         }
         StaticText text = new StaticText();
         text.setId(ComponentUtilities.createPrivateFacetId(this,
@@ -774,7 +797,7 @@ public class EditableList extends WebuiInput implements ListManager,
      */
     @Override
     public void setConverter(javax.faces.convert.Converter converter) {
-        String msg = getTheme().getMessage("EditableList.noConversion"); //NOI18N
+        String msg = getTheme().getMessage("EditableList.noConversion");
         throw new RuntimeException(msg);
     }
 
@@ -926,7 +949,7 @@ public class EditableList extends WebuiInput implements ListManager,
         // possible to use a constant for this, since an o with an
         // umlaut comes after z in Swedish, but before it in German,
         // for example).
-        String lastKey = ""; //NOI18N
+        String lastKey = "";
         String[] currentValues = getCurrentValueAsStringArray();
         if (DEBUG) {
             log("\tValues are:");
@@ -974,9 +997,9 @@ public class EditableList extends WebuiInput implements ListManager,
             currentString = currentValues[counter];
 
             if (DEBUG) {
-                log("Current string is " + currentString); //NOI18N
+                log("Current string is " + currentString);
                 log("SelectedValue is " +
-                        String.valueOf(selectedValue)); //NOI18N
+                        String.valueOf(selectedValue));
             }
 
             if (currentString == null) {
@@ -1093,7 +1116,7 @@ public class EditableList extends WebuiInput implements ListManager,
     }
 
     private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
+        System.out.println(this.getClass().getName() + "::" + s);
     }
 
     /**

@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: ListboxRenderer.java,v 1.1.18.1 2009-12-29 04:52:43 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -26,30 +23,25 @@ import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.sun.webui.jsf.component.Listbox;
-import com.sun.webui.jsf.component.ListManager;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
+
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * <p>Renderer for a {@link com.sun.webui.jsf.component.Listbox} component.</p>
+ * Renderer for a {@link com.sun.webui.jsf.component.Listbox} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Listbox"))
 public class ListboxRenderer extends ListRendererBase {
 
+    /**
+     * Debug flag.
+     */
     private final static boolean DEBUG = false;
 
-    /**
-     * <p>Render the list.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * end should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
@@ -57,11 +49,12 @@ public class ListboxRenderer extends ListRendererBase {
         if (DEBUG) {
             log("encodeEnd()");
         }
-
+        if (component == null){
+            return;
+        }
         if (component instanceof ListSelector) {
 
             ListSelector selector = (ListSelector) component;
-
             if (!Beans.isDesignTime()) {
                 selector.checkSelectionModel(context);
             }
@@ -70,44 +63,39 @@ public class ListboxRenderer extends ListRendererBase {
             if (selector instanceof Listbox) {
                 useMonospace = ((Listbox) selector).isMonospace();
             }
-
-            super.renderListComponent(selector, context, getStyles(context, component, useMonospace));
+            super.renderListComponent(selector, context,
+                    getStyles(context, component, useMonospace));
         } else {
-            String message = "Component " + component.toString() + //NOI18N
-                    " has been associated with a ListboxRenderer. " + //NOI18N
-                    " This renderer can only be used by components " + //NOI18N
-                    " that extend com.sun.webui.jsf.component.Selector."; //NOI18N
+            String message = "Component " + component.toString()
+                    + " has been associated with a ListboxRenderer. "
+                    + " This renderer can only be used by components "
+                    + " that extend com.sun.webui.jsf.component.Selector.";
             throw new FacesException(message);
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Render the appropriate element end, depending on the value of the
-     * <code>type</code> property.</p>
+     * Render the appropriate element end, depending on the value of the
+     * {@code type} property.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param monospace <code>UIComponent</code> if true, use the monospace
+     * @param context {@code FacesContext} for the current request
+     * @param monospace {@code UIComponent} if true, use the mono space
      * styles to render the list.
-     *
-     * @exception IOException if an input/output error occurs
      */
-    private String[] getStyles(FacesContext context,
-            UIComponent component,
+    private String[] getStyles(FacesContext context, UIComponent component,
             boolean monospace) {
 
         if (DEBUG) {
             log("getStyles()");
         }
 
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
 
         String[] styles = new String[10];
-        styles[0] = getOnChangeJavaScript((ListManager) component,
-                JavaScriptUtilities.getModuleName("listbox"), "changed",//NOI18N
-                context);
+        styles[0] = renderCalls(((Listbox) component).getOnChange(),
+                // ws_changed
+                renderCall("changed", "listbox",
+                        component.getClientId(context)));
         if (monospace) {
             styles[1] = theme.getStyleClass(ThemeStyles.LIST_MONOSPACE);
             styles[2] =

@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: ListRendererBase.java,v 1.1.4.1.2.1 2009-12-29 04:52:45 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import java.io.IOException;
@@ -35,35 +32,53 @@ import com.sun.webui.jsf.model.OptionTitle;
 import com.sun.webui.jsf.model.list.ListItem;
 import com.sun.webui.jsf.model.list.StartGroup;
 import com.sun.webui.jsf.model.list.EndGroup;
-import com.sun.webui.jsf.util.ConversionUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
+
+import static com.sun.webui.jsf.util.ConversionUtilities.setRenderedValue;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.RenderingUtilities.writeStringAttributes;
 
 /**
- * The ListRendererBase is the base class for the listbox renderers
+ * The ListRendererBase is the base class for the list box renderers
  * (Drop-down Menu and Selectable List). These are both rendered using
- * the same HTML tag (select) so a lot of the renderering functionality
+ * the same HTML tag (select) so a lot of the rendering functionality
  * is shared.
  */
 public abstract class ListRendererBase extends Renderer {
 
     /**
-     *
+     * Debug flag.
      */
     private final static boolean DEBUG = false;
-    /** <p>The list of attribute names in the HTML 4.01 Specification that
-     * correspond to the entity type <em>%events;</em>.</p>
-     */
-    public static final String[] STRING_ATTRIBUTES = {"onBlur", "onClick", "onDblClick", "onFocus", //NOI18N
-        "onMouseDown", "onMouseUp", "onMouseOver", //NOI18N
-        "onMouseMove", "onMouseOut", "onKeyPress", //NOI18N
-        "onKeyDown", "onKeyUp", "onSelect" //NOI18N
-    };
-    protected static final String SEPARATOR = "|";  //NOI18N
 
     /**
-     * <p>This method determines whether the component should be
+     * The list of attribute names in the HTML 4.01 Specification that
+     * correspond to the entity type <em>%events;</em>.
+     */
+    public static final String[] STRING_ATTRIBUTES = {
+        "onBlur",
+        "onClick",
+        "onDblClick",
+        "onFocus",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseOver",
+        "onMouseMove",
+        "onMouseOut",
+        "onKeyPress",
+        "onKeyDown",
+        "onKeyUp",
+        "onSelect"
+    };
+
+    /**
+     * Separator character.
+     */
+    protected static final String SEPARATOR = "|";
+
+    /**
+     * This method determines whether the component should be
      * rendered as a standalone list, or laid out together with a
-     * label that was defined as part of the component.</p>
+     * label that was defined as part of the component.
      *
      * <p>A label will be rendered if either of the following is
      * true:</p>
@@ -89,8 +104,7 @@ public abstract class ListRendererBase extends Renderer {
      * the response
      */
     void renderListComponent(ListSelector component, FacesContext context,
-            String[] styles)
-            throws IOException {
+            String[] styles) throws IOException {
 
         if (DEBUG) {
             log("renderListComponent()");
@@ -112,7 +126,7 @@ public abstract class ListRendererBase extends Renderer {
         boolean spanRendered = false;
 
         if (label != null) {
-            renderOpenEncloser(component, context, "span", styles[8]); //NOI18N
+            renderOpenEncloser(component, context, "span", styles[8]);
             spanRendered = true;
             writer.writeText("\n", null);
             if (!component.isLabelOnTop() && component.getRows() > 1) {
@@ -125,12 +139,12 @@ public abstract class ListRendererBase extends Renderer {
                 }
             }
 
-            RenderingUtilities.renderComponent(label, context);
+            renderComponent(label, context);
             writer.writeText("\n", null);
             if (component.isLabelOnTop()) {
 
-                writer.startElement("br", component); //NOI18N
-                writer.endElement("br");         //NOI18N
+                writer.startElement("br", component);
+                writer.endElement("br");
                 writer.writeText("\n", null);
             }
 
@@ -142,9 +156,10 @@ public abstract class ListRendererBase extends Renderer {
             UIComponent value = component.getReadOnlyValueComponent();
             if (label == null) {
                 value.getAttributes().put("style", component.getStyle());
-                value.getAttributes().put("styleClass", component.getStyleClass());
+                value.getAttributes().put("styleClass",
+                        component.getStyleClass());
             }
-            RenderingUtilities.renderComponent(value, context);
+            renderComponent(value, context);
         } else {
             //renderHiddenValue(component, context, writer, styles[8]);
             //writer.writeText("\n", null);
@@ -152,83 +167,71 @@ public abstract class ListRendererBase extends Renderer {
             // Because renderHiddenValue is commented out this needs
             // to be called for supporting DB NULL values.
             // If it becomes uncommented remove this call.
-            //
             recordRenderedValue(component);
             renderList(component, id, context, styles, label == null);
         }
         if (label != null) {
-            context.getResponseWriter().endElement("span"); //NOI18N
+            context.getResponseWriter().endElement("span");
         }
     }
 
-    /**
-     * Overrides encodeChildren of Renderer to do nothing. This
-     * renderer renders its own children, but not through this
-     * method.
-     * @param context The FacesContext of the request
-     * @param component The component associated with the
-     * renderer. Must be a subclass of ListSelector.
-     */
     @Override
     public void encodeChildren(javax.faces.context.FacesContext context,
             javax.faces.component.UIComponent component)
             throws java.io.IOException {
-        return;
     }
 
     /**
-     * <p>Renders the opening div tag.</p>
+     * Renders the opening div tag.
      * @param component The component associated with the
      * renderer. Must implement ListManager
      * @param context The FacesContext of the request
      * @param element One of "span" or "div"
+     * @param hiddenStyle hidden style
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
     protected void renderOpenEncloser(ListManager component,
-            FacesContext context,
-            String element,
-            String hiddenStyle)
+            FacesContext context, String element, String hiddenStyle)
             throws IOException {
 
         String id = component.getClientId(context);
-
         ResponseWriter writer = context.getResponseWriter();
         writer.writeText("\n", null);
         writer.startElement(element, (UIComponent) component);
-        writer.writeAttribute("id", id, "id"); //NOI18N
+        writer.writeAttribute("id", id, "id");
 
         String style = component.getStyle();
         if (style != null && style.length() > 0) {
-            writer.writeAttribute("style", style, "style");      //NOI18N
+            writer.writeAttribute("style", style, "style");
         }
         style = component.getStyleClass();
         if (component.isVisible()) {
             if (style != null && style.length() > 0) {
-                writer.writeAttribute("class", style, "class"); //NOI18N
+                writer.writeAttribute("class", style, "class");
             }
         } else {
             if (style == null) {
                 style = hiddenStyle;
             } else {
-                style = style + " " + hiddenStyle; //NOI18N
+                style = style + " " + hiddenStyle;
             }
-            writer.writeAttribute("class", style, "class"); //NOI18N
+            writer.writeAttribute("class", style, "class");
         }
-
-        writer.writeText("\n", null);                         //NOI18N
+        writer.writeText("\n", null);
     }
 
-    protected void renderHiddenValue(UIComponent component, FacesContext context,
-            ResponseWriter writer, String hiddenStyle)
+    protected void renderHiddenValue(UIComponent component,
+            FacesContext context, ResponseWriter writer, String hiddenStyle)
             throws IOException {
 
         ListManager listManager = (ListManager) component;
-
         recordRenderedValue(component);
 
-        String hiddenID = component.getClientId(context).concat(ListSelector.VALUE_ID);
-        String hiddenLabelID = component.getClientId(context).concat(ListSelector.VALUE_LABEL_ID);
+        String hiddenID = component.getClientId(context)
+                .concat(ListSelector.VALUE_ID);
+        String hiddenLabelID = component.getClientId(context)
+                .concat(ListSelector.VALUE_LABEL_ID);
 
         String[] values = listManager.getValueAsStringArray(context);
         if (DEBUG) {
@@ -239,63 +242,71 @@ public abstract class ListRendererBase extends Renderer {
         }
 
         // Write a hidden label to pacify a11y checkers.
-        writer.startElement("label", component); //NOI18N
-        writer.writeAttribute("id", hiddenLabelID, null); //NOI18N
-        writer.writeAttribute("for", hiddenID, "for"); //NOI19N
-        writer.writeAttribute("class", hiddenStyle, null); //NOI18N     
-        writer.endElement("label"); //NOI18N
+        writer.startElement("label", component);
+        writer.writeAttribute("id", hiddenLabelID, null);
+        writer.writeAttribute("for", hiddenID, "for");
+        writer.writeAttribute("class", hiddenStyle, null);
+        writer.endElement("label");
         // Write the hidden <select> 
 
-        writer.startElement("select", component); //NOI18N
-        writer.writeAttribute("id", hiddenID, null); //NOI18N
-        writer.writeAttribute("name", hiddenID, null); //NOI18N
-        writer.writeAttribute("multiple", "true", null); //NOI18N
-        writer.writeAttribute("class", hiddenStyle, null); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("select", component);
+        writer.writeAttribute("id", hiddenID, null);
+        writer.writeAttribute("name", hiddenID, null);
+        writer.writeAttribute("multiple", "true", null);
+        writer.writeAttribute("class", hiddenStyle, null);
+        writer.writeText("\n", null);
         for (int counter = 0; counter < values.length; ++counter) {
-            writer.startElement("option", component); //NOI18N
-            writer.writeAttribute("selected", "selected", null); //NOI18N
-            writer.writeAttribute("value", values[counter], null); //NOI18N
-            writer.writeText(values[counter], null); //NOI18N
-            writer.endElement("option"); //NOI18N
-            writer.writeText("\n", null); //NOI18N          
+            writer.startElement("option", component);
+            writer.writeAttribute("selected", "selected", null);
+            writer.writeAttribute("value", values[counter], null);
+            writer.writeText(values[counter], null);
+            writer.endElement("option");
+            writer.writeText("\n", null);
         }
-        writer.endElement("select"); //NOI18N       
+        writer.endElement("select");
     }
 
     /**
-     * This is the base method for rendering a HTML select
-     * element. This method is based on the functionality of the RI
-     * version, so it invokes a method renderSelectItems which in term
-     * invokes renderSelectItem. Currently, this renderer requires for
-     * the options to be specified using the JSF SelectItem construct,
-     * but this should be replaced with a Lockhart version, because
-     * the JSF version lacks the ability to associate an id with the
-     * list item. I'm not sure whether it should be possible to use
+     * This is the base method for rendering a HTML select element.This method
+     * is based on the functionality of the RI version, so it invokes a method
+     * renderSelectItems which in term invokes renderSelectItem. Currently, this
+     * renderer requires for the options to be specified using the JSF
+     * SelectItem construct, but this should be replaced with a Lockhart
+     * version, because the JSF version lacks the ability to associate an id
+     * with the list item. I'm not sure whether it should be possible to use
      * SelectItem as well yet.
-     * @param component The UI Component associated with the
-     * renderer.
+     *
+     * @param component The UI Component associated with the renderer.
+     * @param id component id
      * @param context The FacesContext of the request
-     * @param styles A String array of styles used to render the
-     * component. The first item of the array is the name of the
-     * JavaScript method that handles change event. The second item is
-     * the style used when the list is enabled. The third style is the
-     * one to use when the list is disabled. The fourth item is the
-     * style to use for an item that is enabled, the fifth to use for
-     * an item that is disabled, and the sixth to use when the item is
+     * @param styles A String array of styles used to render the component. The
+     * first item of the array is the name of the JavaScript method that handles
+     * change event. The second item is the style used when the list is enabled.
+     * The third style is the one to use when the list is disabled. The fourth
+     * item is the style to use for an item that is enabled, the fifth to use
+     * for an item that is disabled, and the sixth to use when the item is
      * selected.
-     * @throws java.io.IOException if the renderer fails to write to
-     * the response
+     * @throws java.io.IOException if the renderer fails to write to the
+     * response
      */
     protected void renderList(ListManager component, String id,
             FacesContext context, String[] styles)
             throws IOException {
+
         renderList(component, id, context, styles, false);
     }
 
+    /**
+     * Render the list.
+     * @param listManager list manager
+     * @param id component id
+     * @param context faces context
+     * @param styles CSS styles
+     * @param renderUserStyles flag for rendering user styles
+     * @throws IOException if an IO error occurs
+     */
     private void renderList(ListManager listManager, String id,
-            FacesContext context, String[] styles,
-            boolean renderUserStyles)
+            FacesContext context, String[] styles, boolean renderUserStyles)
             throws IOException {
 
         // Set the style class
@@ -305,13 +316,12 @@ public abstract class ListRendererBase extends Renderer {
         }
 
         ResponseWriter writer = context.getResponseWriter();
-
-        writer.startElement("select", (UIComponent) listManager);              //NOI18N
+        writer.startElement("select", (UIComponent) listManager);
 
         if (renderUserStyles) {
             String style = listManager.getStyle();
             if (style != null && style.length() > 0) {
-                writer.writeAttribute("style", style, null); //NOI18N
+                writer.writeAttribute("style", style, null);
             }
             String compStyleClass = getStyleClass(listManager,
                     styles[8]);
@@ -321,87 +331,53 @@ public abstract class ListRendererBase extends Renderer {
             }
         }
 
-        writer.writeAttribute("class", styleClass, null);      //NOI18N
-        writer.writeAttribute("id", id, null); //NOI18N
+        writer.writeAttribute("class", styleClass, null);
+        writer.writeAttribute("id", id, null);
         if (listManager.mainListSubmits()) {
-            writer.writeAttribute("name", id, null);           //NOI18N
+            writer.writeAttribute("name", id, null);
         }
         int size = listManager.getRows();
         if (size < 1) {
             size = 12;
         }
-        writer.writeAttribute("size", String.valueOf(size), null); //NOI18N
+        writer.writeAttribute("size", String.valueOf(size), null);
 
         if (listManager.isMultiple()) {
-            writer.writeAttribute("multiple", "multiple", null); //NOI18N
+            writer.writeAttribute("multiple", "multiple", null);
         }
 
         if (listManager.isDisabled()) {
-            writer.writeAttribute("disabled", //NOI18N
-                    "disabled", //NOI18N
-                    "disabled"); //NOI18N
+            writer.writeAttribute("disabled", "disabled", "disabled");
         }
 
         String tooltip = listManager.getToolTip();
         if (tooltip != null) {
-            writer.writeAttribute("title", tooltip, null); //NOI18N
+            writer.writeAttribute("title", tooltip, null);
         }
 
         if (DEBUG) {
             log("Setting onchange event handler");
         }
-        writer.writeAttribute("onchange", styles[0], null);    //NOI18N
+        writer.writeAttribute("onchange", styles[0], null);
 
         int tabindex = listManager.getTabIndex();
         if (tabindex > 0 && tabindex < 32767) {
-            writer.writeAttribute("tabindex", //NOI18N
+            writer.writeAttribute("tabindex",
                     String.valueOf(tabindex),
-                    "tabindex");              //NOI18N
+                    "tabindex");
         }
 
-        RenderingUtilities.writeStringAttributes((UIComponent) listManager,
-                writer, STRING_ATTRIBUTES);
+        writeStringAttributes((UIComponent) listManager, writer,
+                STRING_ATTRIBUTES);
 
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         renderListOptions((UIComponent) listManager,
                 listManager.getListItems(context, true),
                 writer, styles);
 
-        writer.endElement("select");  //NOI18N
-        writer.writeText("\n", null); //NOI18N
-    }
-
-    /**
-     * Append the webui component's own JavaScript function at the end
-     * of any component-specific event handling code.
-     * @param component The ListManager for which we create the function call
-     * @param moduleName The name of the dojo module
-     * @param functionName The name of the function
-     * @param context The FacesContext of this request
-     */
-    protected String getOnChangeJavaScript(ListManager component,
-            String moduleName, String functionName,
-            FacesContext context) {
-
-        String script = component.getOnChange();
-        String id = component.getClientId(context);
-        StringBuilder onchangeBuffer = new StringBuilder(200);
-        if (script != null) {
-            onchangeBuffer.append(script).append(";");
-        }
-        String functionCall = functionName + "('" + id + "');";
-        if(moduleName == null){
-            onchangeBuffer.append(functionCall);
-        } else {
-            onchangeBuffer.append("require(['")
-                    .append(moduleName)
-                    .append("'],function(list){ list.")
-                    .append(functionCall)
-                    .append("});") //NOI18N
-                    .append(" return false;"); //NOI18N
-        }
-        return onchangeBuffer.toString();
+        writer.endElement("select");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -424,57 +400,47 @@ public abstract class ListRendererBase extends Renderer {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderListOptions(UIComponent component,
-            Iterator optionsIterator,
-            ResponseWriter writer,
-            String[] styles)
-            throws IOException {
+    void renderListOptions(UIComponent component, Iterator optionsIterator,
+            ResponseWriter writer, String[] styles) throws IOException {
 
         if (DEBUG) {
             log("renderListOptions() START");
         }
 
-        Object option = null;
+        Object option;
         boolean noSeparator = true;
 
         while (optionsIterator.hasNext()) {
-
             option = optionsIterator.next();
-
             if (option instanceof Separator) {
                 if (DEBUG) {
-                    log("\tFound separator"); //NOII18N
+                    log("\tFound separator");
                 }
                 renderSeparator(component, writer, styles[7]);
             } else if (option instanceof StartGroup) {
-
                 if (DEBUG) {
-                    log("\tFound option group"); //NOII18N
+                    log("\tFound option group");
                 }
                 StartGroup group = (StartGroup) option;
                 if (DEBUG) {
-                    log("\tThis is the start of a group"); //NOI18N
-                    log("\tLabel is" + group.getLabel());  //NOI18N
+                    log("\tThis is the start of a group");
+                    log("\tLabel is" + group.getLabel());
                 }
 
                 if (!noSeparator) {
                     renderSeparator(component, writer, styles[7]);
                 }
-                writer.startElement("optgroup", component);     //NOI18N
-                writer.writeAttribute("label", //NOI18N
-                        group.getLabel(),
-                        null);
-                writer.writeAttribute("class", //NOI18N
-                        styles[6],
-                        null);
-                writer.write("\n");                        //NOI18N
+                writer.startElement("optgroup", component);
+                writer.writeAttribute("label", group.getLabel(), null);
+                writer.writeAttribute("class", styles[6], null);
+                writer.write("\n");
                 noSeparator = true;
             } else if (option instanceof EndGroup) {
                 if (DEBUG) {
                     log("\tThis is the end of a group");
                 }
-                writer.endElement("optgroup");         //NOI18N
-                writer.write("\n");                    //NOI18N
+                writer.endElement("optgroup");
+                writer.write("\n");
                 if (optionsIterator.hasNext()) {
                     renderSeparator(component, writer, styles[7]);
                 }
@@ -507,11 +473,8 @@ public abstract class ListRendererBase extends Renderer {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderListOption(UIComponent list,
-            ListItem listItem,
-            ResponseWriter writer,
-            String[] styles)
-            throws IOException {
+    void renderListOption(UIComponent list, ListItem listItem,
+            ResponseWriter writer, String[] styles) throws IOException {
 
         if (DEBUG) {
             log("renderListOption() - START");
@@ -520,9 +483,9 @@ public abstract class ListRendererBase extends Renderer {
         // By default, we use the basic option style
         String styleClass = styles[3];
 
-        // CR 6317842. Regardless if the option is currently selected or        
+        // CR 6317842. Regardless if the option is currently selected or
         // not, the disabled option style should be used when the option
-        // is disabled. So, check for the disabled item first.        
+        // is disabled. So, check for the disabled item first.
         if (listItem.isDisabled()) {
             if (DEBUG) {
                 log("\tItem is disabled");
@@ -544,9 +507,9 @@ public abstract class ListRendererBase extends Renderer {
             }
         }
 
-        writer.writeText("\t", null);                            //NOI18N
-        writer.startElement("option", list);                     //NOI18N
-        writer.writeAttribute("class", styleClass, null);        //NOI18N
+        writer.writeText("\t", null);
+        writer.startElement("option", list);
+        writer.writeAttribute("class", styleClass, null);
         String itemValue = listItem.getValue();
 
         // Note that there is no distinction made between an
@@ -561,16 +524,16 @@ public abstract class ListRendererBase extends Renderer {
             if (DEBUG) {
                 log("Item value is not null");
             }
-            writer.writeAttribute("value", itemValue, null);      //NOI18N
+            writer.writeAttribute("value", itemValue, null);
         }
         if (listItem.isDisabled()) {
-            writer.writeAttribute("disabled", "disabled", null); //NOI18N
+            writer.writeAttribute("disabled", "disabled", null);
         }
         if (listItem.isSelected()) {
             if (DEBUG) {
                 log("\tWriting selected attribute");
             }
-            writer.writeAttribute("selected", "selected", null); //NOI18N
+            writer.writeAttribute("selected", "selected", null);
         }
 
         boolean title = listItem.isTitle();
@@ -581,12 +544,11 @@ public abstract class ListRendererBase extends Renderer {
         if (title) {
             writer.write(" &#8212;");
         }
-        writer.endElement("option");                             //NOI18N
-        writer.writeText("\n", null);                            //NOI18N
+        writer.endElement("option");
+        writer.writeText("\n", null);
         if (DEBUG) {
             log("\trenderListOption() - END");
         }
-        return;
     }
 
     /**
@@ -612,20 +574,20 @@ public abstract class ListRendererBase extends Renderer {
             return;
         }
 
-        writer.writeText("\t", null);                        //NOI18N
-        writer.startElement("option", component);                 //NOI18N
-        writer.writeAttribute("class", style, null);         //NOI18N
-        writer.writeAttribute("disabled", "disabled", null); //NOI18N
+        writer.writeText("\t", null);
+        writer.startElement("option", component);
+        writer.writeAttribute("class", style, null);
+        writer.writeAttribute("disabled", "disabled", null);
 
         int numEms = selector.getSeparatorLength();
-        StringBuffer labelBuffer = new StringBuffer();
+        StringBuilder labelBuffer = new StringBuilder();
         for (int em = 0; em < numEms; ++em) {
-            labelBuffer.append("-");                         //NOI18N
+            labelBuffer.append("-");
         }
 
         writer.writeText(labelBuffer.toString(), null);
-        writer.endElement("option");                         //NOI18N
-        writer.writeText("\n", null);                        //NOI18N
+        writer.endElement("option");
+        writer.writeText("\n", null);
     }
 
     /** This method is used by some of the renderers that extend
@@ -640,16 +602,20 @@ public abstract class ListRendererBase extends Renderer {
             throws IOException {
 
         UIComponent value = component.getReadOnlyValueComponent();
-
         renderOpenEncloser(component, context, "span", hiddenStyle);
         if (label != null) {
-            RenderingUtilities.renderComponent(label, context);
+            renderComponent(label, context);
         }
-        RenderingUtilities.renderComponent(value, context);
-        context.getResponseWriter().endElement("span"); //NOI18N
+        renderComponent(value, context);
+        context.getResponseWriter().endElement("span");
     }
 
-    // Prepend the hidden style to the user's added style if necessary
+    /**
+     * Prepend the hidden style to the user's added style if necessary.
+     * @param component UI component
+     * @param hiddenStyle hidden style
+     * @return String
+     */
     private String getStyleClass(ListManager component, String hiddenStyle) {
 
         String style = component.getStyleClass();
@@ -667,11 +633,6 @@ public abstract class ListRendererBase extends Renderer {
         return style;
     }
 
-    /**
-     * Retrieve user input from the UI.
-     * @param context The FacesContext of this request
-     * @param component The component associated with the renderer
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
 
@@ -700,9 +661,9 @@ public abstract class ListRendererBase extends Renderer {
     /**
      * Retrieve user input from the UI.
      * The expected format of the request parameter of interest is
-     * <separator>value<separator>value<separator> ...
+     * {@code <separator>value<separator>value<separator>} ...
      * If a value is an empty string the format is
-     * <separator><separator>
+     * {@code <separator><separator>}
      * If there is no value there is a single separator.
      * @param context The FacesContext of this request
      * @param component The component associated with the renderer
@@ -727,9 +688,10 @@ public abstract class ListRendererBase extends Renderer {
             return;
         }
 
-        Map params = context.getExternalContext().getRequestParameterValuesMap();
+        Map params = context.getExternalContext()
+                .getRequestParameterValuesMap();
 
-        String[] values = null;
+        String[] values;
         Object p = params.get(id);
         if (p == null) {
             values = new String[0];
@@ -747,10 +709,8 @@ public abstract class ListRendererBase extends Renderer {
         // submit did not happen at all and leave the submitted
         // value as is. It should be null, thereby effectively
         // taking this component out of further lifecycle processing.
-        //
         if (values.length > 1) {
             // Need to remove any OptionTitle submitted values
-            //
             ArrayList<String> newParams = new ArrayList<String>();
             for (int i = 0; i < values.length; ++i) {
                 if (OptionTitle.NONESELECTED.equals(values[i])) {
@@ -764,12 +724,11 @@ public abstract class ListRendererBase extends Renderer {
             return;
         }
 
-
         if (DEBUG) {
-            log("\tNumber of Selected values " + //NOI18N
-                    String.valueOf(values.length));
+            log("\tNumber of Selected values "
+                    + String.valueOf(values.length));
             for (int counter = 0; counter < values.length; ++counter) {
-                log("\tvalue: " + values[counter]); //NOI18N
+                log("\tvalue: " + values[counter]);
             }
         }
 
@@ -780,13 +739,14 @@ public abstract class ListRendererBase extends Renderer {
         if (values.length > 0 || !lmComponent.isDisabled()) {
             lmComponent.setSubmittedValue(values);
         }
-
     }
 
     /**
-     * The list is not responsible for rendering any child components,
-     * so this method returns false. (This is unintuitive, but it
-     * causes the right behaviour). I need to understand this better.
+     * The list is not responsible for rendering any child components, so this
+     * method returns false.(This is not intuitive, but it causes the right
+     * behavior). I need to understand this better.
+     *
+     * @return {@code true}
      */
     @Override
     public boolean getRendersChildren() {
@@ -817,10 +777,10 @@ public abstract class ListRendererBase extends Renderer {
             values = new String[0];
         }
         if (DEBUG) {
-            log("\tNumber of Selected values " + // NOI18N
-                    String.valueOf(values.length));
+            log("\tNumber of Selected values "
+                    + String.valueOf(values.length));
             for (int counter = 0; counter < values.length; ++counter) {
-                log("\t" + values[counter]);     //NOI18N
+                log("\t" + values[counter]);
             }
         }
         return values;
@@ -828,21 +788,23 @@ public abstract class ListRendererBase extends Renderer {
 
     /**
      * Log an error - only used during development time.
+     * @param msg message to log
      */
-    void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
+    void log(String msg) {
+        System.out.println(this.getClass().getName() + "::" + msg);
     }
 
     /**
      * This must be called where the value is about to be rendered
-     * for DB Null value support
+     * for DB Null value support.
+     * @param component UI component
      */
     private void recordRenderedValue(UIComponent component) {
 
         if (component instanceof EditableValueHolder &&
                 ((EditableValueHolder) component).getSubmittedValue() == null) {
-            ConversionUtilities.setRenderedValue(component,
-                    ((EditableValueHolder) component).getValue());
+            setRenderedValue(component, ((EditableValueHolder) component)
+                    .getValue());
         }
     }
 }

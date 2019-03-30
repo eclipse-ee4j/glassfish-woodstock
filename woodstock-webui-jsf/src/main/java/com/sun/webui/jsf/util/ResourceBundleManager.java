@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import java.util.HashMap;
@@ -21,106 +20,122 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-
 /**
- *  This class caches ResourceBundle objects per locale.
- *
- * @author Ken Paulsen (ken.paulsen@sun.com)
+ * This class caches ResourceBundle objects per locale.
  */
 public class ResourceBundleManager {
 
     /**
-     *	Singleton
+     * Singleton.
      */
-    private static ResourceBundleManager _instance =
-	    new ResourceBundleManager();
+    private static ResourceBundleManager _instance
+            = new ResourceBundleManager();
 
     /**
-     *	The cache of ResourceBundles.
+     * The cache of ResourceBundles.
      */
-    private Map<String, ResourceBundle> _cache = new HashMap<String, ResourceBundle>();
+    private Map<String, ResourceBundle> _cache =
+            new HashMap<String, ResourceBundle>();
 
     /**
-     *	Use getInstance() to obtain an instance.
+     * Use getInstance() to obtain an instance.
      */
     protected ResourceBundleManager() {
     }
 
-
     /**
-     *	Use this method to get the instance of this class.
+     * Use this method to get the instance of this class.
+     * @return ResourceBundleManager
      */
     public static ResourceBundleManager getInstance() {
-	if (_instance == null) {
-	    _instance = new ResourceBundleManager();
-	}
-	return _instance;
+        if (_instance == null) {
+            _instance = new ResourceBundleManager();
+        }
+        return _instance;
     }
 
     /**
-     *	This method checks the cache for the requested resource bundle.
+     * This method checks the cache for the requested resource bundle.
      *
-     *	@param	baseName    Name of the bundle
-     *	@param	locale	    The locale
+     * @param baseName Name of the bundle
+     * @param locale The locale
      *
-     *	@return	The requested ResourceBundle in the most appropriate locale.
+     * @return The requested ResourceBundle in the most appropriate locale.
      */
     protected ResourceBundle getCachedBundle(String baseName, Locale locale) {
-	return (ResourceBundle)_cache.get(getCacheKey(baseName, locale));
+        return (ResourceBundle) _cache.get(getCacheKey(baseName, locale));
     }
 
     /**
-     *	This method generates a unique key for setting / getting Resources
-     *	bundles from the cache.  It is important to have different keys per
-     *	locale (obviously).
+     * This method generates a unique key for setting / getting Resources
+     * bundles from the cache. It is important to have different keys per locale
+     * (obviously).
+     * @param baseName Name of the bundle
+     * @param locale The locale
+     * @return String
      */
     protected String getCacheKey(String baseName, Locale locale) {
-	return baseName+"__"+locale.toString();
+        return baseName + "__" + locale.toString();
     }
 
     /**
-     *	This method adds a ResourceBundle to the cache.
+     * This method adds a ResourceBundle to the cache.
+     * @param baseName
+     * @param locale
+     * @param bundle
      */
-    protected void addCachedBundle(String baseName, Locale locale, ResourceBundle bundle) {
-	// Copy the old Map to prevent changing a Map while someone is
-	// accessing it.
-	Map<String, ResourceBundle> map = new HashMap<String, ResourceBundle>(_cache);
+    protected void addCachedBundle(String baseName, Locale locale,
+            ResourceBundle bundle) {
 
-	// Add the new bundle
-	map.put(getCacheKey(baseName, locale), bundle);
+        // Copy the old Map to prevent changing a Map while someone is
+        // accessing it.
+        Map<String, ResourceBundle> map =
+                new HashMap<String, ResourceBundle>(_cache);
 
-	// Set this new Map as the shared cache Map
-	_cache = map;
+        // Add the new bundle
+        map.put(getCacheKey(baseName, locale), bundle);
+
+        // Set this new Map as the shared cache Map
+        _cache = map;
     }
 
     /**
-     *	This method obtains the requested resource bundle as specified by the
-     *	given basename and locale.
+     * This method obtains the requested resource bundle as specified by the
+     * given base name and locale.
+     * @param baseName Name of the bundle
+     * @param locale The locale
+     * @return ResourceBundle
      */
     public ResourceBundle getBundle(String baseName, Locale locale) {
-	ResourceBundle bundle = getCachedBundle(baseName, locale);
-	if (bundle == null) {
-	    bundle = ResourceBundle.getBundle(baseName, locale, 
+        ResourceBundle bundle = getCachedBundle(baseName, locale);
+        if (bundle == null) {
+            bundle = ResourceBundle.getBundle(baseName, locale,
                     ClassLoaderFinder.getCurrentLoader(MessageUtil.class));
-	    if (bundle != null) {
-		addCachedBundle(baseName, locale, bundle);
-	    }
-	}
-	return bundle;
+            if (bundle != null) {
+                addCachedBundle(baseName, locale, bundle);
+            }
+        }
+        return bundle;
     }
 
     /**
-     *	This method obtains the requested resource bundle as specified by the
-     *	given basename, locale, and classloader.
+     * This method obtains the requested resource bundle as specified by the
+     * given base name, locale, and class-loader.
+     * @param baseName Name of the bundle
+     * @param locale The locale
+     * @param loader class-loader to use
+     * @return ResourceBundle
      */
-    public ResourceBundle getBundle(String baseName, Locale locale, ClassLoader loader) {
-	ResourceBundle bundle = getCachedBundle(baseName, locale);
-	if (bundle == null) {
-	    bundle = ResourceBundle.getBundle(baseName, locale, loader);
-	    if (bundle != null) {
-		addCachedBundle(baseName, locale, bundle);
-	    }
-	}
-	return bundle;
+    public ResourceBundle getBundle(String baseName, Locale locale,
+            ClassLoader loader) {
+
+        ResourceBundle bundle = getCachedBundle(baseName, locale);
+        if (bundle == null) {
+            bundle = ResourceBundle.getBundle(baseName, locale, loader);
+            if (bundle != null) {
+                addCachedBundle(baseName, locale, bundle);
+            }
+        }
+        return bundle;
     }
 }

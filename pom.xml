@@ -316,6 +316,11 @@
                 <artifactId>prototype</artifactId>
                 <version>1.7.3</version>
             </dependency>
+            <dependency>
+                <groupId>jakarta.json</groupId>
+                <artifactId>jakarta.json-api</artifactId>
+                <version>1.1.5</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -31,7 +31,9 @@
 //   </ui:wizard>
 //
 
-define(["webui/suntheme/common"], function (common) {
+define([
+    "webui/suntheme/common"
+], function (common) {
 
     return {
         /**

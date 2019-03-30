@@ -14,34 +14,31 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/* $Id: ThemeContext.java,v 1.1.6.1 2009-12-29 05:05:17 jyeary Exp $ */
 package com.sun.webui.theme;
 
 import java.util.Locale;
 import java.util.Set;
 
 /**
- * <code>ThemeContext</code> encapsulates the runtime environment for theme.
- * The runtime environment and dictates how information, required to locate
- * theme resources, and make those resources available to an application, 
- * is obtained.
+ * {@code ThemeContext} encapsulates the run-time environment for theme. The
+ * run-time environment and dictates how information, required to locate theme
+ * resources, and make those resources available to an application, is obtained.
  * For example:
  * <p>
  * <ul>
- * <li>In a <code>javax.servlet.Servlet</code> application environment
- * information about a theme and its resources is specified by the
- * application in its web.xml file
+ * <li>In a {@code javax.servlet.Servlet} application environment information
+ * about a theme and its resources is specified by the application in its
+ * {@code web.xml} file
  * </li>
- * <li>In a Creator design time environment
- * there is no need to prefix a theme resource reference with a theme
- * servlet prefix
+ * <li>In a Creator design time environment there is no need to prefix a theme
+ * resource reference with a theme servlet prefix
  * </li>
- * <li>In a Sun Management Web Console environment that is sharing
- * resources via a specific servlet and class loader, the console determines
- * the class loader and theme servlet prefix.
+ * <li>In a Sun Management Web Console environment that is sharing resources via
+ * a specific servlet and class loader, the console determines the class loader
+ * and theme servlet prefix.
  * </li>
  * <li>In a JSF environment information must be obtained from the
- * <code>FacesContext</code> which encapsulates servlet and portlet contexts.
+ * {@code FacesContext} which encapsulates servlet and portlet contexts.
  * </li>
  * </ul>
  * </p>
@@ -49,197 +46,214 @@ import java.util.Set;
 public abstract class ThemeContext {
 
     /**
-     * Identifies a theme messages bundle to override the 
-     * message bundle in a theme.
-     * @deprecated
+     * Identifies a theme messages bundle to override the message bundle in a
+     * theme.
+     *
+     * @deprecated do not use
      */
-    public final static String THEME_MESSAGES =
-            "com.sun.webui.theme.THEME_MESSAGES"; //NOI18N
+    public final static String THEME_MESSAGES
+            = "com.sun.webui.theme.THEME_MESSAGES";
+
     /**
-     * @deprecated
+     * Messages.
+     * @deprecated do not use
      */
     private String messages;
 
     /**
-     * @deprecated
+     * Get the messages
+     * @return messages
+     * @deprecated do not use
      */
     public String getMessages() {
         return messages;
     }
 
     /**
-     * @deprecated
+     * Set the messages.
+     * @param messages new messages
+     * @deprecated do not use
      */
     public void setMessages(String messages) {
         this.messages = messages;
     }
+
     /**
-     * Identifies a theme messages bundle to override the 
-     * message bundle in a theme.
-     * @deprecated
+     * Identifies a theme messages bundle to override the message bundle in a
+     * theme.
+     * @deprecated do not use
      */
-    public final static String SUPPORTED_LOCALES =
-            "com.sun.webui.theme.SUPPORTED_LOCALES"; //NOI18N
+    public final static String SUPPORTED_LOCALES
+            = "com.sun.webui.theme.SUPPORTED_LOCALES";
+
     /**
      * The separator for the supported locales list.
      */
-    protected static final String LOCALE_SEPARATOR = ",";//NOI18N
+    protected static final String LOCALE_SEPARATOR = ",";
+
     /**
-     * @deprecated
+     * Supported locales.
+     * @deprecated do not use
      */
     private Set supportedLocales;
 
     /**
-     * @deprecated
+     * Get the supported locales.
+     * @return supported locales
+     * @deprecated do not use
      */
     public Set getSupportedLocales() {
         return supportedLocales;
     }
 
     /**
-     * @deprecated
+     * Set the supported locales.
+     * @param supportedLocales new supported locales
+     * @deprecated do not use
      */
     public void setSupportedLocales(Set supportedLocales) {
         this.supportedLocales = supportedLocales;
     }
+
     /**
-     * Intended as a key identifying a <code>ThemeContext</code> instance.
+     * Intended as a key identifying a {@code ThemeContext} instance.
      */
-    protected final static String THEME_CONTEXT =
-            "com.sun.webui.theme.THEME_CONTEXT";
+    protected final static String THEME_CONTEXT
+            = "com.sun.webui.theme.THEME_CONTEXT";
+
     /**
      * Identifies the context's default locale.
      */
-    protected final static String DEFAULT_LOCALE =
-            "com.sun.webui.theme.DEFAULT_LOCALE"; //NOI18N
+    protected final static String DEFAULT_LOCALE
+            = "com.sun.webui.theme.DEFAULT_LOCALE";
+
     /**
      * Identifies the context's default theme.
      */
-    protected final static String DEFAULT_THEME =
-            "com.sun.webui.theme.DEFAULT_THEME"; //NOI18N
+    protected final static String DEFAULT_THEME
+            = "com.sun.webui.theme.DEFAULT_THEME";
+
     /**
      * Identifies the context's desired theme version.
      */
-    protected final static String DEFAULT_THEME_VERSION =
-            "com.sun.webui.theme.DEFAULT_THEME_VERSION"; //NOI18N
+    protected final static String DEFAULT_THEME_VERSION
+            = "com.sun.webui.theme.DEFAULT_THEME_VERSION";
+
     /**
      * Identifies additional theme bundles.
      */
-    protected final static String THEME_RESOURCES =
-            "com.sun.webui.theme.THEME_RESOURCES"; //NOI18N
+    protected final static String THEME_RESOURCES
+            = "com.sun.webui.theme.THEME_RESOURCES";
+
     /**
-     * Identifies the <code>ThemeFactory</code> class name.
+     * Identifies the {@code ThemeFactory} class name.
      */
-    protected final static String THEME_FACTORY_CLASS_NAME =
-            "com.sun.webui.theme.THEME_FACTORY_CLASS_NAME"; //NOI18N
+    protected final static String THEME_FACTORY_CLASS_NAME
+            = "com.sun.webui.theme.THEME_FACTORY_CLASS_NAME";
+
     /**
-     * Identifies the <code>ThemeServlet</code> context for obtaining
-     * resources via HTTP.
+     * Identifies the {@code ThemeServlet} context for obtaining resources via
+     * HTTP.
      */
-    protected final static String THEME_SERVLET_CONTEXT =
-            "com.sun.webui.theme.THEME_SERVLET_CONTEXT"; //NOI18N
+    protected final static String THEME_SERVLET_CONTEXT
+            = "com.sun.webui.theme.THEME_SERVLET_CONTEXT";
+
     /**
-     * The default locale for the default theme in this
-     * <code>ThemeContext</code>.
+     * The default locale for the default theme in this {@code ThemeContext}.
      */
     private Locale defaultLocale = Locale.getDefault();
 
-    // Should be configurable in the environment like a system property
-    // but not only as a compile time constant.
-    //
     /**
-     * The name of the default theme for this <code>ThemeContext</code>.
-     * If a requested resource cannot be found in a specified theme
-     * then the default theme will be used to obtain that resource.
+     * The name of the default theme for this {@code ThemeContext}. If a
+     * requested resource cannot be found in a specified theme then the default
+     * theme will be used to obtain that resource. Should be configurable in the
+     * environment like a system property but not only as a compile time
+     * constant.
      */
     private String defaultTheme = null;
 
-    // Need to firm up versioning semantics. Does specification version
-    // and implementation make more sense than Major/Minor ?
-    //
-    // Should also be configurable from the runtime environment
-    // as system property, versus just a compiled default.
-    //
     /**
-     * If more than one version of the default theme exists, the
-     * theme instance with version equal to <code>defaultThemeVersion</code>
-     * will be used to obtain theme resources.
+     * If more than one version of the default theme exists, the theme instance
+     * with version equal to {@code defaultThemeVersion} will be used to obtain
+     * theme resources. Need to firm up versioning semantics. Does specification
+     * version and implementation make more sense than Major/Minor ?
+     *
+     * Should also be configurable from the runtime environment as system
+     * property, versus just a compiled default.
      */
     private String defaultThemeVersion = null;
+
     /**
-     * The absolute portion of the theme servlet's servlet-mapping
-     * url-pattern element. For example if the theme servlet is configured as:
+     * The absolute portion of the theme servlet's servlet-mapping url-pattern
+     * element. For example if the theme servlet is configured as:
      * <p>
-     * <code>
+     * {@code
      * <pre>
      *     &lt;servlet-mapping&gt;
      *         &lt;servlet-name&gt;FacesServlet&lt;/servlet-name&gt;
      *         &lt;url-pattern&gt;faces/*&lt;/url-pattern&gt;
      *     &lt;/servlet-mapping&gt;
      * </pre>
-     * </code>
+     * }
      * </p>
      * <p>
-     * Then the value of <code>themeServletContext</code> would be
-     * <code>theme</code>.
+     * Then the value of {@code themeServletContext} would be {@code theme}.
      * </p>
      * <p>
-     * When trying to locate a specifc theme resource this prefix is
-     * prepending to the theme resource reference to locate the resource.
+     * When trying to locate a specific theme resource this prefix is prepending
+     * to the theme resource reference to locate the resource.
      * </p>
      */
     private String themeServletContext;
 
-    // Probably want a different name so as not to get confused
-    // with theme.ThemeResources.
-    //
     /**
-     * Bundle names of theme resources that augment a core theme.
-     * These resources typically contain theme overrides and are referenced
-     * first before a default or core theme.
+     * Bundle names of theme resources that augment a core theme. These
+     * resources typically contain theme overrides and are referenced first
+     * before a default or core theme.
      */
     private String[] themeResources;
+
     /**
-     * The class name of a <code>ThemeFactory</code> implementation.
-     * This class will be used to instantiate an instance of a
-     * <code>ThemeFactory</code>.
+     * The class name of a {@code ThemeFactory} implementation. This class will
+     * be used to instantiate an instance of a {@code ThemeFactory}.
      */
     private String themeFactoryClassName;
+
     /**
-     * The <code>ClassLoader</code> that this <code>ThemeContext</code>
-     * should use when obtaining resources.
+     * The {@code ClassLoader} that this {@code ThemeContext} should use when
+     * obtaining resources.
      */
     private ClassLoader defaultClassLoader;
+
     /**
-     * The application context path as a path prefix that is prepended to 
-     * theme resource path references.
+     * The application context path as a path prefix that is prepended to theme
+     * resource path references.
      */
     private String requestContextPath;
 
-    // Should be an interface.
-    //
+    /**
+     * Theme factory.
+     */
     private ThemeFactory themeFactory;
 
     /**
-     * Construct a <code>ThemeContext</code>.
+     * Construct a {@code ThemeContext}.
      */
     ThemeContext() {
     }
 
     public ThemeFactory getThemeFactory() {
-        if (themeFactory == null) {
-            //FIXME double-checked locking
-            synchronized (this) {
-                if (themeFactory == null) {
-                    try {
-                        themeFactory = (ThemeFactory) Class.forName(getThemeFactoryClassName()).
-                                newInstance();
-                    } catch (Exception e) {
-                        // Use JarThemeFactory as the fallback default
-                        // This should come from subclasses.
-                        //
-                        return (ThemeFactory) new JarThemeFactory();
-                    }
+        //FIXME double-checked locking
+        synchronized (this) {
+            if (themeFactory == null) {
+                try {
+                    themeFactory = (ThemeFactory) Class
+                            .forName(getThemeFactoryClassName()).
+                            newInstance();
+                } catch (Exception e) {
+                    // Use JarThemeFactory as the fallback default
+                    // This should come from subclasses.
+                    return (ThemeFactory) new JarThemeFactory();
                 }
             }
         }
@@ -247,170 +261,200 @@ public abstract class ThemeContext {
     }
 
     /**
-     * Return bundle names of theme resources that augment a core theme.
-     * These resources typically contain theme overrides and are referenced
-     * first before a default or core theme.
+     * Return bundle names of theme resources that augment a core theme.These
+     * resources typically contain theme overrides and are referenced first
+     * before a default or core theme.
+     *
+     * @return theme resources
      */
     public String[] getThemeResources() {
         return themeResources;
     }
 
     /**
-     * Set the bundle names of theme resources that augment a core theme.
-     * These resources typically contain theme overrides and are referenced
-     * first before a default or core theme.
+     * Set the bundle names of theme resources that augment a core theme.These
+     * resources typically contain theme overrides and are referenced first
+     * before a default or core theme.
+     *
+     * @param themeResources new theme resources
      */
     public void setThemeResources(String[] themeResources) {
         this.themeResources = themeResources;
     }
 
-    // Could this be a "strategy" object instance vs. just a value ?
-    // 
     /**
-     * Return the  application context path as a prefix that is prepended to 
+     * Return the application context path as a prefix that is prepended to
      * theme resource path references.
+     *
+     * @return request context path
      */
     public String getRequestContextPath() {
         return requestContextPath;
     }
 
     /**
-     * Set the application context path prefix that is prepended to 
-     * theme resource path references.
+     * Set the application context path prefix that is prepended to theme
+     * resource path references.
+     *
+     * @param requestContextPath new request context path
      */
     public void setRequestContextPath(String requestContextPath) {
         this.requestContextPath = requestContextPath;
     }
 
     /**
-     * Return a path used as a prefix that is prepended to a
-     * a theme resource path reference.
-     * This implementation returns
-     * <code>getRequestContextPath() + getThemeServletContext()</code>.
+     * Return a path used as a prefix that is prepended to a a theme resource
+     * path reference.This implementation returns
+     * {@code getRequestContextPath() + getThemeServletContext()}.
+     *
+     * @param path input path
+     * @return resource path
      */
     public String getResourcePath(String path) {
-        return getRequestContextPath() + getThemeServletContext() +
-                (String) (path.startsWith("/") ? "/" + path : path);
+        return getRequestContextPath() + getThemeServletContext()
+                + (String) (path.startsWith("/") ? "/" + path : path);
     }
 
     /**
-     * Set the default locale for the themes in this <code>ThemeContext</code>.
+     * Set the default locale for the themes in this {@code ThemeContext}.
+     *
+     * @param defaultLocale new default locale
      */
     public void setDefaultLocale(Locale defaultLocale) {
         this.defaultLocale = defaultLocale;
     }
 
     /**
-     * Set the default locale for the themes in this <code>ThemeContext</code>.
+     * Set the default locale for the themes in this {@code ThemeContext}.
+     *
+     * @param defaultLocale new default locale string
      */
     public void setDefaultLocale(String defaultLocale) {
         this.defaultLocale = getLocale(defaultLocale);
     }
 
     /**
-     * Return the default locale for thee themes in this
-     * <code>ThemeContext</code>.
+     * Return the default locale for thee themes in this {@code ThemeContext}.
+     *
+     * @return Locale
      */
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
     /**
-     * Return the <code>ClassLoader</code> that this <code>ThemeContext</code>
-     * should use when obtaining resources.
+     * Return the {@code ClassLoader} that this {@code ThemeContext} should use
+     * when obtaining resources.
+     *
+     * @return default class-loader
      */
     public ClassLoader getDefaultClassLoader() {
-        return defaultClassLoader == null ? this.getClass().getClassLoader() : defaultClassLoader;
+        if (defaultClassLoader == null) {
+            return this.getClass().getClassLoader();
+        }
+        return defaultClassLoader;
     }
 
     /**
-     * Set the <code>ClassLoader</code> that this <code>ThemeContext</code>
-     * should use when obtaining resources.
+     * Set the {@code ClassLoader} that this {@code ThemeContext} should use
+     * when obtaining resources.
+     *
+     * @param defaultClassLoader new default class-loader
      */
     public void setDefaultClassLoader(ClassLoader defaultClassLoader) {
         this.defaultClassLoader = defaultClassLoader;
     }
 
     /**
-     * Return the class name of a <code>ThemeFactory</code> implementation.
-     * This class will be used to instantiate an instance of a
-     * <code>ThemeFactory</code>.
+     * Return the class name of a {@code ThemeFactory} implementation.This class
+     * will be used to instantiate an instance of a {@code ThemeFactory}.
+     *
+     * @return theme factory class name
      */
     public String getThemeFactoryClassName() {
         return themeFactoryClassName;
     }
 
     /**
-     * Set the class name of a <code>ThemeFactory</code> implementation.
-     * This class will be used to instantiate an instance of a
-     * <code>ThemeFactory</code>.
+     * Set the class name of a {@code ThemeFactory} implementation.This class
+     * will be used to instantiate an instance of a {@code ThemeFactory}.
+     *
+     * @param themeFactoryClassName new theme factory class name
      */
     public void setThemeFactoryClassName(String themeFactoryClassName) {
         this.themeFactoryClassName = themeFactoryClassName;
     }
 
     /**
-     * Return the the name of the default theme.
-     * If a requested resource cannot be found in a specified theme
-     * then the default theme will be used to obtain that resource.
+     * Return the the name of the default theme.If a requested resource cannot
+     * be found in a specified theme then the default theme will be used to
+     * obtain that resource.
+     *
+     * @return default theme
      */
     public String getDefaultTheme() {
         return defaultTheme;
     }
 
     /**
-     * Set the default theme name for this <code>ThemeContext</code>.
-     * If a requested resource cannot be found in a specified theme
-     * then the default theme will be used to obtain that resource.
+     * Set the default theme name for this {@code ThemeContext}.If a requested
+     * resource cannot be found in a specified theme then the default theme will
+     * be used to obtain that resource.
+     *
+     * @param defaultTheme new default theme
      */
     public void setDefaultTheme(String defaultTheme) {
         this.defaultTheme = defaultTheme;
     }
 
     /**
-     * Return the version of the default theme.
-     * If more than one version of the default theme exists, the
-     * theme instance with version equal to <code>defaultThemeVersion</code>
-     * will be used to obtain theme resources.
+     * Return the version of the default theme. If more than one version of the
+     * default theme exists, the theme instance with version equal to
+     * {@code defaultThemeVersion} will be used to obtain theme resources.
+     *
+     * @return default theme version
      */
     public String getDefaultThemeVersion() {
         return defaultThemeVersion;
     }
 
     /**
-     * Set the version of the default theme.
-     * If more than one version of the default theme exists, the
-     * <code>defaultThemeVersion</code> will be used to obtain 
-     * <code>Theme</code> resources.
+     * Set the version of the default theme.If more than one version of the
+     * default theme exists, the {@code defaultThemeVersion} will be used to
+     * obtain {@code Theme} resources.
+     *
+     * @param defaultThemeVersion new default theme version
      */
     public void setDefaultThemeVersion(String defaultThemeVersion) {
         this.defaultThemeVersion = defaultThemeVersion;
     }
 
     /**
-     * Return a path prefix of a theme resource.
-     * When trying to locate a specifc theme resource this prefix is
-     * prepending to the theme resource identifier to locate the resource.
-     * It is the same as the ThemeServlet's url-pattern, less any
-     * "/*" specification.
+     * Return a path prefix of a theme resource.When trying to locate a specific
+     * theme resource this prefix is prepending to the theme resource identifier
+     * to locate the resource. It is the same as the ThemeServlet's url-pattern,
+     * less any "/*" specification.
+     *
+     * @return theme servlet context
      */
     public String getThemeServletContext() {
         return themeServletContext;
     }
 
     /**
-     * Set a path prefix of a theme resource.
-     * When trying to locate a specifc theme resource this prefix is
-     * prepending to the theme resource identifier to locate the resource.
-     * It is the same as the ThemeServlet's url-pattern, less any
-     * "/*" specification.
+     * Set a path prefix of a theme resource.When trying to locate a specific
+     * theme resource this prefix is prepending to the theme resource identifier
+     * to locate the resource. It is the same as the ThemeServlet's URL pattern,
+     * less any "/*" specification.
+     *
+     * @param themeServletContext theme servlet context
      */
     public void setThemeServletContext(String themeServletContext) {
         this.themeServletContext = themeServletContext;
     }
     /**
-     * If no version can be identified from one of the version
-     * methods, this constant is returned.
+     * If no version can be identified from one of the version methods, this
+     * constant is returned.
      */
     public static final int NOVERSION = -1;
 
@@ -422,11 +466,11 @@ public abstract class ThemeContext {
         MAJOR, MINOR
     };
 
-    // Need to escape "." because the string is used as a regular expression.
     /**
-     * Version separator.
+     * Version separator. Need to escape "." because the string is used as a
+     * regular expression.
      */
-    private static String DOT = "\\.";
+    private static final String DOT = "\\.";
 
     // This also doesn't make sense in the presence of more than
     // one theme. Consider this an implementation detail for an
@@ -435,24 +479,30 @@ public abstract class ThemeContext {
     // context. Is there one theme context for each theme ?
     //
     /**
-     * Return the major version of the default theme version or 
-     * <code>ThemeContext.NOVERSION</code>.
+     * Return the major version of the default theme version or
+     * {@code ThemeContext.NOVERSION}.
+     *
+     * @return major version
      */
     public int getDefaultThemeMajorVersion() {
         return getVersionNumber(Version.MAJOR);
     }
 
     /**
-     * Return the minor version of the default theme version or 
-     * <code>ThemeContext.NOVERSION</code>.
+     * Return the minor version of the default theme version or
+     * {@code ThemeContext.NOVERSION}.
+     *
+     * @return minor version
      */
     public int getDefaultThemeMinorVersion() {
         return getVersionNumber(Version.MINOR);
     }
 
     /**
-     * The theme version format is "MAJOR.MINOR" where
-     * MAJOR and MINOR are integers
+     * Convert the theme version to integer. The format is "MAJOR.MINOR" where
+     * MAJOR and MINOR are integers.
+     *
+     * @param majorOrMinor major or minor
      */
     private int getVersionNumber(Version majorOrMinor) {
         int version = NOVERSION;
@@ -476,8 +526,11 @@ public abstract class ThemeContext {
     }
 
     /**
-     * Return a <code>Locale</code> from a <code>String</code>
-     * of the form <code>language[_country[_variant]]</code>.
+     * Get a {@code Locale} from a {@code String} of the form
+     * {@code language[_country[_variant]]}.
+     *
+     * @param localeString locale string
+     * @return Locale
      */
     private Locale getLocale(String localeString) {
         if (localeString == null) {

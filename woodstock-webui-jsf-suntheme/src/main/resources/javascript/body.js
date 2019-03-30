@@ -14,7 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, cookie) {
+define([
+    "webui/suntheme/common",
+    "webui/suntheme/cookie"
+], function (common, cookie) {
 
     return {
         /**
@@ -112,7 +115,7 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                     return false;
                 }
                 return this.setFocusByElement(window.document.getElementById(fid));
-            }
+            };
 
             /**
              * Set the focus on "focusElement".
@@ -229,20 +232,18 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 // Don't know if we'll have issues if multiple forms contain
                 // an element with the same id. I know getElementById gets
                 // confused.
-                //
 
                 if (focusElement === null) {
                     return false;
                 }
+
                 // Get the form that contains the focus element.
-                //
                 for (var i = 0; i < document.forms.length; ++i) {
                     var fform = document.forms[i];
 
                     // Get the hidden field that maintains the focus element id.
                     // If it exists return it. We know its name is the same
                     // as its id.
-                    //
                     try {
                         var ffield = fform.elements[this.focusElementFieldId];
                         if (ffield !== null) {
@@ -256,7 +257,6 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
 
                     // If it doesn't exist create it.
                     // and add it to the form.
-                    //
                     ffield = document.createElement('input');
                     ffield.type = 'hidden';
                     ffield.id = this.focusElementFieldId;
@@ -287,7 +287,6 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
 
                 // # char found, anchor being used. forego scrolling.
                 // CR 6342635. 
-                //
                 if (window.location.href.indexOf('#') !== -1) {
                     this.scrollCookie.restore();
                 }
@@ -304,18 +303,15 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
             this.focusListener = function (evt) {
 
                 // If it's not an element node just return
-                //
                 var node = null;
                 var isElementNode = false;
 
                 // is IE 
-                //
                 if (document.attachEvent) {
                     node = evt.srcElement;
 
                     // We have to hard code "1" as the Node.ELEMENT_NODE in
                     // ie, because ie does not make the constant accessible.
-                    //
                     isElementNode = (node === null ? false : node.nodeType === 1);
                 } else {
                     node = evt.target;
@@ -326,7 +322,6 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                     // Note that there is no reliable way to set
                     // focus to some other element if the event element
                     // deemed to receive the focus can't accept the focus.
-                    //
                     common.body.updateFocusElementField(node);
                 }
                 return true;
@@ -347,7 +342,6 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
 
                 // Add the focus listener, in the onload to prevent
                 // recursive calls from calling setDefaultFocus.
-                //
                 if (window.document.addEventListener) {
                     window.document.addEventListener('focus',
                             common.body.focusListener, true);
@@ -361,7 +355,6 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 // Also rely on the focus listener to update the focus
                 // hidden fields by catching the 'element.focus()' in
                 // setDefaultFocus
-                //
                 window.setTimeout(function () {
                     common.body.setDefaultFocus();
                 }
@@ -370,7 +363,6 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 // Set up the scroll position after the focus has been
                 // restored. Need to make sure that this takes into
                 // account the default focus that was just set.
-                //
                 common.body.setDefaultScrollPosition();
             };
 
@@ -395,5 +387,5 @@ define(["webui/suntheme/common", "webui/suntheme/cookie"], function (common, coo
                 window.attachEvent('onunload', this.onUnloadListener);
             }
         }
-    }
+    };
 });

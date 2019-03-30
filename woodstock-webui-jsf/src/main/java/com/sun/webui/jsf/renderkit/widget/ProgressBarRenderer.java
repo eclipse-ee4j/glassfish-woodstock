@@ -20,98 +20,88 @@ import com.sun.faces.annotation.Renderer;
 
 import com.sun.webui.jsf.component.ProgressBar;
 import com.sun.webui.jsf.component.TextArea;
-import com.sun.webui.jsf.util.WidgetUtilities;
 import com.sun.webui.theme.Theme;
-import com.sun.webui.jsf.theme.ThemeTemplates;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.faces.context.ResponseWriter;
+import javax.json.JsonObjectBuilder;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.jsonValueOf;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 
 /**
  * This class renders ProgressBar components.
  */
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.ProgressBar",
 componentFamily = "com.sun.webui.jsf.ProgressBar"))
-public class ProgressBarRenderer extends RendererBase {
+public final class ProgressBarRenderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
      */
-    private static final String attributes[] = {
-        "style"};
+    private static final String ATTRIBUTES[] = {
+        "style"
+    };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Get the Dojo modules required to instantiate the widget.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONArray getModules(FacesContext context, UIComponent component)
-            throws JSONException {
+    @Override
+    protected String[] getModuleNames(UIComponent component) {
+
         ProgressBar progressBar = (ProgressBar) component;
-
-        JSONArray json = new JSONArray();
-        json.put(JavaScriptUtilities.getModuleName("widget.progressBar"));
-
         if (progressBar.isAjaxify()) {
-            json.put(JavaScriptUtilities.getModuleName(
-                    "widget.jsfx.progressBar"));
+            return new String[]{
+                "progressBar",
+                "jsfx/progressBar"
+            };
         }
-        return json;
+        return new String[]{
+            "progressBar"
+        };
     }
 
-    /**
-     * Helper method to obtain component properties.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONObject getProperties(FacesContext context,
-            UIComponent component) throws IOException, JSONException {
-        ProgressBar progressBar = (ProgressBar) component;
-        Theme theme = ThemeUtilities.getTheme(context);
-        String templatePath = progressBar.getHtmlTemplate(); // Get HTML template.
+    @Override
+    protected JsonObjectBuilder getProperties(FacesContext context,
+            UIComponent component) throws IOException {
 
-        JSONObject json = new JSONObject();
-        json.put("barHeight", progressBar.getHeight()).put("barWidth", progressBar.getWidth()).put("failedStateText", progressBar.getFailedStateText()).put("logMessage", progressBar.getLogMessage()).put("overlayAnimation", progressBar.isOverlayAnimation()).put("percentChar", theme.getMessage("ProgressBar.percentChar")).put("progress", String.valueOf(progressBar.getProgress())).put("progressImageUrl", progressBar.getProgressImageUrl()).put("refreshRate", progressBar.getRefreshRate()).put("taskState", progressBar.getTaskState()).put("templatePath", (templatePath != null)
-                ? templatePath
-                : theme.getPathToTemplate(ThemeTemplates.PROGRESSBAR)).put("toolTip", (progressBar.getToolTip() != null)
-                ? progressBar.getToolTip()
-                : theme.getMessage("ProgressBar.toolTip")).put("type", progressBar.getType()).put("visible", progressBar.isVisible());
+        ProgressBar progressBar = (ProgressBar) component;
+        Theme theme = getTheme(context);
+        JsonObjectBuilder jsonBuilder = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+        .add("barHeight", progressBar.getHeight())
+        .add("barWidth", progressBar.getWidth())
+        .add("failedStateText", jsonValueOf(progressBar.getFailedStateText()))
+        .add("logMessage", jsonValueOf(progressBar.getLogMessage()))
+        .add("overlayAnimation", progressBar.isOverlayAnimation())
+        .add("percentChar", jsonValueOf(
+                theme.getMessage("ProgressBar.percentChar")))
+        .add("progress", progressBar.getProgress())
+        .add("progressImageUrl", jsonValueOf(
+                progressBar.getProgressImageUrl()))
+        .add("refreshRate", progressBar.getRefreshRate())
+        .add("taskState", jsonValueOf(progressBar.getTaskState()));
+        if (progressBar.getToolTip() != null) {
+            jsonBuilder.add("toolTip", progressBar.getToolTip());
+        } else {
+            jsonBuilder.add("toolTip", theme.getMessage("ProgressBar.toolTip"));
+        }
+        jsonBuilder.add("type", progressBar.getType());
+        jsonBuilder.add("visible", progressBar.isVisible());
+        addAttributeProperties(ATTRIBUTES, component, jsonBuilder);
+        return jsonBuilder;
+    }
+
+    @Override
+    protected void renderNestedContent(FacesContext context,
+            UIComponent component) throws IOException{
+
+        ResponseWriter writer = context.getResponseWriter();
+        ProgressBar pb = (ProgressBar) component;
 
         // Add busy icon.
-        WidgetUtilities.addProperties(json, "busyImage",
-                WidgetUtilities.renderComponent(context,
-                progressBar.getBusyIcon()));
+        writer.append(renderComponent(context, pb.getBusyIcon()));
 
-        // Append properties.
-        addAttributeProperties(attributes, component, json);
-        setCoreProperties(context, component, json);
-        setFacetProperties(context, progressBar, json);
-
-        return json;
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Helper method to set facet properties.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     * @param json JSONObject to append to.
-     */
-    private void setFacetProperties(FacesContext context, ProgressBar component,
-            JSONObject json) throws IOException, JSONException {
         // Button facets.
         UIComponent rightButtonCon = component.getFacet(
                 ProgressBar.RIGHTTASK_CONTROL_FACET);
@@ -119,41 +109,38 @@ public class ProgressBarRenderer extends RendererBase {
                 ProgressBar.BOTTOMTASK_CONTROL_FACET);
 
         if (rightButtonCon != null) {
-            WidgetUtilities.addProperties(json, "progressControlRight",
-                    WidgetUtilities.renderComponent(context, rightButtonCon));
+            writer.append(renderComponent(context, rightButtonCon));
         }
         if (bottomButtonCon != null) {
-            WidgetUtilities.addProperties(json, "progressControlBottom",
-                    WidgetUtilities.renderComponent(context, bottomButtonCon));
+            writer.append(renderComponent(context, bottomButtonCon));
         }
 
-        ProgressBar pb = (ProgressBar) component;
         if (pb.getLogMessage() != null) {
             // TextArea for running log
-            UIComponent textArea = (TextArea) pb.getLogMsgComponent(component);
-
-            WidgetUtilities.addProperties(json, "log",
-                    WidgetUtilities.renderComponent(context, textArea));
-            json.put("logId", textArea.getClientId(context));
+            UIComponent textArea = (TextArea) pb.getLogMsgComponent(pb);
+            writer.append(renderComponent(context, textArea));
         }
 
         // Bottom text facet.
         UIComponent bottomTextFacet = component.getFacet(
                 ProgressBar.BOTTOMTEXT_FACET);
         if (bottomTextFacet != null) {
-            WidgetUtilities.addProperties(json, "bottomText",
-                    WidgetUtilities.renderComponent(context, bottomTextFacet));
+            writer.append(renderComponent(context, bottomTextFacet));
         } else {
-            json.put("bottomText", pb.getStatus());
+            writer.append("<span>bottomText:")
+                    .append(pb.getStatus())
+                    .append("</span>");
         }
 
         // Top Text facet.
-        UIComponent topTextFacet = component.getFacet(ProgressBar.TOPTEXT_FACET);
+        UIComponent topTextFacet = component
+                .getFacet(ProgressBar.TOPTEXT_FACET);
         if (topTextFacet != null) {
-            WidgetUtilities.addProperties(json, "topText",
-                    WidgetUtilities.renderComponent(context, topTextFacet));
+            writer.append(renderComponent(context, topTextFacet));
         } else {
-            json.put("topText", pb.getDescription());
+            writer.append("<span>topText:")
+                    .append(pb.getDescription())
+                    .append("</span>");
         }
     }
 }

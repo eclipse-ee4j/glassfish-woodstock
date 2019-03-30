@@ -17,11 +17,16 @@
 package com.sun.webui.jsf.theme;
 
 /**
- * <p> This class contains constants for image paths.</p>
- * TODO: Eventually these need to move to a theme-based
- * resource file.
+ * This class contains constants for image paths.
+ * TODO: Eventually these need to move to a theme-based resource file.
  */
-public class ThemeImages {
+public final class ThemeImages {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private ThemeImages() {
+    }
 
     /**
      * Alarm images.
@@ -999,11 +1004,4 @@ public class ThemeImages {
     public static final String PROGRESS_BUSY_ALT =
             "PROGRESS_BUSY_ALT";
 
-    /**
-     * This private constructor prevents this class from being instantiated
-     * directly as its only purpose is to provide image constants.
-     */
-    private ThemeImages() {
-        // do nothing
-    }
 }

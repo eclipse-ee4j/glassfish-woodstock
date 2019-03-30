@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: FrameRenderer.java,v 1.1.16.1 2009-12-29 04:52:46 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -25,58 +22,35 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Frame;
-import com.sun.webui.jsf.util.RenderingUtilities;
+
+import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderURLAttribute;
 
 /**
- * <p>Renderer for a {@link Frame} component.</p>
+ * Renderer for a {@link Frame} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Frame"))
 public class FrameRenderer extends AbstractRenderer {
 
-    // ======================================================== Static Variables
     /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
+     * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {"name", "scrolling"}; //NOI18N
+    private static final String STRING_ATTRIBUTES[] = {
+        "name",
+        "scrolling"
+    };
 
-    // -------------------------------------------------------- Renderer Methods
-    /**
-     * <p>Render the appropriate element start for the outermost
-     * element.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
         Frame frame = (Frame) component;
 
-        // I don't think this is the correct way to write the XML
-        // header /avk
-
-        if (!RenderingUtilities.isPortlet(context)) {
+        // I don't think this is the correct way to write the XML header
+        if (!isPortlet(context)) {
             writer.startElement("frame", component);
         }
-
     }
 
-    /**
-     * <p>Render the appropriate element attributes, followed by the
-     * nested <code>&lt;head&gt;</code> element, plus the beginning
-     * of a nested <code>&lt;body&gt;</code> element.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderAttributes(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -84,60 +58,56 @@ public class FrameRenderer extends AbstractRenderer {
         Frame frame = (Frame) component;
 
         // Render a nested "head" element
-        if (!RenderingUtilities.isPortlet(context)) {
-            //id
+        if (!isPortlet(context)) {
             String id = frame.getClientId(context);
             if (id != null) {
-                writer.writeAttribute("id", id, null); //NOI18N
+                writer.writeAttribute("id", id, null);
             }
-            //url
             String url = frame.getUrl();
             if (url != null) {
                 // Append context path to relative URLs -- bugtraq #6338307.
                 url = context.getApplication().getViewHandler().
                         getResourceURL(context, url);
 
-                RenderingUtilities.renderURLAttribute(context,
-                        writer,
-                        component,
-                        "src", //NOI18N
-                        url,
-                        null); //NOI18N
+                renderURLAttribute(context, writer, component, "src",
+                        url, null);
             }
             //class
             String styleClass = frame.getStyleClass();
             if (styleClass != null) {
-                writer.writeAttribute("class", styleClass, null); //NOI18N
+                writer.writeAttribute("class", styleClass, null);
             }
             //style
             String style = frame.getStyle();
             if (style != null) {
-                writer.writeAttribute("style", style, null); //NOI18N
+                writer.writeAttribute("style", style, null);
             }
             //write out the rest of the attributes
-            addStringAttributes(context, component, writer, stringAttributes);
+            addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
 
             //frameborder
             boolean border = frame.isFrameBorder();
             if (border) {
-                writer.writeAttribute("frameborder", "1", null); //NOI18N
+                writer.writeAttribute("frameborder", "1", null);
             } else {
-                writer.writeAttribute("frameborder", "0", null); //NOI18N
+                writer.writeAttribute("frameborder", "0", null);
             }
             //longdesc
             String longdesc = frame.getLongDesc();
             if (longdesc != null) {
-                writer.writeAttribute("longdesc", longdesc, null); //NOI18N
+                writer.writeAttribute("longdesc", longdesc, null);
             }
             //marginWidth
-            Integer marginWidth = new Integer(frame.getMarginWidth());
+            Integer marginWidth = frame.getMarginWidth();
             if (frame.getMarginWidth() >= 0) {
-                writer.writeAttribute("marginwidth", marginWidth.toString(), null); //NOI18N
+                writer.writeAttribute("marginwidth", marginWidth.toString(),
+                        null);
             }
             //marginHeight
-            Integer marginHeight = new Integer(frame.getMarginHeight());
+            Integer marginHeight = frame.getMarginHeight();
             if (frame.getMarginHeight() >= 0) {
-                writer.writeAttribute("marginheight", marginHeight.toString(), null); //NOI18N
+                writer.writeAttribute("marginheight", marginHeight.toString(),
+                        null);
             }
 
             renderResizeAttribute(writer, component);
@@ -145,43 +115,29 @@ public class FrameRenderer extends AbstractRenderer {
             //tooltip
             String toolTip = frame.getToolTip();
             if (toolTip != null) {
-                writer.writeAttribute("title", toolTip, "toolTip"); //NOI18N
+                writer.writeAttribute("title", toolTip, "toolTip");
             }
         }
 
     }
 
-    /**
-     * <p>Render the appropriate element end.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
 
-        Frame frame = (Frame) component;
-
         // End the outermost "html" element
-        if (!RenderingUtilities.isPortlet(context)) {
-            writer.write(" />"); //NOI18N
-            writer.write("\n"); //NOI18N
+        if (!isPortlet(context)) {
+            writer.write(" />");
+            writer.write("\n");
         }
-
     }
 
-    // ---------------------------------------------------s- protected Methods
-    protected void renderResizeAttribute(ResponseWriter writer, UIComponent comp)
-            throws IOException {
-        //noresize
+    protected void renderResizeAttribute(ResponseWriter writer,
+            UIComponent comp) throws IOException {
+
         boolean noresize = ((Frame) comp).isNoResize();
         if (noresize) {
-            writer.writeAttribute("noresize", "noresize", null); //NOI18N
+            writer.writeAttribute("noresize", "noresize", null);
         }
     }
 }

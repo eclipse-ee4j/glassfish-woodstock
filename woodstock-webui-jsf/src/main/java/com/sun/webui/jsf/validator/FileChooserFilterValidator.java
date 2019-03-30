@@ -46,9 +46,9 @@ import com.sun.webui.jsf.component.FileChooser;
  */
 // Note that typing this by referencing FileChooser
 // prevents using this in a general Chooser paradigm.
-//
 public class FileChooserFilterValidator implements Validator {
 
+    @Override
     public void validate(FacesContext context, UIComponent component,
             Object value) throws ValidatorException {
 

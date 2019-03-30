@@ -20,35 +20,35 @@ import com.sun.faces.annotation.Renderer;
 
 import com.sun.webui.jsf.component.Table2;
 import com.sun.webui.jsf.component.Table2RowGroup;
-import com.sun.webui.jsf.util.WidgetUtilities;
-import com.sun.webui.theme.Theme;
-import com.sun.webui.jsf.theme.ThemeTemplates;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import java.io.IOException;
 import java.util.Iterator;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonValue;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 
 /**
  * This class renders Table2 components.
  */
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.Table2",
 componentFamily = "com.sun.webui.jsf.Table2"))
-public class Table2Renderer extends RendererBase {
+public final class Table2Renderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
      * <p>
      * Note: The BGCOLOR attribute is deprecated (in the HTML 4.0 spec) in favor
      * of style sheets. In addition, the DIR and LANG attributes are not
-     * cuurently supported.
+     * currently supported.
      * </p>
      */
-    private static final String attributes[] = {
+    private static final String ATTRIBUTES[] = {
         "align",
         "bgColor",
         "dir",
@@ -65,67 +65,53 @@ public class Table2Renderer extends RendererBase {
         "onMouseOver",
         "onMouseUp",
         "rules",
-        "summary"};
+        "summary"
+    };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // RendererBase methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Get the Dojo modules required to instantiate the widget.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONArray getModules(FacesContext context, UIComponent component)
-            throws JSONException {
-        JSONArray json = new JSONArray();
-        json.put(JavaScriptUtilities.getModuleName("widget.table2"));
-        return json;
+    @Override
+    protected String[] getModuleNames(UIComponent component) {
+        return new String[]{
+            "table2"
+        };
     }
 
-    /** 
-     * Helper method to obtain component properties.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONObject getProperties(FacesContext context,
-            UIComponent component) throws IOException, JSONException {
-        Table2 table = (Table2) component;
-        String templatePath = table.getHtmlTemplate(); // Get HTML template.
+    @Override
+    protected JsonObjectBuilder getProperties(FacesContext context,
+            UIComponent component) throws IOException {
 
-        JSONObject json = new JSONObject();
-        json.put("templatePath", (templatePath != null)
-                ? templatePath
-                : getTheme().getPathToTemplate(ThemeTemplates.TABLE2)).put("width", table.getWidth());
+        Table2 table = (Table2) component;
+
+        JsonObjectBuilder jsonBuilder = JSON_BUILDER_FACTORY
+                .createObjectBuilder();
 
         // Add properties.
-        addAttributeProperties(attributes, table, json);
-        setCoreProperties(context, table, json);
-        setRowGroupProperties(context, table, json);
-        setActionsProperties(context, table, json);
-        setTitleProperties(context, table, json);
-
-        return json;
+        addAttributeProperties(ATTRIBUTES, table, jsonBuilder);
+        setRowGroupProperties(context, table, jsonBuilder);
+        setActionsProperties(context, table, jsonBuilder);
+        setTitleProperties(context, table, jsonBuilder);
+        return jsonBuilder;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Property methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /** 
+    @Override
+    protected void renderNestedContent(FacesContext context,
+            UIComponent component) throws IOException {
+    }
+
+    /**
      * Helper method to obtain actions properties.
      *
      * @param context FacesContext for the current request.
      * @param component Table2 to be rendered.
-     * @param json JSONObject to assign properties to.
+     * @param jsonBuilder JSONObject to assign properties to.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void setActionsProperties(FacesContext context, Table2 component,
-            JSONObject json) throws IOException, JSONException {
+            JsonObjectBuilder jsonBuilder) throws IOException {
+
         // Get actions facet.
         UIComponent facet = component.getFacet(Table2.ACTIONS_TOP_FACET);
         if (facet != null && facet.isRendered()) {
-            WidgetUtilities.addProperties(json, "actions",
-                    WidgetUtilities.renderComponent(context, facet));
+            jsonBuilder.add("actions", renderComponent(context, facet));
         }
     }
 
@@ -134,22 +120,23 @@ public class Table2Renderer extends RendererBase {
      *
      * @param context FacesContext for the current request.
      * @param component Table2 to be rendered.
-     * @param json JSONObject to assign properties to.
+     * @param jsonBuilder JSONObject to assign properties to.
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void setRowGroupProperties(FacesContext context, Table2 component,
-            JSONObject json) throws IOException, JSONException {
-        JSONArray jArray = new JSONArray();
-        json.put("rowGroups", jArray);
+            JsonObjectBuilder jsonBuilder) throws IOException {
 
         // Add properties for each Table2RowGroup child.
+        JsonArrayBuilder jsonArrayBuilder = JSON_BUILDER_FACTORY
+                .createArrayBuilder();
         Iterator kids = component.getTable2RowGroupChildren();
         while (kids.hasNext()) {
             Table2RowGroup group = (Table2RowGroup) kids.next();
             if (group.isRendered()) {
-                WidgetUtilities.addProperties(jArray,
-                        WidgetUtilities.renderComponent(context, group));
+                jsonArrayBuilder.add(renderComponent(context, group));
             }
         }
+        jsonBuilder.add("rowGroups", jsonArrayBuilder);
     }
 
     /** 
@@ -157,34 +144,33 @@ public class Table2Renderer extends RendererBase {
      *
      * @param context FacesContext for the current request.
      * @param component Table2 to be rendered.
-     * @param json JSONObject to assign properties to.
+     * @throws java.io.IOException if an IO error occurs
+     * @param jsonBuilder JSONObject to assign properties to.
      */
     protected void setTitleProperties(FacesContext context, Table2 component,
-            JSONObject json) throws IOException, JSONException {
+            JsonObjectBuilder jsonBuilder) throws IOException {
+
         // Get facet.
-        UIComponent facet = component.getFacet(Table2.TITLE_FACET);
+        UIComponent facet = component.getFacet(Table2.TABLE2_TITLE_FACET);
         if (facet != null) {
-            WidgetUtilities.addProperties(json, "title",
-                    WidgetUtilities.renderComponent(context, facet));
+            jsonBuilder.add("title", renderComponent(context, facet));
             return;
         }
 
-        // Get filter augment. 
-        String filterText = (component.getFilterText() != null)
-                ? getTheme().getMessage("table.title.filterApplied",
-                new String[]{component.getFilterText()})
-                : null;
+        // Get filter argument.
+        JsonValue filterText;
+        if (component.getFilterText() != null) {
+            filterText = Json.createValue(getTheme(context)
+                    .getMessage("table.title.filterApplied",
+                            new String[]{
+                                component.getFilterText()
+                            }));
+        } else {
+            filterText = JsonValue.NULL;
+        }
 
         // Append component properties.
-        json.put("title", component.getTitle()).put("filterText", filterText);
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // Helper method to get Theme objects.
-    private Theme getTheme() {
-        return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+        jsonBuilder.add("title", component.getTitle())
+                .add("filterText", filterText);
     }
 }

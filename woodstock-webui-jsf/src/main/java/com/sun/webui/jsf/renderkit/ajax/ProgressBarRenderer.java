@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 
 /**
  * This class responds to Ajax requests made to ProgressBar components.
@@ -32,12 +34,6 @@ import org.json.JSONObject;
 componentFamily = "com.sun.webui.jsf.ProgressBar"))
 public class ProgressBarRenderer extends javax.faces.render.Renderer {
 
-    /**
-     * Decode the component component
-     *
-     * @param context The FacesContext associated with this request
-     * @param component The ProgressBar component to decode
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
         if (context == null || component == null) {
@@ -50,7 +46,7 @@ public class ProgressBarRenderer extends javax.faces.render.Renderer {
         String buttonId = id + "_" + "controlType"; //NOI18N
 
         Object valueObject = params.get(buttonId);
-        String value = null;
+        String value;
         if (valueObject != null) {
             value = ((String) valueObject).trim();
             ProgressBar progressBar = (ProgressBar) component;
@@ -67,48 +63,18 @@ public class ProgressBarRenderer extends javax.faces.render.Renderer {
         }
     }
 
-    /**
-     * Render the beginning of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
     public void encodeBegin(FacesContext context, UIComponent component)
             throws IOException {
         // Do nothing...
     }
 
-    /**
-     * Render the children of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
     public void encodeChildren(FacesContext context, UIComponent component)
             throws IOException {
         // Do nothing...
     }
 
-    /**
-     * Render the ending of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
     public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException {
@@ -128,29 +94,26 @@ public class ProgressBarRenderer extends javax.faces.render.Renderer {
         String failedStateText = progressBar.getFailedStateText();
 
         // Top text facet.
-        UIComponent topTextFacet = component.getFacet(ProgressBar.TOPTEXT_FACET);
+        UIComponent topTextFacet = component
+                .getFacet(ProgressBar.TOPTEXT_FACET);
         if (topTextFacet != null) {
             topText = null;
         }
-        UIComponent bottomTextFacet = component.getFacet(ProgressBar.BOTTOMTEXT_FACET);
+        UIComponent bottomTextFacet = component
+                .getFacet(ProgressBar.BOTTOMTEXT_FACET);
         if (bottomTextFacet != null) {
             status = null;
         }
 
-        String taskState = progressBar.getTaskState();
-
-        try {
-            JSONObject json = new JSONObject();
-            json.put("taskState", taskState);
-            json.put("progress", String.valueOf(progress));
-            json.put("status", status);
-            json.put("topText", topText);
-            json.put("logMessage", logMessage);
-            json.put("failedStateText", failedStateText);
-            json.write(context.getResponseWriter());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JsonObject json = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("taskState", progressBar.getTaskState())
+                .add("progress", progress)
+                .add("status", status)
+                .add("topText", topText)
+                .add("logMessage", logMessage)
+                .add("failedStateText", failedStateText)
+                .build();
+        writeJsonObject(json, context.getResponseWriter());
     }
 }
-

@@ -33,33 +33,28 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.component.DateManager;
 
 /**
- *  <p>	Use this validator to check the number of characters in a string when
- *	you need to set the validation messages.</p>
- *
- * @author avk
+ * Use this validator to check the number of characters in a string when
+ * you need to set the validation messages.
  */
 public class DateInRangeValidator implements Validator {
 
     /**
-     * <p>The converter id for this converter.</p>
+     * The converter id for this converter.
      */
     public static final String VALIDATOR_ID = "com.sun.webui.jsf.DateInRange";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
-    /** Creates a new instance of StringLengthValidator */
+    /**
+     * Creates a new instance of StringLengthValidator.
+     */
     public DateInRangeValidator() {
     }
 
-    /**
-     *	<p> Validate the value with regard to a <code>UIComponent</code> and a
-     *	    <code>FacesContext</code>.</p>
-     *
-     *	@param	context	    The FacesContext
-     *	@param	component   The component to be validated
-     *	@param	value	    The submitted value of the component
-     *
-     * @exception ValidatorException if the value is not valid
-     */
+    @Override
     public void validate(FacesContext context,
             UIComponent component,
             Object value) throws ValidatorException {
@@ -81,7 +76,8 @@ public class DateInRangeValidator implements Validator {
             dateManager = (DateManager) (component.getParent());
         }
         if (dateManager == null) {
-            //log("Didn't find a DateManager " + component.getClass().toString()); 
+            //log("Didn't find a DateManager "
+            // + component.getClass().toString()); 
             return;
         }
 
@@ -103,9 +99,16 @@ public class DateInRangeValidator implements Validator {
         }
     }
 
+    /**
+     * Get the faces message
+     * @param component UI componnet
+     * @param context faces context
+     * @param date date
+     * @param key message key
+     * @return FacesMessage
+     */
     private FacesMessage getFacesMessage(UIComponent component,
-            FacesContext context,
-            Date date, String key) {
+            FacesContext context, Date date, String key) {
 
         String message = ThemeUtilities.getTheme(context).getMessage(key);
         String arg = ConversionUtilities.convertValueToString(component, date);
@@ -115,7 +118,11 @@ public class DateInRangeValidator implements Validator {
         return new FacesMessage(mf.format(params));
     }
 
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
+    /**
+     * Log a message to the standard output.
+     * @param msg message to log
+     */
+    private void log(String msg) {
+        System.out.println(this.getClass().getName() + "::" + msg);
     }
 }

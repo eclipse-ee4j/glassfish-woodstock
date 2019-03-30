@@ -393,7 +393,7 @@ public class Markup {
             throw new NullPointerException();
         }
         if (!open) {
-            throw new IllegalStateException("No element is currently open"); //I18N - FIXME
+            throw new IllegalStateException("No element is currently open");
         }
 
         String text = value.toString();

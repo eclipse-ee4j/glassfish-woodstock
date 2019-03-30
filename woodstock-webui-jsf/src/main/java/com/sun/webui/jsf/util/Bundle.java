@@ -13,77 +13,69 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
- * <p>
  * Utility methods for localized messages for design time classes. This class
- * expects a resource bundle named <code>Bundle-DT</code> in the same pacakge
- * as the class passed to its constructor. This class is also useful for
- * design-time behavior in component renderers and so exists in this runtime
- * package.
- * </p>
+ * expects a resource bundle named {@code Bundle-DT} in the same package as the
+ * class passed to its constructor. This class is also useful for design-time
+ * behavior in component renderers and so exists in this run-time package.
  */
 public class Bundle {
 
-
-    // ------------------------------------------------------------- Constructor
     /**
-     * <p>Construct a <code>Bundle</code> instance for the specified
-     * class.</p>
+     * Construct a {@code Bundle} instance for the specified class.
      *
      * @param clazz Class for which to construct a bundle instance
      */
     public Bundle(Class clazz) {
         String name = clazz.getName();
-        int period = name.lastIndexOf('.'); // NOI18N
+        int period = name.lastIndexOf('.');
         if (period >= 0) {
             name = name.substring(0, period + 1);
         } else {
             name = "";
         }
         name += "Bundle-DT";
-        bundle =
-                ResourceBundle.getBundle(name, format.getLocale(), clazz.getClassLoader());
+        bundle = ResourceBundle.getBundle(name, format.getLocale(),
+                clazz.getClassLoader());
     }
-    // -------------------------------------------------------- Static Variables
-    /**
-     * <p>The <code>MessageFormat</code> instance we will use for messages
-     * that require parameter replacement.</p>
-     */
-    private MessageFormat format = new MessageFormat("");
-    // ------------------------------------------------------ Instance Variables
-    /**
-     * <p>The <code>ResourceBundle</code> containing our messages.</p>
-     */
-    private ResourceBundle bundle;
 
-
-    // ---------------------------------------------------------- Public Methods
     /**
-     * <p>Return the message for the specified key.</p>
+     * The {@code MessageFormat} instance we will use for messages that require
+     * parameter replacement.
+     */
+    private final MessageFormat format = new MessageFormat("");
+
+    /**
+     * The {@code ResourceBundle} containing our messages.
+     */
+    private final ResourceBundle bundle;
+
+    /**
+     * Return the message for the specified key.
      *
      * @param key Message key to look up
+     * @return String
      */
     public String message(String key) {
         return bundle.getString(key);
     }
 
     /**
-     * <p>Return the message for the specified key, after substituting
-     * the specified parameters.</p>
+     * Return the message for the specified key, after substituting the
+     * specified parameters.
      *
      * @param key Message key to look up
      * @param params Replacement parameters
+     * @return String
      */
     public String message(String key, Object params[]) {
         String pattern = message(key);
 
-        //FIXME synchronization on a non-final variable
         synchronized (format) {
             format.applyPattern(pattern);
             return format.format(params);

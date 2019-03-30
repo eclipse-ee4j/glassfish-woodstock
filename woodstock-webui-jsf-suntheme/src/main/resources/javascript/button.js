@@ -17,7 +17,6 @@
 define(["webui/suntheme/common", "webui/suntheme/props"], function (common, props) {
 
     return {
-
         addOnInitCallback: common.addOnInitCallback,
 
         /**
@@ -223,7 +222,7 @@ define(["webui/suntheme/common", "webui/suntheme/props"], function (common, prop
             var stripTypeHov;
             var newType;
 
-            if (this.secondary === false && secondary == true) {
+            if (this.secondary === false && secondary === true) {
                 //change from primary to secondary
                 if (this.mini) {
                     stripTypeHov = this.classNamePrimaryMiniHov;
@@ -235,7 +234,7 @@ define(["webui/suntheme/common", "webui/suntheme/props"], function (common, prop
                     hovType = this.classNameSecondaryHov;
                     newType = this.classNameSecondary;
                 }
-            } else if (this.secondary === true && secondary == false) {
+            } else if (this.secondary === true && secondary === false) {
                 //change from secondary to primary
                 if (this.mini) {
                     //this is currently a mini button

@@ -41,7 +41,6 @@ import javax.faces.validator.Validator;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * The Tree component is used to display a tree structure in the rendered HTML
  * page.
@@ -55,24 +54,18 @@ public class Tree extends TreeNode implements EditableValueHolder {
     private static final long serialVersionUID = -3186310519238174661L;
 
     /**
-     *	Constructor.
+     * Create a new instance.
      */
     public Tree() {
         super();
         setRendererType("com.sun.webui.jsf.Tree");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Tree";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.

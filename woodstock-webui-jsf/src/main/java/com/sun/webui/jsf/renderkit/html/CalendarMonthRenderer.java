@@ -38,44 +38,187 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.RenderingUtilities;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderAnchor;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p><strong>This class needs to be rewritten. Do not release as API.</strong></p>
+ * This class needs to be rewritten.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CalendarMonth"))
 public class CalendarMonthRenderer extends AbstractRenderer {
 
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
-    private static final String SKIP_SECTION = "skipSection"; //NOI18N
-    private static final String CURR_YEAR_ATTR = "currYear";
-    private static final String CURR_MONTH_ATTR = "currMonth";
-    /** Calendar close image id	*/
+
+    /**
+     * Skip section.
+     */
+    private static final String SKIP_SECTION = "skipSection";
+
+    /**
+     * Calendar close image id.
+     */
     private static final String CLOSE_IMAGE = "_closeImage";
 
+    @Override
+    public void encodeChildren(FacesContext context, UIComponent component)
+            throws IOException {
+    }
+
+    @Override
+    public void encodeBegin(FacesContext context, UIComponent component)
+            throws IOException {
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName();
+    }
+
+    @Override
+    public boolean getRendersChildren() {
+        return true;
+    }
+
+    @Override
+    public void decode(FacesContext context, UIComponent component) {
+        super.decode(context, component);
+    }
+
+    @Override
+    public void encodeEnd(FacesContext context, UIComponent component)
+            throws IOException {
+
+        if (DEBUG) {
+            log("encodeEnd()");
+        }
+
+        if (component == null){
+            return;
+        }
+
+        if (!(component instanceof CalendarMonth)) {
+            Object[] params = {
+                component.toString(),
+                this.getClass().getName(),
+                CalendarMonth.class.getName()
+            };
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
+            throw new FacesException(message);
+        }
+
+        CalendarMonth calendarMonth = (CalendarMonth) component;
+        SimpleDateFormat dateFormat =
+                (SimpleDateFormat) calendarMonth.getDateFormat();
+        initializeChildren(calendarMonth, dateFormat, context);
+
+        ResponseWriter writer = context.getResponseWriter();
+        Theme theme = ThemeUtilities.getTheme(context);
+        String[] styles = getStyles(calendarMonth, context, theme);
+
+        //renderComponent(calendarMonth.getDateField(), context);
+        //writer.write("\n");
+
+        String id = calendarMonth.getClientId(context);
+        if (calendarMonth.isPopup()) {
+            renderPopupStart(calendarMonth, id, styles, context, writer);
+        } else {
+            writer.startElement("div", calendarMonth);
+            writer.writeAttribute("id", id, null);
+            writer.writeText("\n", null);
+        }
+
+        // render calendar header
+        renderCalendarHeader(calendarMonth, styles, context, writer, theme);
+
+        // render the begining of the layout for calendar controls and days of
+        // the week.
+        writer.startElement("div", calendarMonth);
+        writer.writeAttribute("class", styles[4], null);
+        writer.writeText("\n", null);
+
+        renderCalendarControls(calendarMonth, styles, context, writer);
+
+        renderDateTable(calendarMonth, styles, id, dateFormat, context, writer);
+
+        // close the div
+        writer.endElement("div");
+        writer.write("\n");
+
+        if (calendarMonth.isPopup()) {
+            renderPopupEnd(writer);
+        } else {
+            writer.endElement("div");
+            writer.write("\n");
+        }
+    }
+
+    /** 
+     * Render a spacer image.
+     * 
+     * @param context The current FacesContext 
+     * @param calendarMonth The CalendarMonth component instance 
+     * @param theme The current Theme 
+     * @param height The height to use for the spaer image 
+     * @param width The width to use for the spacer image 
+     * 
+     * @exception IOException if an input/output error occurs 
+     */
+    protected final void renderSpacerImage(FacesContext context,
+            CalendarMonth calendarMonth, Theme theme, int height, int width)
+            throws IOException {
+
+        // TODO - this generates a component with no id set! Has to be fixed.
+        Icon dot = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
+        dot.setWidth(width);
+        dot.setHeight(height);
+        dot.setId("icon");
+        dot.setAlt("");
+
+        renderComponent(dot, context);
+    }
+
+    /**
+     * Render table start.
+     * @param calendarMonth UI component
+     * @param styles CSS styles
+     * @param writer write to use
+     * @throws IOException if an IO error occurs
+     */
     private void renderDateTableStart(CalendarMonth calendarMonth,
             String[] styles,
             ResponseWriter writer)
             throws IOException {
 
         writer.startElement("div", calendarMonth);
-        writer.writeAttribute("class", styles[4], null); // NOI18N
-        writer.write("\n"); // NOI18N
+        writer.writeAttribute("class", styles[4], null);
+        writer.write("\n");
         writer.startElement("table", calendarMonth);
-        writer.writeAttribute("width", "100%", null); // NOI18N
-        writer.writeAttribute("cellspacing", "1", null); // NOI18N
-        writer.writeAttribute("cellpadding", "0", null); // NOI18N
-        writer.writeAttribute("border", "0", null); // NOI18N
-        writer.write("\n"); // NOI18N
+        writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("cellspacing", "1", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("border", "0", null);
+        writer.write("\n");
         writer.startElement("tbody", calendarMonth);
-        writer.writeAttribute("class", styles[5], null); // NOI18N
-        writer.write("\n"); // NOI18N
+        writer.writeAttribute("class", styles[5], null);
+        writer.write("\n");
     }
 
+    /**
+     * Render day header row.
+     * @param calendarMonth UI component
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     private void renderDayHeaderRow(CalendarMonth calendarMonth,
-            String[] styles,
-            FacesContext context,
-            ResponseWriter writer)
+            String[] styles, FacesContext context, ResponseWriter writer)
             throws IOException {
 
         writer.startElement("tr", calendarMonth);
@@ -109,7 +252,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
     }
 
     /**
-     * <p>Render the calendarMonth header containing the weekday table headers.</p>
+     * Render the calendarMonth header containing the weekday table headers.
      * 
      * @param calendarMonth The CalendarMonth component instance
      * @param writer The current ResponseWriter
@@ -121,31 +264,39 @@ public class CalendarMonthRenderer extends AbstractRenderer {
     private void renderWeekdayHeader(CalendarMonth calendarMonth,
             ResponseWriter writer, String styleClass, String header)
             throws IOException {
+
         // render a column header with the given style and header text
         writer.startElement("th", calendarMonth);
-        writer.writeAttribute("align", "center", null); //NOI18N
-        writer.writeAttribute("scope", "col", null); //NOI18N
-        writer.write("\n"); //NOI18N
-        writer.startElement("span", calendarMonth); //NOI18N
-        writer.writeAttribute("class", styleClass, null); //NOI18N
-        writer.write("\n"); //NOI18N
+        writer.writeAttribute("align", "center", null);
+        writer.writeAttribute("scope", "col", null);
+        writer.write("\n");
+        writer.startElement("span", calendarMonth);
+        writer.writeAttribute("class", styleClass, null);
+        writer.write("\n");
         writer.writeText(header, null);
-        writer.write("\n"); //NOI18N
-        writer.endElement("span"); //NOI18N
-        writer.write("\n"); //NOI18N
-        writer.endElement("th"); //NOI18N
+        writer.write("\n");
+        writer.endElement("span");
+        writer.write("\n");
+        writer.endElement("th");
     }
 
+    /**
+     * Render days.
+     * @param calendarMonth UI component
+     * @param id element id
+     * @param styles CSS styles
+     * @param dateFormat date format
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     private void renderDays(CalendarMonth calendarMonth, String id,
             String[] styles, DateFormat dateFormat, ResponseWriter writer)
             throws IOException {
 
         // now render each week in a row with each day in a td
         Calendar monthToShow = calendarMonth.getCalendar();
-        monthToShow.set(Calendar.YEAR,
-                calendarMonth.getCurrentYear().intValue());
-        monthToShow.set(Calendar.MONTH,
-                calendarMonth.getCurrentMonth().intValue() - 1);
+        monthToShow.set(Calendar.YEAR, calendarMonth.getCurrentYear());
+        monthToShow.set(Calendar.MONTH, calendarMonth.getCurrentMonth() - 1);
         monthToShow.set(Calendar.DAY_OF_MONTH, 1);
 
         if (DEBUG) {
@@ -194,9 +345,10 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         int dateLinkId = 0;
         int rowNum = 0;
         while (startDate.before(endDate)) {
+
             writer.startElement("tr", calendarMonth);
             String rowId = rowIdPrefix + rowNum++;
-            writer.writeAttribute("id", rowId, null); // NOI18N
+            writer.writeAttribute("id", rowId, null);
             writer.write("\n");
 
             for (int i = 0; i < 7; ++i) {
@@ -204,10 +356,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
                 if (DEBUG) {
                     log("Now rendering " + startDate.getTime().toString());
                 }
+
                 selected = calendarMonth.isDateSelected(startDate, endDate);
-
                 dayInMonth = (startDate.get(Calendar.MONTH) == displayedMonth);
-
                 String style = styles[17];
 
                 if (selected) {
@@ -235,14 +386,14 @@ public class CalendarMonthRenderer extends AbstractRenderer {
                 startDate.add(Calendar.DAY_OF_YEAR, 1);
                 startDate.getTime();
             }
-            writer.endElement("tr"); //NOI18N
+            writer.endElement("tr");
             writer.write("\n");
         }
         if (rowNum < 6) {
             writer.startElement("tr", calendarMonth);
             String rowId = rowIdPrefix + rowNum++;
-            writer.writeAttribute("id", rowId, null); // NOI18N
-            writer.writeAttribute("style", "display:none;", null); // NOI18N
+            writer.writeAttribute("id", rowId, null);
+            writer.writeAttribute("style", "display:none;", null);
             writer.write("\n");
 
             for (int i = 0; i < 7; ++i) {
@@ -254,34 +405,41 @@ public class CalendarMonthRenderer extends AbstractRenderer {
                 startDate.add(Calendar.DAY_OF_YEAR, 1);
                 startDate.getTime();
             }
-            writer.endElement("tr"); //NOI18N
+            writer.endElement("tr");
             writer.write("\n");
         }
     }
 
+    /**
+     * Render date link.
+     * @param startDate start date
+     * @param style CSS style
+     * @param id element id
+     * @param calendarMonth UI component
+     * @param dateFormat date format
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     private void renderDateLink(Calendar startDate,
-            String style,
-            String id,
-            CalendarMonth calendarMonth,
-            DateFormat dateFormat,
-            ResponseWriter writer) throws IOException {
+            String style, String id, CalendarMonth calendarMonth,
+            DateFormat dateFormat, ResponseWriter writer) throws IOException {
 
-        writer.startElement("td", calendarMonth);//NOI18N
-        writer.writeAttribute("align", "center", null); // NOI18N
-        writer.writeText("\n", null);//NOI18N
+        writer.startElement("td", calendarMonth);
+        writer.writeAttribute("align", "center", null);
+        writer.writeText("\n", null);
 
         int day = startDate.get(Calendar.DAY_OF_MONTH);
 
         // For performance reasons, don't create a hyperlink component
         // for each date...
-        writer.startElement("a", calendarMonth); //NOI18N
-        writer.writeAttribute("class", style, null); //NOI18N
-        writer.writeAttribute("id", id, null); //NOI18N
+        writer.startElement("a", calendarMonth);
+        writer.writeAttribute("class", style, null);
+        writer.writeAttribute("id", id, null);
 
         String dateString = dateFormat.format(startDate.getTime());
-        writer.writeAttribute("title", dateString, null); //NOI18N
+        writer.writeAttribute("title", dateString, null);
 
-        StringBuffer buffer = new StringBuffer(128);
+        StringBuilder buffer = new StringBuilder(128);
 
         if (calendarMonth.isPopup()) {
             buffer.append(calendarMonth.getJavaScriptObjectName());
@@ -293,50 +451,67 @@ public class CalendarMonthRenderer extends AbstractRenderer {
             buffer.append("', this); return false;");
         }
 
-        writer.writeAttribute("onclick", buffer.toString(), null); //NOI18N
-        writer.writeAttribute("href", "#", null); //NOI18N
+        writer.writeAttribute("onclick", buffer.toString(), null);
+        writer.writeAttribute("href", "#", null);
         writer.write(String.valueOf(day));
-        writer.endElement("a");  //NOI18N
-        writer.write("\n"); //NOI18N
-        writer.endElement("td"); //NOI18N
-        writer.write("\n");    //NOI18N
+        writer.endElement("a");
+        writer.write("\n");
+        writer.endElement("td");
+        writer.write("\n");
     }
 
+    /**
+     * Render end of table.
+     * @param writer write to use
+     * @throws IOException if an IO error occurs
+     */
     private void renderDateTableEnd(ResponseWriter writer)
             throws IOException {
 
-        writer.endElement("tbody"); //NOI18N
-        writer.write("\n"); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.write("\n"); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.write("\n"); //NOI18N
+        writer.endElement("tbody");
+        writer.write("\n");
+        writer.endElement("table");
+        writer.write("\n");
+        writer.endElement("div");
+        writer.write("\n");
     }
 
-    // Render the calendar header.
+    /**
+     * Render the calendar header.
+     * @param calendarMonth UI component
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @param theme theme in-use
+     * @throws IOException if an IO error occurs
+     */
     private void renderCalendarHeader(CalendarMonth calendarMonth,
-            String[] styles,
-            FacesContext context,
-            ResponseWriter writer,
-            Theme theme)
-            throws IOException {
+            String[] styles, FacesContext context, ResponseWriter writer,
+            Theme theme) throws IOException {
 
         renderHeaderTable(calendarMonth, writer, styles, theme);
         renderTodayDate(calendarMonth, writer, styles, theme, context);
     }
 
-    // Render a table to layout the rounded corners and top border of 
-    // the calendar header.
+    /**
+     * Render a table to layout the rounded corners and top border of the
+     * calendar header.
+     * @param calendarMonth UI component
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @param theme theme in-use
+     * @throws IOException 
+     */
     private void renderHeaderTable(CalendarMonth calendarMonth,
             ResponseWriter writer, String[] styles, Theme theme)
             throws IOException {
 
         writer.startElement("table", calendarMonth);
-        writer.writeAttribute("border", "0", null); // NOI18N
-        writer.writeAttribute("cellpadding", "0", null); // NOI18N
-        writer.writeAttribute("cellspacing", "0", null); // NOI18N
-        writer.writeAttribute("width", "100%", null); // NOI18N
-        writer.write("\n"); // NOI18N
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("width", "100%", null);
+        writer.write("\n");
         writer.startElement("tr", calendarMonth);
         writer.writeText("\n", null);  // NOI18N
 
@@ -346,49 +521,63 @@ public class CalendarMonthRenderer extends AbstractRenderer {
 
         // Render a spacer column.
         String path = theme.getImagePath(ThemeImages.DOT);
-        writer.startElement("td", calendarMonth);//NOI18N
-        writer.writeAttribute("class", styles[23], null); //NOI18
-        writer.writeAttribute("width", "100%", null); //NOI18N
-        writer.startElement("img", calendarMonth); //NOI18N
-        writer.writeAttribute("src", path, null); //NOI18N
-        writer.writeAttribute("height", String.valueOf(1), null); //NOI18N
-        writer.writeAttribute("width", String.valueOf(10), null); //NOI18N
-        writer.writeAttribute("alt", "", null); //NOI18N
-        writer.endElement("img");      //NOI18N
-        writer.endElement("td");      //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.startElement("td", calendarMonth);
+        writer.writeAttribute("class", styles[23], null);
+        writer.writeAttribute("width", "100%", null);
+        writer.startElement("img", calendarMonth);
+        writer.writeAttribute("src", path, null);
+        writer.writeAttribute("height", String.valueOf(1), null);
+        writer.writeAttribute("width", String.valueOf(10), null);
+        writer.writeAttribute("alt", "", null);
+        writer.endElement("img");
+        writer.endElement("td");
+        writer.writeText("\n", null);
 
         // Render the header's right corner.
         renderHeaderCornerCell(calendarMonth, writer,
                 theme.getImagePath(ThemeImages.SCHEDULER_TOP_RIGHT));
 
         // Close the table.
-        writer.endElement("tr");       //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N	
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        writer.endElement("table");
+        writer.writeText("\n", null);	
     }
 
+    /**
+     * Render header corner cell.
+     * @param calendarMonth UI component
+     * @param writer writer to use
+     * @param src image source attribute value
+     * @throws IOException if an IO error occurs
+     */
     private void renderHeaderCornerCell(CalendarMonth calendarMonth,
             ResponseWriter writer, String src)
             throws IOException {
 
-        writer.startElement("td", calendarMonth);//NOI18N
-        writer.writeAttribute("width", "6", null); //NOI18N
-        writer.writeText("\n", null);  //NOI18N
-        writer.startElement("img", calendarMonth); //NOI18N
-        writer.writeAttribute("src", src, null); //NOI18N
-        writer.writeAttribute("alt", "", null); //NOI18N
-        writer.endElement("img");      //NOI18N
-        writer.endElement("td");      //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.startElement("td", calendarMonth);
+        writer.writeAttribute("width", "6", null);
+        writer.writeText("\n", null);
+        writer.startElement("img", calendarMonth);
+        writer.writeAttribute("src", src, null);
+        writer.writeAttribute("alt", "", null);
+        writer.endElement("img");
+        writer.endElement("td");
+        writer.writeText("\n", null);
     }
 
-    // Render today's date in the header.
+    /**
+     * Render today's date in the header.
+     * @param calendarMonth UI component
+     * @param writer writer to use
+     * @param context faces context
+     * @param styles CSS styles
+     * @param theme theme in-use
+     * @throws IOException if an IO error occurs
+     */
     private void renderTodayDate(CalendarMonth calendarMonth,
-            ResponseWriter writer, String[] styles,
-            Theme theme, FacesContext context)
-            throws IOException {
+            ResponseWriter writer, String[] styles, Theme theme,
+            FacesContext context) throws IOException {
 
         renderTodayDateBegin(calendarMonth, writer, styles);
         renderTodayDateText(calendarMonth, writer, context, styles, theme);
@@ -400,25 +589,39 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         renderTodayDateEnd(writer);
     }
 
-    // Render the beginning of the layout for today date.
+    /**
+     * Render the beginning of the layout for today date.
+     * @param calendarMonth UI component
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
     private void renderTodayDateBegin(CalendarMonth calendarMonth,
             ResponseWriter writer, String[] styles)
             throws IOException {
 
-        writer.startElement("div", calendarMonth);//NOI18N
-        writer.writeAttribute("class", styles[22], null); //NOI18N
+        writer.startElement("div", calendarMonth);
+        writer.writeAttribute("class", styles[22], null);
         writer.write("\n");
     }
 
-    // Render today date text.
+    /**
+     * Render today date text.
+     * @param calendarMonth UI component
+     * @param writer writer to use
+     * @param context faces context
+     * @param styles CSS styles
+     * @param theme theme in-use
+     * @throws IOException if an IO error occurs
+     */
     private void renderTodayDateText(CalendarMonth calendarMonth,
             ResponseWriter writer, FacesContext context,
             String[] styles,
             Theme theme)
             throws IOException {
 
-        writer.startElement("div", calendarMonth);//NOI18N
-        writer.writeAttribute("class", styles[24], null); //NOI18N
+        writer.startElement("div", calendarMonth);
+        writer.writeAttribute("class", styles[24], null);
 
         DateFormat dateFormat =
                 SimpleDateFormat.getDateInstance(DateFormat.MEDIUM,
@@ -432,21 +635,25 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         String detailMsg = theme.getMessage("CalendarMonth.todayIs", detailArg);
         writer.writeText(detailMsg, null);
 
-        writer.endElement("div");       //NOI18N
-        writer.writeText("\n", null);  //NOI18N		
-    }
-
-    // Render the end of the layout for today date.
-    private void renderTodayDateEnd(ResponseWriter writer)
-            throws IOException {
-
-        writer.endElement("div");       //NOI18N
-        writer.writeText("\n", null);  //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
     /**
-     * <p>Render the calendarMonth controls: the month and year menus as well as the
-     * previous and next month IconHyperlink's.</p>
+     * Render the end of the layout for today date.
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderTodayDateEnd(ResponseWriter writer)
+            throws IOException {
+
+        writer.endElement("div");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Render the calendarMonth controls: the month and year menus as well as the
+     * previous and next month IconHyperlink's.
      *
      * @param context The current FacesContext
      * @param calendarMonth The CalendarMonth component instance
@@ -456,9 +663,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @exception IOException if an input/output error occurs
      */
     private void renderCalendarControls(CalendarMonth calendarMonth,
-            String[] styles,
-            FacesContext context,
-            ResponseWriter writer)
+            String[] styles, FacesContext context, ResponseWriter writer)
             throws IOException {
 
         if (DEBUG) {
@@ -466,45 +671,43 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         }
 
         String id = calendarMonth.getClientId(context);
-        writer.startElement("div", calendarMonth); //NOI18N
-        writer.writeAttribute("class", styles[3], null); // NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("div", calendarMonth);
+        writer.writeAttribute("class", styles[3], null);
+        writer.writeText("\n", null);
 
-        writer.startElement("div", calendarMonth); //NOI18N
-        writer.writeAttribute("class", styles[26], null); // NOI18N
+        writer.startElement("div", calendarMonth);
+        writer.writeAttribute("class", styles[26], null);
 
         String pattern = calendarMonth.getDateFormatPattern();
         if (pattern.indexOf("yyyy") < pattern.indexOf("MM")) { //NOI18N
             renderYearControl(calendarMonth, styles, context, writer);
-            writer.endElement("div"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
-            writer.startElement("div", calendarMonth); //NOI18N
-            writer.writeAttribute("class", styles[27], null); // NOI18N
+            writer.endElement("div");
+            writer.writeText("\n", null);
+            writer.startElement("div", calendarMonth);
+            writer.writeAttribute("class", styles[27], null);
             renderMonthControl(calendarMonth, styles, context, writer);
         } else {
             renderMonthControl(calendarMonth, styles, context, writer);
-            writer.endElement("div"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
-            writer.startElement("div", calendarMonth); //NOI18N
-            writer.writeAttribute("class", styles[27], null); // NOI18N
+            writer.endElement("div");
+            writer.writeText("\n", null);
+            writer.startElement("div", calendarMonth);
+            writer.writeAttribute("class", styles[27], null);
             renderYearControl(calendarMonth, styles, context, writer);
         }
 
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
 
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
     private void renderYearControl(CalendarMonth calendarMonth,
-            String[] styles,
-            FacesContext context,
-            ResponseWriter writer)
+            String[] styles, FacesContext context, ResponseWriter writer)
             throws IOException {
 
         if (DEBUG) {
-            log("renderYearControl()"); //NOI18N
+            log("renderYearControl()");
         }
         DropDown yearDropDown = calendarMonth.getYearMenu();
         yearDropDown.setToolTip(styles[6]);
@@ -519,11 +722,11 @@ public class CalendarMonthRenderer extends AbstractRenderer {
             throws IOException {
 
         if (DEBUG) {
-            log("renderMonthControl()"); //NOI18N
+            log("renderMonthControl()");
         }
         IconHyperlink decreaseLink = calendarMonth.getPreviousMonthLink();
         RenderingUtilities.renderComponent(decreaseLink, context);
-        writer.write("\n"); //NOI18N
+        writer.write("\n");
         if (DEBUG) {
             log("\t rendered PreviousLink");
         }
@@ -537,29 +740,26 @@ public class CalendarMonthRenderer extends AbstractRenderer {
             log("Got DropDown");
         }
         RenderingUtilities.renderComponent(monthDropDown, context);
-        writer.write("\n");  //NOI18N
+        writer.write("\n");
         if (DEBUG) {
             log("\t rendered Month Menu");
         }
 
         IconHyperlink increaseLink = calendarMonth.getNextMonthLink();
         RenderingUtilities.renderComponent(increaseLink, context);
-        writer.write("\n"); //NOI18N
+        writer.write("\n");
         if (DEBUG) {
             log("\t rendered IncreaseLink");
         }
     }
 
     private void renderCloseButton(CalendarMonth calendarMonth,
-            String[] styles,
-            FacesContext context,
-            ResponseWriter writer,
-            Theme theme)
-            throws IOException {
+            String[] styles, FacesContext context, ResponseWriter writer,
+            Theme theme) throws IOException {
 
         RenderingUtilities.renderAnchor(SKIP_SECTION, calendarMonth, context);
 
-        StringBuffer strBuffer = new StringBuffer(128);
+        StringBuilder strBuffer = new StringBuilder(128);
         strBuffer.append(calendarMonth.getJavaScriptObjectName());
         strBuffer.append(".setInitialFocus(); ");
         strBuffer.append(calendarMonth.getJavaScriptObjectName());
@@ -570,7 +770,8 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.writeAttribute("class", styles[25], null);
         writer.writeAttribute("href", "#", null);
 
-        Icon icon = ThemeUtilities.getIcon(theme, ThemeImages.CALENDAR_CLOSE_BUTTON);
+        Icon icon = ThemeUtilities.getIcon(theme,
+                ThemeImages.CALENDAR_CLOSE_BUTTON);
         icon.setParent(calendarMonth);
         icon.setId(CLOSE_IMAGE);
         RenderingUtilities.renderComponent(icon, context);
@@ -579,129 +780,35 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.write("\n");
     }
 
-    /** 
-     * <p>Render a spacer image.</p> 
-     * 
-     * @param context The current FacesContext 
-     * @param calendarMonth The CalendarMonth component instance 
-     * @param theme The current Theme 
-     * @param height The height to use for the spaer image 
-     * @param width The width to use for the spacer image 
-     * 
-     * @exception IOException if an input/output error occurs 
-     */
-    // TODO - this generates a component with no id set! Has to be fixed.
-    protected void renderSpacerImage(FacesContext context, CalendarMonth calendarMonth,
-            Theme theme, int height, int width) throws IOException {
-        Icon dot = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
-        dot.setWidth(width);
-        dot.setHeight(height);
-        dot.setId("icon");
-        dot.setAlt("");
-
-        RenderingUtilities.renderComponent(dot, context);
-    }
-
-    /**
-     *
-     * @param context {@link FacesContext} for the response we are creating
-     * @param component {@link UIComponent} to be rendered
-     *
-     * @exception IOException if an input/output error occurs while rendering
-     * @exception NullPointerException if <code>context</code>
-     *  or <code>component</code> is <code>null</code>
-     */
-    @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
-
-        if (DEBUG) {
-            log("encodeEnd()");
-        }
-
-        if (!(component instanceof CalendarMonth)) {
-            Object[] params = {component.toString(),
-                this.getClass().getName(),
-                CalendarMonth.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
-            throw new FacesException(message);
-        }
-
-        CalendarMonth calendarMonth = (CalendarMonth) component;
-        SimpleDateFormat dateFormat =
-                (SimpleDateFormat) calendarMonth.getDateFormat();
-        initializeChildren(calendarMonth, dateFormat, context);
-
-        ResponseWriter writer = context.getResponseWriter();
-        Theme theme = ThemeUtilities.getTheme(context);
-        String[] styles = getStyles(calendarMonth, context, theme);
-
-        //RenderingUtilities.renderComponent(calendarMonth.getDateField(), context);
-        //writer.write("\n");
-
-        String id = calendarMonth.getClientId(context);
-        if (calendarMonth.isPopup()) {
-            renderPopupStart(calendarMonth, id, styles, context, writer);
-        } else {
-            writer.startElement("div", calendarMonth); // NOI18N
-            writer.writeAttribute("id", id, null); // NOI18N
-            writer.writeText("\n", null);
-        }
-
-        // render calendar header
-        renderCalendarHeader(calendarMonth, styles, context, writer, theme);
-
-        // render the begining of the layout for calendar controls and days of the week.
-        writer.startElement("div", calendarMonth); // NOI18N
-        writer.writeAttribute("class", styles[4], null); //NOI18N
-        writer.writeText("\n", null);
-
-        renderCalendarControls(calendarMonth, styles, context, writer);
-
-        renderDateTable(calendarMonth, styles, id, dateFormat, context, writer);
-
-        // close the div
-        writer.endElement("div");
-        writer.write("\n");  //NOI18N
-
-        if (calendarMonth.isPopup()) {
-            renderPopupEnd(writer);
-        } else {
-            writer.endElement("div");
-            writer.write("\n");  //NOI18N
-        }
-    }
-
     private void renderPopupStart(CalendarMonth calendarMonth,
             String id, String[] styles,
             FacesContext context,
             ResponseWriter writer)
             throws IOException {
 
-        writer.startElement("div", calendarMonth); // NOI18N
-        writer.writeAttribute("id", id, null); // NOI18N
-        writer.writeAttribute("class", styles[0], null); // NOI18N
+        writer.startElement("div", calendarMonth);
+        writer.writeAttribute("id", id, null);
+        writer.writeAttribute("class", styles[0], null);
         writer.writeText("\n", null);
 
         writer.startElement("div", calendarMonth);
-        writer.writeAttribute("class", styles[1], null); // NOI18N
+        writer.writeAttribute("class", styles[1], null);
         writer.writeText("\n", null);
 
         writer.startElement("div", calendarMonth);
-        writer.writeAttribute("class", styles[2], null); // NOI18N
+        writer.writeAttribute("class", styles[2], null);
         writer.writeText("\n", null);
     }
 
     private void renderPopupEnd(ResponseWriter writer)
             throws IOException {
 
-        writer.endElement("div");  //NOI18N
-        writer.write("\n");  //NOI18N
-        writer.endElement("div");  //NOI18N
-        writer.write("\n");  //NOI18N
-        writer.endElement("div");  //NOI18N
-        writer.write("\n");  //NOI18N
+        writer.endElement("div");
+        writer.write("\n");
+        writer.endElement("div");
+        writer.write("\n");
+        writer.endElement("div");
+        writer.write("\n");
     }
 
     private void renderDateTable(CalendarMonth calendarMonth, String[] styles,
@@ -718,11 +825,8 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         renderDays(calendarMonth, id, styles, dateFormat, writer);
         renderDateTableEnd(writer);
 
-
-
         if (!calendarMonth.isPopup()) {
-            RenderingUtilities.renderAnchor(SKIP_SECTION, calendarMonth,
-                    context);
+            renderAnchor(SKIP_SECTION, calendarMonth, context);
         }
     }
 
@@ -730,7 +834,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
             SimpleDateFormat dateFormat, FacesContext context) {
 
         if (DEBUG) {
-            log("initializeChildren()"); //NOI18N
+            log("initializeChildren()");
         }
         // This variable is used to track whether the calendar 
         // controls have to be updated based on the calculations
@@ -746,9 +850,6 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         // (we only use the year and month component of the date).
         // We start by assuming that this will be the today's date
         Date displayDate = calendar.getTime();
-
-
-
 
         // Find out what the current year and month settings are of the 
         // CalendarMonth component (this is whatever the user has 
@@ -769,10 +870,10 @@ public class CalendarMonthRenderer extends AbstractRenderer {
             if (DEBUG) {
                 log("Year is " + year.toString());
             }
-            calendar.set(Calendar.YEAR, year.intValue());
+            calendar.set(Calendar.YEAR, year);
             // Adjust for the fact that we display the months as 1 - 12, but 
             // java.util.Calendar has them as 0 to 11.  
-            calendar.set(Calendar.MONTH, month.intValue() - 1);
+            calendar.set(Calendar.MONTH, month - 1);
         //calendar.set(Calendar.DAY_OF_MONTH, 1);
         } else {
             updateCalendarControls = true;
@@ -796,6 +897,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         if (DEBUG) {
             log("Min date set to  " + minDate.toString());
         }
+
         if (DEBUG) {
             log("Max date set to " + maxDate.toString());
         }
@@ -803,6 +905,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         if (DEBUG) {
             log("Date to display is " + displayDate.toString());
         }
+
         if (displayDate.before(minDate)) {
             if (DEBUG) {
                 log("date is before mindate");
@@ -829,7 +932,8 @@ public class CalendarMonthRenderer extends AbstractRenderer {
                 log("Value of year: " + yearValue);
             }
 
-            String monthValue = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            String monthValue = String.valueOf(
+                    calendar.get(Calendar.MONTH) + 1);
             monthMenu.setSubmittedValue(new String[]{monthValue});
             if (DEBUG) {
                 log("Value of month: " + monthValue);
@@ -843,10 +947,10 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         int lastYear = calendar.get(Calendar.YEAR);
 
         int numYears = lastYear - firstYear + 1;
-        Integer yearInteger = null;
+        Integer yearInteger;
         Option[] yearOptions = new Option[numYears];
         for (int i = 0; i < numYears; ++i) {
-            yearInteger = new Integer(firstYear + i);
+            yearInteger = firstYear + i;
             yearOptions[i] = new Option(yearInteger, yearInteger.toString());
         }
         yearMenu.setItems(yearOptions);
@@ -860,7 +964,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         int monthInt;
         for (int i = 0; i < 12; i++) {
             monthInt = calendar.get(Calendar.MONTH);
-            months[i] = new Option(new Integer(monthInt + 1), monthNames[i]);
+            months[i] = new Option(monthInt + 1, monthNames[i]);
             calendar.add(Calendar.MONTH, 1);
         }
         if (DEBUG) {
@@ -869,63 +973,20 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         monthMenu.setItems(months);
 
         if (DEBUG) {
-            log("initializeChildren() - END"); //NOI18N
+            log("initializeChildren() - END");
         }
     }
 
     /**
-     * Override default behaviour - do nothing.
-     *
-     * @param context {@link FacesContext} for the response we are creating
-     * @param component {@link UIComponent} whose children are to be rendered
-     *
-     * @exception IOException if an input/output error occurs while rendering
-     * @exception NullPointerException if <code>context</code>
-     *  or <code>component</code> is <code>null</code>
+     * Get the styles.
+     * @param calendarMonth UI component
+     * @param context faces context
+     * @param theme theme in-use
+     * @return String[]
      */
-    @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
-        return;
-    }
-
-    /**
-     *Override default behaviour - do nothing.
-     *
-     *
-     * @param context {@link FacesContext} for the request we are processing
-     * @param component {@link UIComponent} to be rendered
-     *
-     * @exception IOException if an input/output error occurs while rendering
-     * @exception NullPointerException if <code>context</code>
-     *  or <code>component</code> is null
-     */
-    @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
-        return;
-    }
-
-    /**
-     * Returns a string representation of the object.
-     * @return  a string representation of the object.
-     */
-    @Override
-    public String toString() {
-        return this.getClass().getName();
-    }
-
-    /**
-     * Returns true.
-     * @return true
-     */
-    @Override
-    public boolean getRendersChildren() {
-        return true;
-    }
-
     private String[] getStyles(CalendarMonth calendarMonth,
             FacesContext context, Theme theme) {
+
         String[] styles = new String[28];
         styles[0] = theme.getStyleClass(ThemeStyles.CALENDAR_DIV_SHOW);
         styles[1] = theme.getStyleClass(ThemeStyles.CALENDAR_DIV_SHOW2);
@@ -958,13 +1019,11 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         return styles;
     }
 
+    /**
+     * Log a message to the standard output.
+     * @param s 
+     */
     private void log(String s) {
         System.out.println(this.getClass().getName() + "::" + s);
-    }
-
-    @Override
-    public void decode(FacesContext context, UIComponent component) {
-
-        super.decode(context, component);
     }
 }

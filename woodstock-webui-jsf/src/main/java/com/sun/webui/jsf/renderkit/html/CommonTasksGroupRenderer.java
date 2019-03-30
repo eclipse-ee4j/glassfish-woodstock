@@ -16,17 +16,11 @@
 
 package com.sun.webui.jsf.renderkit.html;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import com.sun.faces.annotation.Renderer;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
-import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
@@ -36,9 +30,16 @@ import com.sun.webui.jsf.component.CommonTasksGroup;
 import com.sun.webui.jsf.component.CommonTasksSection;
 import com.sun.webui.jsf.component.StaticText;
 import java.util.Iterator;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.RenderingUtilities.getStyleClasses;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
- * <p>Renderer for a {@link com.sun.webui.jsf.component.CommonTasksGroup} component.</p>
+ * Renderer for a {@link com.sun.webui.jsf.component.CommonTasksGroup} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CommonTasksGroup"))
 public class CommonTasksGroupRenderer extends AbstractRenderer {
@@ -49,12 +50,15 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
     private static final String TITLE_SPAN = "_groupTitle";
     public static final String GROUP_TITLE = "commonTasks.groupTitle";
     public static final String SKIP_GROUP = "commonTasks.skipTagAltText";
+
     /**
-     *Skip a complete common tasks group.
+     * Skip a complete common tasks group.
      */
     private static final String SKIP_TASKSGROUP = "skipGroup"; // NOI18N
 
-    /** Creates a new instance of CommonTaskGroupRenderer */
+    /**
+     * Creates a new instance of CommonTaskGroupRenderer.
+     */
     public CommonTasksGroupRenderer() {
     }
 
@@ -86,7 +90,7 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
         if (!ctg.isRendered()) {
             return;
         }
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
         String title = ctg.getTitle();
         if (title == null) {
             title = theme.getMessage(GROUP_TITLE);
@@ -95,22 +99,22 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
 
         writer.startElement(HTMLElements.DIV, ctg);
         writer.writeAttribute(HTMLAttributes.ID, ctg.getClientId(context),
-                HTMLAttributes.ID); //NOI18N
+                HTMLAttributes.ID);
 
-        String styles = RenderingUtilities.getStyleClasses(context, ctg,
+        String styles = getStyleClasses(context, ctg,
                 theme.getStyleClass(ThemeStyles.CTS_GROUP));
 
         if (styles != null) {
             writer.writeAttribute(HTMLAttributes.CLASS, styles,
-                    HTMLAttributes.CLASS);// NOI18N
+                    HTMLAttributes.CLASS);
         }
 
         if (ctg.getStyle() != null) {
             writer.writeAttribute(HTMLAttributes.STYLE, ctg.getStyle(),
-                    HTMLAttributes.STYLE);  // NOI18N
+                    HTMLAttributes.STYLE);
         }
 
-        StringBuffer jsBuffer = new StringBuffer();
+        StringBuilder jsBuffer = new StringBuilder();
         renderTaskGroupHeader(title, writer, context, ctg, theme);
 
         if (!(ctg.getParent() instanceof CommonTasksSection)) {
@@ -121,63 +125,44 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
         UIComponent comp;
         while (it.hasNext()) {
             comp = (UIComponent) it.next();
-            RenderingUtilities.renderComponent(comp, context);
+            renderComponent(comp, context);
         }
 
         writer.endElement(HTMLElements.DIV);
     }
 
     /**
-     * Renders the javascript necessary to precache the "i" images
+     * Renders the JS necessary to precache the "i" images
      *
      * @param theme The current theme
      * @param writer The ResponseWriter object
      * @param component The commonTasksSection component
+     * @param context faces context
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderJavascriptImages(Theme theme, ResponseWriter writer,
             UIComponent component, FacesContext context) throws IOException {
-        StringBuffer buff = new StringBuffer();
 
 
-        /*
-         * Create the JSON object.
-         */
+        JsonObject initProps = getJSONProperties(context, theme, component);
 
-        try {
-            JSONObject json = getJSONProperties(context, theme, component);
-
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("commonTasksSection")).append("'], function (commonTasksSection) {").append("\n") // NOI18N
-//                    .append(JavaScriptUtilities.getModuleName("commonTasksSection.init(")) // NOI18N
-                    .append("commonTasksSection.init(")
-                    .append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");\n"); //NOI18N
-            buff.append("});");
-            
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            if (LogUtil.fineEnabled()) {
-                LogUtil.fine(e.getStackTrace().toString()); //NOI18N
-            }
-        }
-        writer.write("\n");             // NOI18N
+        // Render JavaScript.
+        renderInitScriptTag(writer, "commonTasksSection", initProps);
     }
 
-    protected JSONObject getJSONProperties(FacesContext context, Theme theme,
-            UIComponent component) throws IOException, JSONException {
+    protected JsonObject getJSONProperties(FacesContext context, Theme theme,
+            UIComponent component) throws IOException {
 
-        JSONObject json = new JSONObject();
+        return JSON_BUILDER_FACTORY.createObjectBuilder()
+                .add("id", component.getClientId(context))
+                .add("pic1URL", theme.getImagePath(
+                        ThemeImages.CTS_RIGHT_TOGGLE_SELECTED))
+                .add("pic2URL", theme.getImagePath(
+                        ThemeImages.CTS_RIGHT_TOGGLE_OVER))
+                .add("pic3URL", theme.getImagePath(
+                        ThemeImages.CTS_RIGHT_TOGGLE))
+                .build();
 
-        json.put("id", component.getClientId(context));
-        String url =
-                theme.getImagePath(ThemeImages.CTS_RIGHT_TOGGLE_SELECTED);
-        json.put("pic1URL", url);
-        url = theme.getImagePath(ThemeImages.CTS_RIGHT_TOGGLE_OVER);
-        json.put("pic2URL", url);
-        url = theme.getImagePath(ThemeImages.CTS_RIGHT_TOGGLE);
-        json.put("pic3URL", url);
-
-        return json;
     }
 
     /**
@@ -202,17 +187,18 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
      * @param component The CommonTasksGroup object
      * @param theme The current theme.
      * @param context The current FacesContext
+     * @throws java.io.IOException if an IO error occurs
      */
     protected void renderTaskGroupHeader(String header, ResponseWriter writer,
             FacesContext context, UIComponent component, Theme theme)
             throws IOException {
 
-        StaticText st = new StaticText();
-        st.setParent(component);
-        st.setId(TITLE_SPAN);
-        st.setStyleClass(theme.getStyleClass(ThemeStyles.CTS_HEADER));
-        st.setText(header);
-        RenderingUtilities.renderComponent(st, context);
+        StaticText staticText = new StaticText();
+        staticText.setParent(component);
+        staticText.setId(TITLE_SPAN);
+        staticText.setStyleClass(theme.getStyleClass(ThemeStyles.CTS_HEADER));
+        staticText.setText(header);
+        renderComponent(staticText, context);
     }
 
     @Override

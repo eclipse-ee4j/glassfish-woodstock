@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: IFrameRenderer.java,v 1.1.20.1 2009-12-29 04:52:43 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -25,51 +22,24 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.IFrame;
-import com.sun.webui.jsf.util.RenderingUtilities;
+
+import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
 
 /**
- * <p>Renderer for a {@link IFrameRenderer} component.</p>
+ * Renderer for a {@link IFrameRenderer} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.IFrame"))
 public class IFrameRenderer extends FrameRenderer {
 
-    // -------------------------------------------------------- Renderer Methods
-    /**
-     * <p>Render the appropriate element start for the outermost
-     * element.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
-        IFrame frame = (IFrame) component;
 
-        // I don't think this is the correct way to write the XML
-        // header /avk
-
-        if (!RenderingUtilities.isPortlet(context)) {
+        if (!isPortlet(context)) {
             writer.startElement("iframe", component);
         }
     }
 
-    /**
-     * <p>Render the appropriate element attributes, followed by the
-     * nested <code>&lt;head&gt;</code> element, plus the beginning
-     * of a nested <code>&lt;body&gt;</code> element.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderAttributes(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -79,52 +49,39 @@ public class IFrameRenderer extends FrameRenderer {
         super.renderAttributes(context, component, writer);
 
         // Render a nested "head" element
-        if (!RenderingUtilities.isPortlet(context)) {
-            //align
+        if (!isPortlet(context)) {
             String align = frame.getAlign();
             if (align != null) {
-                writer.writeAttribute("align", align, null); //NOI18N
+                writer.writeAttribute("align", align, null);
             }
 
-            //marginWidth
+            // marginWidth
             String width = frame.getWidth();
             if (width != null) {
-                writer.writeAttribute("width", width.toString(), null); //NOI18N
+                writer.writeAttribute("width", width, null);
             }
-            //marginHeight
+            // marginHeight
             String height = frame.getHeight();
             if (height != null) {
-                writer.writeAttribute("height", height.toString(), null); //NOI18N
+                writer.writeAttribute("height", height, null);
             }
         }
     }
 
-    /**
-     * <p>Render the appropriate element end.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
 
         // End the outermost "html" element
-        if (!RenderingUtilities.isPortlet(context)) {
+        if (!isPortlet(context)) {
             writer.endElement("iframe"); //NOI18N
             writer.write("\n"); //NOI18N
         }
 
     }
 
-    // ------------------------------------------------------- Protected Methods
     @Override
     protected void renderResizeAttribute(ResponseWriter writer, UIComponent comp)
             throws IOException {
-        //intentionally blank
     }
 }

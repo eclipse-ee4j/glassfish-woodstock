@@ -22,7 +22,6 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.CookieUtils;
-import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 import java.beans.Beans;
@@ -38,15 +37,20 @@ import javax.faces.context.ResponseWriter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleClass;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * <p>Renderer for an {@link Alert} component.</p>
- *
+ * Renderer for an {@link Alert} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Alert"))
 public class AlertRenderer extends AbstractRenderer {
 
-    /** Creates a new instance of AlertRenderer */
+    /** 
+     * Creates a new instance of AlertRenderer.
+     */
     public AlertRenderer() {
         // default constructor
     }
@@ -57,8 +61,8 @@ public class AlertRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
-        //purposefully don't want to do anything here!
+    public void encodeChildren(FacesContext context, UIComponent component)
+            throws IOException {
     }
 
     /**
@@ -69,10 +73,13 @@ public class AlertRenderer extends AbstractRenderer {
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
-     * @deprecated replaced by {@link #renderOuterDiv(context,Alert,String,ResponseWriter)}
+     * @deprecated replaced by
+     * {@link #renderOuterDiv(context,Alert,String,ResponseWriter)}
      */
-    protected void renderOuterDiv(FacesContext context, Alert alert, ResponseWriter writer) throws IOException {
-        Theme theme = ThemeUtilities.getTheme(context);
+    protected void renderOuterDiv(FacesContext context, Alert alert,
+            ResponseWriter writer) throws IOException {
+
+        Theme theme = getTheme(context);
         String defaultStyleClass = theme.getStyleClass(ThemeStyles.ALERT_DIV);
         renderOuterDiv(context, alert, defaultStyleClass, writer);
     }
@@ -87,19 +94,21 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderOuterDiv(FacesContext context, Alert alert, String defaultStyleClass, ResponseWriter writer) throws IOException {
+    protected void renderOuterDiv(FacesContext context, Alert alert,
+            String defaultStyleClass, ResponseWriter writer) throws IOException {
+
         String style = alert.getStyle();
         String id = alert.getClientId(context);
 
-        writer.startElement("div", alert); //NOI18N
+        writer.startElement("div", alert);
 
         // Write a id only if a style/class was specified?
         if (id != null) {
-            writer.writeAttribute("id", id, null);  //NOI18N
+            writer.writeAttribute("id", id, null);
         }
 
         if (style != null) {
-            writer.writeAttribute("style", style, null);  //NOI18N
+            writer.writeAttribute("style", style, null);
         }
 
         // Even though renderStyleClass obtains the component's
@@ -107,13 +116,13 @@ public class AlertRenderer extends AbstractRenderer {
         // do not pass the defaultStyleClass.
         //
         String styleClass = alert.getStyleClass();
-        if (styleClass == null || styleClass.length() == 0) { //NOI18N
+        if (styleClass == null || styleClass.length() == 0) {
             styleClass = defaultStyleClass;
         } else {
             // Don't pass it or else it will get added twice
             styleClass = null;
         }
-        RenderingUtilities.renderStyleClass(context, writer, (UIComponent) alert, styleClass);
+        renderStyleClass(context, writer, (UIComponent) alert, styleClass);
     }
 
     /**
@@ -126,13 +135,15 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderOpeningTable(Alert alert, ResponseWriter writer) throws IOException {
-        writer.startElement("table", alert); //NOI18N
-        writer.writeAttribute("border", "0", null); //NOI18N
-        writer.writeAttribute("cellspacing", "0", null); //NOI18N
-        writer.writeAttribute("cellpadding", "0", null); //NTOI18N
-        writer.writeAttribute("title", "", null); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+    protected void renderOpeningTable(Alert alert, ResponseWriter writer)
+            throws IOException {
+
+        writer.startElement("table", alert);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("title", "", null);
+        writer.writeText("\n", null);
     }
 
     /**
@@ -145,14 +156,16 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderTopRow(Alert alert, String spacerPath, String[] styles, ResponseWriter writer) throws IOException {
-        writer.startElement("tr", alert); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+    protected void renderTopRow(Alert alert, String spacerPath, String[] styles,
+            ResponseWriter writer) throws IOException {
+
+        writer.startElement("tr", alert);
+        writer.writeText("\n", null);
         renderSpacerCell(alert, styles[0], spacerPath, writer);
         renderSpacerCell(alert, styles[1], spacerPath, writer);
         renderSpacerCell(alert, styles[2], spacerPath, writer);
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("tr");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -168,34 +181,36 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderMiddleRow(Alert alert, Theme theme, String spacerPath, String[] styles, FacesContext context, ResponseWriter writer) throws IOException {
+    protected void renderMiddleRow(Alert alert, Theme theme, String spacerPath,
+            String[] styles, FacesContext context, ResponseWriter writer)
+            throws IOException {
 
-        writer.startElement("tr", alert); //NOI18N
-        writer.writeAttribute("class", styles[3], null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("tr", alert);
+        writer.writeAttribute("class", styles[3], null);
+        writer.writeText("\n", null);
 
         // render a spacer in the left column
-        writer.startElement("td", alert); //NOI18N
-        writer.writeAttribute("class", styles[4], null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("td", alert);
+        writer.writeAttribute("class", styles[4], null);
+        writer.writeText("\n", null);
         renderSpacerImage(alert, spacerPath, writer);
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
 
         // render middle column
         renderMiddleCell(context, alert, theme, writer, styles);
 
         // render a spacer in the right column
-        writer.startElement("td", alert); //NOI18N
-        writer.writeAttribute("class", styles[9], null);  //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("td", alert);
+        writer.writeAttribute("class", styles[9], null);
+        writer.writeText("\n", null);
         renderSpacerImage(alert, spacerPath, writer);
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
 
         // close the middle row
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("tr");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -203,40 +218,46 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @param alert The Alert object to use
      * @param theme The Theme to use
+     * @param spacerPath
+     * @param styles
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderBottomRow(Alert alert, Theme theme, String spacerPath, String[] styles, ResponseWriter writer) throws IOException {
-        writer.startElement("tr", alert); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+    protected void renderBottomRow(Alert alert, Theme theme, String spacerPath,
+            String[] styles, ResponseWriter writer) throws IOException {
+
+        writer.startElement("tr", alert);
+        writer.writeText("\n", null);
         renderSpacerCell(alert, styles[10], spacerPath, writer);
         renderSpacerCell(alert, styles[11], spacerPath, writer);
         renderSpacerCell(alert, styles[12], spacerPath, writer);
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("tr");
+        writer.writeText("\n", null);
     }
 
     /**
      * Renders a spacer coulmn.
      *
      * @param alert The Alert object to use
-     * @param styles The array of styles
+     * @param styleClass CSS class
      * @param spacerPath The path to the spacer image
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderSpacerCell(Alert alert, String styleClass, String spacerPath, ResponseWriter writer) throws IOException {
-        writer.startElement("td", alert); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+    protected void renderSpacerCell(Alert alert, String styleClass,
+            String spacerPath, ResponseWriter writer) throws IOException {
+
+        writer.startElement("td", alert);
+        writer.writeText("\n", null);
         writer.startElement("div", alert);
-        writer.writeAttribute("class", styleClass, null);  //NOI18N
+        writer.writeAttribute("class", styleClass, null);
         renderSpacerImage(alert, spacerPath, writer);
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
+        writer.endElement("td");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -247,21 +268,24 @@ public class AlertRenderer extends AbstractRenderer {
      * @param alert The Alert object to use
      * @param theme The Theme to use
      * @param writer The current ResponseWriter
+     * @param styles CSS styles
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderMiddleCell(FacesContext context, Alert alert, Theme theme, ResponseWriter writer, String[] styles) throws IOException {
+    protected void renderMiddleCell(FacesContext context, Alert alert,
+            Theme theme, ResponseWriter writer, String[] styles)
+            throws IOException {
 
-        writer.startElement("td", alert); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("td", alert);
+        writer.writeText("\n", null);
 
         // open the outer div containing the summary and detial areas
-        writer.startElement("div", alert); //NOI18N
-        writer.writeAttribute("class", styles[5], null); //NOI18N
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styles[5], null);
 
         // open the alert header div
-        writer.startElement("div", alert); //NOI18N
-        writer.writeAttribute("class", styles[6], null); //NOI18N
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styles[6], null);
 
         // Render the alert icon
         renderAlertIcon(context, alert, theme, writer);
@@ -269,19 +293,19 @@ public class AlertRenderer extends AbstractRenderer {
         renderAlertSummaryText(alert, styles, writer, context);
 
         // close the alert header div
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
 
         // Render the detailed text and the optional link
         renderAlertDetailArea(context, alert, theme, styles, writer);
 
         // Close the outer div
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
 
         // Close the cell
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -294,43 +318,50 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderAlertIcon(FacesContext context, Alert alert, Theme theme, ResponseWriter writer) throws IOException {
+    protected void renderAlertIcon(FacesContext context, Alert alert,
+            Theme theme, ResponseWriter writer) throws IOException {
+
         UIComponent alertIcon = alert.getAlertIcon();
-        RenderingUtilities.renderComponent(alertIcon, context);
+        renderComponent(alertIcon, context);
     }
 
     /**
      * Renders the summary message of the inline alert.
      *
      * @param alert The Alert object to use
+     * @param styles CSS styles
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderAlertSummaryText(Alert alert, String[] styles, ResponseWriter writer) throws IOException {
+    protected void renderAlertSummaryText(Alert alert, String[] styles,
+            ResponseWriter writer) throws IOException {
+
         // Render the summary text
         String summary = alert.getSummary();
 
         // Check if it should be HTML escaped (true by default).
         writer.startElement("span", alert);
-        writer.writeAttribute("class", styles[7], null); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeAttribute("class", styles[7], null);
+        writer.writeText("\n", null);
         writer.writeText(summary, null);
-        writer.endElement("span"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("span");
+        writer.writeText("\n", null);
     }
 
-    protected void renderAlertSummaryText(Alert alert, String[] styles, ResponseWriter writer, FacesContext context) throws IOException {
+    protected void renderAlertSummaryText(Alert alert, String[] styles,
+            ResponseWriter writer, FacesContext context) throws IOException {
+
         // Render the summary text
         String summary = alert.getSummary();
 
         if (summary != null) {
             writer.startElement("span", alert);
-            writer.writeAttribute("class", styles[7], null); //NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.writeAttribute("class", styles[7], null);
+            writer.writeText("\n", null);
             renderFormattedMessage(writer, alert, context, summary);
-            writer.endElement("span"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.endElement("span");
+            writer.writeText("\n", null);
         }
     }
 
@@ -338,38 +369,46 @@ public class AlertRenderer extends AbstractRenderer {
      * Renders the optional detail message of the inline alert.
      * Also renders the optional link.
      *
+     * @param context faces context
      * @param alert The Alert object to use
      * @param theme The theme to use
+     * @param styles CSS styles
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderAlertDetailArea(FacesContext context, Alert alert, Theme theme, String[] styles, ResponseWriter writer) throws IOException {
+    protected void renderAlertDetailArea(FacesContext context, Alert alert,
+            Theme theme, String[] styles, ResponseWriter writer)
+            throws IOException {
+
         // Get the detail text
         String detail = alert.getDetail();
 
         // Get the children, if any.
         List children = alert.getChildren();
-        if ((detail == null || detail.trim().length() == 0) && children.size() <= 0) {
+        if ((detail == null
+                || detail.trim().length() == 0)
+                && children.size() <= 0) {
             return;
         }
 
         // Set the style
-        writer.startElement("div", alert); //NOI18N
-        writer.writeAttribute("class", styles[8], null); //NOI18N
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styles[8], null);
 
         // Check if it should be HTML escaped (true by default).
         if (detail != null) {
             writer.startElement("span", alert);
-            writer.writeAttribute("class", styles[7], null); //NOI18N
+            writer.writeAttribute("class", styles[7], null);
 
-	    //Added to force screen reader to read alert box incase of deployment error
-	    writer.writeAttribute("role", "alert", null);
+            //Added to force screen reader to read alert box incase of
+            // deployment error
+            writer.writeAttribute("role", "alert", null);
 
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             renderFormattedMessage(writer, alert, context, detail);
-            writer.endElement("span"); //NOI18N
-            writer.writeText("\n", null); //NOI18N
+            writer.endElement("span");
+            writer.writeText("\n", null);
         }
 
         // render any children
@@ -379,8 +418,8 @@ public class AlertRenderer extends AbstractRenderer {
         renderAlertLink(context, alert, theme, writer);
 
         // Close the div
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -388,14 +427,17 @@ public class AlertRenderer extends AbstractRenderer {
      *
      * @param context The current FacesContext
      * @param alert The Alert object to use
+     * @param theme theme in-use
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderAlertLink(FacesContext context, Alert alert, Theme theme, ResponseWriter writer) throws IOException {
+    protected void renderAlertLink(FacesContext context, Alert alert,
+            Theme theme, ResponseWriter writer) throws IOException {
+
         UIComponent link = alert.getAlertLink();
         if (link != null) {
-            RenderingUtilities.renderComponent(link, context);
+            renderComponent(link, context);
         }
     }
 
@@ -407,22 +449,15 @@ public class AlertRenderer extends AbstractRenderer {
      * @exception IOException if an input/output error occurs
      */
     protected void renderClosingTags(ResponseWriter writer) throws IOException {
-        writer.endElement("table"); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("table");
+        writer.endElement("div");
+        writer.writeText("\n", null);
     }
 
-    /**
-     * Renders the inline alert component.
-     *
-     * @param context The current FacesContext
-     * @param component The Alert object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurss
-     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component, ResponseWriter writer) throws IOException {
+    protected void renderEnd(FacesContext context, UIComponent component,
+            ResponseWriter writer) throws IOException {
+
         // Render end of alert
         Alert alert = (Alert) component;
         String summary = alert.getSummary();
@@ -445,20 +480,20 @@ public class AlertRenderer extends AbstractRenderer {
         // If the ExternalContext instance is specific to design time
         // and behaves appropriately, then the
         // isDesignTime test will not be needed either.
-        //
 
-        if (!RenderingUtilities.isPortlet(context) &&
-                !Beans.isDesignTime()) {
+        if (!isPortlet(context)
+                && !Beans.isDesignTime()) {
             // Reset the scroll position by creating a new cookie
             // and setting its value to null. This would override
             // the cookie that the javascript code creates. CR 6251724.
-            HttpServletResponse response =
-                    (HttpServletResponse) context.getExternalContext().getResponse();
+            HttpServletResponse response
+                    = (HttpServletResponse) context.getExternalContext()
+                            .getResponse();
             String viewId = context.getViewRoot().getViewId();
             String urlString = context.getApplication().getViewHandler().
                     getActionURL(context, viewId);
-	    // Get this after we calculate the urlString...
-	    viewId = CookieUtils.getValidCookieName(viewId);
+            // Get this after we calculate the urlString...
+            viewId = CookieUtils.getValidCookieName(viewId);
             Cookie cookie = new Cookie(viewId, "");
             cookie.setPath(urlString);
             response.addCookie(cookie);
@@ -466,7 +501,6 @@ public class AlertRenderer extends AbstractRenderer {
 
         // Render the outer div that wraps the alert
         // Get the default style for the alert
-        //
         String defaultStyleClass = theme.getStyleClass(ThemeStyles.ALERT_DIV);
         renderOuterDiv(context, alert, defaultStyleClass, writer);
 
@@ -487,13 +521,13 @@ public class AlertRenderer extends AbstractRenderer {
     }
 
     // Private helper methods.
-    private void renderFormattedMessage(ResponseWriter writer, UIComponent component, FacesContext context, String msg) throws IOException {
-        ArrayList<Object> parameterList = new ArrayList<Object>();
+    private void renderFormattedMessage(ResponseWriter writer,
+            UIComponent component, FacesContext context, String msg)
+            throws IOException {
 
+        ArrayList<Object> parameterList = new ArrayList<Object>();
         // get UIParameter children...
-        java.util.Iterator kids = component.getChildren().iterator();
-        while (kids.hasNext()) {
-            UIComponent kid = (UIComponent) kids.next();
+        for (UIComponent kid : component.getChildren()) {
             if (!(kid instanceof UIParameter)) {
                 continue;
             }
@@ -502,9 +536,10 @@ public class AlertRenderer extends AbstractRenderer {
 
         // If at least one substitution parameter was specified,
         // use the string as a MessageFormat instance.
-        String message = null;
+        String message;
         if (parameterList.size() > 0) {
-            message = MessageFormat.format(msg, parameterList.toArray(new Object[parameterList.size()]));
+            message = MessageFormat.format(msg,
+                    parameterList.toArray(new Object[parameterList.size()]));
         } else {
             message = msg;
         }
@@ -515,11 +550,13 @@ public class AlertRenderer extends AbstractRenderer {
     }
 
     // Renders a spacer image.
-    private void renderSpacerImage(Alert alert, String spacerPath, ResponseWriter writer) throws IOException {
-        writer.startElement("img", alert); //NOI18N
-        writer.writeAttribute("src", spacerPath, null); //NOI18N
-        writer.writeAttribute("alt", "", null); //NOI18N
-        writer.endElement("img");      //NOI18N
+    private void renderSpacerImage(Alert alert, String spacerPath,
+            ResponseWriter writer) throws IOException {
+
+        writer.startElement("img", alert);
+        writer.writeAttribute("src", spacerPath, null);
+        writer.writeAttribute("alt", "", null);
+        writer.endElement("img");
     }
 
     private String[] getStyles(Theme theme) {

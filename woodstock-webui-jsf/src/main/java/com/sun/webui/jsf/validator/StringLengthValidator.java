@@ -33,15 +33,13 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- *  <p>	Use this validator to check the number of characters in a string when
- *	you need to set the validation messages.</p>
- *
- * @author avk
+ * Use this validator to check the number of characters in a string when
+ * you need to set the validation messages.
  */
 public class StringLengthValidator implements Validator, StateHolder {
 
     /**
-     * <p>The converter id for this converter.</p>
+     * The converter id for this converter.
      */
     public static final String VALIDATOR_ID = "com.sun.webui.jsf.StringLength";
     /**
@@ -49,6 +47,7 @@ public class StringLengthValidator implements Validator, StateHolder {
      * {0} for the minimum value.
      */
     private String tooShortMessage = null;
+
     /**
      * The message to use in case the value is too long. May include
      * {0} for the maximum value.
@@ -59,7 +58,9 @@ public class StringLengthValidator implements Validator, StateHolder {
     private boolean minimumSet = false;
     private static final boolean DEBUG = false;
 
-    /** Creates a new instance of StringLengthValidator */
+    /**
+     * Create a new instance.
+     */
     public StringLengthValidator() {
     }
 
@@ -82,16 +83,7 @@ public class StringLengthValidator implements Validator, StateHolder {
         minimumSet = true;
     }
 
-    /**
-     *	<p> Validate the value with regard to a <code>UIComponent</code> and a
-     *	    <code>FacesContext</code>.</p>
-     *
-     *	@param	context	    The FacesContext
-     *	@param	component   The component to be validated
-     *	@param	value	    The submitted value of the component
-     *
-     * @exception ValidatorException if the value is not valid
-     */
+    @Override
     public void validate(FacesContext context,
             UIComponent component,
             Object value) throws ValidatorException {
@@ -126,7 +118,8 @@ public class StringLengthValidator implements Validator, StateHolder {
             }
             if (tooLongMessage == null) {
                 Theme theme = ThemeUtilities.getTheme(context);
-                tooLongMessage = theme.getMessage("StringLengthValidator.itemTooLong");
+                tooLongMessage = theme.getMessage(
+                        "StringLengthValidator.itemTooLong");
             }
             MessageFormat mf =
                     new MessageFormat(tooLongMessage,
@@ -142,7 +135,8 @@ public class StringLengthValidator implements Validator, StateHolder {
             }
             if (tooShortMessage == null) {
                 Theme theme = ThemeUtilities.getTheme(context);
-                tooShortMessage = theme.getMessage("StringLengthValidator.itemTooLong");
+                tooShortMessage = theme.getMessage(
+                        "StringLengthValidator.itemTooLong");
             }
             MessageFormat mf =
                     new MessageFormat(tooShortMessage,
@@ -155,42 +149,34 @@ public class StringLengthValidator implements Validator, StateHolder {
 
     @SuppressWarnings("unchecked")
     private String integerToString(UIComponent component, Integer toConvert) {
-        String result = null;
-        Converter converter = null;
+        String result;
+        Converter converter;
         FacesContext context = FacesContext.getCurrentInstance();
 
-        converter = (Converter) context.getApplication().createConverter("javax.faces.Number");
+        converter = (Converter) context.getApplication()
+                .createConverter("javax.faces.Number");
         result = converter.getAsString(context, component, toConvert);
         return result;
     }
 
-    /**
-     * Saves the state of the component into an object
-     * @param context the FacesContext
-     * @return the Object representing the state of the component
-     */
+    @Override
     public Object saveState(FacesContext context) {
-
         Object values[] = new Object[5];
-        values[0] = new Integer(maxLength);
-        values[1] = new Integer(minLength);
+        values[0] = maxLength;
+        values[1] = minLength;
         values[2] = minimumSet ? Boolean.TRUE : Boolean.FALSE;
         values[3] = tooLongMessage;
         values[4] = tooShortMessage;
         return (values);
     }
 
-    /**
-     * Restore the state of the component.
-     * @param context The FacesContext
-     * @param state the Object representing the state of the component
-     */
+    @Override
     public void restoreState(FacesContext context, Object state) {
 
         Object values[] = (Object[]) state;
-        maxLength = ((Integer) values[0]).intValue();
-        minLength = ((Integer) values[1]).intValue();
-        minimumSet = ((Boolean) values[2]).booleanValue();
+        maxLength = ((Integer) values[0]);
+        minLength = ((Integer) values[1]);
+        minimumSet = ((Boolean) values[2]);
         if (values[3] != null) {
             tooLongMessage = values[3].toString();
         }
@@ -198,56 +184,57 @@ public class StringLengthValidator implements Validator, StateHolder {
             tooShortMessage = values[4].toString();
         }
     }
-    private boolean transientValue = false;
 
-    /**
-     * Returns false, this component needs to save state.
-     * @return false
-     */
+    @Override
     public boolean isTransient() {
         return false;
     }
 
-    /**
-     * Does nothing
-     */
+    @Override
     public void setTransient(boolean transientValue) {
-        return;
     }
 
     /**
-     * Get the message to be used if the string is longer than the maxmimum number of characters.
-     * @return the message to be used if the string is longer than the maxmimum number of characters
+     * Get the message to be used if the string is longer than the maximum
+     * number of characters.
+     *
+     * @return the message to be used if the string is longer than the maximum
+     * number of characters
      */
     public String getTooLongMessage() {
-
         return this.tooLongMessage;
     }
 
     /**
-     * Set the message to be used if the string is longer than the maximum number of characters.
-     * @param tooLongMessage the message to be used if the string is longer than the maxmimum number of characters
+     * Set the message to be used if the string is longer than the maximum
+     * number of characters.
+     *
+     * @param tooLongMessage the message to be used if the string is longer than
+     * the maximum number of characters
      */
     public void setTooLongMessage(String tooLongMessage) {
-
         this.tooLongMessage = tooLongMessage;
     }
 
     /**
-     * Get the message to be used if the string is shorter than the minimum number of characters.
-     * @return the message to be used if the string is shorter than the minimum number of characters
+     * Get the message to be used if the string is shorter than the minimum
+     * number of characters.
+     *
+     * @return the message to be used if the string is shorter than the minimum
+     * number of characters
      */
     public String getTooShortMessage() {
-
         return this.tooShortMessage;
     }
 
     /**
-     * Set the message to be used if the string is shorter than the minimum number of characters.
-     * @param tooShortMessage the message to be used if the string is shorter than the minimum number of characters
+     * Set the message to be used if the string is shorter than the minimum
+     * number of characters.
+     *
+     * @param tooShortMessage the message to be used if the string is shorter
+     * than the minimum number of characters
      */
     public void setTooShortMessage(String tooShortMessage) {
-
         this.tooShortMessage = tooShortMessage;
     }
 

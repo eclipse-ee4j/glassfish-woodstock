@@ -21,7 +21,8 @@ define(function () {
      */
     return {
         // Common properties.
-        hiddenClassName: "hidden_sun4", // Use webui.suntheme.common.setVisibleElement
+        // Use webui.suntheme.common.setVisibleElement
+        hiddenClassName: "hidden_sun4",
 
         // Button properties.
         button: {

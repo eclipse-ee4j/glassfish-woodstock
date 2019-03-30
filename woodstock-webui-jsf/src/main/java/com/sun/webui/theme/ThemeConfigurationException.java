@@ -17,16 +17,17 @@
 package com.sun.webui.theme;
 
 /**
- * <p>Exception describing a problem configuring a specified {@link Theme}.
- * This class has JDK 1.4 compatible constructor and method signatures,
- * but will also work in a 1.3 environment.</p>
+ * Exception describing a problem configuring a specified {@link Theme}.
  */
 public class ThemeConfigurationException extends RuntimeException {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 3798546969459906555L;
 
     /**
-     * <p>Construct a ThemeConfigurationException with a message.</p>
+     * Construct a ThemeConfigurationException with a message.
      * @param message Message describing the configuration problem
      */
     public ThemeConfigurationException(String message) {

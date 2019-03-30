@@ -24,78 +24,68 @@ import javax.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Head;
 import com.sun.webui.jsf.component.util.Util;
 import com.sun.webui.theme.Theme;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderHeaderScriptTags;
+import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleSheetLink;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+
 /**
- * <p>Renderer for a {@link Head} component.</p>
+ * Renderer for a {@link Head} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Head"))
 public class HeadRenderer extends AbstractRenderer {
 
     /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
+     * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {"profile"}; //NOI18N
-
-    private static final String DATE_ONE =
-            (new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US)).format(new Date(1));
+    private static final String STRING_ATTRIBUTES[] = {"profile"};
 
     /**
-     * <p>Render the appropriate element start, depending on whether the
-     * <code>for</code> property is set or not.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to render.
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
+     * Date one.
      */
+    private static final String DATE_ONE =
+            (new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US))
+                    .format(new Date(1));
+
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
+
         // Start the appropriate element
-        if (!RenderingUtilities.isPortlet(context)) {
-            writer.startElement("head", component); //NOI18N
+        if (!isPortlet(context)) {
+            writer.startElement("head", component);
         }
     }
 
-    /**
-     * <p>Render the appropriate element attributes, 
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderAttributes(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
+
         Head head = (Head) component;
-        if (!RenderingUtilities.isPortlet(context)) {
+        if (!isPortlet(context)) {
             // Profile
-            addStringAttributes(context, component, writer, stringAttributes);
+            addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
 
             // Meta tags
             if (head.isMeta()) {
-                writer.write("\n"); //NOI18N
-                
-                HttpServletResponse servletResponse = (HttpServletResponse) context.getCurrentInstance().getExternalContext().getResponse();
-                servletResponse.setHeader("Pragma", "no-cache");
-                servletResponse.setHeader("Cache-Control", "no-store");
-                servletResponse.setHeader("Cache-Control", "no-cache");
-                servletResponse.setHeader("Expires", DATE_ONE);
-                servletResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
-                
+                writer.write("\n");
+
+                HttpServletResponse response = (HttpServletResponse)
+                        FacesContext.getCurrentInstance()
+                                .getExternalContext()
+                                .getResponse();
+
+                response.setHeader("Pragma", "no-cache");
+                response.setHeader("Cache-Control", "no-store");
+                response.setHeader("Cache-Control", "no-cache");
+                response.setHeader("Expires", DATE_ONE);
+                response.setHeader("X-Frame-Options", "SAMEORIGIN");
+
                 renderMetaTag("no-cache", "Pragma", writer, head);
                 renderMetaTag("no-cache", "Cache-Control", writer, head);
                 renderMetaTag("no-store", "Cache-Control", writer, head);
@@ -112,75 +102,46 @@ public class HeadRenderer extends AbstractRenderer {
             writer.startElement("title", head);
             writer.write(title);
             writer.endElement("title");
-            writer.write("\n"); //NOI18N
+            writer.write("\n");
 
             // Base
             if (head.isDefaultBase()) {
-                writer.startElement("base", head); //NOI18N
+                writer.startElement("base", head);
                 // TODO - verify the requirements w.r.t. printing this href
-                writer.writeURIAttribute("href", Util.getBase(context), null); //NOI18N
-                writer.endElement("base"); //NOI18N
-                writer.write("\n"); //NOI18N
+                writer.writeURIAttribute("href", Util.getBase(context), null);
+                writer.endElement("base");
+                writer.write("\n");
             }
 
             // Master link to always write out.
-            Theme theme = ThemeUtilities.getTheme(context);
-            RenderingUtilities.renderStyleSheetLink(head, theme, context, writer);
+            Theme theme = getTheme(context);
+            renderStyleSheetLink(head, theme, context, writer);
 
             // Do not render any JavaScript.
             if (!head.isJavaScript()) {
                 return;
             }
 
-            // Render Dojo config.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    JavaScriptUtilities.getDojoConfig(head.isDebug(),
-                    head.isParseWidgets()));
-
-            // Render Dojo include.
-            JavaScriptUtilities.renderDojoInclude(component, writer);
-
-            // Render JSON include.
-            //JavaScriptUtilities.renderJsonInclude(component, writer);
-
-            // Render Prototype include before JSF Extensions.
-            JavaScriptUtilities.renderPrototypeInclude(component, writer);
-
-            // Render JSF Extensions include.
-            //JavaScriptUtilities.renderJsfxInclude(component, writer);
-
-            // Render module config after including dojo.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    JavaScriptUtilities.getModuleConfig(head.isDebug()));
-
-            // Render global include.
-            JavaScriptUtilities.renderGlobalInclude(component, writer);
+            // Render script tags
+            renderHeaderScriptTags(head.isDebug(), head.isParseWidgets(),
+                    writer);
         }
     }
 
-    /**
-     * <p>Render the appropriate element end, depending on whether the
-     * <code>for</code> property is set or not.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component component to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
+
         // Start the appropriate element.
-        if (!RenderingUtilities.isPortlet(context)) {
-            writer.endElement("head"); //NOI18N
-            writer.write("\n"); //NOI18N
+        if (!isPortlet(context)) {
+            writer.endElement("head");
+            writer.write("\n");
         }
     }
 
     private void renderMetaTag(String content, String httpEquivalent,
             ResponseWriter writer, Head head) throws IOException {
+
         writer.startElement("meta", head);
         writer.writeAttribute("content", content, null);
         writer.writeAttribute("http-equiv", httpEquivalent, null);

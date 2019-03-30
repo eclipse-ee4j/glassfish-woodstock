@@ -109,9 +109,6 @@ public class ProgressBar extends javax.faces.component.UIOutput
         return getFacesContext();
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.ProgressBar";
@@ -126,18 +123,11 @@ public class ProgressBar extends javax.faces.component.UIOutput
         }
     }
 
-    /**
-     * Get the type of widget represented by this component.
-     *
-     * @return The type of widget represented by this component.
-     */
+    @Override
     public String getWidgetType() {
-        return JavaScriptUtilities.getNamespace("progressBar");
+        return "progressBar";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Icon methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Get the busy icon.
      *
@@ -197,8 +187,9 @@ public class ProgressBar extends javax.faces.component.UIOutput
     }
 
     /**
-     * This function creates one textarea component for displaying
+     * This function creates one text-area component for displaying
      * log messages.
+     * @param component
      * @return UIComponent
      */
     public UIComponent getLogMsgComponent(ProgressBar component) {
@@ -211,6 +202,7 @@ public class ProgressBar extends javax.faces.component.UIOutput
 
         return textArea;
     }
+
     /**
      * Flag indicating to turn off default Ajax functionality. Set ajaxify to
      * false when providing a different Ajax implementation.

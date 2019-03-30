@@ -14,10 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-//dojo.provide("webui.suntheme.orderableList");
 define(function () {
 
     return {
+
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.

@@ -28,46 +28,37 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>Renderer for an {@link Alarm} component.</p>
- * 
+ * Renderer for an {@link Alarm} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Alarm"))
 public class AlarmRenderer extends ImageRenderer {
+ 
     // Label position.
-
-    private static final String LABEL_LEFT = "left"; //NOI8N
-    private static final String LABEL_RIGHT = "right"; //NOI8N
-    private static final String WHITE_SPACE = "&nbsp;"; //NOI8N
+    private static final String LABEL_LEFT = "left";
+    private static final String LABEL_RIGHT = "right";
+    private static final String WHITE_SPACE = "&nbsp;";
     private static final String CRITICAL_ALT_TEXT_KEY =
-            "Alarm.criticalImageAltText"; //NOI18N
+            "Alarm.criticalImageAltText";
     private static final String MAJOR_ALT_TEXT_KEY =
-            "Alarm.majorImageAltText"; //NOI18N
+            "Alarm.majorImageAltText";
     private static final String MINOR_ALT_TEXT_KEY =
-            "Alarm.minorImageAltText"; //NOI18N
+            "Alarm.minorImageAltText";
     private static final String DOWN_ALT_TEXT_KEY =
-            "Alarm.downImageAltText"; //NOI18N
-
-    /** Creates a new instance of AlarmRenderer */
-    public AlarmRenderer() {
-        // default constructor
-    }
+            "Alarm.downImageAltText";
 
     /**
-     * Render the start of the image element
-     *
-     * @param context The current FacesContext
-     * @param component The ImageComponent object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurss
+     * Creates a new instance of AlarmRenderer.
      */
+    public AlarmRenderer() {
+    }
+
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
 
         if (context == null || component == null) {
             throw new NullPointerException(
-                    "FacesContext or UIComponent is null"); //NOI18N
+                    "FacesContext or UIComponent is null");
         }
 
         Alarm alarm = (Alarm) component;
@@ -97,7 +88,6 @@ public class AlarmRenderer extends ImageRenderer {
             }
         } else if (label != null) {
             // Just a label no additional space.
-            //
             renderLabel(context, alarm, label, false, false, writer);
         }
     }
@@ -152,20 +142,20 @@ public class AlarmRenderer extends ImageRenderer {
         // data from the returned Icon to the ImageComponent to ensure that developer values
         // are respected.
 
-        if (severity.equalsIgnoreCase(alarm.SEVERITY_CRITICAL)) {
+        if (severity.equalsIgnoreCase(Alarm.SEVERITY_CRITICAL)) {
             sevIcon = ThemeImages.ALARM_CRITICAL_MEDIUM;
             sevAlt = theme.getMessage(CRITICAL_ALT_TEXT_KEY);
             sevToolTip = theme.getMessage(CRITICAL_ALT_TEXT_KEY);
-        } else if (severity.equalsIgnoreCase(alarm.SEVERITY_MAJOR)) {
+        } else if (severity.equalsIgnoreCase(Alarm.SEVERITY_MAJOR)) {
             sevIcon = ThemeImages.ALARM_MAJOR_MEDIUM;
             sevAlt = theme.getMessage(MAJOR_ALT_TEXT_KEY);
             sevToolTip = theme.getMessage(MAJOR_ALT_TEXT_KEY);
 
-        } else if (severity.equalsIgnoreCase(alarm.SEVERITY_MINOR)) {
+        } else if (severity.equalsIgnoreCase(Alarm.SEVERITY_MINOR)) {
             sevIcon = ThemeImages.ALARM_MINOR_MEDIUM;
             sevAlt = theme.getMessage(MINOR_ALT_TEXT_KEY);
             sevToolTip = theme.getMessage(MINOR_ALT_TEXT_KEY);
-        } else if (severity.equalsIgnoreCase(alarm.SEVERITY_DOWN)) {
+        } else if (severity.equalsIgnoreCase(Alarm.SEVERITY_DOWN)) {
             sevIcon = ThemeImages.ALARM_DOWN_MEDIUM;
             sevAlt = theme.getMessage(DOWN_ALT_TEXT_KEY);
             sevToolTip = theme.getMessage(DOWN_ALT_TEXT_KEY);
@@ -174,7 +164,6 @@ public class AlarmRenderer extends ImageRenderer {
         // If the developer specified an URL it takes precendence
         // over the icon in ImageRenderer.
         // See if the developer overrode the severity based icon.
-        //
         String icon = alarm.getIcon();
         if (icon != null) {
             sevIcon = icon;
@@ -195,7 +184,6 @@ public class AlarmRenderer extends ImageRenderer {
 
         // We don't want to pass an Icon to the ImageRenderer
         // because if it sees an Icon, it ignores too much
-        //
         ImageComponent sevImage = new ImageComponent();
         sevImage.setIcon(sevIcon);
         sevImage.setUrl(url);
@@ -216,15 +204,6 @@ public class AlarmRenderer extends ImageRenderer {
         return sevImage;
     }
 
-    /**
-     * Render the end of the image element
-     *
-     * @param context The current FacesContext
-     * @param component The ImageComponent object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurss
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -251,7 +230,7 @@ public class AlarmRenderer extends ImageRenderer {
      * @param component The ImageComponent object to use
      * @param writer The current ResponseWriter
      *
-     * @exception IOException if an input/output error occurss
+     * @exception IOException if an input/output error occurs
      */
     @Override
     protected void renderAttributes(FacesContext context,
@@ -268,19 +247,21 @@ public class AlarmRenderer extends ImageRenderer {
      */
     private String getSeverity(Alarm alarm) {
         String severity = alarm.getSeverity();
-        if (severity == null || !(severity.equals(alarm.SEVERITY_CRITICAL) ||
-                severity.equals(alarm.SEVERITY_DOWN) ||
-                severity.equals(alarm.SEVERITY_MAJOR) ||
-                severity.equals(alarm.SEVERITY_MINOR))) {
-            severity = alarm.DEFAULT_SEVERITY;
+        if (severity == null || !(severity.equals(Alarm.SEVERITY_CRITICAL) ||
+                severity.equals(Alarm.SEVERITY_DOWN) ||
+                severity.equals(Alarm.SEVERITY_MAJOR) ||
+                severity.equals(Alarm.SEVERITY_MINOR))) {
+            severity = Alarm.DEFAULT_SEVERITY;
         }
         return severity.toLowerCase();
     }
 
     /**
-     * If the severity is ok, but url is not null, show an image
-     * even though the severity is "ok". The quidelines say "ok"
+     * If the severity is acceptable, but URL is not null, show an image
+     * even though the severity is fine. The guidelines say acceptable
      * has no image but if the developer wants it show it.
+     * @param severity severity to test
+     * @return {@code true} if acceptable, {@code false} otherwise
      */
     private boolean isSeverityOk(String severity) {
         return Alarm.DEFAULT_SEVERITY.equalsIgnoreCase(severity);

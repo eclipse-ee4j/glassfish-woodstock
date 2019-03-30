@@ -18,30 +18,30 @@ package com.sun.webui.jsf.renderkit.widget;
 
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Table2Column;
-import com.sun.webui.jsf.util.WidgetUtilities;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObjectBuilder;
+
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 
 /**
  * This class renders Table2Column components.
  */
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.Table2Column",
 componentFamily = "com.sun.webui.jsf.Table2Column"))
-public class Table2ColumnRenderer extends RendererBase {
+public final class Table2ColumnRenderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
      * <p>
      * Note: The WIDTH, HEIGHT, and BGCOLOR attributes are all deprecated (in
      * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and 
-     * LANG attributes are not cuurently supported.
+     * LANG attributes are not currently supported.
      * </p>
      */
-    private static final String attributes[] = {
+    private static final String ATTRIBUTES[] = {
         "abbr",
         "axis",
         "bgColor",
@@ -63,62 +63,56 @@ public class Table2ColumnRenderer extends RendererBase {
         "onMouseOver",
         "style",
         "valign",
-        "width"};
+        "width"
+    };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // RendererBase methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Get the Dojo modules required to instantiate the widget.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONArray getModules(FacesContext context, UIComponent component)
-            throws JSONException {
-        return null; // not implementd.
+    @Override
+    protected String[] getModuleNames(UIComponent component) {
+        return new String[]{
+            "table2RowGroup"
+        };
     }
 
-    /** 
-     * Helper method to obtain component properties.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     */
-    protected JSONObject getProperties(FacesContext context,
-            UIComponent component) throws IOException, JSONException {
+    @Override
+    protected JsonObjectBuilder getProperties(FacesContext context,
+            UIComponent component) throws IOException {
+
         Table2Column col = (Table2Column) component;
-        JSONObject json = new JSONObject();
+        JsonObjectBuilder jsonBuilder = JSON_BUILDER_FACTORY
+                .createObjectBuilder();
 
         // Add properties.
-        addAttributeProperties(attributes, col, json);
-        setCoreProperties(context, col, json);
-        setFooterProperties(context, col, json);
-        setHeaderProperties(context, col, json);
+        addAttributeProperties(ATTRIBUTES, col, jsonBuilder);
+        setFooterProperties(context, col, jsonBuilder);
+        setHeaderProperties(context, col, jsonBuilder);
 
-        return json;
+        return jsonBuilder;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Property methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /** 
+    @Override
+    protected void renderNestedContent(FacesContext context,
+            UIComponent component) throws IOException {
+    }
+
+    /**
      * Helper method to obtain footer properties.
      *
      * @param context FacesContext for the current request.
      * @param component Table2Column to be rendered.
-     * @param json JSONObject to assign properties to.
+     * @param jsonBuilder JSONObject to assign properties to.
+     * @throws java.io.IOException if an IO error occurs
      */
-    protected void setFooterProperties(FacesContext context, Table2Column component,
-            JSONObject json) throws IOException, JSONException {
+    protected void setFooterProperties(FacesContext context,
+            Table2Column component, JsonObjectBuilder jsonBuilder)
+            throws IOException {
+
         // Get footer facet.
         UIComponent facet = component.getFacet(Table2Column.FOOTER_FACET);
         if (facet != null && facet.isRendered()) {
-            WidgetUtilities.addProperties(json, "footerText",
-                    WidgetUtilities.renderComponent(context, facet));
+            jsonBuilder.add("footerText", renderComponent(context, facet));
         } else {
             // Add footer text.
-            json.put("footerText", component.getFooterText());
+            jsonBuilder.add("footerText", component.getFooterText());
         }
     }
 
@@ -127,22 +121,20 @@ public class Table2ColumnRenderer extends RendererBase {
      *
      * @param context FacesContext for the current request.
      * @param component Table2Column to be rendered.
-     * @param json JSONObject to assign properties to.
+     * @param jsonBuilder JSONObject to assign properties to.
+     * @throws java.io.IOException if an IO error occurs
      */
-    protected void setHeaderProperties(FacesContext context, Table2Column component,
-            JSONObject json) throws IOException, JSONException {
+    protected void setHeaderProperties(FacesContext context,
+            Table2Column component, JsonObjectBuilder jsonBuilder)
+            throws IOException {
+
         // Get header facet.
         UIComponent facet = component.getFacet(Table2Column.HEADER_FACET);
         if (facet != null && facet.isRendered()) {
-            WidgetUtilities.addProperties(json, "headerText",
-                    WidgetUtilities.renderComponent(context, facet));
+            jsonBuilder.add("headerText", renderComponent(context, facet));
         } else {
             // Add header text.
-            json.put("headerText", component.getHeaderText());
+            jsonBuilder.add("headerText", component.getHeaderText());
         }
     }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }

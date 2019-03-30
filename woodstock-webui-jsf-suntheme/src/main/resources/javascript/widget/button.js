@@ -27,7 +27,7 @@ require([
     "dijit/_WidgetBase",
     "dijit/_OnDijitClickMixin",
     "dijit/_TemplatedMixin",
-    "webui/../text!./templates/button.html"
+    "dojo/text!webui/suntheme../templates/button.html"
 ], function (button, common, props, widgetCommon, on, declare, _WidgetBase,
         _OnDijitClickMixin, _TemplatedMixin, template) {
 

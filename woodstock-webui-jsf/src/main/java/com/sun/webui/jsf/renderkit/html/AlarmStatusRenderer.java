@@ -26,46 +26,53 @@ import com.sun.webui.jsf.component.ImageComponent;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
+import static com.sun.webui.jsf.util.ConversionUtilities.convertValueToString;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
+
 /**
- * <p>Render an instance of the AlarmStatus component.</p>
- *
- * @author Sean Comerford
+ * Render an instance of the AlarmStatus component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.AlarmStatus"))
 public class AlarmStatusRenderer extends HyperlinkRenderer {
 
-    /** Creates a new instance of AlarmStatusRenderer */
+    /**
+     * Creates a new instance of AlarmStatusRenderer.
+     */
     public AlarmStatusRenderer() {
     }
 
+    /**
+     * Render an alarm label.
+     * @param context faces context
+     * @param alarmStatus alarm status
+     * @param writer writer to use
+     * @param theme theme in-use
+     * @throws IOException if an IO error occurs
+     */
     protected void renderAlarmLabel(FacesContext context,
             AlarmStatus alarmStatus, ResponseWriter writer, Theme theme)
             throws IOException {
+
         writer.startElement("span", alarmStatus);
         addCoreAttributes(context, alarmStatus, writer,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_TEXT));
 
         Object textObj = alarmStatus.getText();
-        String text = textObj == null ? theme.getMessage("masthead.currentAlarms") : ConversionUtilities.convertValueToString(alarmStatus, textObj);
+        String text;
+        if (textObj == null) {
+            text = theme.getMessage("masthead.currentAlarms");
+        } else {
+            text = convertValueToString(alarmStatus, textObj);
+        }
 
         writer.write(text);
         writer.write("&nbsp;");
         writer.endElement("span");
     }
 
-    /**
-     * <p>Render the start of the JobInfo component.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * start should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -80,10 +87,10 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
             renderAlarmLabel(context, alarmStatus, writer, theme);
         }
 
-        int numAlarms = 0;
-        String icon = null;
-        String themeIcon = null;
-        String alt = null;
+        int numAlarms;
+        String icon;
+        String themeIcon;
+        String alt;
         facet = alarmStatus.getFacet("downAlarms");
 
         if (facet != null) {
@@ -92,10 +99,17 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         } else if (alarmStatus.isDownAlarms()) {
             // render the down alarm image + count
             numAlarms = alarmStatus.getNumDownAlarms();
-            themeIcon = numAlarms != 0 ? ThemeImages.ALARM_MASTHEAD_DOWN_MEDIUM : ThemeImages.ALARM_MASTHEAD_DOWN_DIMMED;
-            icon = alarmStatus.getDownIcon() != null ? alarmStatus.getDownIcon() : themeIcon;
+            if (numAlarms != 0) {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_DOWN_MEDIUM;
+            } else {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_DOWN_DIMMED;
+            }
+            if (alarmStatus.getDownIcon() != null) {
+                icon = alarmStatus.getDownIcon();
+            } else {
+                icon = themeIcon;
+            }
             alt = theme.getMessage("Alarm.downImageAltText");
-
             renderAlarmCount(context, writer, alarmStatus, icon,
                     theme.getStyleClass(ThemeStyles.MASTHEAD_ALARM_LINK),
                     numAlarms, alt);
@@ -109,10 +123,17 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         } else if (alarmStatus.isCriticalAlarms()) {
             // render the critical alarm + count
             numAlarms = alarmStatus.getNumCriticalAlarms();
-            themeIcon = numAlarms != 0 ? ThemeImages.ALARM_MASTHEAD_CRITICAL_MEDIUM : ThemeImages.ALARM_MASTHEAD_CRITICAL_DIMMED;
-            icon = alarmStatus.getCriticalIcon() != null ? alarmStatus.getCriticalIcon() : themeIcon;
+            if (numAlarms != 0) {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_CRITICAL_MEDIUM;
+            } else {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_CRITICAL_DIMMED;
+            }
+            if (alarmStatus.getCriticalIcon() != null) {
+                icon = alarmStatus.getCriticalIcon();
+            } else {
+                icon = themeIcon;
+            }
             alt = theme.getMessage("Alarm.criticalImageAltText");
-
             renderAlarmCount(context, writer, alarmStatus, icon,
                     theme.getStyleClass(ThemeStyles.MASTHEAD_ALARM_LINK),
                     numAlarms, alt);
@@ -126,10 +147,17 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         } else if (alarmStatus.isMajorAlarms()) {
             // render the major alarm + count
             numAlarms = alarmStatus.getNumMajorAlarms();
-            themeIcon = numAlarms != 0 ? ThemeImages.ALARM_MASTHEAD_MAJOR_MEDIUM : ThemeImages.ALARM_MASTHEAD_MAJOR_DIMMED;
-            icon = alarmStatus.getMajorIcon() != null ? alarmStatus.getMajorIcon() : themeIcon;
+            if (numAlarms != 0) {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_MAJOR_MEDIUM;
+            } else {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_MAJOR_DIMMED;
+            }
+            if (alarmStatus.getMajorIcon() != null) {
+                icon = alarmStatus.getMajorIcon();
+            } else {
+                icon = themeIcon;
+            }
             alt = theme.getMessage("Alarm.majorImageAltText");
-
             renderAlarmCount(context, writer, alarmStatus, icon,
                     theme.getStyleClass(ThemeStyles.MASTHEAD_ALARM_LINK),
                     numAlarms, alt);
@@ -143,10 +171,17 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         } else if (alarmStatus.isMinorAlarms()) {
             // render the minor alarm + count
             numAlarms = alarmStatus.getNumMinorAlarms();
-            themeIcon = numAlarms != 0 ? ThemeImages.ALARM_MASTHEAD_MINOR_MEDIUM : ThemeImages.ALARM_MASTHEAD_MINOR_DIMMED;
-            icon = alarmStatus.getMinorIcon() != null ? alarmStatus.getMinorIcon() : themeIcon;
+            if (numAlarms != 0) {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_MINOR_MEDIUM;
+            } else {
+                themeIcon = ThemeImages.ALARM_MASTHEAD_MINOR_DIMMED;
+            }
+            if (alarmStatus.getMinorIcon() != null) {
+                icon = alarmStatus.getMinorIcon();
+            } else {
+                icon = themeIcon;
+            }
             alt = theme.getMessage("Alarm.minorImageAltText");
-
             renderAlarmCount(context, writer, alarmStatus, icon,
                     theme.getStyleClass(ThemeStyles.MASTHEAD_ALARM_LINK),
                     numAlarms, alt);
@@ -160,7 +195,6 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         // We don't want conversion here. This is just to cache
         // the original value so we can restore it after calling
         // renderLink.
-        //
         Object realText = alarmStatus.getText();
         String realIcon = alarmStatus.getIcon();
         String realStyleClass = alarmStatus.getStyleClass();
@@ -192,15 +226,6 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         alarmStatus.setAlt(alt);
     }
 
-    /**
-     * <p>Render the end of the JobInfo component.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * start should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -212,16 +237,16 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
             UIComponent component,
             ResponseWriter writer)
             throws IOException {
+
         // this method will (usually) be called 4 times to render each alarm
         // image and count as a separate instance of the same anchor tag
         AlarmStatus alarmStatus = (AlarmStatus) component;
         UIComponent image = alarmStatus.getImageFacet();
-
-        String label = ConversionUtilities.convertValueToString(alarmStatus,
+        String label = convertValueToString(alarmStatus,
                 alarmStatus.getText());
 
         if (image != null) {
-            RenderingUtilities.renderComponent(image, context);
+            renderComponent(image, context);
         }
 
         if (label != null && label.length() != 0) {
@@ -230,15 +255,20 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
     }
 
     /**
-     * @deprecated
+     * @param context faces context
+     * @param alarmStatus alarm status
+     * @param writer writer to sue
+     * @param theme theme to sue
+     * @param alarmSrc alarm source
+     * @throws java.io.IOException if an IO error occurs
+     * @deprecated do not use
      */
-    protected void renderAlarmImage(FacesContext context, AlarmStatus alarmStatus,
-            ResponseWriter writer, Theme theme, String alarmSrc)
-            throws IOException {
+    protected void renderAlarmImage(FacesContext context,
+            AlarmStatus alarmStatus, ResponseWriter writer, Theme theme,
+            String alarmSrc) throws IOException {
+
         ImageComponent image = new ImageComponent();
-
         image.setIcon(alarmSrc);
-
         RenderingUtilities.renderComponent(image, context);
     }
 }

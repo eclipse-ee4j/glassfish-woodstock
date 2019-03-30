@@ -29,23 +29,23 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * <p>
- * The <code>CheckboxRenderer</code> renders a 
+ * The {@code CheckboxRenderer} renders a 
  * {@link com.sun.webui.jsf.component.Checkbox} component.
- * </p>
+ *
  * <h3>Encoding</h3>
  * <p>
- * The <code>CheckboxRenderer</code> renders a <code>Checkbox</code> as:
+ * The {@code CheckboxRenderer} renders a {@code Checkbox} as:
  * <ul>
  * <li> An INPUT element of type checkbox for each checkbox.
  * </li>
  * <li> An optional image. The component rendered for this feature is obtained
- * from a call to <code>getImageComponent()</code> on the component being
+ * from a call to {@code getImageComponent()} on the component being
  * rendered. </li>
  * <li> An optional label. The component rendered for this feature is obtained
- * from a call to <code>getLabelComponent()</code> on the component being
+ * from a call to {@code getLabelComponent()} on the component being
  * rendered. </li>
  * </li>
  * </ul>
@@ -67,12 +67,12 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  * radio button if an image is rendered.</li>
  * </ul>
  * <em>Note that these selectors are appended to any existing selectors
- * that may already exist on the <code>styleClass</code> property of the
- * <code>Checkbox</code> component and the optional image and label
+ * that may already exist on the {@code styleClass} property of the
+ * {@code Checkbox} component and the optional image and label
  * components.</em>
  * <p>
  * For more details on the logic for actual renderering of HTML for
- * a <code>Checkbox</code> component see the super class
+ * a {@code Checkbox} component see the super class
  * {@link com.sun.webui.jsf.renderkit.html.RbCbRendererBase}
  * </p>
  * <p>
@@ -91,13 +91,13 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  * </p>
  * <p>
  * The component being decoded is selected if the component's
- * <code>isDisabled</code> and <code>isReadOnly</code> methods
+ * {@code isDisabled} and {@code isReadOnly} methods
  * return false and:
  * </p>
  * <ul>
- * <li>a request parameter exists that is equal to its <code>name</code>
- * property. If the <code>name</code> property is null, then a
- * request parameter exists that is equal to its <code>clientId</code>
+ * <li>a request parameter exists that is equal to its {@code name}
+ * property. If the {@code name} property is null, then a
+ * request parameter exists that is equal to its {@code clientId}
  * property.
  * <li/>
  * </ul>
@@ -106,26 +106,26 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  * </p>
  * <ul>
  * <li> the request parameter's value is an array that contains an element
- * that is <code>String.equal</code> to the
- * the component's <code>selectedValue</code> property, after conversion
- * to a <code>String</code>, by calling
- * <code>ConversionUtilities.convertValueToString</code>. If the component
+ * that is {@code String.equal} to the
+ * the component's {@code selectedValue} property, after conversion
+ * to a {@code String}, by calling
+ * {@code ConversionUtilities.convertValueToString}. If the component
  * was encoded as a boolean control, then an element the request parameter's
- * array value must be equal to the component's <code>clientId</code> property.
+ * array value must be equal to the component's {@code clientId} property.
  * </li>
  * </ul>
  * <p>
- * If selected, a <code>String[1]</code> array is assigned as the component's
- * submitted value where the single array element is the <code>String</code>
- * version of the <code>selectedValue</code> property or "true" if the
+ * If selected, a {@code String[1]} array is assigned as the component's
+ * submitted value where the single array element is the {@code String}
+ * version of the {@code selectedValue} property or "true" if the
  * component was encoded as a boolean control.<br/>
- * If not selected, a <code>String[0]</code> array is assigned as the
- * component's submitted value or a <code>String[1]</code> array where the
+ * If not selected, a {@code String[0]} array is assigned as the
+ * component's submitted value or a {@code String[1]} array where the
  * single array element is "false" if the component was encoded as a 
  * boolean control.
  * </p>
  * <p>
- * If the component's <code>isDisabled</code> or <code>isReadOnly</code>
+ * If the component's {@code isDisabled} or {@code isReadOnly}
  * methods return true no submitted value is assigned to the component,
  * and results in a null submitted value implying the component
  * was not submitted, and the state of the component is unchanged.
@@ -146,41 +146,41 @@ public class CheckboxRenderer extends RbCbRendererBase {
     }
 
     /**
-     * <p>Decode the <code>Checkbox</code> selection.</p>
+     * <p>Decode the {@code Checkbox} selection.</p>
      * <p>
-     * If the component's <code>isDisabled</code> and <code>isReadOnly</code>
+     * If the component's {@code isDisabled} and {@code isReadOnly}
      * methods return false, 
-     * If the value of the component's <code>name</code> property
+     * If the value of the component's {@code name} property
      * has been set, the value is used to match a request parameter.
      * If it has not been set the component clientId is used to match
      * a request parameter. If a match is found, and the value of the 
-     * of the request parameter matches the <code>String</code> value of the 
-     * component's <code>selectedValue</code> property, the
+     * of the request parameter matches the {@code String} value of the 
+     * component's {@code selectedValue} property, the
      * radio button is selected. The component's submitted value is
-     * assigned a <code>String[1]</code> array where the single array
+     * assigned a {@code String[1]} array where the single array
      * element is the matching parameter value.
      * </p>
      * <p>
      * If no matching request parameter or value is found, an instance of 
-     * <code>String[0]</code> is assigned as the submitted value,
+     * {@code String[0]} is assigned as the submitted value,
      * meaning that this is a component was not selected.
      * </p>
      * <p>
      * If the component was encoded as a boolean control the
      * value of the matching request attribute will be the component's
-     * <code>clientId</code> property if selected. If selected the 
-     * submitted value is <code>new String[] { "true" }</code>
-     * and <code>new String[] { "false" }</code> if not selected.
+     * {@code clientId} property if selected. If selected the 
+     * submitted value is {@code new String[] { "true" }}
+     * and {@code new String[] { "false" }} if not selected.
      * </p>
      * <p>
      * It is the developer's responsibility to ensure the validity of the
-     * <code>name</code> property (the name attribute on the
+     * {@code name} property (the name attribute on the
      * INPUT element) by ensuring that it is unique to the radio buttons
      * for a given group within a form.
      * </p>
      *
      * @param context FacesContext for the request we are processing.
-     * @param component The <code>Checkbox</code>
+     * @param component The {@code Checkbox}
      * component to be decoded.
      */
     @Override
@@ -302,7 +302,7 @@ public class CheckboxRenderer extends RbCbRendererBase {
 
     /**
      * Ensure that the component to be rendered is a Checkbox instance.
-     * Actual rendering occurs during <code>renderEnd</code>
+     * Actual rendering occurs during {@code renderEnd}
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
@@ -320,53 +320,34 @@ public class CheckboxRenderer extends RbCbRendererBase {
         }
     }
 
-    /**
-     * CheckboxRenderer renders the entire Checkbox
-     * component within the renderEnd method.
-     * See {@link com.sun.webui.jsf.renderkit.html.RbCbRendererBase} for
-     * details on encoding a <code>Checkbox</code> component.
-     *
-     * @param context FacesContext for the request we are processing.
-     * @param component UIComponent to be decoded.
-     */
     @Override
     public void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer)
-            throws IOException {
+            ResponseWriter writer) throws IOException {
 
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
         renderSelection(context, component, theme, writer, "checkbox");
-
     }
 
-    /**
-     * Return true if the <code>component</code> is selected, false
-     * otherwise.
-     * 
-     * @param context FacesContext for the request we are processing.
-     * @param component UIComponent to test for selected
-     */
-    protected boolean isSelected(FacesContext context, UIComponent component) {
+    @Override
+    protected final boolean isSelected(FacesContext context, UIComponent component) {
         return ((Checkbox) component).isChecked();
     }
-    protected String[] styles = {
-        ThemeStyles.CHECKBOX, /* INPUT */
-        ThemeStyles.CHECKBOX_DISABLED, /* INPUT_DIS */
-        ThemeStyles.CHECKBOX_LABEL, /* LABEL */
-        ThemeStyles.CHECKBOX_LABEL_DISABLED, /* LABEL_DIS */
-        ThemeStyles.CHECKBOX_IMAGE, /* IMAGE */
-        ThemeStyles.CHECKBOX_IMAGE_DISABLED, /* IMAGE_DIS */
-        ThemeStyles.CHECKBOX_SPAN, /* SPAN */
-        ThemeStyles.CHECKBOX_SPAN_DISABLED, /* SPAN_DIS */};
 
     /**
-     * Return the style class name for the structural element indicated
-     * by <code>styleCode</code>
-     *
-     * @param theme The Theme for this request.
-     * @param styleCode identifies the style class for the element about
-     * to be rendered.
+     * All checkbox styles.
      */
+    protected final String[] styles = {
+        ThemeStyles.CHECKBOX, // INPUT
+        ThemeStyles.CHECKBOX_DISABLED, // INPUT_DIS
+        ThemeStyles.CHECKBOX_LABEL, // LABEL
+        ThemeStyles.CHECKBOX_LABEL_DISABLED, // LABEL_DIS
+        ThemeStyles.CHECKBOX_IMAGE, // IMAGE
+        ThemeStyles.CHECKBOX_IMAGE_DISABLED, // IMAGE_DIS
+        ThemeStyles.CHECKBOX_SPAN, // SPAN
+        ThemeStyles.CHECKBOX_SPAN_DISABLED, // SPAN_DIS
+    };
+
+    @Override
     protected String getStyle(Theme theme, int styleCode) {
         String style = null;
         try {

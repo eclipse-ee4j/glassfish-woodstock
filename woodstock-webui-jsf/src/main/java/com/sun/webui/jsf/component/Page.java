@@ -27,29 +27,24 @@ import com.sun.faces.annotation.Property;
  * page that is used by the Sun Java Web UI Components.
  */
 @Component(type = "com.sun.webui.jsf.Page", family = "com.sun.webui.jsf.Page",
-displayName = "Page", tagName = "page",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_page",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_page_props")
-public class Page extends UIComponentBase {
+        displayName = "Page", tagName = "page",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_page",
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_page_props")
+public final class Page extends UIComponentBase {
 
     /**
-     * <p>Construct a new <code>Page</code>.</p>
+     * Create a new instance.
      */
     public Page() {
         super();
         setRendererType("com.sun.webui.jsf.Page");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Page";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * The component identifier for this component. This value must be unique 
      * within the closest parent component that is a naming container.
@@ -72,6 +67,7 @@ public class Page extends UIComponentBase {
     public void setRendered(boolean rendered) {
         super.setRendered(rendered);
     }
+
     /**
      * <span style="color: rgb(0, 0, 0);">Use the frame attribute to
      * indicate whether the page should render frames. If this attribute is
@@ -138,6 +134,7 @@ public class Page extends UIComponentBase {
         this.frame = frame;
         this.frame_set = true;
     }
+
     /**
      * <span style="color: rgb(0, 0, 0);">XHTML transitional page or HTML
      * transitional page. This attribute influences
@@ -168,7 +165,7 @@ public class Page extends UIComponentBase {
             if (_result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) _result);
             }
         }
         return true;
@@ -188,22 +185,16 @@ public class Page extends UIComponentBase {
         this.xhtml_set = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
     public void restoreState(FacesContext _context, Object _state) {
         Object _values[] = (Object[]) _state;
         super.restoreState(_context, _values[0]);
-        this.frame = ((Boolean) _values[1]).booleanValue();
-        this.frame_set = ((Boolean) _values[2]).booleanValue();
-        this.xhtml = ((Boolean) _values[3]).booleanValue();
-        this.xhtml_set = ((Boolean) _values[4]).booleanValue();
+        this.frame = ((Boolean) _values[1]);
+        this.frame_set = ((Boolean) _values[2]);
+        this.xhtml = ((Boolean) _values[3]);
+        this.xhtml_set = ((Boolean) _values[4]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
     public Object saveState(FacesContext _context) {
         Object _values[] = new Object[5];

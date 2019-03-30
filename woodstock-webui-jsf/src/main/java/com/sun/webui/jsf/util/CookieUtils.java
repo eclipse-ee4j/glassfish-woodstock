@@ -13,57 +13,73 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Cookie;
 
-
 /**
- *  <p>	Methods for working with cookies.</p>
- *
- *  @author Ken Paulsen (kenapaulsen@gmail.com)
+ * Methods for working with cookies.
  */
-public class CookieUtils {
+public final class CookieUtils {
 
     /**
-     *	<p> Gets the requested cookie name.  This method will ensure invalid
-     *	    characters are not used in the name.  The cooresponding
-     *	    <code>setCookieValue</code> call should be used to ensure proper
-     *	    setting / retrieval of your cookie. (NOTE: there is a JS version
-     *	    of these methods as well.)</p>
+     * Cannot be instanciated.
      */
-    public static Cookie getCookieValue(FacesContext context, String name) {
-	name = CookieUtils.getValidCookieName(name);
-        return (Cookie) context.getExternalContext().getRequestCookieMap().get(name);
+    private CookieUtils() {
     }
 
     /**
-     *	<p> Sets the specified cookie name / value.  This method will ensure
-     *	    invalid characters are not used in the name.  The cooresponding
-     *	    <code>getCookieValue</code> call should be used to ensure proper
-     *	    setting / retrieval of your cookie. (NOTE: there is a JS version
-     *	    of these methods as well.)</p>
+     * Characters not allowed to be part of a cookie name (RFC 2109).
      */
-    public static void setCookieValue(FacesContext context, String name, String value) {
-	// FIXME: not quite implemented...
-	name = CookieUtils.getValidCookieName(name);
+    private static final char BAD_COOKIE_CHARS[] = {
+        '(', ')', '<', '>', '@', ',', ';', ':', '\\',
+        '\'', '/', '[', ']', '?', '=', '{', '}', ' ', '\t'
+    };
+
+    /**
+     * Gets the requested cookie name. This method will ensure invalid
+     * characters are not used in the name.The corresponding
+     * {@code setCookieValue} call should be used to ensure proper setting /
+     * retrieval of your cookie.(NOTE: there is a JS version of these methods as
+     * well.)
+     *
+     * @param context faces context
+     * @param name cookie name
+     * @return Cookie
+     */
+    public static Cookie getCookieValue(FacesContext context, String name) {
+        name = CookieUtils.getValidCookieName(name);
+        return (Cookie) context.getExternalContext().getRequestCookieMap()
+                .get(name);
+    }
+
+    /**
+     * Sets the specified cookie name / value. This method will ensure invalid
+     * characters are not used in the name. The corresponding
+     * {@code getCookieValue} call should be used to ensure proper setting /
+     * retrieval of your cookie. (NOTE: there is a JS version of these methods
+     * as well.)
+     * @param context faces context
+     * @param name cookie name
+     * @param value cookie value
+     */
+    public static void setCookieValue(FacesContext context, String name,
+            String value) {
+        // FIXME: not quite implemented...
+        name = CookieUtils.getValidCookieName(name);
         context.getExternalContext().getRequestCookieMap().put(name, value);
     }
 
     /**
-     *	<p> Ensure we use a RFC 2109 compliant cookie name.</p>
+     * Ensure we use a RFC 2109 compliant cookie name.
+     * @param name cookie name
+     * @return compliant cookie name
      */
     public static String getValidCookieName(String name) {
-	for (char ch : badCookieChars) {
-	    name = name.replace(ch, '_');
-	}
-	return name;
+        for (char ch : BAD_COOKIE_CHARS) {
+            name = name.replace(ch, '_');
+        }
+        return name;
     }
-
-    // Characters not allowed to be part of a cookie name (RFC 2109)
-    private static final char badCookieChars[] = {
-	    '(', ')', '<', '>', '@', ',', ';', ':', '\\',
-	    '\'', '/', '[', ']', '?', '=', '{', '}', ' ', '\t'};
 }

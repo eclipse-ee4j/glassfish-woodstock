@@ -27,44 +27,51 @@
                     <webuijsf:link rel="shortcut icon" url="/images/favicon.ico" type="image/x-icon" />
                     <webuijsf:script url="/fixup.js" />
                     <f:verbatim><![CDATA[
-            <script type="text/javascript">
-              // The ID of the form used for this page.
-              var theForm = "form1";
+    <script type="text/javascript">
+        // The ID of the form used for this page.
+        var theForm = "form1";
 
-              // Utility for setting a button's enable/disable state.
-              // buttonID: ID of the button whose state will be set.
-              // hiddenFieldID: ID of the hidden field that maintains the button's state
-              // disable: true to disable the button, false to enable it
-              //
-              // Both buttonID and hiddenFieldID are the base ID of the component, and
-              // not the fully-qualified ID.
-              //
-              function disableButton(buttonID, hiddenFieldID, disable) {
-                  (document.getElementById(theForm + ":" + buttonID)).setDisabled(disable);
-                  require(['webui/suntheme/field'], function(field){
-                    if (disable)
-                        field.setValue(theForm + ":" + hiddenFieldID, 'true');
-                    else
-                        field.setValue(theForm + ":" + hiddenFieldID, 'false');
-                  });
-              }
+        // Utility for setting a button's enable/disable state.
+        // buttonID: ID of the button whose state will be set.
+        // hiddenFieldID: ID of the hidden field that maintains the button's state
+        // disable: true to disable the button, false to enable it
+        //
+        // Both buttonID and hiddenFieldID are the base ID of the component, and
+        // not the fully-qualified ID.
+        function disableButton(buttonID, hiddenFieldID, disable) {
+            (document.getElementById(theForm + ":" + buttonID)).setDisabled(disable);
+            if (disable)
+                ws_field_set_value(theForm + ":" + hiddenFieldID, 'true');
+            else
+                ws_field_set_value(theForm + ":" + hiddenFieldID, 'false');
+        }
 
-              // Utility for setting enable/disable state for all buttons.
-              // disable: true to disable the buttons, false to enable them
-              //
-              function disableAll(disable) {
-                  disableButton('PrimaryButton','primaryButtonDisabled', disable);
-                  disableButton('PrimaryMiniButton','primaryMiniButtonDisabled', disable);
-                  disableButton('SecondaryButton','secondaryButtonDisabled', disable);
-                  disableButton('SecondaryMiniButton','secondaryMiniButtonDisabled', disable);
-                  require(['webui/suntheme/checkbox'], function(checkbox){
-                    checkbox.setChecked('form1:PrimaryCheckbox', !disable);
-                    checkbox.setChecked('form1:PrimaryMiniCheckbox', !disable);
-                    checkbox.setChecked('form1:SecondaryCheckbox', !disable);
-                    checkbox.setChecked('form1:SecondaryMiniCheckbox', !disable);
-                  });
-              }
-            </script>
+        // Utility for setting enable/disable state for all buttons.
+        // disable: true to disable the buttons, false to enable them
+        function disableAll(disable) {
+            disableButton('PrimaryButton','primaryButtonDisabled', disable);
+            disableButton('PrimaryMiniButton','primaryMiniButtonDisabled', disable);
+            disableButton('SecondaryButton','secondaryButtonDisabled', disable);
+            disableButton('SecondaryMiniButton','secondaryMiniButtonDisabled', disable);
+            ws_checkbox_setchecked('form1:PrimaryCheckbox', !disable);
+            ws_checkbox_setchecked('form1:PrimaryMiniCheckbox', !disable);
+            ws_checkbox_setchecked('form1:SecondaryCheckbox', !disable);
+            ws_checkbox_setchecked('form1:SecondaryMiniCheckbox', !disable);
+        }
+
+        // Utility for disabling/enabling all buttons.
+        // See notes below
+        function onChange(dropDown){
+            ws_dropdown_getselected(theForm + ':TestCaseMenu', function(selected){
+                if (selected == 'button_testCase_disableAll') {
+                    disableAll(true);
+                }
+                if (selected == 'button_testCase_enableAll') {
+                    disableAll(false);
+                }
+            });
+        }
+    </script>
           ]]></f:verbatim>
                 </webuijsf:head>
                 <webuijsf:body>
@@ -85,8 +92,8 @@
                         <!-- Bread Crumb Component -->
                         <webuijsf:breadcrumbs id="breadcrumbs">
                             <webuijsf:hyperlink actionExpression="#{ButtonBean.showExampleIndex}" text="#{msgs.exampleTitle}"
-                                                onMouseOver="javascript:window.status='#{msgs.index_breadcrumbMouseOver}'; return true;"
-                                                onMouseOut="javascript: window.status=''; return true" />
+                                                onMouseOver="javascript:window.status='#{msgs.index_breadcrumbMouseOver}';"
+                                                onMouseOut="javascript:window.status='';" />
                             <webuijsf:hyperlink text="#{msgs.button_title}"/>
                         </webuijsf:breadcrumbs>
 
@@ -139,9 +146,7 @@
                                     <td>
                                         <webuijsf:checkbox id="PrimaryCheckbox" label="#{msgs.button_enable}"
                                                            selected="#{ButtonBean.primaryCBSelected}"
-                                                           onClick="javascript: 
-                            disableButton('PrimaryButton', 'primaryButtonDisabled', !this.checked); 
-                            return true;"/>
+                                                           onClick="disableButton('PrimaryButton', 'primaryButtonDisabled', !this.checked);"/>
                                     </td>
                                 </tr>
 
@@ -161,9 +166,7 @@
                                     <td>
                                         <webuijsf:checkbox id="PrimaryMiniCheckbox" label="#{msgs.button_enable}"
                                                            selected="#{ButtonBean.primaryMiniCBSelected}"
-                                                           onClick="javascript: 
-                            disableButton('PrimaryMiniButton', 'primaryMiniButtonDisabled', !this.checked); 
-                            return true;"/>
+                                                           onClick="disableButton('PrimaryMiniButton', 'primaryMiniButtonDisabled', !this.checked);"/>
                                     </td>
                                 </tr>
 
@@ -183,9 +186,7 @@
                                     <td>
                                         <webuijsf:checkbox id="SecondaryCheckbox" label="#{msgs.button_enable}"
                                                            selected="#{ButtonBean.secondaryCBSelected}"
-                                                           onClick="javascript: 
-                            disableButton('SecondaryButton', 'secondaryButtonDisabled', !this.checked); 
-                            return true;"/>
+                                                           onClick="disableButton('SecondaryButton', 'secondaryButtonDisabled', !this.checked);"/>
                                     </td>
                                 </tr>
 
@@ -205,9 +206,7 @@
                                     <td>
                                         <webuijsf:checkbox id="SecondaryMiniCheckbox" label="#{msgs.button_enable}"
                                                            selected="#{ButtonBean.secondaryMiniCBSelected}"
-                                                           onClick="javascript: 
-                            disableButton('SecondaryMiniButton', 'secondaryMiniButtonDisabled', !this.checked);
-                            return true;"/>
+                                                           onClick="disableButton('SecondaryMiniButton', 'secondaryMiniButtonDisabled', !this.checked);"/>
                                     </td>
                                 </tr>
                             </table>
@@ -241,16 +240,7 @@
                             -->
                             <webuijsf:dropDown id="TestCaseMenu" items="#{ButtonBean.testCaseOptions}"
                                                actionExpression="#{ButtonBean.testCaseActionHandler}"
-                                               onChange="
-                            require(['webui/suntheme/dropDown'], function(dropDown){
-                                var selected=dropDown.getSelectedValue(theForm + ':TestCaseMenu');
-                                if (selected == 'button_testCase_disableAll') {
-                                    disableAll(true);
-                                }
-                                if (selected == 'button_testCase_enableAll') {
-                                    disableAll(false);
-                                }
-                            });"
+                                               onChange="onChange(this);"
                                                submitForm="true"
                                                forgetValue="true"/>
                         </webuijsf:markup>

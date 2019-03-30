@@ -13,136 +13,90 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.util;
 
 import com.sun.webui.theme.Theme;
-import com.sun.webui.jsf.component.ProgressBar;
-import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeJavascript;
-import com.sun.webui.jsf.theme.ThemeStyles;
-import com.sun.webui.jsf.theme.ThemeTemplates;
-
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-
+import java.io.StringWriter;
+import java.io.Writer;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.json.JsonObject;
+import javax.json.JsonWriter;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_WRITER_FACTORY;
+import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class provides common methods for rendering JavaScript includes, default
  * properties, etc.
  */
-public class JavaScriptUtilities {
-    // The number of spaces to add to each level of indentation.
-    public static final int INDENT_FACTOR = 4;
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // JavaScript config methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+public final class JavaScriptUtilities {
 
     /**
-     * Get JavaScript used to configure Dojo.
-     *
-     * Note: Must be rendered before including dojo.js in page.
+     * Cannot be instanciated.
+     */
+    private JavaScriptUtilities() {
+    }
+
+    // TODO
+    // remove getDomNode
+    // remove getModuleName
+    // create enum for helper methods (to give some typing)
+
+    /**
+     * Render the DOJO config object.
+     * Note: Must be rendered before including {@code dojo.js} in the page.
      *
      * @param debug Enable JavaScript debugging.
      * @param parseWidgets Enable searching of dojoType widget tags.
+     * @param writer writer to use
+     * @throws java.io.IOException if an input/output error occurs.
      */
-    public static String getDojoConfig(boolean debug, boolean parseWidgets) {
-        Theme theme = getTheme();
-        StringBuffer buff = new StringBuffer(256);
+    public static void renderHeaderScriptTags(boolean debug,
+            boolean parseWidgets, ResponseWriter writer) throws IOException {
 
-        try {
-            JSONObject json = new JSONObject();
-            JSONObject json1 = new JSONObject();
-            json1.put("webui/suntheme", "../../com/sun/webui/jsf/suntheme/javascript");
-            json.put("isDebug", debug)
-                .put("debugAtAllCosts", debug)
-                .put("parseWidgets", parseWidgets)
-                .put("async", true)
-                .put("paths", json1);
+        JsonObject path = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("webui/suntheme", "../../com/sun/webui/jsf/suntheme/javascript")
+                .build();
+        JsonObject json = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("isDebug", debug)
+                .add("debugAtAllCosts", debug)
+                .add("parseWidgets", parseWidgets)
+                .add("async", true)
+                .add("paths", path)
+                .build();
 
-            buff.append("var dojoConfig=")
-                .append(json.toString(INDENT_FACTOR))
-                .append(";\n");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }    
-        return buff.toString();
-    }
+        StringWriter buff = new StringWriter();
+        buff.append("var dojoConfig=");
+        JsonWriter jsonWriter = JSON_WRITER_FACTORY.createWriter(buff);
+        jsonWriter.writeObject(json);
+        buff.append(";\n");
+        renderScripTag(writer, buff.toString());
 
-    /**
-     * Get JavaScript used to configure module resources.
-     *
-     * @param writeIncludes Write includes for JavaScript debugging.
-     */
-    public static String getModuleConfig(boolean writeIncludes) {
-        Theme theme = getTheme();
-        StringBuffer buff = new StringBuffer(256);
+        renderInclude(writer, ThemeJavascript.DOJO);
+        renderInclude(writer, ThemeJavascript.HELPER);
+        renderInclude(writer, ThemeJavascript.PROTOTYPE);
+        renderInclude(writer, ThemeJavascript.JSFX);
 
-        // Append JavaScript.
-//        buff.append("dojo.hostenv.setModulePrefix(\"")
-////            .append(getTheme().getJSString(ThemeJavascript.MODULE_PREFIX))
-//            .append("webui/suntheme")
-//            .append("\", \"")
-//            .append(theme.getPathToJSFile(ThemeJavascript.MODULE_PATH))
-//            .append("\");\n")
-//            .append(getModule("*"))
-//            .append("\n");
-        // Output includes for debugging. This will ensure that JavaScript
-        // files are accessible to JavaScript debuggers.
-        if (writeIncludes) {
-            buff.append(getModule("widget.*"))
-                .append("\n")
-                .append(getModule("widget.jsfx.*"))
-                .append("\n")
-                .append("dojo.hostenv.writeIncludes();")
-                .append("\n");
-        }
-        return buff.toString();
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // JavaScript include methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * Helper method to render JavaScript include.
-     *
-     * @param component UIComponent to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     */
-    public static void renderDojoInclude(UIComponent component,
-            ResponseWriter writer) throws IOException {
-        renderJavaScriptIncludeDojo(component, writer, ThemeJavascript.DOJO);
-    }
-
-    /**
-     * Helper method to render JavaScript include.
-     *
-     * @param component UIComponent to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
-     */
-    public static void renderGlobalInclude(UIComponent component,
-            ResponseWriter writer) throws IOException {
-        String javascripts[] = getTheme().getGlobalJSFiles();
-        if (javascripts == null) {
+        // Render global include.
+        String jsFiles[] = getTheme().getGlobalJSFiles();
+        if (jsFiles == null) {
             return;
         }
-        for (int i = 0; i < javascripts.length; i++) {
-            Object file = javascripts[i];
+        for (String jsFile : jsFiles) {
+            Object file = jsFile;
             if (file == null) {
                 continue;
             }
-            writer.startElement("script", component);
+            writer.startElement("script", null);
             writer.writeAttribute("type", "text/javascript", null);
             writer.writeURIAttribute("src", file.toString(), null);
             writer.endElement("script");
@@ -151,151 +105,229 @@ public class JavaScriptUtilities {
     }
 
     /**
-     * Helper method to render JavaScript include.
-     *
-     * @param component UIComponent to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     */
-    public static void renderJsfxInclude(UIComponent component,
-            ResponseWriter writer) throws IOException {
-        renderJavaScriptInclude(component, writer, ThemeJavascript.JSFX);
-    }
-
-    /**
-     * Helper method to render JavaScript include.
-     *
-     * @param component UIComponent to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     */
-    public static void renderJsonInclude(UIComponent component,
-            ResponseWriter writer) throws IOException {
-        renderJavaScriptInclude(component, writer, ThemeJavascript.JSON);
-    }
-
-    /**
-     * Helper method to render JavaScript include.
-     *
-     * @param component UIComponent to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     */
-    public static void renderPrototypeInclude(UIComponent component,
-            ResponseWriter writer) throws IOException {
-        renderJavaScriptInclude(component, writer, ThemeJavascript.PROTOTYPE);
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Rendering methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
      * Returns JavaScript to obtain the DOM node associated with the given
-     * component.
-     * 
-     * When complex components are rendered, a DOM object corresponding to the
-     * component is created. To manipulate the component on the client side, we
-     * will invoke functions on the DOM object.
-     * 
-     * Providing a component, with a client id of "form1:btn1", will return
-     * "document.getElementById('form1:btn1')". This JavaScript obtains the
-     * DOM object associated the HTML element. Thus, we can disable a button 
-     * using "document.getElementById('form1:btn1').disable(true);"
+     * component.When complex components are rendered, a DOM object
+     * corresponding to the component is created.To manipulate the component on
+     * the client side, we will invoke functions on the DOM object.
+     *
+     * Providing a component, with a client id of {@code form1:btn1}, will
+     * return {@code document.getElementById('form1:btn1')}. This JavaScript
+     * obtains the DOM object associated the HTML element. Thus, we can disable
+     * a button using
+     * {@code document.getElementById('form1:btn1').disable(true);}
      *
      * @param context The current FacesContext.
      * @param component The current component being rendered.
-     * @param name The JavaScript object name to append.
+     * @deprecated removed soon
+     * @return
      */
     public static String getDomNode(FacesContext context,
             UIComponent component) {
-        StringBuffer buff = new StringBuffer(128);
-        buff.append("document.getElementById('")
-            .append(component.getClientId(context))
-            .append("')");
-        return buff.toString();
+
+        return new StringBuilder(128)
+                .append("document.getElementById('")
+                .append(component.getClientId(context))
+                .append("')")
+                .toString();
     }
 
     /**
-     * Returns JavaScript used to require a Dojo module. For example, a value of
-     * For example, a value of "widget.*" will return
-     * "dojo.require('webui.suntheme.widget.*')" for a theme, named 
-     * "suntheme".
-     *
-     * @param name The JavaScript object name to append.
-     */
-    public static String getModule(String name) {
-        StringBuffer buff = new StringBuffer(128);
-        buff.append("require([\"")
-            .append(getModuleName(name))
-            .append("\"]);");
-        return buff.toString();
-    }
-
-    /**
-     * Returns a string comprised of a theme prifix and the given module name.
-     * For example, a value of "widget.button" will return 
-     * "webui.suntheme.widget.button" for a theme, named "suntheme".
+     * Returns a string comprised of a theme prefix and the given module
+     * name.
      *
      * @param name The module to append to the theme prefix.
+     * @deprecated removed soon
+     * @return fully qualified module name
      */
     public static String getModuleName(String name) {
-        StringBuffer buff = new StringBuffer(128);
-//        buff.append(getTheme().getJSString(ThemeJavascript.MODULE_PREFIX))
-        buff.append("webui/suntheme")
-            .append("/")
-            .append(name);
-        return buff.toString();
+        return new StringBuilder(128)
+                .append("webui/suntheme")
+                .append("/")
+                .append(name)
+                .toString();
     }
 
     /**
-     * Returns a string comprised of a theme prifix and the given widget name.
-     * For example, a value of "button" will return "webui.suntheme:button" for
-     * a theme, named "suntheme".
+     * Render the JS call to {@code ws_init} in the page, including enclosing
+     * script tags.
      *
-     * @param name The widget name to append to the namespace prefix.
+     * @param writer ResponseWriter to which the component should be rendered.
+     * @param moduleName name of the init module
+     * @param properties init properties
+     * @param extraCalls extra calls
+     *
+     * @exception IOException if an input/output error occurs.
      */
-    public static String getNamespace(String name) {
-        StringBuffer buff = new StringBuffer(128);
-//        buff.append(getTheme().getJSString(ThemeJavascript.MODULE_PREFIX))
-        buff.append("webui/suntheme")
-            .append(":")
-            .append(name);
-        return buff.toString();
+    public static void renderInitScriptTag(ResponseWriter writer,
+            String moduleName, JsonObject properties, String... extraCalls)
+            throws IOException {
+
+        if (properties == null) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(renderInitCall(moduleName, properties));
+        if(extraCalls != null){
+            for (String extraCall : extraCalls) {
+                sb.append(extraCall);
+                sb.append("\n");
+            }
+        }
+        renderScripTag(writer, sb.toString());
+    }
+
+    /**
+     * Render the JS call to {@code ws_init} in the page, including enclosing
+     * script tags.
+     *
+     * @param writer ResponseWriter to which the component should be rendered.
+     * @param moduleName name of the init module
+     * @param properties init properties
+     *
+     * @exception IOException if an input/output error occurs.
+     */
+    public static void renderInitScriptTag(ResponseWriter writer,
+            String moduleName, JsonObject properties) throws IOException {
+
+        renderInitScriptTag(writer, moduleName, properties, (String[]) null);
+    }
+
+    /**
+     * Render the JS call to {@code ws_init_elt} in the page.
+     *
+     * @param moduleName name of the init module
+     * @param properties init properties
+     * @return String rendered call
+     *
+     * @throws IllegalArgumentException if properties is {@code null}
+     */
+    public static String renderInitCall(String moduleName, JsonObject properties)
+            throws IllegalArgumentException {
+
+        if(properties == null){
+            throw new IllegalArgumentException("event type is null");
+        }
+        return renderCall("init_elt", moduleName, properties);
+    }
+
+    /**
+     * Render the JS call to {@code ws_on...} for a given event.
+     *
+     * @param moduleName module name that handles the event
+     * @param extraCall The existing attribute value to append JS to.
+     * @param eventType The JS event to invoke.
+     * @return String rendered attribute value
+     * @throws IllegalArgumentException if event type is {@code null}
+     */
+    public static String renderEventCall(String moduleName, String extraCall,
+            String eventType) {
+
+        if(eventType == null){
+            throw new IllegalArgumentException("event type is null");
+        }
+        return renderCalls(
+                renderCall(eventType, moduleName, "this"),
+                extraCall);
+    }
+
+    /**
+     * Render two JS calls, make sure they are separated by a {@code ';'}.
+     *
+     * @param firstCall first call, may be {@code null}
+     * @param secondCall second call, may be {@code null}
+     * @return String rendered calls
+     */
+    public static String renderCalls(String firstCall, String secondCall) {
+        StringBuilder sb = new StringBuilder();
+        if (firstCall != null) {
+            sb.append(firstCall);
+            if (!firstCall.endsWith(";")) {
+                sb.append(";");
+            }
+        }
+        if(secondCall != null){
+            sb.append(secondCall);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Render a JS call to a method prefixed with {@code ws_}.
+     *
+     * @param methodName method call to render
+     * @param arguments method arguments
+     * @return String rendered attribute value
+     */
+    public static String renderCall(String methodName, Object... arguments) {
+
+        if (methodName == null) {
+            throw new IllegalArgumentException("method name is null");
+        }
+        StringBuilder buff = new StringBuilder();
+        buff.append("ws_")
+                .append(methodName)
+                .append("(");
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (i > 0) {
+                    buff.append(",");
+                }
+                if(arguments[i] == null){
+                    buff.append("null");
+                } else if (arguments[i] instanceof JsonObject) {
+                    StringWriter jsonWriter = new StringWriter();
+                    writeJsonObject((JsonObject) arguments[i], jsonWriter);
+                    buff.append(jsonWriter.toString());
+                } else if (arguments[i] instanceof List) {
+                    if (((List) arguments[i]).isEmpty()) {
+                        buff.append("null");
+                        continue;
+                    }
+                    buff.append("[");
+                    Iterator it = ((List) arguments[i]).iterator();
+                    while (it.hasNext()) {
+                          buff.append("'")
+                            .append(String.valueOf(it.next()))
+                            .append("'");
+                        if (it.hasNext()) {
+                            buff.append(",");
+                        }
+                    }
+                    buff.append("]");
+                } else if(arguments[i] instanceof String
+                        && "this".equals((String) arguments[i])) {
+                    buff.append("this");
+                } else {
+                    buff.append("'")
+                            .append(String.valueOf(arguments[i]))
+                            .append("'");
+                }
+            }
+        }
+        return buff.append(");")
+                .toString();
     }
 
     /**
      * Render JavaScript in the page, including enclosing script tags.
      *
-     * @param component UIComponent to be rendered.
      * @param writer ResponseWriter to which the component should be rendered.
-     * @param js The JavaScript string to render.
+     * @param jsCode The JS code string nested within the scrip tag
      *
      * @exception IOException if an input/output error occurs.
      */
-    public static void renderJavaScript(UIComponent component,
-            ResponseWriter writer, String js) throws IOException {
-        if (js == null) {
+    public static void renderScripTag(ResponseWriter writer, String jsCode)
+            throws IOException {
+
+        if (jsCode == null) {
             return;
         }
-        writer.startElement("script", component);
+        writer.startElement("script", null);
         writer.writeAttribute("type", "text/javascript", null);
         writer.write("\n");
-        writer.write(js);
+        writer.write(jsCode);
         writer.endElement("script");
         writer.write("\n");
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // Helper method to get Theme objects.
-    private static Theme getTheme() {
-        return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
     }
 
     /**
@@ -305,52 +337,42 @@ public class JavaScriptUtilities {
      * widgets. This can be done via the head, themeLinks, or portalTheme tags,
      * but not via any other component renderer. Thus, this method is declared
      * private to ovoid misuse.
-     * 
-     * If JavaScript includes are output by renderers, timing issues can occur 
-     * when client-side widgets and server-side components are rendered in the 
+     *
+     * If JavaScript includes are output by renderers, timing issues can occur
+     * when client-side widgets and server-side components are rendered in the
      * same page. For example, button HTML may be rendered as a JSON property
-     * (the child of a widget), which also contains a JavaScript include. In 
-     * this scenario, ther buttons in the page may not initialize correctly
-     * because the widget has not added the JavaScript include, yet. See CR 6517246.
+     * (the child of a widget), which also contains a JavaScript include. In
+     * this scenario, their buttons in the page may not initialize correctly
+     * because the widget has not added the JavaScript include, yet. See CR
+     * 6517246.
      *
      * @param component The current component being rendered.
      * @param writer The current ResponseWriter.
      * @param file The JavaScript file to include.
      */
-    private static void renderJavaScriptInclude(UIComponent component,
-            ResponseWriter writer, String file) throws  IOException {
+    private static void renderInclude(ResponseWriter writer,
+            String file) throws IOException {
+
         if (file == null) {
-	    return;
-	}
+            return;
+        }
 
-	String jsFile = getTheme().getPathToJSFile(file);
-	if (jsFile == null) {
-	    return;
-	}
+        String jsFile = getTheme().getPathToJSFile(file);
+        if (jsFile == null) {
+            return;
+        }
 
-        writer.startElement("script", component);
+        writer.startElement("script", null);
         writer.writeAttribute("type", "text/javascript", null);
         writer.writeURIAttribute("src", jsFile, null);
         writer.endElement("script");
         writer.write("\n");
     }
-    
-    private static void renderJavaScriptIncludeDojo(UIComponent component,
-            ResponseWriter writer, String file) throws  IOException {
-        if (file == null) {
-	    return;
-	}
 
-	String jsFile = getTheme().getPathToJSFile(file);
-	if (jsFile == null) {
-	    return;
-	}
-
-        writer.startElement("script", component);
-        writer.writeAttribute("type", "text/javascript", null);
-//        writer.writeAttribute("data-dojo-config", "async: true", null);
-        writer.writeURIAttribute("src", jsFile, null);
-        writer.endElement("script");
-        writer.write("\n");
+    /**
+     * Helper method to get Theme objects.
+     */
+    private static Theme getTheme() {
+        return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
     }
 }

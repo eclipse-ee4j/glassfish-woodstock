@@ -14,11 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * $Id: MethodExpressionMethodBindingAdapter.java,v 1.1 2007-02-16 01:50:26 bob_yennaco Exp $
  */
-
- 
 package com.sun.webui.jsf.util;
 
 import javax.el.MethodExpression;
@@ -30,210 +28,228 @@ import javax.faces.context.FacesContext;
 import javax.faces.component.StateHolder;
 
 import java.io.Serializable;
+import javax.faces.el.EvaluationException;
+import javax.faces.el.MethodNotFoundException;
 
 /**
- * <p>Wrap a MethodBinding instance and expose it as a
- * MethodExpression.</p>
+ * Wrap a MethodBinding instance and expose it as a MethodExpression.
  */
+public class MethodExpressionMethodBindingAdapter extends MethodExpression
+        implements Serializable, StateHolder {
 
- public class MethodExpressionMethodBindingAdapter extends MethodExpression implements Serializable, StateHolder {
-
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -1822420567946048452L;
 
-    public MethodExpressionMethodBindingAdapter() {} // for StateHolder
-
+    /**
+     * Method binding.
+     */
     private MethodBinding binding = null;
 
-    public MethodExpressionMethodBindingAdapter(MethodBinding binding) {
-	assert(null != binding);
-	this.binding = binding;
-    }
-
-    //
-    // Methods from MethodExpression
-    //
-
+    /**
+     * Method info.
+     */
     private transient MethodInfo info = null;
 
+    /**
+     * Transient flag.
+     */
+    private boolean tranzient = false;
+
+    /**
+     * Create a new instance.
+     */
+    public MethodExpressionMethodBindingAdapter() {
+    }
+
+    /**
+     * Create a new instance.
+     * @param binding method binding
+     */
+    public MethodExpressionMethodBindingAdapter(MethodBinding binding) {
+        assert (null != binding);
+        this.binding = binding;
+    }
+
+    @Override
     public MethodInfo getMethodInfo(ELContext context) throws ELException {
-	assert(null != binding);
+        assert (null != binding);
 
-	if (null == info) {
-	    FacesContext facesContext = (FacesContext) 
-		context.getContext(FacesContext.class);
-	    if (null != facesContext) {
-		try {
-		    info = new MethodInfo(null, binding.getType(facesContext), 
-					  null);
-		}
-		catch (Exception e) {
-		    throw new ELException(e);
-		}
-	    }
-	}
-		
-	return info;
-    }
-    
-    public Object invoke(ELContext context, Object[] params) throws ELException {
-	assert(null != binding);
-
-	Object result = null;
-	FacesContext facesContext = (FacesContext) 
-	    context.getContext(FacesContext.class);
-	if (null != facesContext) {
-	    try {
-		result = binding.invoke(facesContext, params);
-	    }
-	    catch (Exception e) {
-		throw new ELException(e);
-	    }
-	}
-	return result;
+        if (null == info) {
+            FacesContext facesContext = (FacesContext) context
+                    .getContext(FacesContext.class);
+            if (null != facesContext) {
+                try {
+                    info = new MethodInfo(null, binding.getType(facesContext),
+                            null);
+                } catch (MethodNotFoundException e) {
+                    throw new ELException(e);
+                }
+            }
+        }
+        return info;
     }
 
+    @Override
+    public Object invoke(ELContext context, Object[] params)
+            throws ELException {
+
+        assert (null != binding);
+
+        Object result = null;
+        FacesContext facesContext = (FacesContext) context
+                .getContext(FacesContext.class);
+        if (null != facesContext) {
+            try {
+                result = binding.invoke(facesContext, params);
+            } catch (EvaluationException e) {
+                throw new ELException(e);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public String getExpressionString() {
-	assert(null != binding);
-	return binding.getExpressionString();
-	
+        assert (null != binding);
+        return binding.getExpressionString();
+
     }
 
+    @Override
     public boolean isLiteralText() {
         assert (binding != null);
         String expr = binding.getExpressionString();
         return (!(expr.startsWith("#{")
-            && expr.endsWith("}")));    
+                && expr.endsWith("}")));
     }
 
+    @Override
     public boolean equals(Object other) {
-	assert(null != binding);
-	boolean result = false;
-	
-	// don't bother even trying to compare, if we're not assignment
-	// compatabile with "other"
-	if (MethodExpression.class.isAssignableFrom(other.getClass())) {
-	    MethodExpression otherVE = (MethodExpression) other;
-	    result = this.getExpressionString().equals(otherVE.getExpressionString());
-	}
-	return result;
+        assert (null != binding);
+        boolean result = false;
+
+        // don't bother even trying to compare, if we're not assignment
+        // compatabile with "other"
+        if (MethodExpression.class.isAssignableFrom(other.getClass())) {
+            MethodExpression otherVE = (MethodExpression) other;
+            result = this.getExpressionString()
+                    .equals(otherVE.getExpressionString());
+        }
+        return result;
     }
 
+    @Override
     public int hashCode() {
-	assert(null != binding);
-
-	return binding.hashCode();
+        assert (null != binding);
+        return binding.hashCode();
     }
-    
+
     public String getDelimiterSyntax() {
-       // PENDING (visvan) Implementation
+        // XXX not implemented
         return "";
     }
-    
-    // 
-    // Methods from StateHolder
-    //
 
-    
-
+    @Override
     public Object saveState(FacesContext context) {
-	Object result = null;
-	if (!tranzient) {
-	    if (binding instanceof StateHolder) {
-		Object [] stateStruct = new Object[2];
-		
-		// save the actual state of our wrapped binding
-		stateStruct[0] = ((StateHolder)binding).saveState(context);
-		// save the class name of the binding impl
-		stateStruct[1] = binding.getClass().getName();
+        Object result = null;
+        if (!tranzient) {
+            if (binding instanceof StateHolder) {
+                Object[] stateStruct = new Object[2];
 
-		result = stateStruct;
-	    }
-	    else {
-		result = binding;
-	    }
-	}
+                // save the actual state of our wrapped binding
+                stateStruct[0] = ((StateHolder) binding).saveState(context);
+                // save the class name of the binding impl
+                stateStruct[1] = binding.getClass().getName();
 
-	return result;
+                result = stateStruct;
+            } else {
+                result = binding;
+            }
+        }
+
+        return result;
     }
 
+    @Override
     public void restoreState(FacesContext context, Object state) {
-	// if we have state
-	if (null == state) {
-	    return;
-	}
-	
-	if (!(state instanceof MethodBinding)) {
-	    Object [] stateStruct = (Object []) state;
-	    Object savedState = stateStruct[0];
-	    String className = stateStruct[1].toString();
-	    MethodBinding result = null;
-	    
-	    Class toRestoreClass = null;
-	    if (null != className) {
-		try {
-		    toRestoreClass = loadClass(className, this);
-		}
-		catch (ClassNotFoundException e) {
-		    throw new IllegalStateException(e.getMessage());
-		}
-		
-		if (null != toRestoreClass) {
-		    try {
-			result = 
-			    (MethodBinding) toRestoreClass.newInstance();
-		    }
-		    catch (InstantiationException e) {
-			throw new IllegalStateException(e.getMessage());
-		    }
-		    catch (IllegalAccessException a) {
-			throw new IllegalStateException(a.getMessage());
-		    }
-		}
-		
-		if (null != result && null != savedState) {
-		    // don't need to check transient, since that was
-		    // done on the saving side.
-		    ((StateHolder)result).restoreState(context, savedState);
-		}
-		binding = result;
-	    }
-	}
-	else {
-	    binding = (MethodBinding) state;
-	}
+        // if we have state
+        if (null == state) {
+            return;
+        }
+
+        if (!(state instanceof MethodBinding)) {
+            Object[] stateStruct = (Object[]) state;
+            Object savedState = stateStruct[0];
+            String className = stateStruct[1].toString();
+            MethodBinding result = null;
+
+            Class toRestoreClass = null;
+            if (null != className) {
+                try {
+                    toRestoreClass = loadClass(className, this);
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException(e.getMessage());
+                }
+
+                if (null != toRestoreClass) {
+                    try {
+                        result
+                                = (MethodBinding) toRestoreClass.newInstance();
+                    } catch (InstantiationException e) {
+                        throw new IllegalStateException(e.getMessage());
+                    } catch (IllegalAccessException a) {
+                        throw new IllegalStateException(a.getMessage());
+                    }
+                }
+
+                if (null != result && null != savedState) {
+                    // don't need to check transient, since that was
+                    // done on the saving side.
+                    ((StateHolder) result).restoreState(context, savedState);
+                }
+                binding = result;
+            }
+        } else {
+            binding = (MethodBinding) state;
+        }
     }
 
-    private boolean tranzient = false;
-
+    @Override
     public boolean isTransient() {
-	return tranzient;
+        return tranzient;
     }
 
+    @Override
     public void setTransient(boolean newTransientMethod) {
-	tranzient = newTransientMethod;
+        tranzient = newTransientMethod;
     }
 
-    //
-    // Helper methods for StateHolder
-    //
+    /**
+     * Get the wrapped method binding.
+     *
+     * @return MethodBinding
+     */
+    public MethodBinding getWrapped() {
+        return binding;
+    }
 
-    private static Class loadClass(String name, 
+    /**
+     * Load the given class.
+     * @param name class name
+     * @param fallbackClass object to derive the fallback from
+     * @return Class
+     * @throws ClassNotFoundException if the given class name is not found
+     */
+    private static Class loadClass(String name,
             Object fallbackClass) throws ClassNotFoundException {
-        ClassLoader loader =
-            Thread.currentThread().getContextClassLoader();
+        ClassLoader loader
+                = Thread.currentThread().getContextClassLoader();
         if (loader == null) {
             loader = fallbackClass.getClass().getClassLoader();
         }
         return loader.loadClass(name);
-    }
- 
-
-    // 
-    // methods used by classes aware of this class's wrapper nature
-    //
-
-    public MethodBinding getWrapped() {
-	return binding;
     }
 
 }

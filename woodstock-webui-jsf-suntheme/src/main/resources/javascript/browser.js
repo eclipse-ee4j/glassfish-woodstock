@@ -34,7 +34,7 @@ define(function () {
                 || this.agent.indexOf("; nav") !== -1;
         this.is_nav6 = this.is_nav && this.is_major === 5;
         this.is_nav6up = this.is_nav && this.is_major >= 5;
-        this.is_gecko = this.agent.indexOf('gecko') != -1;
+        this.is_gecko = this.agent.indexOf('gecko') !== -1;
 
         // IE version
         this.is_ie = this.agent.indexOf("msie") !== -1

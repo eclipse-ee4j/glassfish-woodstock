@@ -36,38 +36,35 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
- * <p><strong>MethodExprValidator</strong> is a {@link Validator} that 
+ * <strong>MethodExprValidator</strong> is a {@link Validator} that 
  * wraps a {@link MethodExpression}, and it performs validation by executing
- * a method on an object identified by the {@link MethodExpression}.</p>
- * @author mbohm
+ * a method on an object identified by the {@link MethodExpression}.
  */
 public class MethodExprValidator implements Validator, StateHolder {
-    
+
+    /**
+     * Method expression.
+     */
     private MethodExpression methodExpression = null;
 
+    /**
+     * Create a new instance.
+     */
     public MethodExprValidator() {
-
         super();
-        
     }
 
     /**
-     * <p>Construct a {@link Validator} that contains a {@link MethodExpression}.</p>
+     * Construct a {@link Validator} that contains a {@link MethodExpression}.
+     * @param methodExpression
      */
     public MethodExprValidator(MethodExpression methodExpression) {
 
         super();
         this.methodExpression = methodExpression;
-
     }
 
-
-    // ------------------------------------------------------- Validator Methods
-
-    /**
-     * @throws NullPointerException {@inheritDoc}     
-     * @throws ValidatorException {@inheritDoc}     
-     */ 
+    @Override
     public void validate(FacesContext context,
                          UIComponent  component,
                          Object       value) throws ValidatorException {
@@ -78,7 +75,11 @@ public class MethodExprValidator implements Validator, StateHolder {
         if (value != null) {
             try {
                 ELContext elContext = context.getELContext();
-                methodExpression.invoke(elContext, new Object[] {context, component, value});
+                methodExpression.invoke(elContext, new Object[] {
+                    context,
+                    component,
+                    value
+                });
             } catch (ELException ee) {
                 Throwable e = ee.getCause();
                 if (e instanceof ValidatorException) {
@@ -91,52 +92,52 @@ public class MethodExprValidator implements Validator, StateHolder {
 
     }
 
-    // ----------------------------------------------------- StateHolder Methods
-    
-
+    @Override
     public Object saveState(FacesContext context) {
 
         Object values[] = new Object[1];
         values[0] = methodExpression;
         return (values);
-
     }
 
-
+    @Override
     public void restoreState(FacesContext context, Object state) {
 
         Object values[] = (Object[]) state;
         methodExpression = (MethodExpression)values[0];
     }
 
-
     private boolean transientValue = false;
 
-
+    @Override
     public boolean isTransient() {
-
         return (this.transientValue);
-
     }
 
-
+    @Override
     public void setTransient(boolean transientValue) {
-
         this.transientValue = transientValue;
-
     }
-    
+
     public MethodExpression getMethodExpression() {
         return methodExpression;
     }
-    
+
+    @Override
     public boolean equals(Object otherObject) {
         if (! (otherObject instanceof MethodExprValidator)) {
             return false;
         }
-        
         MethodExprValidator other = (MethodExprValidator)otherObject;
         MethodExpression otherMe = other.getMethodExpression();
         return methodExpression.equals(otherMe);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (this.methodExpression != null
+                ? this.methodExpression.hashCode() : 0);
+        return hash;
     }
 }

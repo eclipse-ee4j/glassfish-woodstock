@@ -13,74 +13,70 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Button;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import com.sun.webui.jsf.util.ConversionUtilities;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import com.sun.webui.jsf.util.RenderingUtilities;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import java.io.IOException;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.event.ActionEvent;
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.json.JsonObject;
+
+import static com.sun.webui.jsf.util.ConversionUtilities.convertValueToString;
+import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleClass;
+import static com.sun.webui.jsf.util.RenderingUtilities.renderURLAttribute;
+import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderEventCall;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
- * <p>Renderer for a {@link Button} component.</p>
+ * Renderer for a {@link Button} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Button"))
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Button"))
 public class ButtonRenderer extends AbstractRenderer {
 
     /**
-     * <p>The set of integer pass-through attributes to be rendered.</p>
+     * The set of integer pass-through attributes to be rendered.
      */
-    private static final String integerAttributes[] = {"tabIndex"}; //NOI18N
+    private static final String INT_ATTRIBUTES[] = {
+        "tabIndex"
+    };
+
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {
-        "dir", //NOI18N
-        "lang", //NOI18N
-        "onClick", //NOI18N
-        "onDblClick", //NOI18N
-        "onKeyDown", //NOI18N
-        "onKeyPress", //NOI18N
-        "onKeyUp", //NOI18N
-        "onMouseDown", //NOI18N
-        "onMouseUp", //NOI18N
-        "onMouseMove", //NOI18N
-        "style", //NOI18N
+    private static final String STRING_ATTRIBUTES[] = {
+        "dir",
+        "lang",
+        "onClick",
+        "onDblClick",
+        "onKeyDown",
+        "onKeyPress",
+        "onKeyUp",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseMove",
+        "style"
     };
+
     /**
      * The set of pass-through attributes rendered for input elements.
      */
-    private static final String inputAttributes[] = {
-        "alt", //NOI18N
-        "align" //NOI18N
+    private static final String INPUT_ATTRIBUTES[] = {
+        "alt",
+        "align"
     };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer Methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Determine if this was the component that submitted the form.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be decoded
-     *
-     * @exception NullPointerException if <code>context</code> or
-     *  <code>component</code> is <code>null</code>
-     */
     @Override
     public void decode(FacesContext context, UIComponent component) {
+
         // Enforce NPE requirements in the Javadocs
         if (context == null || component == null) {
             throw new NullPointerException();
@@ -97,22 +93,13 @@ public class ButtonRenderer extends AbstractRenderer {
         String clientId = button.getClientId(context);
         Map map = context.getExternalContext().getRequestParameterMap();
 
-        if (map.containsKey(clientId) ||
-                (map.containsKey(clientId + ".x") && map.containsKey(clientId + ".y"))) {
+        if (map.containsKey(clientId)
+                || (map.containsKey(clientId + ".x")
+                && map.containsKey(clientId + ".y"))) {
             button.queueEvent(new ActionEvent(button));
         }
     }
 
-    /**
-     * Render the appropriate element start.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderStart(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -120,75 +107,66 @@ public class ButtonRenderer extends AbstractRenderer {
 
         // Start the appropriate element.
         if (button.isEscape()) {
-            writer.startElement("input", button); //NOI18N
+            writer.startElement("input", button);
         } else {
-            writer.startElement("button", button); //NOI18N
+            writer.startElement("button", button);
         }
     }
 
-    /**
-     * Render the appropriate element attributes.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  attributes should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderAttributes(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
+
         Button button = (Button) component;
 
         // Render client id and name. 
         //
         // Note: Null is used when output is different than the original value 
         // of the component.
-        writer.writeAttribute("id", button.getClientId(context), null); //NOI18N
-        writer.writeAttribute("name", button.getClientId(context), null); //NOI18N
+        writer.writeAttribute("id", button.getClientId(context), null);
+        writer.writeAttribute("name", button.getClientId(context), null);
 
         // Render style classes.
-        String style = getStyle(button, ThemeUtilities.getTheme(context));
-        RenderingUtilities.renderStyleClass(context, writer, button, style);
+        String style = getStyle(button, getTheme(context));
+        renderStyleClass(context, writer, button, style);
 
-        String js = getJavascript(button.getOnBlur(), "onblur"); //NOI18N
-        if (js != null) {
-            writer.writeAttribute("onblur", js, "onBlur"); //NOI18N
-        }
+        writer.writeAttribute("onblur",
+                renderEventCall("button", button.getOnBlur(),
+                        "onblur"),
+                "onBlur");
 
-        js = getJavascript(button.getOnFocus(), "onfocus");  //NOI18N
-        if (js != null) {
-            writer.writeAttribute("onfocus", js, "onFocus"); //NOI18N
-        }
+        writer.writeAttribute("onfocus",
+                renderEventCall("button", button.getOnFocus(),
+                        "onfocus"),
+                "onFocus");
 
-        js = getJavascript(button.getOnMouseOut(), "onmouseout");  //NOI18N
-        if (js != null) {
-            writer.writeAttribute("onmouseout", js, "onMouseOut"); //NOI18N
-        }
+        writer.writeAttribute("onmouseout",
+                renderEventCall("button", button.getOnMouseOut(),
+                        "onmouseout"),
+                "onMouseOut");
 
-        js = getJavascript(button.getOnMouseOver(), "onmouseover");  //NOI18N
-        if (js != null) {
-            writer.writeAttribute("onmouseover", js, "onMouseOver"); //NOI18N
-        }
+        writer.writeAttribute("onmouseover",
+                renderEventCall("button", button.getOnMouseOver(),
+                        "onmouseover"),
+                "onMouseOver");
 
         // Render tooltip.
         if (button.getToolTip() != null) {
-            writer.writeAttribute("title", button.getToolTip(), "toolTip"); //NOI18N
+            writer.writeAttribute("title", button.getToolTip(), "toolTip");
         }
 
         // Render disabled attribute.
         if (button.isDisabled()) {
-            writer.writeAttribute("disabled", "disabled", null); //NOI18N
+            writer.writeAttribute("disabled", "disabled", null);
         }
 
         // Render pass through attributes.
-        addIntegerAttributes(context, component, writer, integerAttributes);
-        addStringAttributes(context, component, writer, stringAttributes);
+        addIntegerAttributes(context, component, writer, INT_ATTRIBUTES);
+        addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
 
         // Render pass through attributes for input elements.
         if (button.isEscape()) {
-            addStringAttributes(context, component, writer, inputAttributes);
+            addStringAttributes(context, component, writer, INPUT_ATTRIBUTES);
         }
 
         // Note: Text attributes must be assigned last because the starting
@@ -204,16 +182,6 @@ public class ButtonRenderer extends AbstractRenderer {
         }
     }
 
-    /**
-     * Render the appropriate element end.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  end should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
     protected void renderEnd(FacesContext context, UIComponent component,
             ResponseWriter writer) throws IOException {
@@ -221,72 +189,58 @@ public class ButtonRenderer extends AbstractRenderer {
 
         // End the appropriate element.
         if (button.isEscape()) {
-            writer.endElement("input"); //NOI18N
+            writer.endElement("input");
         } else {
-            writer.endElement("button"); //NOI18N
+            writer.endElement("button");
         }
 
-        try {
-            // Append button properties.
-            StringBuilder buff = new StringBuilder(256);
-            JSONObject json = new JSONObject();
-            json.put("id", button.getClientId(context)).put("mini", button.isMini()).put("disabled", button.isDisabled()).put("secondary", !button.isPrimary()).put("icon", (button.getImageURL() != null || button.getIcon() != null));
+        // Append button properties.
+        boolean isIcon = button.getImageURL() != null
+                || button.getIcon() != null;
+        JsonObject initProps = JSON_BUILDER_FACTORY
+                .createObjectBuilder()
+                .add("id", button.getClientId(context))
+                .add("mini", button.isMini())
+                .add("disabled", button.isDisabled())
+                .add("secondary", !button.isPrimary())
+                .add("icon", isIcon)
+                .build();
 
-            // Append JavaScript.
-//            buff.append(JavaScriptUtilities.getModuleName("button.init")).append("(").append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");");
-            buff.append("require(['").append(JavaScriptUtilities.getModuleName("button")).append("'], function (button) {").append("\n")
-                    .append("button.init").append("(").append(json.toString(JavaScriptUtilities.INDENT_FACTOR)).append(");")
-                    .append("});");
-            
-            // Render JavaScript.
-            JavaScriptUtilities.renderJavaScript(component, writer,
-                    buff.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-//        StringBuffer buff1 = new StringBuffer(200);
-//        buff1.append("function hyperlinkfunc(hyplnk1, formClientId, params) { \n")
-//                .append("require(['webui/suntheme/hyperlink'], function(hyperlink) { \n")
-//                .append("hyperlink.submit(hyplnk1, formClientId, params); \n")
-//                .append("return false; \n")
-//                .append("});")
-//                .append("}");
-//        JavaScriptUtilities.renderJavaScript(component, writer, buff1.toString());
+        // Render JavaScript.
+        renderInitScriptTag(writer, "button", initProps);
     }
 
     /**
      * Render the appropriate element attributes for an icon button.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  attributes should be rendered
-     * @param icon  The identifier of the desired theme image.
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be rendered
+     * @param writer {@code ResponseWriter} to which the element attributes
+     * should be rendered
+     * @param icon The identifier of the desired theme image.
      *
      * @exception IOException if an input/output error occurs
      */
     protected void renderIconAttributes(FacesContext context,
             UIComponent component, ResponseWriter writer, String icon)
             throws IOException {
-        Button button = (Button) component;
 
         // Get themed image.
-        String imagePath = ThemeUtilities.getTheme(context).getImagePath(icon);
+        String imagePath = getTheme(context).getImagePath(icon);
 
         // Render type and source attributes.
-        writer.writeAttribute("type", "image", null); //NOI18N
-        RenderingUtilities.renderURLAttribute(context, writer, component,
-                "src", imagePath, "icon"); //NOI18N
+        writer.writeAttribute("type", "image", null);
+        renderURLAttribute(context, writer, component, "src", imagePath,
+                "icon");
     }
 
     /**
      * Render the appropriate element attributes for an image URL button.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  attributes should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be rendered
+     * @param writer {@code ResponseWriter} to which the element attributes
+     * should be rendered
      * @param url The image URL
      *
      * @exception IOException if an input/output error occurs
@@ -294,25 +248,23 @@ public class ButtonRenderer extends AbstractRenderer {
     protected void renderImageURLAttributes(FacesContext context,
             UIComponent component, ResponseWriter writer, String url)
             throws IOException {
-        Button button = (Button) component;
 
         // Append context path to relative URLs -- bugtraq #6333069 & 6306727.
         url = context.getApplication().getViewHandler().
                 getResourceURL(context, url);
 
         // Render type and source attributes.
-        writer.writeAttribute("type", "image", null); //NOI18N
-        RenderingUtilities.renderURLAttribute(context, writer, component,
-                "src", url, "imageURL"); //NOI18N
+        writer.writeAttribute("type", "image", null);
+        renderURLAttribute(context, writer, component, "src", url, "imageURL");
     }
 
     /**
      * Render the appropriate element attributes for a text button.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  attributes should be rendered
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be rendered
+     * @param writer {@code ResponseWriter} to which the element attributes
+     * should be rendered
      *
      * @exception IOException if an input/output error occurs
      */
@@ -325,13 +277,13 @@ public class ButtonRenderer extends AbstractRenderer {
         // Note: The "button" type is not supported for usability (isReset and 
         // isButton values would conflict).
         if (button.isReset()) {
-            writer.writeAttribute("type", "reset", null); //NOI18N
+            writer.writeAttribute("type", "reset", null);
         } else {
-            writer.writeAttribute("type", "submit", null); //NOI18N
+            writer.writeAttribute("type", "submit", null);
         }
 
         // Get the textual label of the button.
-        String text = ConversionUtilities.convertValueToString(button,
+        String text = convertValueToString(button,
                 button.getValue());
         if (text == null || text.trim().length() == 0) {
             return;
@@ -343,15 +295,15 @@ public class ButtonRenderer extends AbstractRenderer {
         // for Netscape 4.x. We may be able to do this with styles instead.
         if (!button.isNoTextPadding()) {
             if (text.trim().length() <= 3) {
-                text = "  " + text + "  "; //NOI18N
+                text = "  " + text + "  ";
             } else if (text.trim().length() == 4) {
-                text = " " + text + " "; //NOI18N
+                text = " " + text + " ";
             }
         }
 
         // Render button text.
         if (button.isEscape()) {
-            writer.writeAttribute("value", text, "text"); //NOI18N
+            writer.writeAttribute("value", text, "text");
         } else {
             // Note: This will close the starting tag -- see bugtraq #6315893.
             writer.write(text);
@@ -359,15 +311,15 @@ public class ButtonRenderer extends AbstractRenderer {
     }
 
     /**
-     * Get onblur style class.
+     * Get {@code onblur} style class.
      *
-     * @param button <code>Button</code> to be rendered
-     * @param theme <code>Theme</code> for the component
+     * @param button {@code Button} to be rendered
+     * @param theme {@code Theme}> for the component
+     * @return String
      */
     protected String getOnBlurStyle(Button button, Theme theme) {
-        String style = null;
 
-
+        String style;
         if (button.getImageURL() != null || button.getIcon() != null) {
             style = theme.getStyleClass(ThemeStyles.BUTTON3);
         } else if (button.isMini() && !button.isPrimary()) {
@@ -379,19 +331,19 @@ public class ButtonRenderer extends AbstractRenderer {
         } else {
             style = theme.getStyleClass(ThemeStyles.BUTTON1);
         }
-
         return style;
     }
 
     /**
-     * Get onfocus style class.
+     * Get {@code onfocus} style class.
      *
-     * @param button <code>Button</code> to be rendered
-     *@param theme <code>Theme</code> for the component
+     * @param button {@code Button} to be rendered
+     * @param theme {@code Theme}> for the component
+     * @return String
      */
     protected String getOnFocusStyle(Button button, Theme theme) {
-        String style = null;
 
+        String style;
         if (button.getImageURL() != null || button.getIcon() != null) {
             style = theme.getStyleClass(ThemeStyles.BUTTON3_HOVER);
         } else if (button.isMini() && !button.isPrimary()) {
@@ -403,15 +355,15 @@ public class ButtonRenderer extends AbstractRenderer {
         } else {
             style = theme.getStyleClass(ThemeStyles.BUTTON1_HOVER);
         }
-
         return style;
     }
 
     /**
-     * Get onmouseover style class.
+     * Get {@code onmouseover} style class.
      *
-     * @param button <code>Button</code> to be rendered
-     * @param theme <code>Theme</code> for the component
+     * @param button {@code Button} to be rendered
+     * @param theme {@code Theme}> for the component
+     * @return String
      */
     protected String getOnMouseOverStyle(Button button, Theme theme) {
         // The getOnfocusStyle method shares the same style classes.
@@ -419,10 +371,11 @@ public class ButtonRenderer extends AbstractRenderer {
     }
 
     /**
-     * Get onmouseout style class.
+     * Get {@code onmouseout} style class.
      *
-     * @param button <code>Button</code> to be rendered
-     * @param theme <code>Theme</code> for the component
+     * @param button {@code Button} to be rendered
+     * @param theme {@code Theme}> for the component
+     * @return String
      */
     protected String getOnMouseOutStyle(Button button, Theme theme) {
         // The getOnblurStyle method shares the same style classes.
@@ -432,10 +385,12 @@ public class ButtonRenderer extends AbstractRenderer {
     /**
      * Get style class.
      *
-     * @param button <code>Button</code> to be rendered
-     * @param theme <code>Theme</code> for the component
+     * @param button {@code Button} to be rendered
+     * @param theme {@code Theme}> for the component
+     * @return String
      */
     protected String getStyle(Button button, Theme theme) {
+
         // styles should always be appended
         String style;  // button style from theme.
         if (button.getImageURL() != null || button.getIcon() != null) {
@@ -457,29 +412,6 @@ public class ButtonRenderer extends AbstractRenderer {
                     ? theme.getStyleClass(ThemeStyles.BUTTON1_DISABLED)
                     : theme.getStyleClass(ThemeStyles.BUTTON1);
         }
-
         return style;
-    }
-
-    /**
-     * Helper method to set style classes during Javascript events such as
-     * onblur, onfocus, onmouseover, and onmouseout.
-     *
-     * @param value The existing attribute value to append Javascript to.
-     * @param jsmethod The JS event to invoke.
-     */
-    protected String getJavascript(String value, String jsmethod) {
-        if (jsmethod == null) {
-            return value;
-        }
-        StringBuilder event = new StringBuilder();
-        event.append("require(['")
-                .append(JavaScriptUtilities.getModuleName("button"))
-                .append("'], function (button) {")
-                .append("button.addOnInitCallback(function(btnElt){btnElt.my")
-                .append(jsmethod)
-                .append("();});});");
-
-        return (value != null) ? value + ";" + event.toString() : event.toString(); //NOI18N
     }
 }
