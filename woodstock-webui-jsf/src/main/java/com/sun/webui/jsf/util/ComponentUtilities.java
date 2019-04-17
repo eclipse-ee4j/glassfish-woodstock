@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,23 +16,35 @@
 
 package com.sun.webui.jsf.util;
 
+import java.beans.Beans;
+import java.util.Iterator;
+import javax.faces.FactoryFinder;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIForm;
+import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseListener;
+import javax.faces.lifecycle.Lifecycle;
+import javax.faces.lifecycle.LifecycleFactory;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Methods for general component manipulation.
  */
-public class ComponentUtilities {
+public final class ComponentUtilities {
 
-    private final static String USCORE = "_";
+    /**
+     * Underscore character.
+     */
+    private static final String USCORE = "_";
 
     /**
      * Creates a new instance of ComponentUtilities.
      */
-    public ComponentUtilities() {
+    private ComponentUtilities() {
     }
 
     /**
-     * Store an internally created component utilizing the 
+     * Store an internally created component utilizing the
      * internal facet naming convention by mapping the facet
      * to the name returned by {@code createPrivateFacetName()}.
      * Add the component to the parent's facets map.
@@ -41,8 +53,8 @@ public class ComponentUtilities {
      * @param facetName the public facet name
      * @param facet the private facet component instance
      */
-    public static void putPrivateFacet(UIComponent parent,
-            String facetName, UIComponent facet) {
+    public static void putPrivateFacet(final UIComponent parent,
+            final String facetName, final UIComponent facet) {
 
         if (parent == null || facet == null || facetName == null) {
             return;
@@ -51,7 +63,7 @@ public class ComponentUtilities {
     }
 
     /**
-     * Remove an internally created component utilizing the 
+     * Remove an internally created component utilizing the
      * internal facet naming convention by mapping the facet
      * to the name returned by {@code createPrivateFacetName()}.
      * Remove the component from the parent's facets map.
@@ -59,8 +71,8 @@ public class ComponentUtilities {
      * @param parent the component that created the facet
      * @param facetName the public facet name
      */
-    public static void removePrivateFacet(UIComponent parent,
-            String facetName) {
+    public static void removePrivateFacet(final UIComponent parent,
+            final String facetName) {
 
         if (parent == null || facetName == null) {
             return;
@@ -83,8 +95,8 @@ public class ComponentUtilities {
      * @param matchId verify a the id of the facet
      * @return a UIComponent if the facet is found else null.
      */
-    public static UIComponent getPrivateFacet(UIComponent parent,
-            String facetName, boolean matchId) {
+    public static UIComponent getPrivateFacet(final UIComponent parent,
+            final String facetName, final boolean matchId) {
 
         if (parent == null || facetName == null) {
             return null;
@@ -92,11 +104,7 @@ public class ComponentUtilities {
 
         String pfacetName = createPrivateFacetName(facetName);
         UIComponent facet = (UIComponent) parent.getFacets().get(pfacetName);
-        if (facet == null) {
-            return null;
-        }
-
-        if (matchId == false) {
+        if (facet == null || !matchId) {
             return facet;
         }
 
@@ -115,21 +123,22 @@ public class ComponentUtilities {
      * @param facetName the public facet name
      * @return a private facet name
      */
-    public static String createPrivateFacetName(String facetName) {
+    public static String createPrivateFacetName(final String facetName) {
         return USCORE.concat(facetName);
     }
 
     /**
-     * Return an id using the convention: {@code parent.getId() + "_" + facetName}.
-     * If {@code parent.getId()} is {@code null}, {@code "_" + facetName }
+     * Return an id using the convention:
+     * {@code parent.getId() + "_" + facetName}. If {@code parent.getId()} is
+     * {@code null}, {@code "_" + facetName }
      * is returned.
      *
      * @param parent the component that contains the facet
      * @param facetName the public facet name
      * @return an id for a private facet.
      */
-    public static String createPrivateFacetId(UIComponent parent,
-            String facetName) {
+    public static String createPrivateFacetId(final UIComponent parent,
+            final String facetName) {
 
         String pfacetName = createPrivateFacetName(facetName);
         String id = parent.getId();
@@ -137,5 +146,203 @@ public class ComponentUtilities {
             pfacetName = id.concat(pfacetName);
         }
         return pfacetName;
+    }
+
+    /**
+     * Return a child with the specified component id from the specified
+     * component. If not found, return {@code null}.
+     *
+     * This method will NOT create a new {@code UIComponent}.
+     *
+     * @param parent {@code UIComponent} to be searched
+     * @param id Component id (or facet name) to search for
+     *
+     * @return The child {@code UIComponent} if it exists, null otherwise.
+     */
+    public static UIComponent getChild(final UIComponent parent,
+            final String id) {
+
+        return findChild(parent, id, id);
+    }
+
+    /**
+     * Return a child with the specified component id (or facetName) from the
+     * specified component. If not found, return {@code null}.
+     * {@code facetName} or {@code id} may be null to avoid searching
+     * the facet Map or the {@code parent}'s children.
+     *
+     * This method will NOT create a new {@code UIComponent}.
+     *
+     * @param parent {@code UIComponent} to be searched
+     * @param id id to search for
+     * @param facetName Facet name to search for
+     *
+     * @return The child {@code UIComponent} if it exists, null otherwise.
+     */
+    public static UIComponent findChild(final UIComponent parent,
+            final String id, final String facetName) {
+
+        // Sanity Check
+        if (parent == null) {
+            return null;
+        }
+
+        // First search for facet
+        UIComponent child;
+        if (facetName != null) {
+            child = (UIComponent) parent.getFacets().get(facetName);
+            if (child != null) {
+                return child;
+            }
+        }
+
+        // Search for component by id
+        if (id != null) {
+            Iterator it = parent.getChildren().iterator();
+            while (it.hasNext()) {
+                child = (UIComponent) it.next();
+                if (id.equals(child.getId())) {
+                    return (child);
+                }
+            }
+        }
+
+        // Not found, return null
+        return null;
+    }
+
+    /**
+     * Helper method to obtain containing {@code UIForm}.
+     *
+     * @param context {@code FacesContext} for the request we are
+     * processing.
+     * @param component {@code UIComponent} to find form from.
+     *
+     * @return Returns the {@code UIForm} component that contains this
+     * element
+     */
+    public static UIComponent getForm(final FacesContext context,
+            final UIComponent component) {
+
+        //make sure component is not null
+        if (component != null) {
+            //make sure we don't already have a form
+            if (component instanceof UIForm) {
+                return component;
+            }
+
+            UIComponent form = component;
+            do {
+                form = form.getParent();
+                if (form != null && form instanceof UIForm) {
+                    return form;
+                }
+            } while (form != null);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the form id from the containing {@code UIForm}.
+     *
+     * @param context FacesContext for the request we are processing.
+     * @param component UIComponent to find form from.
+     *
+     * @return Returns the id of the {@code UIForm} that contains this
+     * element.
+     */
+    public static String getFormName(final FacesContext context,
+            final UIComponent component) {
+
+        UIComponent form = getForm(context, component);
+        if (form != null) {
+            return form.getClientId(context);
+        }
+        return null;
+    }
+
+    /**
+     * Return the base URI for the view identifier of the current view.
+     *
+     * @param context {@code FacesContext} for the current request
+     * @return String
+     */
+    public static String getBase(final FacesContext context) {
+        return getContext(context) + context.getViewRoot().getViewId();
+    }
+
+    /**
+     * Return an absolute URL to our server and context path.
+     *
+     * @param context {@code FacesContext} for the current request
+     * @return String
+     */
+    @SuppressWarnings({
+        "checkstyle:emptystatement",
+        "checkstyle:magicnumber",
+        "checkstyle:emptyblock"
+    })
+    public static String getContext(final FacesContext context) {
+
+        // FIXME - design time FacesContext needs better instrumentaiton?
+        if (Beans.isDesignTime()) {
+            return "http://localhost:18080/myapp";
+        }
+
+        //FIXME - portlet environment variation?
+        HttpServletRequest request = (HttpServletRequest) context
+                .getExternalContext().getRequest();
+        StringBuilder sb = new StringBuilder(request.getScheme());
+        sb.append("://");
+        sb.append(request.getServerName());
+        if ("http".equals(request.getScheme())
+                && (80 == request.getServerPort())) {
+            ;
+        } else if ("https".equals(request.getScheme())
+                && (443 == request.getServerPort())) {
+        } else {
+            sb.append(":").append(request.getServerPort());
+        }
+        sb.append(request.getContextPath());
+        return sb.toString();
+    }
+
+    /**
+     * Get the action URL.
+     * @param context faces context
+     * @param url input URL
+     * @return String
+     */
+    public static String getActionURL(final FacesContext context,
+            final String url) {
+
+        return context.getApplication().getViewHandler()
+                .getActionURL(context, url);
+    }
+
+    /**
+     * Add a PhaseListener.
+     *
+     * @param phaseListener PhaseListener instance.
+     */
+    public static void addPhaseListener(final PhaseListener phaseListener) {
+        LifecycleFactory factory = (LifecycleFactory) FactoryFinder
+                .getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+        Lifecycle lifecycle = factory
+                .getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+        lifecycle.addPhaseListener(phaseListener);
+    }
+
+    /**
+     * Remove a PhaseListener.
+     *
+     * @param phaseListener PhaseListener instance.
+     */
+    public static void removePhaseListener(final PhaseListener phaseListener) {
+        LifecycleFactory factory = (LifecycleFactory) FactoryFinder
+                .getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+        Lifecycle lifecycle = factory
+                .getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+        lifecycle.removePhaseListener(phaseListener);
     }
 }

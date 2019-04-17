@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  *    }
  * </pre>
  * <p>
- * The javadoc-formatted comment found with the annotated class declaration is
+ * The javadoc formatted comment found with the annotated class declaration is
  * also considered part of this property's metadata. Typically, the first
  * sentence of the comment will be used as the component's default short
  * description.
@@ -49,8 +49,6 @@ import java.lang.annotation.Target;
  * A component's properties should be annotated with the {@link Property},
  * annotation, and its events should be annotated with the {@link Event}
  * annotation.
- *
- * @author gjmurphy
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
@@ -59,27 +57,54 @@ public @interface Component {
     /**
      * Constraints that determine how a component may be resized in the IDE.
      */
-    public enum ResizeConstraints {
+    enum ResizeConstraints {
+        /**
+         * None.
+         */
         NONE,
+        /**
+         * Any.
+         */
         ANY,
+        /**
+         * Top.
+         */
         TOP,
+        /**
+         * Bottom.
+         */
         BOTTOM,
+        /**
+         * Left.
+         */
         LEFT,
+        /**
+         * Right.
+         */
         RIGHT,
+        /**
+         * Horizontal.
+         */
         HORIZONTAL,
+        /**
+         * Vertical.
+         */
         VERTICAL,
+        /**
+         * Maintain aspect ratio.
+         */
         MAINTAIN_ASPECT_RATIO
     }
 
     /**
      * This component's type, which acts as a unique identifier. The value of
      * type must be unique within the scope of the current compilation unit. If
-     * no value is supplied, the component class's fully qualifed name will be
+     * no value is supplied, the component class's fully qualified name will be
      * used.
      *
      * @return String
      */
-    public String type() default "";
+    String type() default "";
 
     /**
      * This component's family. The value should be the same as is returned by a
@@ -88,7 +113,7 @@ public @interface Component {
      *
      * @return String
      */
-    public String family() default "";
+    String family() default "";
 
     /**
      * This component's display name, typically used at design-time. If no value
@@ -97,7 +122,7 @@ public @interface Component {
      * @return String
      */
     @Localizable
-    public String displayName() default "";
+    String displayName() default "";
 
     /**
      * The basis of variable names generated for this component, typically at
@@ -107,7 +132,7 @@ public @interface Component {
      *
      * @return String
      */
-    public String instanceName() default "";
+    String instanceName() default "";
 
     /**
      * If true, this component is intended to be used only in Java code, and no
@@ -117,7 +142,7 @@ public @interface Component {
      * @return {@code true} if should be used only java Java code, {@code false}
      * otherwise
      */
-    public boolean isTag() default true;
+    boolean isTag() default true;
 
     /**
      * The name of the JSP tag that corresponds to this component. If no value
@@ -130,14 +155,14 @@ public @interface Component {
      *
      * @return String
      */
-    public String tagName() default "";
+    String tagName() default "";
 
     /**
      * The renderer type for this component's tag. The value specified must
      * correspond to a renderer type specified for a renderer class in the
      * current compilation unit (see {@link Renderer.Renders#rendererType}). If
      * not specified, and exactly one renderer type has been associated with
-     * this compononents {@link #family}, this value will default to that
+     * this components {@link #family}, this value will default to that
      * renderer type. If not specified, and more than one renderer type has been
      * associated with this component's {@link #family}, the default value is
      * undefined.
@@ -149,7 +174,7 @@ public @interface Component {
      *
      * @return String
      */
-    public String tagRendererType() default "";
+    String tagRendererType() default "";
 
     /**
      * An optional short description of this component, typically used as a tool
@@ -160,7 +185,7 @@ public @interface Component {
      * @return String
      */
     @Localizable
-    public String shortDescription() default "";
+    String shortDescription() default "";
 
     /**
      * Indicates whether this component may act as a container for other
@@ -168,14 +193,14 @@ public @interface Component {
      *
      * @return {@code true} if container, {@code false} otherwise
      */
-    public boolean isContainer() default true;
+    boolean isContainer() default true;
 
     /**
      * Controls the manner in which a component may be resized at design-time.
      *
      * @return ResizeConstraints[]
      */
-    public ResizeConstraints[] resizeConstraints() default {ResizeConstraints.ANY};
+    ResizeConstraints[] resizeConstraints() default {ResizeConstraints.ANY};
 
     /**
      * The name of a unique key used to associate help with this component at
@@ -183,7 +208,7 @@ public @interface Component {
      *
      * @return String
      */
-    public String helpKey() default "";
+    String helpKey() default "";
 
     /**
      * The name of a unique key used to associate help with this component at
@@ -191,6 +216,6 @@ public @interface Component {
      *
      * @return String
      */
-    public String propertiesHelpKey() default "";
+    String propertiesHelpKey() default "";
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -25,75 +24,55 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 /**
- * <p>This class is responsible for rendering the script component for the
- * HTML Render Kit.</p> <p> The script component can be used as an Script</p>
+ * This class is responsible for rendering the script component for the HTML
+ * Render Kit. The script component can be used as an Script
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Script"))
-public class ScriptRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Script"))
+public final class ScriptRenderer extends AbstractRenderer {
 
-    // -------------------------------------------------------- Static Variables
     /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
+     * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {"charset", "type"}; //NOI18N
+    private static final String[] STRING_ATTRIBUTES = {
+        "charset",
+        "type"
+    };
 
-    // -------------------------------------------------------- Renderer Methods
-    /**
-     * <p>Render the start of an Script (Script) tag.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * start should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         writer.startElement("script", component);
     }
 
-    /**
-     * <p>Render the attributes for an Script tag.  The onclick attribute will contain
-     * extra javascript that will appropriately submit the form if the URL field is
-     * not set.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * attributes should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Script script = (Script) component;
         addCoreAttributes(context, component, writer, null);
-        addStringAttributes(context, component, writer, stringAttributes);
+        addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
         // the URL is the tough thing because it needs to be encoded:
         String url = script.getUrl();
         if (url != null) {
             // Get resource URL -- bugtraq #6305522.
-            RenderingUtilities.renderURLAttribute(context, writer, script, "src", //NO18N
-                    context.getApplication().getViewHandler().getResourceURL(context, url),
-                    "url"); //NO18N
+            RenderingUtilities.renderURLAttribute(context, writer, script,
+                    "src", context.getApplication().getViewHandler()
+                            .getResourceURL(context, url),
+                    "url");
         }
     }
 
-    /**
-     * <p>Close off the Script tag.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * end should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // End the appropriate element
-        Script script = (Script) component;
-        writer.endElement("script"); //NOI18N
-        writer.write("\n"); //NOI18N
+        writer.endElement("script");
+        writer.write("\n");
     }
-    // --------------------------------------------------------- Private Methods
 }

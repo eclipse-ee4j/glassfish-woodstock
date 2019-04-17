@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.faces;
 
 import com.sun.faces.annotation.Resolver;
@@ -35,46 +34,56 @@ import javax.el.PropertyNotWritableException;
 import javax.faces.context.FacesContext;
 
 /**
- * <p><code>ThemeELResolver</code> is a <code>PropertyResolver</code> 
- * implementation that passes calls to <code>getValue()</code>, 
- * <code>getType()</code>, <code>isReadOnly()</code>, and 
- * <code>setValue()</code> to the underlying {@link Theme} instance.</p>
+ * {@code PropertyResolver} implementation that passes calls to
+ * {@code getValue()},{@code getType()}, {@code isReadOnly()}, and
+ * {@code setValue()} to the underlying {@link Theme} instance.
  *
- * <p>Examples of supported expressions:</p><p>
- *
- * 1. <code>#{themeStyles.CONTENT_MARGIN}</code></p><p>
- * This expression binds to a value in the {@link Theme} corresponding to the 
- * CONTENT_MARGIN constant in ThemeStyles.
- * </p><p>
- *
- * 2. <code>#{themeImages.ALERT_ERROR_LARGE}</code></p><p>
- * This expression binds to a value in the {@link Theme} corresponding to the 
- * ALERT_ERROR_LARGE constant in ThemeImages.
- * </p><p>
- *
- * 3. <code>#{themeJavascript.DOJO}</code></p><p>
- * This expression binds to the value of the {@link Theme} value corresponding 
- * to the DOJO constant in ThemeJavascript.
- * </p><p>
- *
- * 4. <code>#{themeMessages['EditableList.invalidRemove']}</code></p><p>
- * This expression binds to a value in the {@link Theme} corresponding to the 
- * EditableList.invalidRemove key in messages.properties.
- * </p><p>
- *
- * 5. <code>#{themeTemplates.PROGRESSBAR}</code></p><p>
- * This expression binds to a value in the {@link Theme} corresponding to the 
- * PROGRESSBAR constant in ThemeTemplates.
- * </p>
+ * Examples of supported expressions:
+ * <ul>
+ * <li>{@code #{themeStyles.CONTENT_MARGIN}}
+ * This expression binds to a value in the {@link Theme} corresponding to the
+ * CONTENT_MARGIN constant in ThemeStyles.</li>
+ * <li> {@code #{themeImages.ALERT_ERROR_LARGE}}
+ * This expression binds to a value in the {@link Theme} corresponding to the
+ * ALERT_ERROR_LARGE constant in ThemeImages.</li>
+ * <li>{@code #{themeJavascript.DOJO}}
+ * This expression binds to the value of the {@link Theme} value corresponding
+ * to the DOJO constant in ThemeJavascript.</li>
+ * <li>{@code #{themeMessages['EditableList.invalidRemove']}}
+ * This expression binds to a value in the {@link Theme} corresponding to the
+ * EditableList.invalidRemove key in messages.properties.</li>
+ * <li>{@code #{themeTemplates.PROGRESSBAR}}
+ * This expression binds to a value in the {@link Theme} corresponding to the
+ * PROGRESSBAR constant in ThemeTemplates.</li>
+ * </ul>
  */
 @Resolver
-public class ThemeELResolver extends ELResolver {
+public final class ThemeELResolver extends ELResolver {
 
-    private final String THEME_IMAGES = "themeImages";
-    private final String THEME_JAVASCRIPT = "themeJavascript";
-    private final String THEME_MESSAGES = "themeMessages";
-    private final String THEME_STYLES = "themeStyles";
-    private final String THEME_TEMPLATES = "themeTemplates";
+    /**
+     * Theme images key.
+     */
+    private static final String THEME_IMAGES = "themeImages";
+
+    /**
+     * Theme JS key.
+     */
+    private static final String THEME_JAVASCRIPT = "themeJavascript";
+
+    /**
+     * Theme messages key.
+     */
+    private static final String THEME_MESSAGES = "themeMessages";
+
+    /**
+     * Theme CSS styles key.
+     */
+    private static final String THEME_STYLES = "themeStyles";
+
+    /**
+     * Theme templates key.
+     */
+    private static final String THEME_TEMPLATES = "themeTemplates";
 
     /**
      * Default constructor.
@@ -82,10 +91,10 @@ public class ThemeELResolver extends ELResolver {
     public ThemeELResolver() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Object getValue(ELContext context, Object base, Object property) {
+    @Override
+    public Object getValue(final ELContext context, final Object base,
+            final Object property) {
+
         if (property == null) {
             throw new PropertyNotFoundException("Property cannot be null.");
         }
@@ -135,10 +144,10 @@ public class ThemeELResolver extends ELResolver {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setValue(ELContext context, Object base, Object property, Object value) {
+    @Override
+    public void setValue(final ELContext context, final Object base,
+            final Object property, final Object value) {
+
         // Variable resolution is a special case of property resolution
         // where the base is null.
         if (base != null) {
@@ -149,23 +158,31 @@ public class ThemeELResolver extends ELResolver {
         }
         if (base != null) {
             // Regardless of the base object, all properties are read only.
-            if (base instanceof Images || base instanceof Javascript || base instanceof Messages || base instanceof Styles || base instanceof Templates) {
+            if (base instanceof Images
+                    || base instanceof Javascript
+                    || base instanceof Messages
+                    || base instanceof Styles
+                    || base instanceof Templates) {
                 throw new PropertyNotWritableException(property.toString());
             }
         } else {
             // Variable resolution is a special case of property resolution
-            // where the base is null. Thus, We need to provide an object to 
+            // where the base is null. Thus, We need to provide an object to
             // resolve the next property.
-            if (THEME_IMAGES.equals(property) || THEME_JAVASCRIPT.equals(property) || THEME_MESSAGES.equals(property) || THEME_STYLES.equals(property) || THEME_TEMPLATES.equals(property)) {
+            if (THEME_IMAGES.equals(property)
+                    || THEME_JAVASCRIPT.equals(property)
+                    || THEME_MESSAGES.equals(property)
+                    || THEME_STYLES.equals(property)
+                    || THEME_TEMPLATES.equals(property)) {
                 throw new PropertyNotWritableException(property.toString());
             }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isReadOnly(ELContext context, Object base, Object property) {
+    @Override
+    public boolean isReadOnly(final ELContext context, final Object base,
+            final Object property) {
+
         if (property == null) {
             throw new PropertyNotFoundException("Property cannot be null.");
         }
@@ -175,15 +192,23 @@ public class ThemeELResolver extends ELResolver {
         boolean result = false;
         if (base != null) {
             // Regardless of the base object, all properties are read only.
-            if (base instanceof Images || base instanceof Javascript || base instanceof Messages || base instanceof Styles || base instanceof Templates) {
+            if (base instanceof Images
+                    || base instanceof Javascript
+                    || base instanceof Messages
+                    || base instanceof Styles
+                    || base instanceof Templates) {
                 result = true;
                 context.setPropertyResolved(true);
             }
         } else {
             // Variable resolution is a special case of property resolution
-            // where the base is null. Thus, We need to provide an object to 
+            // where the base is null. Thus, We need to provide an object to
             // resolve the next property.
-            if (THEME_IMAGES.equals(property) || THEME_JAVASCRIPT.equals(property) || THEME_MESSAGES.equals(property) || THEME_STYLES.equals(property) || THEME_TEMPLATES.equals(property)) {
+            if (THEME_IMAGES.equals(property)
+                    || THEME_JAVASCRIPT.equals(property)
+                    || THEME_MESSAGES.equals(property)
+                    || THEME_STYLES.equals(property)
+                    || THEME_TEMPLATES.equals(property)) {
                 result = true;
                 context.setPropertyResolved(true);
             }
@@ -191,10 +216,10 @@ public class ThemeELResolver extends ELResolver {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Class getType(ELContext context, Object base, Object property) {
+    @Override
+    public Class getType(final ELContext context, final Object base,
+            final Object property) {
+
         if (property == null) {
             throw new PropertyNotFoundException("Property cannot be null.");
         }
@@ -204,15 +229,23 @@ public class ThemeELResolver extends ELResolver {
         Class result = null;
         if (base != null) {
             // Regardless of the base object, all properties are Strings.
-            if (base instanceof Images || base instanceof Javascript || base instanceof Messages || base instanceof Styles || base instanceof Templates) {
+            if (base instanceof Images
+                    || base instanceof Javascript
+                    || base instanceof Messages
+                    || base instanceof Styles
+                    || base instanceof Templates) {
                 result = String.class;
                 context.setPropertyResolved(true);
             }
         } else {
             // Variable resolution is a special case of property resolution
-            // where the base is null. Thus, We need to provide an object to 
+            // where the base is null. Thus, We need to provide an object to
             // resolve the next property.
-            if (THEME_IMAGES.equals(property) || THEME_JAVASCRIPT.equals(property) || THEME_MESSAGES.equals(property) || THEME_STYLES.equals(property) || THEME_TEMPLATES.equals(property)) {
+            if (THEME_IMAGES.equals(property)
+                    || THEME_JAVASCRIPT.equals(property)
+                    || THEME_MESSAGES.equals(property)
+                    || THEME_STYLES.equals(property)
+                    || THEME_TEMPLATES.equals(property)) {
                 result = String.class;
                 context.setPropertyResolved(true);
             }
@@ -220,12 +253,12 @@ public class ThemeELResolver extends ELResolver {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(
+            final ELContext context, final Object base) {
+
         // Variable resolution is a special case of property resolution
-        // where the base is null. Thus, if the object is not null, we're not 
+        // where the base is null. Thus, if the object is not null, we're not
         // meant to resolve it.
         if (base != null) {
             return null;
@@ -242,12 +275,12 @@ public class ThemeELResolver extends ELResolver {
         return result.iterator();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Class getCommonPropertyType(ELContext context, Object base) {
+    @Override
+    public Class getCommonPropertyType(final ELContext context,
+            final Object base) {
+
         // Variable resolution is a special case of property resolution
-        // where the base is null. Thus, if the object is not null, we're not 
+        // where the base is null. Thus, if the object is not null, we're not
         // meant to resolve it.
         if (base != null) {
             return null;
@@ -255,10 +288,15 @@ public class ThemeELResolver extends ELResolver {
         return String.class;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    private FeatureDescriptor getFeatureDescriptor(String name, Class clazz) {
+    /**
+     * Get a feature descriptor.
+     * @param name feature name
+     * @param clazz feature class
+     * @return FeatureDescriptor
+     */
+    private static FeatureDescriptor getFeatureDescriptor(final String name,
+            final Class clazz) {
+
         FeatureDescriptor desc = new FeatureDescriptor();
         desc.setName(name);
         desc.setDisplayName(name);
@@ -267,29 +305,41 @@ public class ThemeELResolver extends ELResolver {
         return desc;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private classes
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /**
+     * Private class to resolve ThemeImage constants.
+     */
+    private static final class Images {
 
-    // Private class to resolve ThemeImage constants.
-    private class Images {
-
+        /**
+         * Height suffix.
+         */
         private static final String HEIGHT_SUFFIX = "_HEIGHT";
+
+        /**
+         * Width suffix.
+         */
         private static final String WIDTH_SUFFIX = "_WIDTH";
+
+        /**
+         * Alternate suffix.
+         */
         private static final String ALT_SUFFIX = "_ALT";
 
         /**
-         * Reslove ThemeImages constants.
+         * Resolve ThemeImages constants.
          *
          * @param property The ThemeImages constant.
+         * @return Object
          */
-        public Object getValue(String property) {
+        public Object getValue(final String property) {
             if (property == null) {
-                throw new PropertyNotFoundException("Property cannot be null.");
+                throw new PropertyNotFoundException(
+                        "Property cannot be null.");
             }
 
-            Object result = null;
-            Theme theme = ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+            Object result;
+            Theme theme = ThemeUtilities
+                    .getTheme(FacesContext.getCurrentInstance());
 
             try {
                 Field field = ThemeImages.class.getField(property);
@@ -310,7 +360,16 @@ public class ThemeELResolver extends ELResolver {
                     // Resolve image paths.
                     result = theme.getImage(value).getPath();
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException e) {
+                // Try to resolve as resource key, bypassing ThemeImages.
+                result = theme.getImageString(property);
+            } catch (IllegalArgumentException e) {
+                // Try to resolve as resource key, bypassing ThemeImages.
+                result = theme.getImageString(property);
+            } catch (NoSuchFieldException e) {
+                // Try to resolve as resource key, bypassing ThemeImages.
+                result = theme.getImageString(property);
+            } catch (SecurityException e) {
                 // Try to resolve as resource key, bypassing ThemeImages.
                 result = theme.getImageString(property);
             }
@@ -318,39 +377,64 @@ public class ThemeELResolver extends ELResolver {
         }
     }
 
-    // Private class to resolve ThemeJavascript constants.
-    private class Javascript {
-        // Special constant which does not prefix the theme path.
+    /**
+     * Private class to resolve ThemeJavascript constants.
+     */
+    private static final class Javascript {
 
-        private static final String JS_PREFIX = "JS_PREFIX"; // Deprecated.
+        /**
+         * JS prefix.
+         */
+        private static final String JS_PREFIX = "JS_PREFIX";
+
+        /**
+         * Module path prefix.
+         */
         private static final String MODULE_PATH = "MODULE_PATH";
+
+        /**
+         * Module prefix.
+         */
         private static final String MODULE_PREFIX = "MODULE_PREFIX";
 
         /**
-         * Reslove ThemeJavascript constants.
+         * Resolve ThemeJavascript constants.
          *
          * @param property The ThemeJavascript constant.
+         * @return Object
          */
-        public Object getValue(String property) {
+        public Object getValue(final String property) {
             if (property == null) {
                 throw new PropertyNotFoundException("Property cannot be null.");
             }
 
-            Object result = null;
-            Theme theme = ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+            Object result;
+            Theme theme = ThemeUtilities
+                    .getTheme(FacesContext.getCurrentInstance());
 
             try {
                 Field field = ThemeJavascript.class.getField(property);
                 String value = field.get(null).toString();
 
                 // This is a special case where the theme path is not prefixed.
-                if (JS_PREFIX.equals(property) || MODULE_PATH.equals(property) || MODULE_PREFIX.equals(property)) {
+                if (JS_PREFIX.equals(property)
+                        || MODULE_PATH.equals(property)
+                        || MODULE_PREFIX.equals(property)) {
                     result = theme.getJSString(value);
                 } else {
                     // Resolve Javascript file path.
                     result = theme.getPathToJSFile(value);
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException e) {
+                // Try to resolve as resource key, bypassing ThemeJavascript.
+                result = theme.getJSString(property);
+            } catch (IllegalArgumentException e) {
+                // Try to resolve as resource key, bypassing ThemeJavascript.
+                result = theme.getJSString(property);
+            } catch (NoSuchFieldException e) {
+                // Try to resolve as resource key, bypassing ThemeJavascript.
+                result = theme.getJSString(property);
+            } catch (SecurityException e) {
                 // Try to resolve as resource key, bypassing ThemeJavascript.
                 result = theme.getJSString(property);
             }
@@ -358,21 +442,25 @@ public class ThemeELResolver extends ELResolver {
         }
     }
 
-    // Private class to resolve messages.properties keys.
-    private class Messages {
+    /**
+     * Private class to resolve messages.properties keys.
+     */
+    private static final class Messages {
 
         /**
-         * Reslove messages.properties keys.
+         * Resolve messages.properties keys.
          *
          * @param property The messages.properties key.
+         * @return Object
          */
-        public Object getValue(String property) {
+        public Object getValue(final String property) {
             if (property == null) {
                 throw new PropertyNotFoundException("Property cannot be null.");
             }
 
-            Object result = null;
-            Theme theme = ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+            Object result;
+            Theme theme = ThemeUtilities
+                    .getTheme(FacesContext.getCurrentInstance());
 
             // Resolve resource bundle string.
             result = theme.getMessage(property);
@@ -380,27 +468,40 @@ public class ThemeELResolver extends ELResolver {
         }
     }
 
-    // Private class to resolve ThemeStyles constants.
-    private class Styles {
+    /**
+     * Private class to resolve ThemeStyles constants.
+     */
+    private static final class Styles {
 
         /**
-         * Reslove ThemeStyles constants.
+         * Resolve ThemeStyles constants.
          *
          * @param property The ThemeStyles constant.
+         * @return Object
          */
-        public Object getValue(String property) {
+        public Object getValue(final String property) {
             if (property == null) {
                 throw new PropertyNotFoundException("Property cannot be null.");
             }
 
-            Object result = null;
-            Theme theme = ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+            Object result;
+            Theme theme = ThemeUtilities
+                    .getTheme(FacesContext.getCurrentInstance());
 
             try {
                 // Resolve the style selector.
                 Field field = ThemeStyles.class.getField(property);
                 result = theme.getStyleClass(field.get(null).toString());
-            } catch (Exception e) {
+            } catch (IllegalAccessException e) {
+                // Try to resolve as resource key, bypassing ThemeStyles.
+                result = theme.getStyleClass(property);
+            } catch (IllegalArgumentException e) {
+                // Try to resolve as resource key, bypassing ThemeStyles.
+                result = theme.getStyleClass(property);
+            } catch (NoSuchFieldException e) {
+                // Try to resolve as resource key, bypassing ThemeStyles.
+                result = theme.getStyleClass(property);
+            } catch (SecurityException e) {
                 // Try to resolve as resource key, bypassing ThemeStyles.
                 result = theme.getStyleClass(property);
             }
@@ -408,27 +509,40 @@ public class ThemeELResolver extends ELResolver {
         }
     }
 
-    // Private class to resolve ThemeTemplates constants.
-    private class Templates {
+    /**
+     * Private class to resolve ThemeTemplates constants.
+     */
+    private static final class Templates {
 
         /**
-         * Reslove ThemeTemplates constants.
+         * Resolve ThemeTemplates constants.
          *
          * @param property The ThemeTemplates constant.
+         * @return Object
          */
-        public Object getValue(String property) {
+        public Object getValue(final String property) {
             if (property == null) {
                 throw new PropertyNotFoundException("Property cannot be null.");
             }
 
-            Object result = null;
-            Theme theme = ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
+            Object result;
+            Theme theme = ThemeUtilities
+                    .getTheme(FacesContext.getCurrentInstance());
 
             try {
                 // Resolve the HTML template path.
                 Field field = ThemeTemplates.class.getField(property);
                 result = theme.getPathToTemplate(field.get(null).toString());
-            } catch (Exception e) {
+            } catch (IllegalAccessException e) {
+                // Try to resolve as resource key, bypassing ThemeTemplates.
+                result = theme.getPathToTemplate(property);
+            } catch (IllegalArgumentException e) {
+                // Try to resolve as resource key, bypassing ThemeTemplates.
+                result = theme.getPathToTemplate(property);
+            } catch (NoSuchFieldException e) {
+                // Try to resolve as resource key, bypassing ThemeTemplates.
+                result = theme.getPathToTemplate(property);
+            } catch (SecurityException e) {
                 // Try to resolve as resource key, bypassing ThemeTemplates.
                 result = theme.getPathToTemplate(property);
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,18 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package org.example;
 
 import com.sun.faces.annotation.Property;
 
-/**
- *
- * @author gjmurphy
- */
 public class SuperSuperBean02 {
-    
-    @Property(displayName="The First")
+
+    @Property(displayName = "The First")
     private String one;
 
     public String getOne() {

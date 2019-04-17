@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,16 +20,25 @@ import com.sun.rave.designtime.markup.AttributeDescriptor;
 /**
  * Represents an attribute for a property of a class from a dependent library,
  * discovered using introspection.
- *
- * @author gjmurphy
  */
-public class IntrospectedAttributeInfo implements AttributeInfo {
+public final class IntrospectedAttributeInfo implements AttributeInfo {
 
-    AttributeDescriptor attributeDescriptor;
+    /**
+     * Attribute descriptor.
+     */
+    private final AttributeDescriptor attributeDescriptor;
+
+    /**
+     * Attribute description.
+     */
     private String description;
 
-    IntrospectedAttributeInfo(AttributeDescriptor attributeDescriptor) {
-        this.attributeDescriptor = attributeDescriptor;
+    /**
+     * Create a new instance.
+     * @param attrDescriptor attribute descriptor
+     */
+    IntrospectedAttributeInfo(final AttributeDescriptor attrDescriptor) {
+        this.attributeDescriptor = attrDescriptor;
     }
 
     @Override
@@ -60,8 +69,12 @@ public class IntrospectedAttributeInfo implements AttributeInfo {
         return this.description;
     }
 
-    void setDescription(String description) {
-        this.description = description;
+    /**
+     * Set the attribute description.
+     * @param attrDesc new attribute description
+     */
+    void setDescription(final String attrDesc) {
+        this.description = attrDesc;
     }
 
     @Override

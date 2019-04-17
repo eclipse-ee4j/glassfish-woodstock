@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,6 +28,9 @@ package com.sun.webui.jsf.util;
  */
 public final class ValueType {
 
+    /**
+     * The type.
+     */
     private final String type;
 
     /**
@@ -37,7 +40,8 @@ public final class ValueType {
     public static final ValueType ARRAY = new ValueType("array");
 
     /**
-     * Indicates that the value binding is assignable to a {@code java.util.List}.
+     * Indicates that the value binding is assignable to a
+     * {@code java.util.List}.
      */
     public static final ValueType LIST = new ValueType("list");
 
@@ -64,12 +68,12 @@ public final class ValueType {
      * Create a new instance.
      * @param valueType type
      */
-    private ValueType(String valueType) {
+    private ValueType(final String valueType) {
         type = valueType;
     }
 
     /**
-     * Get a String representation of the action
+     * Get a String representation of the action.
      *
      * @return A String representation of the value type.
      */

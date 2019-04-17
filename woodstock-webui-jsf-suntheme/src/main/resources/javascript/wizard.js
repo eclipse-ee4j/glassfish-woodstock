@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -36,6 +36,7 @@ define([
 ], function (common) {
 
     return {
+        addOnInitCallback: common.addOnInitCallback,
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.
@@ -56,6 +57,9 @@ define([
             if (domNode === null) {
                 return false;
             }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
+            }
 
             // Set given properties on domNode.
             Object.extend(domNode, props);
@@ -71,6 +75,7 @@ define([
             domNode.closeAndForward = this.closeAndForward;
             domNode.wizOnLoad = this.wizOnLoad;
             domNode.resize_hack = this.resize_hack;
+            common.setInitialized(domNode);
         },
 
         nextClicked: function () {
@@ -177,7 +182,7 @@ define([
                 if (bdy !== null) {
                     bdy.style.height = document.body.clientHeight - 145;
 
-                    if (helpid !== null && helpid != '') {
+                    if (helpid !== null && helpid !== '') {
                         var help = document.getElementById(helpid);
                         if (help !== null) {
                             help.style.height = document.body.clientHeight - 90;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,45 +24,66 @@ import java.util.Set;
 
 /**
  * A map for storing internationalized properties during file generation.
- *
- * @author gjmurphy
  */
 public final class PropertyBundleMap implements Map {
 
-    Map<Object, Object> map = new HashMap<Object, Object>();
-    List<Object> keyList = new ArrayList<Object>();
+    /**
+     * Underlying map.
+     */
+    private final Map<Object, Object> map = new HashMap<Object, Object>();
+
+    /**
+     * Keys.
+     */
+    private final List<Object> keyList = new ArrayList<Object>();
+
+    /**
+     * Bundle qualified name.
+     */
     private String qualifiedName;
 
-    PropertyBundleMap(String qualifiedName) {
-        this.setQualifiedName(qualifiedName);
+    /**
+     * Create a new instance.
+     * @param qName qualified name
+     */
+    PropertyBundleMap(final String qName) {
+        this.setQualifiedName(qName);
     }
 
+    /**
+     * Get the qualified name.
+     * @return String
+     */
     public String getQualifiedName() {
         return this.qualifiedName;
     }
 
-    void setQualifiedName(String qualifiedName) {
-        this.qualifiedName = qualifiedName;
+    /**
+     * Set the qualified name.
+     * @param qName new qualified name
+     */
+    void setQualifiedName(final String qName) {
+        this.qualifiedName = qName;
     }
 
     @Override
-    public Object remove(Object key) {
+    public Object remove(final Object key) {
         this.keyList.remove(key);
         return this.map.remove(key);
     }
 
     @Override
-    public Object get(Object key) {
+    public Object get(final Object key) {
         return this.map.get(key);
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return this.map.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return this.map.containsValue(value);
     }
 
@@ -77,7 +98,7 @@ public final class PropertyBundleMap implements Map {
     }
 
     @Override
-    public Object put(Object key, Object value) {
+    public Object put(final Object key, final Object value) {
         if (this.map.put(key, value) == null) {
             this.keyList.add(key);
             return null;
@@ -87,9 +108,9 @@ public final class PropertyBundleMap implements Map {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void putAll(Map map) {
-        this.map.putAll(map);
-        this.keyList.addAll(map.keySet());
+    public void putAll(final Map aMap) {
+        this.map.putAll(aMap);
+        this.keyList.addAll(aMap.keySet());
     }
 
     @Override
@@ -113,8 +134,11 @@ public final class PropertyBundleMap implements Map {
         return this.map.keySet();
     }
 
+    /**
+     * Get the map keys.
+     * @return {@code List<Object>}
+     */
     public List<Object> keyList() {
         return this.keyList;
     }
-
 }

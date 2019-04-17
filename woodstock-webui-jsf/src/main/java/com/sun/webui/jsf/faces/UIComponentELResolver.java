@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,38 +28,33 @@ import java.beans.FeatureDescriptor;
 import java.util.Arrays;
 
 /**
- * <p>Custom <code>ELResolver that, when the <code>base</code>
- * object is a <code>UIComponent</code>, scans for a child with the
- * <code>id</code> specified by the property name.</p>
+ * Custom {@code ELResolver that, when the {@code base}
+ * object is a {@code UIComponent}, scans for a child with the
+ * {@code id} specified by the property name.
  */
 @Resolver
-public class UIComponentELResolver extends ELResolver {
+public final class UIComponentELResolver extends ELResolver {
 
-
-    // -------------------------------------------------------- Static Variables
-    // ------------------------------------------------------ Instance Variables
-    // ------------------------------------------------------------ Constructors
-    // ------------------------------------------------ ELResolver Methods
     /**
-     * <p>When the base object is a <code>UIComponent</code>, treat the
-     * property name as the <code>id</code> of a child component to be
-     * returned.  If there is no such child, return without calling 
-     * <code>context.setPropertyResolved(true)</code>.</p>
+     * When the base object is a {@code UIComponent}, treat the property name as
+     * the {@code id} of a child component to be returned.If there is no such
+     * child, return without calling {@code context.setPropertyResolved(true)}.
      *
      * @param context the ELContext
      * @param base Base object
      * @param property Property name
+     * @return Object
      */
-    public Object getValue(ELContext context, Object base, Object property) {
+    @Override
+    public Object getValue(final ELContext context, final Object base,
+            final Object property) {
 
         log("getValue(ctx, " + base + "," + property + ")");
-
         if (context == null) {
             throw new NullPointerException();
         }
-
-        if ((base == null) || (!(base instanceof UIComponent)) ||
-                (property == null)) {
+        if ((base == null) || (!(base instanceof UIComponent))
+                || (property == null)) {
             log("argument is null or not of applicable type. returning");
             return null;
         }
@@ -97,10 +92,10 @@ public class UIComponentELResolver extends ELResolver {
     }
 
     /**
-     * <p>When the base object is a <code>UIComponent</code>, treat the
-     * property name as the <code>id</code> of a child component to be
-     * replaced.  If there is no such child, return without calling 
-     * <code>context.setPropertyResolved(true)</code>.</p>
+     * When the base object is a {@code UIComponent}, treat the
+     * property name as the {@code id} of a child component to be
+     * replaced.  If there is no such child, return without calling
+     * {@code context.setPropertyResolved(true)}.
      *
      * @param context the ELContext
      * @param base Base object
@@ -108,17 +103,18 @@ public class UIComponentELResolver extends ELResolver {
      * @param value Replacement component
      */
     @SuppressWarnings("unchecked")
-    public void setValue(ELContext context, Object base, Object property, Object value) {
+    @Override
+    public void setValue(final ELContext context, final Object base,
+            final Object property, final Object value) {
 
         log("setValue(ctx, " + base + "," + property + "," + value + ")");
 
         if (context == null) {
             throw new NullPointerException();
         }
-
-        if ((base == null) || (!(base instanceof UIComponent)) ||
-                (property == null) ||
-                (value == null) || (!(value instanceof UIComponent))) {
+        if ((base == null) || (!(base instanceof UIComponent))
+                || (property == null)
+                || (value == null) || (!(value instanceof UIComponent))) {
             log("argument is null or not of applicable type. returning");
             return;
         }
@@ -152,27 +148,27 @@ public class UIComponentELResolver extends ELResolver {
     }
 
     /**
-     * <p>When the base object is a <code>UIComponent</code>, treat the
-     * property name as the <code>id</code> of a child component to be
-     * retrieved.  If the specified child actually exists, return
-     * <code>false</code> (because replacement is allowed).  If there
-     * is no such child, , return without calling 
-     * <code>context.setPropertyResolved(true)</code>.</p>
+     * When the base object is a {@code UIComponent}, treat the property name as
+     * the {@code id} of a child component to be retrieved.If the specified
+     * child actually exists, return {@code false} (because replacement is
+     * allowed). If there is no such child, , return without calling
+     * {@code context.setPropertyResolved(true)}.
      *
      * @param context the ELContext
      * @param base Base object
      * @param property Property name
+     * @return {@code true} if read-only, {@code false} otherwise
      */
-    public boolean isReadOnly(ELContext context, Object base, Object property) {
+    @Override
+    public boolean isReadOnly(final ELContext context, final Object base,
+            final Object property) {
 
         log("isReadOnly(ctx, " + base + "," + property + ")");
-
         if (context == null) {
             throw new NullPointerException();
         }
-
-        if ((base == null) || (!(base instanceof UIComponent)) ||
-                (property == null)) {
+        if ((base == null) || (!(base instanceof UIComponent))
+                || (property == null)) {
             log("argument is null or not of applicable type. returning");
             return false;
         }
@@ -197,34 +193,34 @@ public class UIComponentELResolver extends ELResolver {
                 return false;
             }
         }
-
         log("can't resolve. returning");
         return false;
 
     }
 
     /**
-     * <p>When the base object is a <code>UIComponent</code>, treat the
-     * property name as the <code>id</code> of a child component to be
-     * retrieved.  If the specified child actually exists, return
-     * <code>javax.faces.component.UIComponent</code>.  If there is
-     * no such child, return without calling 
-     * <code>context.setPropertyResolved(true)</code>.</p>
+     * When the base object is a {@code UIComponent}, treat the property name as
+     * the {@code id} of a child component to be retrieved.If the specified
+     * child actually exists, return {@code javax.faces.component.UIComponent}.
+     * If there is no such child, return without calling
+     * {@code context.setPropertyResolved(true)}.
      *
      * @param context the ELContext
      * @param base Base object
      * @param property Property name
+     * @return Class
      */
-    public Class getType(ELContext context, Object base, Object property) {
+    @Override
+    public Class getType(final ELContext context, final Object base,
+            final Object property) {
 
         log("getType(ctx, " + base + "," + property + ")");
-
         if (context == null) {
             throw new NullPointerException();
         }
-
-        if ((base == null) || (!(base instanceof UIComponent)) ||
-                (property == null)) {
+        if ((base == null)
+                || (!(base instanceof UIComponent))
+                || (property == null)) {
             log("argument is null or not of applicable type. returning");
             return null;
         }
@@ -249,48 +245,51 @@ public class UIComponentELResolver extends ELResolver {
                 return UIComponent.class;
             }
         }
-
         log("can't resolve. returning");
         return null;
     }
 
-    private void log(String message) {
+    /**
+     * Log a message.
+     * @param message message to log.
+     */
+    private static void log(final String message) {
         if (LogUtil.finestEnabled(UIComponentELResolver.class)) {
             LogUtil.finest(UIComponentELResolver.class, message);
         }
     }
 
     /**
-     * <p>When the base object is a <code>UIComponent</code>, return
-     * an <code>Iterator</code> of <code>FeatureDescriptor</code> objects
-     * containing the component ids of the base's children and facets. If
-     * the base is <code>null</code>, return an empty <code>Iterator</code>.
-     * Otherwise, if the base is not a <code>UIComponent</code>, return
-     * <code>null</code>.
+     * When the base object is a {@code UIComponent}, return an {@code Iterator}
+     * of {@code FeatureDescriptor} objects containing the component ids of the
+     * base's children and facets.If the base is {@code null}, return an empty
+     * {@code Iterator}. Otherwise, if the base is not a {@code UIComponent},
+     * return {@code null}.
      *
      * @param context the ELContext
      * @param base Base object
+     * @return Iterator
      */
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(
+            final ELContext context, final Object base) {
 
         log("getFeatureDescriptors(ctx, " + base + ")");
 
         if (context == null) {
             throw new NullPointerException();
         }
-
         if (base == null) {
             return Arrays.asList(new FeatureDescriptor[0]).iterator();
         }
-
         if (!(base instanceof UIComponent)) {
             return null;
         }
 
         List<FeatureDescriptor> result = new ArrayList<FeatureDescriptor>();
-
         UIComponent baseUic = (UIComponent) base;
-        Iterator<UIComponent> facetsAndChildren = baseUic.getFacetsAndChildren();
+        Iterator<UIComponent> facetsAndChildren = baseUic
+                .getFacetsAndChildren();
         while (facetsAndChildren.hasNext()) {
             UIComponent kid = facetsAndChildren.next();
             FeatureDescriptor desc = new FeatureDescriptor();
@@ -301,31 +300,30 @@ public class UIComponentELResolver extends ELResolver {
             desc.setValue(ELResolver.RESOLVABLE_AT_DESIGN_TIME, true);
             result.add(desc);
         }
-
         return result.iterator();
     }
 
     /**
-     * <p>When the base object is a <code>UIComponent</code>, return
-     * <code>String.class</code>. If
-     * the base is <code>null</code> or not a <code>UIComponent</code>, return
-     * <code>null</code>.
+     * When the base object is a {@code UIComponent}, return
+     * {@code String.class}.If the base is {@code null} or not a
+     * {@code UIComponent}, return {@code null}.
      *
      * @param context the ELContext
      * @param base Base object
+     * @return Class
      */
-    public Class getCommonPropertyType(ELContext context,
-            Object base) {
+    @Override
+    public Class getCommonPropertyType(final ELContext context,
+            final Object base) {
+
         log("getCommonPropertyType(ctx, " + base + ")");
 
         if (context == null) {
             throw new NullPointerException();
         }
-
         if (!(base instanceof UIComponent)) {
             return null;
         }
-
         return String.class;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 import java.util.ArrayList;
@@ -29,42 +28,37 @@ import com.sun.webui.jsf.component.WizardStep;
 import com.sun.webui.jsf.component.WizardSubstepBranch;
 
 /**
- * <code>WizardModelBase</code> is the default 
- * {@link WizardModel WizardModel} instance used by the
- * {@link Wizard Wizard}.
- * This class's behavior supports wizard functionality as defined
- * by "Web Application Guidelines - Version 3.0". The support for a
- * step list as defined by the guidelines is encapsulated in 
- * {@link WizardStepListBase WizardStepListBase}. 
- * This class maintains state, controls navigation, and expects the
- * existence of <code>finish</code> and <code>results</code> wizard steps.
- * In addition this class can control whether or not steps should participate
- * in JSF lifecycle phases, see 
- * {@link WizardModelBase#decode(int, boolean) decode}, 
+ * {@code WizardModelBase} is the default {@link WizardModel WizardModel}
+ * instance used by the {@link Wizard Wizard}. This class's behavior supports
+ * wizard functionality as defined by "Web Application Guidelines - Version
+ * 3.0". The support for a step list as defined by the guidelines is
+ * encapsulated in {@link WizardStepListBase WizardStepListBase}. This class
+ * maintains state, controls navigation, and expects the existence of
+ * {@code finish} and {@code results} wizard steps. In addition this class can
+ * control whether or not steps should participate in JSF life-cycle phases,
+ * see null {@link WizardModelBase#decode(int, boolean) decode},
  * {@link WizardModelBase#validate(int, boolean) validate}, and
  * {@link WizardModelBase#update(int, boolean) update}.
  * <p>
- * <code>WizardModelBase</code> expects a hierachy of
- * {@link WizardStep WizardStep}, {@link WizardBranch WizardBranch}, 
+ * {@code WizardModelBase} expects a hierarchy of null
+ * {@link WizardStep WizardStep}, {@link WizardBranch WizardBranch},
  * {@link WizardBranchSteps WizardBranchSteps}, and
- * {@link WizardSubstepBranch WizardSubstepBranch}
- * components. This hierarchy can be specified as children of the
- * {@link Wizard Wizard} component or as a list returned by
- * {@link Wizard#getSteps() Wizard.getSteps()}. If
- * {@link Wizard#getSteps() getSteps} does not
- * return null, the steps represented by that value takes precedence over the
- * existence of {@link Wizard Wizard} child components.
+ * {@link WizardSubstepBranch WizardSubstepBranch} components. This hierarchy
+ * can be specified as children of the {@link Wizard Wizard} component or as a
+ * list returned by {@link Wizard#getSteps() Wizard.getSteps()}. If
+ * {@link Wizard#getSteps() getSteps} does not return null, the steps
+ * represented by that value takes precedence over the existence of
+ * {@link Wizard Wizard} child components.
  * </p>
  * <p>
  * The {@link Wizard Wizard} component calls the {@link #initialize(Wizard)
- * initialize} method twice during the request lifecycle. Once during 
- * the RESTORE_VIEW phase, and once during the RENDER_RESPONSE phase.
- * This is necessary
- * so the model can re-evaluate the steps if changes have occured during
- * request processing or in the INVOKE_APPLICATION phase, which occur before
- * the RENDER_RESPONSE phase. On the first display of a wizard, the 
- * {@link #initialize(Wizard) initialize} method is only called once
- * during the RENDER_RESPONSE phase.</br>
+ * initialize} method twice during the request life-cycle. Once during the
+ * RESTORE_VIEW phase, and once during the RENDER_RESPONSE phase. This is
+ * necessary so the model can re-evaluate the steps if changes have occurred
+ * during request processing or in the INVOKE_APPLICATION phase, which occur
+ * before the RENDER_RESPONSE phase. On the first display of a wizard, the
+ * {@link #initialize(Wizard) initialize} method is only called once during the
+ * RENDER_RESPONSE phase.<br>
  * Note that a call to initialize during RESTORE_VIEW phase is only relevant
  * when the application is configured in client side state saving mode.
  * </p>
@@ -75,10 +69,9 @@ import com.sun.webui.jsf.component.WizardSubstepBranch;
  * </p>
  * <p>
  * The wizard will call the {@link WizardModelBase#complete()
- * complete} method to indicate
- * to the model that it considers the wizard session to be over and will no
- * longer reference it during this wizard session, 
- * and that it is free to deallocate any resources.
+ * complete} method to indicate to the model that it considers the wizard
+ * session to be over and will no longer reference it during this wizard
+ * session, and that it is free to de-allocate any resources.
  * </p>
  */
 public class WizardModelBase implements WizardModel {
@@ -87,21 +80,22 @@ public class WizardModelBase implements WizardModel {
      * The current step sequence of {@link WizardStep WizardStep} instances.
      */
     private ArrayList<WizardStep> wizardSteps;
+
     /**
      * The current model state.
      */
-    private WizardState wizardState;
+    private final WizardState wizardState;
+
     /**
-     * The current step list of
-     * {@link WizardStepListItem WizardStepListItem} instances.
+     * The current step list of {@link WizardStepListItem WizardStepListItem}
+     * instances.
      */
     private WizardStepList wizardStepList;
 
     /**
-     * Construct a <code>WizardModelBase</code> instance.
-     * The <code>initialize</code> method must be called with the
-     * <code>wizard</code> instance when the step children are
-     * available. The <code>Wizard</code> instance will call this method
+     * Construct a {@code WizardModelBase} instance. The {@code initialize}
+     * method must be called with the {@code wizard} instance when the step
+     * children are available. The {@code Wizard} instance will call this method
      * at the appropriate time.
      */
     public WizardModelBase() {
@@ -110,20 +104,19 @@ public class WizardModelBase implements WizardModel {
     }
 
     /**
-     * Initialize the current set of WizardSteps.
-     * This method is called by the {@link Wizard Wizard} twice. Once
-     * during RETORE_VIEW phase, and once during RENDER_RESPONSE phase.
-     * This sequence affords the model the opportunity to modify its
-     * state due to changes that may have occured during request processing.
-     * </br>
-     * Note that a call during RESTORE_VIEW phase is only relevant
-     * when the application is configured in client side state saving mode.
+     * Initialize the current set of WizardSteps. This method is called by the
+     * {@link Wizard Wizard} twice. Once during RETORE_VIEW phase, and once
+     * during RENDER_RESPONSE phase. This sequence affords the model the
+     * opportunity to modify its state due to changes that may have occurred
+     * during request processing.
+     * <br>
+     * Note that a call during RESTORE_VIEW phase is only relevant when the
+     * application is configured in client side state saving mode.
      *
      * @param wizard The Wizard component.
      */
-    public void initialize(Wizard wizard) {
-
-
+    @Override
+    public void initialize(final Wizard wizard) {
         wizardSteps = new ArrayList<WizardStep>();
 
         // Steps can be obtained from both "getSteps" or
@@ -142,61 +135,58 @@ public class WizardModelBase implements WizardModel {
     }
 
     // Call recursively to collect substep and branch children
-    //
     /**
-     * This method builds the current step sequence based on the state
-     * of the wizard.
-     * The current sequence is determined by the values returned from calls to
-     * the <code>isTaken<code> method on {@link WizardBranch WizardBranch},
+     * This method builds the current step sequence based on the state of the
+     * wizard. The current sequence is determined by the values returned from
+     * calls to the {@code isTaken} method on {@link WizardBranch WizardBranch},
      * {@link WizardBranchSteps WizardBranchSteps} and
-     * {@link WizardSubstepBranch WizardSubstepBranch} instances in the
-     * step hierarchy.</br>
-     * The current step sequence is constructed according to the 
-     * "Web Application Guidelines - Version 3.0".</br>
-     * For example if a {@link WizardBranch WizardBranch} is encountered,
-     * the step sequence will end with this step. According to the
-     * guidelines, a branch indicates that proceeding steps cannot be
-     * determined until data is collected before this branch step is
-     * reached. When the step hierarchy is evaluated again and the branch
-     * isTaken method returns true, then the steps for that particular branch
-     * are added to the sequence.
+     * {@link WizardSubstepBranch WizardSubstepBranch} instances in the step
+     * hierarchy.<br>
+     * The current step sequence is constructed according to the "Web
+     * Application Guidelines - Version 3.0".<br>
+     * For example if a {@link WizardBranch WizardBranch} is encountered, the
+     * step sequence will end with this step. According to the guidelines, a
+     * branch indicates that proceeding steps cannot be determined until data is
+     * collected before this branch step is reached. When the step hierarchy is
+     * evaluated again and the branch isTaken method returns true, then the
+     * steps for that particular branch are added to the sequence.
      * <p>
-     * This method also determines if there is step help available.</br>
+     * This method also determines if there is step help available.<br>
      * </p>
      *
      * @param childIterator contains all the steps of the wizard.
-     * @param wizardSteps ArrayList to contain the steps that are in the
-     * current sequence.
+     * @param steps ArrayList to contain the steps that are in the current
+     * sequence.
      */
-    protected void buildStepList(ListIterator childIterator,
-            ArrayList<WizardStep> wizardSteps) {
+    protected void buildStepList(final ListIterator childIterator,
+            final ArrayList<WizardStep> steps) {
 
-        Object step = null;
+        Object step;
         while (childIterator.hasNext()) {
             step = childIterator.next();
             if (step instanceof WizardBranch) {
                 WizardBranch branch = (WizardBranch) step;
                 if (branch.isTaken()) {
                     buildStepList(branch.getChildren().listIterator(),
-                            wizardSteps);
+                            steps);
                 } else {
                     // If the branch hasn't been taken then
                     // this is the last step until it is taken.
                     //
-                    wizardSteps.add((WizardStep)step);
+                    steps.add((WizardStep) step);
                     break;
                 }
             } else if (step instanceof WizardBranchSteps) {
                 WizardBranchSteps branchSteps = (WizardBranchSteps) step;
                 if (branchSteps.isTaken()) {
                     buildStepList(branchSteps.getChildren().listIterator(),
-                            wizardSteps);
+                            steps);
                 }
             } else if (step instanceof WizardSubstepBranch) {
                 WizardSubstepBranch substep = (WizardSubstepBranch) step;
                 if (substep.isTaken()) {
                     buildStepList(substep.getChildren().listIterator(),
-                            wizardSteps);
+                            steps);
                 }
             } else if (step instanceof WizardStep) {
                 // If even one WizardStep has help, show help
@@ -206,23 +196,25 @@ public class WizardModelBase implements WizardModel {
                         wizardState.setHasStepHelp(Boolean.TRUE);
                     }
                 }
-                wizardSteps.add((WizardStep)step);
+                steps.add((WizardStep) step);
             }
         }
     }
 
     /**
-     * Based on the current state of the Wizard, return an Iterator
-     * of the current sequence of {@link WizardStep WizardStep} instances.
+     * This implementation invokes {@code ArrayList.iterator}.
+     * @return Iterator
      */
+    @Override
     public Iterator getWizardStepIterator() {
         return wizardSteps.iterator();
     }
 
     /**
-     * Return a {@link WizardStepList WizardStepList} of
-     * {@link WizardStepListItem WizardStepListItem} instances.
+     * This implementation returns the encapsulated wizard step list model.
+     * @return WizardStepList
      */
+    @Override
     public WizardStepList getWizardStepList() {
         return wizardStepList;
     }
@@ -230,30 +222,31 @@ public class WizardModelBase implements WizardModel {
     /**
      * Return the first {@link WizardStep WizardStep} instance.
      */
+    @Override
     public WizardStep getFirstStep() {
         return (WizardStep) wizardSteps.get(0);
     }
 
     /**
-     * Return the last {@link WizardStep WizardStep} instance.
-     * The step that is returned is dependent on the state of the
-     * wizard. It may only be the last step at this point in time.
-     * At a later point in time, it may be a different step, due to
-     * the existence of branch steps.
+     * Return the last {@link WizardStep WizardStep} instance.The step that is
+     * returned is dependent on the state of the wizard. It may only be the last
+     * step at this point in time. At a later point in time, it may be a
+     * different step, due to the existence of branch steps.
+     *
+     * @return WizardStep
      */
     public WizardStep getLastStep() {
         return (WizardStep) wizardSteps.get(wizardSteps.size() - 1);
     }
 
     /**
-     * Return the index into an <code>ArrayList</code> of
-     * {@link WizardStep WizardStep} instances, for the step with
-     * <code>id</code>.
+     * Return the index into an {@code ArrayList} of
+     * {@link WizardStep WizardStep} instances, for the step with {@code id}.
      *
      * @param id The id of a {@link WizardStep WizardStep} instance.
+     * @return index
      */
-    protected int getStepIndex(String id) {
-
+    protected int getStepIndex(final String id) {
         for (int i = 0; i < wizardSteps.size(); ++i) {
             WizardStep step = (WizardStep) wizardSteps.get(i);
             if (id.equals(step.getId())) {
@@ -267,13 +260,13 @@ public class WizardModelBase implements WizardModel {
     }
 
     /**
-     * Return the {@link WizardStep WizardStep} instance following
-     * <code>step</code>.
+     * Return the {@link WizardStep WizardStep} instance following {@code step}.
      * If there are no more steps return null.
      *
      * @param step The step preceding the returned step.
      */
-    public WizardStep getNextStep(WizardStep step) {
+    @Override
+    public WizardStep getNextStep(final WizardStep step) {
         WizardStep next = null;
         try {
             int i = wizardSteps.indexOf(step);
@@ -286,13 +279,13 @@ public class WizardModelBase implements WizardModel {
     }
 
     /**
-     * Return the {@link WizardStep WizardStep} instance preceding
-     * <code>step</code>
+     * Return the {@link WizardStep WizardStep} instance preceding {@code step}
      * If there is no previous step return null.
      *
      * @param step The step following the returned step.
      */
-    public WizardStep getPreviousStep(WizardStep step) {
+    @Override
+    public WizardStep getPreviousStep(final WizardStep step) {
         WizardStep previous = null;
         try {
             int i = wizardSteps.indexOf(step);
@@ -307,6 +300,7 @@ public class WizardModelBase implements WizardModel {
     /**
      * Return the current {@link WizardStep WizardStep} instance.
      */
+    @Override
     public WizardStep getCurrentStep() {
         WizardStep step = null;
         try {
@@ -317,11 +311,12 @@ public class WizardModelBase implements WizardModel {
     }
 
     /**
-     * Return true if <code>step</code> is the current step, else false.
+     * Return true if {@code step} is the current step, else false.
      *
      * @param step The step to test.
      */
-    public boolean isCurrentStep(WizardStep step) {
+    @Override
+    public boolean isCurrentStep(final WizardStep step) {
         boolean result = false;
         try {
             int i = wizardSteps.indexOf(step);
@@ -332,54 +327,67 @@ public class WizardModelBase implements WizardModel {
     }
 
     /**
-     * Return true if <code>step</code> is the step the should
-     * contain a Finish button. This is the step that performs the
-     * wizard task with the data collected from previous steps.
+     * Return true if {@code step} is the step the should contain a Finish
+     * button. This is the step that performs the wizard task with the data
+     * collected from previous steps.
      *
      * @param step The step to identify.
      */
-    public boolean isFinishStep(WizardStep step) {
-        return step == null ? false : step.isFinish();
+    @Override
+    public boolean isFinishStep(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return step.isFinish();
     }
 
     /**
-     * Return true if <code>step<code> is the results step, else false.
+     * Return true if {@code step{@code  is the results step, else false.
      * The Results step follows the Finish step and displays
      * only  a "Close" button. It displays results of the task
      * performed in the Finish step.
      *
      * @param step The step to identify.
      */
-    public boolean isResultsStep(WizardStep step) {
-        return step == null ? false : step.isResults();
+    @Override
+    public boolean isResultsStep(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return step.isResults();
     }
 
     /**
-     * Return true if <code>step<code> is a branching step, else false.
+     * Return true if {@code step{@code  is a branching step, else false.
      * A branching step acts as a step "placeholder" and informs
      * the user that the steps following this step are determined by
      * the data entered in this or previous steps. Text should be
-     * provided from the {@link #getPlaceholderText(WizardStep) 
+     * provided from the {@link #getPlaceholderText(WizardStep)
      * getPlaceHolderText} method for this step, describing the branch.
      *
      * @param step The step to identify.
      */
-    public boolean isBranch(WizardStep step) {
+    @Override
+    public boolean isBranch(final WizardStep step) {
         return step instanceof WizardBranch;
     }
 
     /**
      * Return a description of this {@link WizardBranch WizardBranch} step.
-     * 
-     * @param step A branching step. It must be a 
+     *
+     * @param step A branching step. It must be a
      * {@link WizardBranch WizardBranch} instance.
      */
-    public String getPlaceholderText(WizardStep step) {
-        return step == null ? null : ((WizardBranch) step).getPlaceholderText();
+    @Override
+    public String getPlaceholderText(final WizardStep step) {
+        if (step == null) {
+            return null;
+        }
+        return ((WizardBranch) step).getPlaceholderText();
     }
 
     /**
-     * Return true if <code>step<code> is a substep step, else false.
+     * Return true if {@code step{@code  is a substep step, else false.
      * A substep is a step or one of a series of substeps,
      * that occurs in every instance of this wizard.
      * Unlike the branch step, substep sequences are always the same
@@ -387,12 +395,16 @@ public class WizardModelBase implements WizardModel {
      *
      * @param step The step to check.
      */
-    public boolean isSubstep(WizardStep step) {
-        return step == null ? false : step.getParent() instanceof WizardSubstepBranch;
+    @Override
+    public boolean isSubstep(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return step.getParent() instanceof WizardSubstepBranch;
     }
 
     /**
-     * Return true if the user can navigate to <code>step<code> out
+     * Return true if the user can navigate to {@code step{@code  out
      * of sequence, else false.
      * Typically this method is called to determine if a previous
      * step should be rendered such that the user can select it
@@ -405,7 +417,8 @@ public class WizardModelBase implements WizardModel {
      *
      * @param step The step to check.
      */
-    public boolean canGotoStep(WizardStep step) {
+    @Override
+    public boolean canGotoStep(final WizardStep step) {
         try {
             int i = wizardSteps.indexOf(step);
             return wizardState.getCurrentStep() > i;
@@ -415,140 +428,162 @@ public class WizardModelBase implements WizardModel {
     }
 
     /**
-     * Return true if the previous button should be disabled
-     * for this step, else false. Typically the first step of a
-     * sequence should return true, since there usually isn't a
-     * step before the first step.
+     * Return true if the previous button should be disabled for this step, else
+     * false. Typically the first step of a sequence should return true, since
+     * there usually isn't a step before the first step.
      *
      * @param step The step to check.
      */
-    public boolean isPreviousDisabled(WizardStep step) {
+    @Override
+    public boolean isPreviousDisabled(final WizardStep step) {
         WizardStep first = getFirstStep();
-        return first == null ? false : first.getId().equals(step.getId());
+        if (first == null) {
+            return false;
+        }
+        return first.getId().equals(step.getId());
     }
 
     /**
-     * Return true if the next button should be disabled
-     * for this step, else false.
-     * This method always returns false;
+     * Return true if the next button should be disabled for this step, else
+     * false. This method always returns false;
      *
      * @param step The step to check.
      */
-    public boolean isNextDisabled(WizardStep step) {
+    @Override
+    public boolean isNextDisabled(final WizardStep step) {
         return false;
     }
 
     /**
-     * Return true if the finish button should be disabled
-     * for this step, else false.
-     * This method always returns false;
+     * Return true if the finish button should be disabled for this step, else
+     * false. This method always returns false;
      *
      * @param step The step to check.
      */
-    public boolean isFinishDisabled(WizardStep step) {
+    @Override
+    public boolean isFinishDisabled(final WizardStep step) {
         return false;
     }
 
     /**
-     * Return true if the cancel button should be disabled
-     * for this step, else false.
-     * This method always returns false;
+     * Return true if the cancel button should be disabled for this step, else
+     * false. This method always returns false;
      *
      * @param step The step to check.
      */
-    public boolean isCancelDisabled(WizardStep step) {
+    @Override
+    public boolean isCancelDisabled(final WizardStep step) {
         return false;
     }
 
     /**
-     * Return true if the close button should be disabled
-     * for this step, else false.
-     * This method always returns false;
+     * Return true if the close button should be disabled for this step, else
+     * false. This method always returns false;
      *
      * @param step The step to check.
      */
-    public boolean isCloseDisabled(WizardStep step) {
+    @Override
+    public boolean isCloseDisabled(final WizardStep step) {
         return false;
     }
 
     /**
-     * Return true if the previous button should be rendered
-     * for this step, else false. Typically this method returns
-     * true for all steps except for steps that are results steps.
+     * Return true if the previous button should be rendered for this step, else
+     * false. Typically this method returns true for all steps except for steps
+     * that are results steps.
      *
      * @param step The step to check.
      */
-    public boolean hasPrevious(WizardStep step) {
-        return step == null ? false : !isResultsStep(step);
+    @Override
+    public boolean hasPrevious(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return !isResultsStep(step);
     }
 
     /**
-     * Return true if the next button should be rendered
-     * for this step, else false. Typically this method returns
-     * true for all steps except for steps that are finish or
-     * results steps.
+     * Return true if the next button should be rendered for this step, else
+     * false. Typically this method returns true for all steps except for steps
+     * that are finish or results steps.
      *
      * @param step The step to check.
      */
-    public boolean hasNext(WizardStep step) {
-        return step == null ? false : !(isFinishStep(step) || isResultsStep(step));
+    @Override
+    public boolean hasNext(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return !(isFinishStep(step) || isResultsStep(step));
     }
 
     /**
-     * Return true if the cancel button should be rendered
-     * for this step, else false.  Typically this method returns
-     * true for all steps except for steps that are results steps.
+     * Return true if the cancel button should be rendered for this step, else
+     * false. Typically this method returns true for all steps except for steps
+     * that are results steps.
      *
      * @param step The step to check.
      */
-    public boolean hasCancel(WizardStep step) {
-        return step == null ? false : !isResultsStep(step);
+    @Override
+    public boolean hasCancel(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return !isResultsStep(step);
     }
 
     /**
-     * Return true if the close button should be rendered
-     * for this step, else false. Typically this method returns
-     * true only for the results step.
+     * Return true if the close button should be rendered for this step, else
+     * false. Typically this method returns true only for the results step.
      *
      * @param step The step to check.
      */
-    public boolean hasClose(WizardStep step) {
-        return step == null ? false : isResultsStep(step);
+    @Override
+    public boolean hasClose(final WizardStep step) {
+        if (step == null) {
+            return false;
+        }
+        return isResultsStep(step);
     }
 
     /**
-     * Return true if the finish button should be rendered
-     * for this step, else false. Typically this method returns
-     * true only for the finish step.
+     * Return true if the finish button should be rendered for this step, else
+     * false. Typically this method returns true only for the finish step.
      *
      * @param step The step to check.
      */
-    public boolean hasFinish(WizardStep step) {
+    @Override
+    public boolean hasFinish(final WizardStep step) {
         // For now we only support simple linear wizards with no
         // results page.
-        //
-        return step == null ? false : isFinishStep(step);
+        if (step == null) {
+            return false;
+        }
+        return isFinishStep(step);
     }
 
     /**
-     * Return true if any of the steps have step help.
-     * If any of the steps have step help, this method should return
-     * true, unless no step help should be shown for the wizard.
-     * If the determination had not been made when this method is
-     * called, since the step list must be built at least once,
-     * false is returned.
+     * Return true if any of the steps have step help. If any of the steps have
+     * step help, this method should return true, unless no step help should be
+     * shown for the wizard. If the determination had not been made when this
+     * method is called, since the step list must be built at least once, false
+     * is returned.
      */
+    @Override
     public boolean hasStepHelp() {
-        return wizardState.getHasStepHelp() == null ? false : wizardState.getHasStepHelp().booleanValue();
+        if (wizardState.getHasStepHelp() == null) {
+            return false;
+        }
+        return wizardState.getHasStepHelp();
     }
 
     /**
-     * Return true if the wizard has completed and there are no
-     * more steps for the user to complete, else false. Typically
-     * this informs the wizard that there is nothing more to render.
-     * This may cause a popup wizard to be dismissed or an inline
-     * wizard to navigate to some other page.
+     * Return true if the wizard has completed and there are no more steps for
+     * the user to complete, else false. Typically this informs the wizard that
+     * there is nothing more to render. This may cause a popup wizard to be
+     * dismissed or an inline wizard to navigate to some other page.
      */
+    @Override
     public boolean isComplete() {
         return wizardState.isComplete();
     }
@@ -557,54 +592,65 @@ public class WizardModelBase implements WizardModel {
      * Called to inform the model that this instance will no longer be
      * referenced.
      */
+    @Override
     public void complete() {
         wizardSteps = null;
         wizardState.reset();
     }
 
     /**
-     * Returns false if prematureRender is true, else true if
-     * the step should participate in the APPLY_REQUEST_VALUES phase.
+     * Returns false if prematureRender is true, else true if the step should
+     * participate in the APPLY_REQUEST_VALUES phase.
      *
      * @param event The event that precipitated this call.
-     * @param prematureRender true if rendering is occuring before
+     * @param prematureRender true if rendering is occurring before
      * RENDER_RESPONSE phase was normally expected.
      */
-    public boolean decode(int event, boolean prematureRender) {
-        return prematureRender ? false : wizardState.decode(event);
+    @Override
+    public boolean decode(final int event, final boolean prematureRender) {
+        if (prematureRender) {
+            return false;
+        }
+        return wizardState.decode(event);
     }
 
     /**
      * Return true if the current step should participate in the
-     * PROCESS_VALIDATIONS phase.
-     * Returns true if event is WizardEvent.NEXT or WizardEvent.FINISH
-     * and prematureRender is false.
+     * PROCESS_VALIDATIONS phase. Returns true if event is WizardEvent.NEXT or
+     * WizardEvent.FINISH and prematureRender is false.
      *
      * @param event The event that precipitated this call.
-     * @param prematureRender Is true if rendering is occuring before
+     * @param prematureRender Is true if rendering is occurring before
      * RENDER_RESPONSE phase was normally expected.
      */
-    public boolean validate(int event, boolean prematureRender) {
-        return prematureRender ? false : wizardState.validate(event);
+    @Override
+    public boolean validate(final int event, final boolean prematureRender) {
+        if (prematureRender) {
+            return false;
+        }
+        return wizardState.validate(event);
     }
 
     /**
-     * Return true if the current step should participate in the 
-     * UPDATE_MODEL_VALUES phase.
-     * Returns true if event is WizardEvent.NEXT or WizardEvent.FINISH and
-     * prematureRender is false.
+     * Return true if the current step should participate in the
+     * UPDATE_MODEL_VALUES phase. Returns true if event is WizardEvent.NEXT or
+     * WizardEvent.FINISH and prematureRender is false.
      *
      * @param event The event that precipitated this call.
-     * @param prematureRender true if rendering is occuring before
+     * @param prematureRender true if rendering is occurring before
      * RENDER_RESPONSE phase was normally expected.
      */
-    public boolean update(int event, boolean prematureRender) {
-        return prematureRender ? false : wizardState.update(event);
+    @Override
+    public boolean update(final int event, final boolean prematureRender) {
+        if (prematureRender) {
+            return false;
+        }
+        return wizardState.update(event);
     }
 
     /**
-     * Handle the following {@link WizardEvent WizardEvent} events
-     * and adjust the state accordingly.
+     * Handle the following {@link WizardEvent WizardEvent} events and adjust
+     * the state accordingly.
      * <ul>
      * <li>WizardEvent.CANCEL</li>
      * <li>WizardEvent.CLOSE</li>
@@ -616,20 +662,17 @@ public class WizardModelBase implements WizardModel {
      * <li>WizardEvent.STEPSTAB</li>
      * </ul>
      */
-    public boolean handleEvent(WizardEvent event) {
+    @Override
+    public boolean handleEvent(final WizardEvent event) {
 
         boolean returnValue = true;
-
         switch (event.getNavigationEvent()) {
-
             case WizardEvent.NEXT:
                 wizardState.nextStep();
                 break;
-
             case WizardEvent.PREVIOUS:
                 wizardState.previousStep();
                 break;
-
             case WizardEvent.FINISH:
                 int i = wizardState.getCurrentStep() + 1;
                 if (i == wizardSteps.size()) {
@@ -638,7 +681,6 @@ public class WizardModelBase implements WizardModel {
                     wizardState.finishStep();
                 }
                 break;
-
             case WizardEvent.GOTOSTEP:
                 String gotoStepId = event.getGotoStepId();
                 if (gotoStepId != null) {
@@ -646,183 +688,299 @@ public class WizardModelBase implements WizardModel {
                     wizardState.gotoStep(index);
                 }
                 break;
-
             case WizardEvent.CANCEL:
                 wizardState.cancel();
                 break;
-
             case WizardEvent.CLOSE:
                 wizardState.close();
                 break;
-
             case WizardEvent.HELPTAB:
                 break;
-
             case WizardEvent.STEPSTAB:
                 break;
-
             case WizardEvent.INVALID:
                 break;
-
             case WizardEvent.NOEVENT:
                 break;
+            default:
+                break;
         }
-
         return returnValue;
     }
 
     /**
-     * This class maintains the current step and most recent
-     * navigation event received from the Wizard component.
-     * Is stores a simple index into the wizardSteps ArrayList
+     * This class maintains the current step and most recent navigation event
+     * received from the Wizard component. Is stores a simple index into the
+     * wizardSteps ArrayList
      *
-     * It defines the state that controls the decode, validate and
-     * update methods of the WizardModel.
+     * It defines the state that controls the decode, validate and update
+     * methods of the WizardModel.
      */
-    class WizardState {
+    private static final class WizardState {
 
+        /**
+         * Start state.
+         */
         static final int START = -1;
-        static final int NEXT = 0;
-        static final int PREVIOUS = 1;
-        static final int CANCEL = 2;
-        static final int FINISH = 3;
-        static final int CLOSE = 4;
-        static final int GOTOSTEP = 7;
-        int state;
-        int currentStep;
-        Boolean hasStepHelp;
 
+        /**
+         * Next state.
+         */
+        static final int NEXT = 0;
+
+        /**
+         * Previous state.
+         */
+        static final int PREVIOUS = 1;
+
+        /**
+         * Cancel state.
+         */
+        static final int CANCEL = 2;
+
+        /**
+         * Finish state.
+         */
+        static final int FINISH = 3;
+
+        /**
+         * Close state.
+         */
+        static final int CLOSE = 4;
+
+        /**
+         * Goto state.
+         */
+        static final int GOTOSTEP = 7;
+
+        /**
+         * Current state.
+         */
+        private int state;
+
+        /**
+         * Current step.
+         */
+        private int currentStep;
+
+        /**
+         * hasStepHelp flag.
+         */
+        private Boolean hasStepHelp;
+
+        /**
+         * Create a new instance.
+         */
         WizardState() {
             super();
             this.state = START;
             this.currentStep = 0;
         }
 
+        /**
+         * Get the current state.
+         *
+         * @return int
+         */
         int getState() {
             return state;
         }
 
-        void setState(int state) {
-            this.state = state;
+        /**
+         * Set the current state.
+         *
+         * @param newState state
+         */
+        void setState(final int newState) {
+            this.state = newState;
         }
 
+        /**
+         * Get the hasStepHelp flag value.
+         *
+         * @return Boolean
+         */
         Boolean getHasStepHelp() {
             return hasStepHelp;
         }
 
-        void setHasStepHelp(Boolean hasStepHelp) {
-            this.hasStepHelp = hasStepHelp;
+        /**
+         * Set the hasStepHelp flag value.
+         *
+         * @param newHasStepHelp new hasStepHelp flag value
+         */
+        void setHasStepHelp(final Boolean newHasStepHelp) {
+            this.hasStepHelp = newHasStepHelp;
         }
 
+        /**
+         * Test if the state is 'close' or 'cancel'.
+         *
+         * @return boolean
+         */
         boolean isComplete() {
             return state == CLOSE || state == CANCEL;
         }
 
-        boolean decode(int event) {
+        /**
+         * Decode the event.
+         *
+         * @param event event id
+         * @return boolean
+         */
+        boolean decode(final int event) {
             return true;
         }
 
-        boolean validate(int event) {
-            return event == WizardEvent.FINISH ||
-                    event == WizardEvent.NEXT ||
-                    event == WizardEvent.NOEVENT;
+        /**
+         * Validate the specified event.
+         *
+         * @param event event id
+         * @return boolean
+         */
+        boolean validate(final int event) {
+            return event == WizardEvent.FINISH
+                    || event == WizardEvent.NEXT
+                    || event == WizardEvent.NOEVENT;
         }
 
-        // Its not clear if another state is needed for
-        // updating on the previous click. We want the
-        // state but not the commit.
-        //
-        boolean update(int event) {
-            return event == WizardEvent.FINISH ||
-                    event == WizardEvent.NEXT ||
-                    event == WizardEvent.NOEVENT;
+        /**
+         * Its not clear if another state is needed for updating on the previous
+         * click. We want the state but not the commit.
+         *
+         * @param event event id
+         * @return boolean
+         */
+        boolean update(final int event) {
+            return event == WizardEvent.FINISH
+                    || event == WizardEvent.NEXT
+                    || event == WizardEvent.NOEVENT;
         }
 
+        /**
+         * Advance to the next step.
+         */
         void nextStep() {
             state = NEXT;
             ++currentStep;
         }
 
+        /**
+         * Finish the current step.
+         */
         void finishStep() {
             state = FINISH;
             ++currentStep;
         }
 
+        /**
+         * Go back to the previous step.
+         */
         void previousStep() {
             state = PREVIOUS;
             --currentStep;
         }
 
-        void gotoStep(int step) {
+        /**
+         * Go to the specified step.
+         *
+         * @param step step
+         */
+        void gotoStep(final int step) {
             state = GOTOSTEP;
             currentStep = step;
         }
 
+        /**
+         * Get the current step.
+         *
+         * @return int
+         */
         int getCurrentStep() {
             return currentStep;
         }
 
-        void setCurrentStep(int currentStep) {
-            this.currentStep = currentStep;
+        /**
+         * Set the current step.
+         *
+         * @param newCurrentStep step
+         */
+        void setCurrentStep(final int newCurrentStep) {
+            this.currentStep = newCurrentStep;
         }
 
+        /**
+         * Set the state to 'start' and currentStep to '0'.
+         */
         void reset() {
             state = START;
             currentStep = 0;
         }
 
+        /**
+         * Set the state to 'cancel'.
+         */
         void cancel() {
             this.state = CANCEL;
         }
 
+        /**
+         * Set the state to 'close'.
+         */
         void close() {
             this.state = CLOSE;
         }
     };
 
     /**
-     * <code>StateHolder</code> method called to save the state the model's
-     * state.
-     * The saved state consists of the values of <code>state<code>,
-     * <code>currentStep</code>, and <code>hasStepHelp</code> of the internal
-     * <code>WizardState</code> instance.
+     * {@code StateHolder} method called to save the state the model's state.
+     * The saved state consists of the values of {@code state{@code ,
+     * {@code currentStep}, and {@code hasStepHelp} of the internal
+     * {@code WizardState} instance.
      */
-    public Object saveState(FacesContext context) {
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
         Object[] state = new Object[3];
         int i = 0;
-        state[i++] = new Integer(wizardState.getState());
-        state[i++] = new Integer(wizardState.getCurrentStep());
+        state[i++] = wizardState.getState();
+        state[i++] = wizardState.getCurrentStep();
         state[i++] = wizardState.getHasStepHelp();
         return state;
     }
 
     /**
-     * <code>StateHolder</code> method called to restore the model's
-     * current state based on the values in <code>state</code>.
-     * The restored state consists of values for <code>state<code>,
-     * <code>currentStep</code>, and <code>hasStepHelp</code> of the internal
-     * <code>WizardState</code> instance.
+     * {@code StateHolder} method called to restore the model's current state
+     * based on the values in {@code state}. The restored state consists of
+     * values for {@code state{@code ,
+     * {@code currentStep}, and {@code hasStepHelp} of the internal
+     * {@code WizardState} instance.
      */
-    public void restoreState(FacesContext context, Object state) {
-        Object[] _state = (Object[]) state;
+    @Override
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] stateArray = (Object[]) state;
         int i = 0;
-        wizardState.setState(((Integer) _state[i++]).intValue());
-        wizardState.setCurrentStep(((Integer) _state[i++]).intValue());
-        wizardState.setHasStepHelp((Boolean) _state[i++]);
+        wizardState.setState(((Integer) stateArray[i++]));
+        wizardState.setCurrentStep(((Integer) stateArray[i++]));
+        wizardState.setHasStepHelp((Boolean) stateArray[i++]);
     }
 
     /**
-     * <code>StateHolder</code> method to set the persistent state of this
-     * class. This call does not modify this class.
+     * {@code StateHolder} method to set the persistent state of this class.This
+     * call does not modify this class.
+     *
+     * @param transientFlag flag
      */
-    public void setTransient(boolean transientFlag) {
+    @Override
+    public void setTransient(final boolean transientFlag) {
         // ignore this
     }
 
     /**
-     * <code>StateHolder</code> method indicating the this class is 
-     * persistent. This method returns <code>false</code>
+     * {@code StateHolder} method indicating the this class is persistent. This
+     * method returns {@code false}
      */
+    @Override
     public boolean isTransient() {
         return false;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -38,18 +37,246 @@ import javax.faces.convert.Converter;
 /**
  * The Label component displays a label for a component.
  */
-@Component(type = "com.sun.webui.jsf.Label", family = "com.sun.webui.jsf.Label", displayName = "Label", tagName = "label",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_label",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_label_props")
-public class Label extends UIOutput implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.Label",
+        family = "com.sun.webui.jsf.Label",
+        displayName = "Label",
+        tagName = "label",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_label",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_label_props")
+        //CHECKSTYLE:ON
+public final class Label extends UIOutput implements NamingContainer {
 
+    /**
+     * Required suffix.
+     */
     public static final String REQUIRED_ID = "_required";
+
+    /**
+     * Required facet.
+     */
     public static final String REQUIRED_FACET = "required";
+
+    /**
+     * Error suffix.
+     */
     public static final String ERROR_ID = "_error";
+
+    /**
+     * Error facet.
+     */
     public static final String ERROR_FACET = "error";
+
+    /**
+     * Editable value.
+     */
     private EditableValueHolder labeledComponent = null;
-    private String element = "span"; //NOI18N
+
+    /**
+     * HTML element.
+     */
+    private String element = "span";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
+
+    /**
+     * Use this attribute to specify the labeled component. The value of the
+     * attribute is the absolute client id of the component or the id of the
+     * component to be labeled. Relative ids are no longer supported. If this
+     * attribute is not specified, the {@code label} component tries to search
+     * its children to see whether any of them can be used for evaluating the
+     * value of this "for" attribute.
+     */
+    @Property(name = "for",
+            displayName = "Input Component",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.InputComponentIdsEditor")
+            //CHECKSTYLE:ON
+    private String forComp = null;
+
+    /**
+     * Use the hideIndicators attribute to prevent display of the required and
+     * invalid icons with the label. When the required attribute on the
+     * component to be labeled is set to true, the required icon is displayed
+     * next to the label. If the user submits the page with an invalid value for
+     * the component, the invalid icon is displayed. This attribute is useful
+     * when the component has more than one label, and only one label should
+     * show the icons.
+     */
+    @Property(name = "hideIndicators",
+            displayName = "Hide the Required and Invalid icons",
+            category = "Advanced")
+    private boolean hideIndicators = false;
+
+    /**
+     * hideIndicateors set flag.
+     */
+    private boolean hideIndicatorsSet = false;
+
+    /**
+     * Style level for this label, where lower values typically specify
+     * progressively larger font sizes, and/or bolder font weights. Valid values
+     * are 1, 2, and 3. The default label level is 2. Any label level outside
+     * this range will result in no label level being added.
+     */
+    @Property(name = "labelLevel",
+            displayName = "Style Level",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.LabelLevelsEditor")
+            //CHECKSTYLE:ON
+    private int labelLevel = Integer.MIN_VALUE;
+
+    /**
+     * labelLevel set flag.
+     */
+    private boolean labelLevelSet = false;
+
+    /**
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     */
+    @Property(name = "onClick",
+            displayName = "Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onClick = null;
+
+    /**
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseDown",
+            displayName = "Mouse Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseDown = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     */
+    @Property(name = "onMouseMove",
+            displayName = "Mouse Move Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseMove = null;
+
+    /**
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     */
+    @Property(name = "onMouseOut",
+            displayName = "Mouse Out Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOut = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     */
+    @Property(name = "onMouseOver",
+            displayName = "Mouse In Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOver = null;
+
+    /**
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseUp",
+            displayName = "Mouse Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseUp = null;
+
+    /**
+     * Flag indicating that the labeled component should be marked as required.
+     * It is only relevant if the labeled component is not a child of the label
+     * tag. Set this flag to ensure that the required icon shows up the first
+     * time the page is rendered.
+     */
+    @Property(name = "requiredIndicator",
+            displayName = "Required Field Indicator",
+            category = "Appearance")
+    private boolean requiredIndicator = false;
+
+    /**
+     * requiredIndicator set flag.
+     */
+    private boolean requiredIndicatorSet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
 
     /**
      * Default constructor.
@@ -59,31 +286,52 @@ public class Label extends UIOutput implements NamingContainer {
         setRendererType("com.sun.webui.jsf.Label");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Label";
     }
 
+    @Property(name = "converter")
+    @Override
+    public void setConverter(final Converter converter) {
+        super.setConverter(converter);
+    }
+
+    @Property(name = "id")
+    @Override
+    public void setId(final String id) {
+        super.setId(id);
+    }
+
+    @Property(name = "rendered")
+    @Override
+    public void setRendered(final boolean rendered) {
+        super.setRendered(rendered);
+    }
+
+    // Hide value
+    @Property(name = "value", isHidden = true, isAttribute = false)
+    @Override
+    public Object getValue() {
+        return super.getValue();
+    }
+
     /**
-     * Set the labeled component to <code>comp</code>.
-     * If <code>comp</code> is null, the labeled component is set to null.</br>
-     * If <code>comp is an instance of <code>EditableValueHolder</code>
-     * the labeled component is set to <code>comp</code> and
-     * <code>setFor</code> is called with the value of
-     * <code>comp.getClientId</code>. Subsequent calls to 
-     * <code>getElement</code> will return "label".</br>
-     * If <code>comp</code> is not an <code>EditableValueHolder</code>
-     * the labeled component is set to null, and subsequent calls to 
-     * <code>getElement</code> will return "label".</br>
+     * Set the labeled component to {@code comp}.If {@code comp} is null, the
+     * labeled component is set to null. If {@code comp is an instance of
+     * {@code EditableValueHolder} the
+     * labeled component is set to {@code comp} and {@code setFor} is
+     * called with the value of {@code comp.getClientId}. Subsequent calls
+     * to {@code getElement} will return "label".
+     * If {@code comp} is not an {@code EditableValueHolder} the
+     * labeled component is set to null, and subsequent calls to
+     * {@code getElement} will return "label".
      *
-     * @deprecated 
+     * @param comp UI component
+     * @deprecated
      * @see #setFor
      */
-    public void setLabeledComponent(UIComponent comp) {
-
+    public void setLabeledComponent(final UIComponent comp) {
         if (DEBUG) {
             log("setLabeledComponent");
         }
@@ -108,40 +356,36 @@ public class Label extends UIOutput implements NamingContainer {
             }
             if (LogUtil.infoEnabled(Label.class)) {
                 FacesContext context = FacesContext.getCurrentInstance();
-
                 LogUtil.info(Label.class, "Label.invalidFor",
                         new Object[]{getId(),
                             context.getViewRoot().getViewId(),
                             comp.getId()});
             }
-
             this.labeledComponent = null;
             element = "label";
         }
     }
 
     /**
-     * Return the labeled component instance.
-     * If the labeled component has not been set and <code>getFor</code>
-     * returns null, return the first <code>EditableValueHolder</code>
-     * child of this <code>Label</code> component.</br>
-     * If <code>getFor</code> does not return null and the value
-     * is a not an absolute id, search for the labeled component
-     * using <code>UIComponentBase.findComponent</code>.
-     * Otherwise search for the labeled component from the view root
-     * using <code>UIComponentBase.findComponent</code> (In this
-     * case the id is ensured to have ":" prepended to the id to 
-     * cause <code>findComponent</code> to search from the view root).</br>
-     * <code>setLabeledComponent</code> is called 
-     * to set the labeled component to the component
-     * that is found or null.
+     * Return the labeled component instance. If the labeled component has not
+     * been set and {@code getFor} returns null, return the first
+     * {@code EditableValueHolder} child of this {@code Label}
+     * component.
+     * If {@code getFor} does not return null and the value is a not an
+     * absolute id, search for the labeled component using
+     * {@code UIComponentBase.findComponent}. Otherwise search for the
+     * labeled component from the view root using
+     * {@code UIComponentBase.findComponent} (In this case the id is
+     * ensured to have ":" prepended to the id to cause
+     * {@code findComponent} to search from the view root).
+     * {@code setLabeledComponent} is called to set the labeled component
+     * to the component that is found or null.
      *
      * @return the labeled component instance or null
-     * @deprecated 
+     * @deprecated
      * @see #getFor()
      */
     public EditableValueHolder getLabeledComponent() {
-
         if (DEBUG) {
             log("getLabeledComponent for label " + String.valueOf(getText()));
         }
@@ -174,8 +418,7 @@ public class Label extends UIOutput implements NamingContainer {
             }
             // If the id is an absolute path, prefix it with ":"
             // to tell findComponent to do a search from the root
-
-            if (id.indexOf(":") > -1 && !id.startsWith(":")) {
+            if (id.contains(":") && !id.startsWith(":")) {
                 id = ":" + id;
             }
             // Since Label is now a NamingContainer, findComponent
@@ -187,7 +430,6 @@ public class Label extends UIOutput implements NamingContainer {
             // This use of parent is different from getLabelComponentId
             // since we are not requiring that the parent be a
             // NamingContainer.
-            //
             try {
                 UIComponent parent = this.getParent();
                 setLabeledComponent(parent.findComponent(id));
@@ -202,32 +444,30 @@ public class Label extends UIOutput implements NamingContainer {
     }
 
     /**
-     * Return the absolute client id of the labeled component.
-     * If the labeled component is an instance of
-     * <code>ComplexComponent</code>, call <code>getPrimaryElementID</code> on
-     * the labeled component and return that id.</br>
+     * Return the absolute client id of the labeled component. If the labeled
+     * component is an instance of {@code ComplexComponent}, call
+     * {@code getPrimaryElementID} on the labeled component and return that
+     * id.
      * If the labeled component is not an instance of
-     * <code>ComplexComponent</code>, call <code>getClientId</code> on the
-     * labeled component and return that id.</br>
-     * If the labeled component has not been set, and the
-     * <code>getFor</code> method returns a non null absolute 
-     * id, return that id.</br>
-     * If <code>getFor</code> returns a relative id and the label's parent
-     * is a <code>NamingContainer</code>, return
-     * an absolute client id constructed from the label's parent client id
-     * and the id returned by the <code>getFor</code> method. If the label's 
-     * parent is not a <code>NamingContainer</code> return the id
-     * returned by <code>getFor</code>.</br>
-     * If <code>getFor</code> returns null, return null.
+     * {@code ComplexComponent}, call {@code getClientId} on the
+     * labeled component and return that id.
+     * If the labeled component has not been set, and the {@code getFor}
+     * method returns a non null absolute id, return that id.
+     * If {@code getFor} returns a relative id and the label's parent is a
+     * {@code NamingContainer}, return an absolute client id constructed
+     * from the label's parent client id and the id returned by the
+     * {@code getFor} method. If the label's parent is not a
+     * {@code NamingContainer} return the id returned by
+     * {@code getFor}.
+     * If {@code getFor} returns null, return null.
      *
+     * @param context faces context
      * @return the client id of the labeled component or null.
      * @deprecated
      * @see com.sun.webui.jsf.util.RenderingUtilities#getLabeledElementId
      */
-    public String getLabeledComponentId(FacesContext context) {
-
-        String id = null;
-
+    public String getLabeledComponentId(final FacesContext context) {
+        String id;
         if (labeledComponent != null) {
             if (labeledComponent instanceof ComplexComponent) {
                 ComplexComponent compComp = (ComplexComponent) labeledComponent;
@@ -252,8 +492,7 @@ public class Label extends UIOutput implements NamingContainer {
             // for a Naming container ? For exmaple until recently
             // many of our own components could be parents but
             // were not NamingContainers.
-            //
-            if (id != null && id.indexOf(":") == -1) {
+            if (id != null && !id.contains(":")) {
                 UIComponent comp = this.getParent();
                 if (comp instanceof NamingContainer) {
                     id = comp.getClientId(context) + ":" + id;
@@ -263,13 +502,17 @@ public class Label extends UIOutput implements NamingContainer {
         return id;
     }
 
+    /**
+     * Find the labeled child.
+     * @return UIComponent
+     */
     private UIComponent findLabeledChild() {
 
         if (DEBUG) {
             log("findLabeledChild");
         }
         List kids = getChildren();
-        if (DEBUG && kids.size() == 0) {
+        if (DEBUG && kids.isEmpty()) {
             log("No children!");
         }
         for (int i = 0; i < kids.size(); i++) {
@@ -288,25 +531,27 @@ public class Label extends UIOutput implements NamingContainer {
     }
 
     /**
-     * Return a component that implements a required icon.
-     * If a facet named <code>required</code> is found
-     * that component is returned.</br>
-     * If a facet is not found an <code>Icon</code>
-     * component instance is returned with the id</br>
-     * <code>getId() + "_required"</code>.
+     * Return a component that implements a required icon. If a facet named
+     * {@code required} is found that component is returned.
+     * If a facet is not found an {@code Icon} component instance is
+     * returned with the id
+     * {@code getId() + "_required"}.
      * <p>
-     * If a facet is not defined then the returned <code>Icon</code>
-     * component is created every time this method is called.
+     * If a facet is not defined then the returned {@code Icon} component
+     * is created every time this method is called.
      * </p>
-     * @return - required facet or an Icon instance
+     *
+     * @param theme theme to use
+     * @param context faces context
+     * @return required facet or an Icon instance
      */
-    public UIComponent getRequiredIcon(Theme theme, FacesContext context) {
+    public UIComponent getRequiredIcon(final Theme theme,
+            final FacesContext context) {
 
         UIComponent comp = getFacet(REQUIRED_FACET);
         if (comp != null) {
             return comp;
         }
-
         Icon icon = ThemeUtilities.getIcon(theme,
                 ThemeImages.LABEL_REQUIRED_ICON);
         icon.setId(
@@ -314,26 +559,28 @@ public class Label extends UIOutput implements NamingContainer {
         icon.setParent(this);
         icon.setBorder(0);
 
-        //icon.setLongDesc("TODO: Required");
-
+        //icon.setLongDesc("FIXME: Required");
         return icon;
     }
 
     /**
-     * Return a component that implements an error icon.
-     * If a facet named <code>error</code> is found
-     * that component is returned.</br>
-     * If a facet is not found an <code>Icon</code>
-     * component instance is returned with the id</br>
-     * <code>getId() + "_error"</code>.
+     * Return a component that implements an error icon. If a facet named
+     * {@code error} is found that component is returned.
+     * If a facet is not found an {@code Icon} component instance is
+     * returned with the id
+     * {@code getId() + "_error"}.
      * <p>
-     * If a facet is not defined then the returned <code>Icon</code>
-     * component is created every time this method is called.
+     * If a facet is not defined then the returned {@code Icon} component
+     * is created every time this method is called.
      * </p>
-     * @return - error facet or an Icon instance
+     *
+     * @param theme theme to use
+     * @param context faces context
+     * @param valid valid flag
+     * @return error facet or an Icon instance
      */
-    public UIComponent getErrorIcon(Theme theme, FacesContext context,
-            boolean valid) {
+    public UIComponent getErrorIcon(final Theme theme,
+            final FacesContext context, final boolean valid) {
 
         UIComponent comp = getFacet(ERROR_FACET);
         if (comp != null) {
@@ -346,21 +593,21 @@ public class Label extends UIOutput implements NamingContainer {
                 ComponentUtilities.createPrivateFacetId(this, ERROR_FACET));
         icon.setParent(this);
         icon.setBorder(0);
-        //icon.setLongDesc("TODO: Invalid");
+        //icon.setLongDesc("FIXME: Invalid");
 
         if (valid) {
             icon.setIcon(ThemeImages.DOT);
             icon.setAlt("");
         } else if (labeledComponent != null) {
-            String labeledCompID =
-                    ((UIComponent) labeledComponent).getClientId(context);
+            String labeledCompID
+                    = ((UIComponent) labeledComponent).getClientId(context);
             Iterator messages = context.getMessages(labeledCompID);
-            FacesMessage fm = null;
-            StringBuffer msgBuffer = new StringBuffer(200);
+            FacesMessage fm;
+            StringBuilder msgBuffer = new StringBuilder();
             while (messages.hasNext()) {
                 fm = (FacesMessage) (messages.next());
                 msgBuffer.append(fm.getDetail());
-                msgBuffer.append(" "); //NOI18N
+                msgBuffer.append(" ");
             }
             icon.setToolTip(msgBuffer.toString());
         }
@@ -369,25 +616,31 @@ public class Label extends UIOutput implements NamingContainer {
     }
 
     /**
-     * Return <code>span</code> if the label is not labeling another
-     * component, else return <code>label</code>.
+     * Return {@code span} if the label is not labeling another component,
+     * else return {@code label}.
+     * @return String
      */
     public String getElement() {
         return element;
     }
 
-    private void log(String s) {
-        System.out.println(getClass().getName() + "::" + s);
+    /**
+     * Log a message to the standard out.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(Label.class.getName() + "::" + msg);
     }
 
     /**
-     * Return the label level.
-     * If the label level is less than 1 or greater than 3, 2 is returned.
+     * Return the label level. If the label level is less than 1 or greater than
+     * 3, 2 is returned.
+     * @return int
      */
     // These values need to be Theme based.
-    //
+    @SuppressWarnings("checkstyle:magicnumber")
     public int getLabelLevel() {
-        int level = _getLabelLevel();
+        int level = doGetLabelLevel();
         if (level < 1 || level > 3) {
             level = 2;
             setLabelLevel(level);
@@ -395,73 +648,18 @@ public class Label extends UIOutput implements NamingContainer {
         return level;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * The converter attribute is used to specify a method to translate native
-     * property values to String and back for this component. The converter 
-     * attribute value must be one of the following:
-     * <ul>
-     * <li>A JavaServer Faces EL expression that resolves to a backing bean or
-     * bean property that implements the 
-     * <code>javax.faces.converter.Converter</code> interface; or
-     * </li><li>the ID of a registered converter (a String).</li>
-     * </ul>
-     */
-    @Property(name = "converter")
     @Override
-    public void setConverter(Converter converter) {
-        super.setConverter(converter);
-    }
-
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
-    @Property(name = "id")
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
-
-    /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
-     */
-    @Property(name = "rendered")
-    @Override
-    public void setRendered(boolean rendered) {
-        super.setRendered(rendered);
-    }
-
-    /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
-     *
-     * @param name Name of value binding expression to retrieve
-     */
-    @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("text")) {
             return super.getValueExpression("value");
         }
         return super.getValueExpression(name);
     }
 
-    /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
-     *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
-     */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("text")) {
             super.setValueExpression("value", binding);
             return;
@@ -469,609 +667,556 @@ public class Label extends UIOutput implements NamingContainer {
         super.setValueExpression(name, binding);
     }
 
-    // Hide value
-    @Property(name = "value", isHidden = true, isAttribute = false)
-    @Override
-    public Object getValue() {
-        return super.getValue();
-    }
     /**
-     * <p>Use this attribute to specify the labeled component. 
-     * The value of the attribute is the absolute client id of the component or
-     * the id of the component to be labeled. Relative ids are no longer supported.
-     * If this attribute is not specified, the <code>label</code> component tries
-     *  to search its children to see whether any of them can be used for evaluating
-     * the value of this "for" attribute.</p>
-     */
-    @Property(name = "for", displayName = "Input Component", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.InputComponentIdsEditor")
-    private String _for = null;
-
-    /**
-     * <p>Use this attribute to specify the labeled component. 
-     * The value of the attribute is the absolute client id of the component or
-     * the id of the component to be labeled. Relative ids are no longer supported.
-     * If this attribute is not specified, the <code>label</code> component tries
-     *  to search its children to see whether any of them can be used for evaluating
-     * the value of this "for" attribute.</p>
+     * Use this attribute to specify the labeled component. The value of the
+     * attribute is the absolute client id of the component or the id of the
+     * component to be labeled. Relative ids are no longer supported. If this
+     * attribute is not specified, the {@code label} component tries to
+     * search its children to see whether any of them can be used for evaluating
+     * the value of this "for" attribute.
+     * @return String
      */
     public String getFor() {
-        if (this._for != null) {
-            return this._for;
+        if (this.forComp != null) {
+            return this.forComp;
         }
-        ValueExpression _vb = getValueExpression("for");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("for");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Use this attribute to specify the labeled component. 
-     * The value of the attribute is the absolute client id of the component or
-     * the id of the component to be labeled. Relative ids are no longer supported.
-     * If this attribute is not specified, the <code>label</code> component tries
-     *  to search its children to see whether any of them can be used for evaluating
-     * the value of this "for" attribute.</p>
+     * Use this attribute to specify the labeled component. The value of the
+     * attribute is the absolute client id of the component or the id of the
+     * component to be labeled. Relative ids are no longer supported. If this
+     * attribute is not specified, the {@code label} component tries to
+     * search its children to see whether any of them can be used for evaluating
+     * the value of this "for" attribute.
+     *
      * @see #getFor()
+     * @param newForcomp forComp
      */
-    public void setFor(String _for) {
-        this._for = _for;
+    public void setFor(final String newForcomp) {
+        this.forComp = newForcomp;
     }
-    /**
-     * <p>Use the hideIndicators attribute to prevent display of the
-     * required and invalid icons with the label. When the required
-     * attribute on the component to be labeled is set to true, the
-     * required icon is displayed next to the label. If the user
-     * submits the page with an invalid value for the component, the
-     * invalid icon is displayed. This attribute is useful when the
-     * component has more than one label, and only one label should
-     * show the icons.</p>
-     */
-    @Property(name = "hideIndicators", displayName = "Hide the Required and Invalid icons", category = "Advanced")
-    private boolean hideIndicators = false;
-    private boolean hideIndicators_set = false;
 
     /**
-     * <p>Use the hideIndicators attribute to prevent display of the
-     * required and invalid icons with the label. When the required
-     * attribute on the component to be labeled is set to true, the
-     * required icon is displayed next to the label. If the user
-     * submits the page with an invalid value for the component, the
-     * invalid icon is displayed. This attribute is useful when the
-     * component has more than one label, and only one label should
-     * show the icons.</p>
+     * Use the hideIndicators attribute to prevent display of the required and
+     * invalid icons with the label. When the required attribute on the
+     * component to be labeled is set to true, the required icon is displayed
+     * next to the label. If the user submits the page with an invalid value for
+     * the component, the invalid icon is displayed. This attribute is useful
+     * when the component has more than one label, and only one label should
+     * show the icons.
+     * @return {@code boolean}
      */
     public boolean isHideIndicators() {
-        if (this.hideIndicators_set) {
+        if (this.hideIndicatorsSet) {
             return this.hideIndicators;
         }
-        ValueExpression _vb = getValueExpression("hideIndicators");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("hideIndicators");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Use the hideIndicators attribute to prevent display of the
-     * required and invalid icons with the label. When the required
-     * attribute on the component to be labeled is set to true, the
-     * required icon is displayed next to the label. If the user
-     * submits the page with an invalid value for the component, the
-     * invalid icon is displayed. This attribute is useful when the
-     * component has more than one label, and only one label should
-     * show the icons.</p>
+     * Use the hideIndicators attribute to prevent display of the required and
+     * invalid icons with the label. When the required attribute on the
+     * component to be labeled is set to true, the required icon is displayed
+     * next to the label. If the user submits the page with an invalid value for
+     * the component, the invalid icon is displayed. This attribute is useful
+     * when the component has more than one label, and only one label should
+     * show the icons.
+     *
      * @see #isHideIndicators()
+     * @param newHideIndicators hideIndicators
      */
-    public void setHideIndicators(boolean hideIndicators) {
-        this.hideIndicators = hideIndicators;
-        this.hideIndicators_set = true;
+    public void setHideIndicators(final boolean newHideIndicators) {
+        this.hideIndicators = newHideIndicators;
+        this.hideIndicatorsSet = true;
     }
-    /**
-     * <p>Style level for this label, where lower values typically specify
-     * progressively larger font sizes, and/or bolder font weights.
-     * Valid values are 1, 2, and 3. The default label level is 2.  Any label
-     * level outside this range will result in no label level being added.</p>
-     */
-    @Property(name = "labelLevel", displayName = "Style Level", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.LabelLevelsEditor")
-    private int labelLevel = Integer.MIN_VALUE;
-    private boolean labelLevel_set = false;
 
     /**
-     * <p>Style level for this label, where lower values typically specify
-     * progressively larger font sizes, and/or bolder font weights.
-     * Valid values are 1, 2, and 3. The default label level is 2.  Any label
-     * level outside this range will result in no label level being added.</p>
+     * Style level for this label, where lower values typically specify
+     * progressively larger font sizes, and/or bolder font weights. Valid values
+     * are 1, 2, and 3. The default label level is 2. Any label level outside
+     * this range will result in no label level being added.
+     * @return int
      */
-    public int _getLabelLevel() {
-        if (this.labelLevel_set) {
+    public int doGetLabelLevel() {
+        if (this.labelLevelSet) {
             return this.labelLevel;
         }
-        ValueExpression _vb = getValueExpression("labelLevel");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("labelLevel");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 2;
     }
 
     /**
-     * <p>Style level for this label, where lower values typically specify
-     * progressively larger font sizes, and/or bolder font weights.
-     * Valid values are 1, 2, and 3. The default label level is 2.  Any label
-     * level outside this range will result in no label level being added.</p>
+     * Style level for this label, where lower values typically specify
+     * progressively larger font sizes, and/or bolder font weights. Valid values
+     * are 1, 2, and 3. The default label level is 2. Any label level outside
+     * this range will result in no label level being added.
+     *
      * @see #getLabelLevel()
+     * @param newLabelLevel labelLevel
      */
-    public void setLabelLevel(int labelLevel) {
-        this.labelLevel = labelLevel;
-        this.labelLevel_set = true;
+    public void setLabelLevel(final int newLabelLevel) {
+        this.labelLevel = newLabelLevel;
+        this.labelLevelSet = true;
     }
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onClick", displayName = "Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     * @return String
      */
     public String getOnClick() {
         if (this.onClick != null) {
             return this.onClick;
         }
-        ValueExpression _vb = getValueExpression("onClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     *
      * @see #getOnClick()
+     * @param newOnClick onClick
      */
-    public void setOnClick(String onClick) {
-        this.onClick = onClick;
+    public void setOnClick(final String newOnClick) {
+        this.onClick = newOnClick;
     }
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseDown", displayName = "Mouse Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseDown() {
         if (this.onMouseDown != null) {
             return this.onMouseDown;
         }
-        ValueExpression _vb = getValueExpression("onMouseDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseDown()
+     * @param newOnMouseDown onMouseDown
      */
-    public void setOnMouseDown(String onMouseDown) {
-        this.onMouseDown = onMouseDown;
+    public void setOnMouseDown(final String newOnMouseDown) {
+        this.onMouseDown = newOnMouseDown;
     }
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
-    @Property(name = "onMouseMove", displayName = "Mouse Move Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseMove = null;
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     * @return String
      */
     public String getOnMouseMove() {
         if (this.onMouseMove != null) {
             return this.onMouseMove;
         }
-        ValueExpression _vb = getValueExpression("onMouseMove");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseMove");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     *
      * @see #getOnMouseMove()
+     * @param newOnMouseMove onMouseMove
      */
-    public void setOnMouseMove(String onMouseMove) {
-        this.onMouseMove = onMouseMove;
+    public void setOnMouseMove(final String newOnMouseMove) {
+        this.onMouseMove = newOnMouseMove;
     }
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
-    @Property(name = "onMouseOut", displayName = "Mouse Out Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOut = null;
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     * @return String
      */
     public String getOnMouseOut() {
         if (this.onMouseOut != null) {
             return this.onMouseOut;
         }
-        ValueExpression _vb = getValueExpression("onMouseOut");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOut");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     *
      * @see #getOnMouseOut()
+     * @param newOnMouseOut onMouseOut
      */
-    public void setOnMouseOut(String onMouseOut) {
-        this.onMouseOut = onMouseOut;
+    public void setOnMouseOut(final String newOnMouseOut) {
+        this.onMouseOut = newOnMouseOut;
     }
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
-    @Property(name = "onMouseOver", displayName = "Mouse In Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOver = null;
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     * @return String
      */
     public String getOnMouseOver() {
         if (this.onMouseOver != null) {
             return this.onMouseOver;
         }
-        ValueExpression _vb = getValueExpression("onMouseOver");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOver");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     *
      * @see #getOnMouseOver()
+     * @param newOnMouseOver onMouseOver
      */
-    public void setOnMouseOver(String onMouseOver) {
-        this.onMouseOver = onMouseOver;
+    public void setOnMouseOver(final String newOnMouseOver) {
+        this.onMouseOver = newOnMouseOver;
     }
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseUp", displayName = "Mouse Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     * @return {@code boolean}
      */
     public String getOnMouseUp() {
         if (this.onMouseUp != null) {
             return this.onMouseUp;
         }
-        ValueExpression _vb = getValueExpression("onMouseUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseUp()
+     * @param newOnMouseUp onMouseUp
      */
-    public void setOnMouseUp(String onMouseUp) {
-        this.onMouseUp = onMouseUp;
+    public void setOnMouseUp(final String newOnMouseUp) {
+        this.onMouseUp = newOnMouseUp;
     }
-    /**
-     * <p>Flag indicating that the labeled component should be marked as
-     * required. It is only relevant if the labeled component is not
-     * a child of the label tag. Set this flag to ensure that the 
-     * required icon shows up the first time the page is rendered.</p>
-     */
-    @Property(name = "requiredIndicator", displayName = "Required Field Indicator", category = "Appearance")
-    private boolean requiredIndicator = false;
-    private boolean requiredIndicator_set = false;
 
     /**
-     * <p>Flag indicating that the labeled component should be marked as
-     * required. It is only relevant if the labeled component is not
-     * a child of the label tag. Set this flag to ensure that the 
-     * required icon shows up the first time the page is rendered.</p>
+     * Flag indicating that the labeled component should be marked as required.
+     * It is only relevant if the labeled component is not a child of the label
+     * tag. Set this flag to ensure that the required icon shows up the first
+     * time the page is rendered.
+     * @return {@code boolean}
      */
     public boolean isRequiredIndicator() {
-        if (this.requiredIndicator_set) {
+        if (this.requiredIndicatorSet) {
             return this.requiredIndicator;
         }
-        ValueExpression _vb = getValueExpression("requiredIndicator");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("requiredIndicator");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag indicating that the labeled component should be marked as
-     * required. It is only relevant if the labeled component is not
-     * a child of the label tag. Set this flag to ensure that the 
-     * required icon shows up the first time the page is rendered.</p>
+     * Flag indicating that the labeled component should be marked as required.
+     * It is only relevant if the labeled component is not a child of the label
+     * tag. Set this flag to ensure that the required icon shows up the first
+     * time the page is rendered.
+     *
      * @see #isRequiredIndicator()
+     * @param newRequiredIndicator requiredIndicator
      */
-    public void setRequiredIndicator(boolean requiredIndicator) {
-        this.requiredIndicator = requiredIndicator;
-        this.requiredIndicator_set = true;
+    public void setRequiredIndicator(final boolean newRequiredIndicator) {
+        this.requiredIndicator = newRequiredIndicator;
+        this.requiredIndicatorSet = true;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
 
     /**
-     * <p>The label text to be displayed for this label. This attribute
-     * can be set to a literal string, to a value binding expression
-     * that corresponds to a property of a managed bean, or to a value
-     * binding expression that corresponds to a message from a resource
-     * bundle declared using <code>f:loadBundle</code>.</p>
+     * The label text to be displayed for this label. This attribute can be set
+     * to a literal string, to a value binding expression that corresponds to a
+     * property of a managed bean, or to a value binding expression that
+     * corresponds to a message from a resource bundle declared using
+     * {@code f:loadBundle}.
+     *
+     * @return Object
      */
-    @Property(name = "text", displayName = "Label Text", category = "Appearance", isDefault = true,
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+    @Property(name = "text",
+            displayName = "Label Text",
+            category = "Appearance",
+            isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
     public Object getText() {
         return getValue();
     }
 
     /**
-     * <p>The label text to be displayed for this label. This attribute
-     * can be set to a literal string, to a value binding expression
-     * that corresponds to a property of a managed bean, or to a value
-     * binding expression that corresponds to a message from a resource
-     * bundle declared using <code>f:loadBundle</code>.</p>
+     * The label text to be displayed for this label. This attribute can be set
+     * to a literal string, to a value binding expression that corresponds to a
+     * property of a managed bean, or to a value binding expression that
+     * corresponds to a message from a resource bundle declared using
+     * {@code f:loadBundle}.
+     *
      * @see #getText()
+     * @param newText text
      */
-    public void setText(Object text) {
-        setValue(text);
+    public void setText(final Object newText) {
+        setValue(newText);
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     * @return String
      */
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
      * @see #getToolTip()
+     * @param newToolTip tool tip
      */
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this._for = (String) _values[1];
-        this.hideIndicators = ((Boolean) _values[2]).booleanValue();
-        this.hideIndicators_set = ((Boolean) _values[3]).booleanValue();
-        this.labelLevel = ((Integer) _values[4]).intValue();
-        this.labelLevel_set = ((Boolean) _values[5]).booleanValue();
-        this.onClick = (String) _values[6];
-        this.onMouseDown = (String) _values[7];
-        this.onMouseMove = (String) _values[8];
-        this.onMouseOut = (String) _values[9];
-        this.onMouseOver = (String) _values[10];
-        this.onMouseUp = (String) _values[11];
-        this.requiredIndicator = ((Boolean) _values[12]).booleanValue();
-        this.requiredIndicator_set = ((Boolean) _values[13]).booleanValue();
-        this.style = (String) _values[14];
-        this.styleClass = (String) _values[15];
-        this.toolTip = (String) _values[16];
-        this.visible = ((Boolean) _values[17]).booleanValue();
-        this.visible_set = ((Boolean) _values[18]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.forComp = (String) values[1];
+        this.hideIndicators = ((Boolean) values[2]);
+        this.hideIndicatorsSet = ((Boolean) values[3]);
+        this.labelLevel = ((Integer) values[4]);
+        this.labelLevelSet = ((Boolean) values[5]);
+        this.onClick = (String) values[6];
+        this.onMouseDown = (String) values[7];
+        this.onMouseMove = (String) values[8];
+        this.onMouseOut = (String) values[9];
+        this.onMouseOver = (String) values[10];
+        this.onMouseUp = (String) values[11];
+        this.requiredIndicator = ((Boolean) values[12]);
+        this.requiredIndicatorSet = ((Boolean) values[13]);
+        this.style = (String) values[14];
+        this.styleClass = (String) values[15];
+        this.toolTip = (String) values[16];
+        this.visible = ((Boolean) values[17]);
+        this.visibleSet = ((Boolean) values[18]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[19];
-        _values[0] = super.saveState(_context);
-        _values[1] = this._for;
-        _values[2] = this.hideIndicators ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.hideIndicators_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = new Integer(this.labelLevel);
-        _values[5] = this.labelLevel_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.onClick;
-        _values[7] = this.onMouseDown;
-        _values[8] = this.onMouseMove;
-        _values[9] = this.onMouseOut;
-        _values[10] = this.onMouseOver;
-        _values[11] = this.onMouseUp;
-        _values[12] = this.requiredIndicator ? Boolean.TRUE : Boolean.FALSE;
-        _values[13] = this.requiredIndicator_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[14] = this.style;
-        _values[15] = this.styleClass;
-        _values[16] = this.toolTip;
-        _values[17] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[18] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[19];
+        values[0] = super.saveState(context);
+        values[1] = this.forComp;
+        if (this.hideIndicators) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.hideIndicatorsSet) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        values[4] = this.labelLevel;
+        if (this.labelLevelSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        values[6] = this.onClick;
+        values[7] = this.onMouseDown;
+        values[8] = this.onMouseMove;
+        values[9] = this.onMouseOut;
+        values[10] = this.onMouseOver;
+        values[11] = this.onMouseUp;
+        if (this.requiredIndicator) {
+            values[12] = Boolean.TRUE;
+        } else {
+            values[12] = Boolean.FALSE;
+        }
+        if (this.requiredIndicatorSet) {
+            values[13] = Boolean.TRUE;
+        } else {
+            values[13] = Boolean.FALSE;
+        }
+        values[14] = this.style;
+        values[15] = this.styleClass;
+        values[16] = this.toolTip;
+        if (this.visible) {
+            values[17] = Boolean.TRUE;
+        } else {
+            values[17] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[18] = Boolean.TRUE;
+        } else {
+            values[18] = Boolean.FALSE;
+        }
+        return values;
     }
 }

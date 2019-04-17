@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,8 +22,6 @@ import java.util.Set;
  * An interface that defines the basic metadata available for a class with one
  * or more properties. This may be a component class or a non-component base
  * class, either in the current compilation unit, or in an external library.
- *
- * @author gjmurphy
  */
 public abstract class ClassInfo {
 
@@ -130,7 +128,9 @@ public abstract class ClassInfo {
      * @return String
      * @throws java.lang.NoSuchMethodException if the method is not found
      */
-    public String getKey(String propertyName) throws NoSuchMethodException {
+    public String getKey(final String propertyName)
+            throws NoSuchMethodException {
+
         String methodName = "get" + propertyName.substring(0, 1).toUpperCase()
                 + propertyName.substring(1);
         this.getClass().getMethod(methodName);
@@ -141,11 +141,18 @@ public abstract class ClassInfo {
     /**
      * Returns a set of the names of all public methods accessible through this
      * class, whether declared by it, or inherited.
+     * @return {@code Set<String>}
      */
     abstract Set<String> getMethodNames();
 
+    /**
+     * This implementation tests the equality using the class name and the
+     * package name.
+     * @param obj object to test equality against this instance
+     * @return {@code true} if equal, {@code false} otherwise
+     */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof ClassInfo)) {
             return false;
         }
@@ -156,20 +163,32 @@ public abstract class ClassInfo {
         if (!this.getClassName().equals(that.getClassName())) {
             return false;
         }
-        if(this.getPackageName() == null && that.getPackageName() != null) {
+        if (this.getPackageName() == null && that.getPackageName() != null) {
             return false;
         }
         return this.getClassName().equals(that.getClassName())
                 && this.getPackageName().equals(that.getPackageName());
     }
 
+    /**
+     * This implementation uses the class name and the package name to compute
+     * the hash code of this instance.
+     * @return hash code
+     */
     @Override
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
         int hash = 3;
         String className = this.getClassName();
         String packageName = this.getPackageName();
-        hash = 31 * hash + ( className != null ? className.hashCode() : 0);
-        hash = 31 * hash + ( packageName != null ? packageName.hashCode() : 0);
+        hash = 31 * hash;
+        if (className != null) {
+            hash = hash + className.hashCode();
+        }
+        hash = 31 * hash;
+        if (packageName != null) {
+            hash = hash + packageName.hashCode();
+        }
         return hash;
     }
 }

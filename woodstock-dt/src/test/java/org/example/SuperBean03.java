@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,10 +17,6 @@ package org.example;
 
 import com.sun.faces.annotation.Property;
 
-/**
- *
- * @author gjmurphy
- */
 public class SuperBean03 extends SuperSuperBean02 {
 
     @Property(name = "two", displayName = "The Second")
@@ -33,5 +29,4 @@ public class SuperBean03 extends SuperSuperBean02 {
     public void setTwo(String two) {
         this.two = two;
     }
-
 }

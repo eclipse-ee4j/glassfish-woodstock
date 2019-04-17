@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.event;
 
 import javax.faces.event.ActionEvent;
@@ -26,45 +25,60 @@ import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.component.Wizard;
 
 /**
- * The WizardActionListener is an internal listener specified on the
- * navigation and tab components of the {@link Wizard Wizard} component.
+ * The WizardActionListener is an internal listener specified on the navigation
+ * and tab components of the {@link Wizard Wizard} component.
  */
-public class WizardActionListener implements ActionListener, StateHolder {
-
-    private String wizardId;
-    private int event;
-    private boolean _transient = false;
+public final class WizardActionListener implements ActionListener, StateHolder {
 
     /**
-     * Create a new instance of <code>WizardActionListener</code>
-     * identifying the wizard and event this listener is registered for.
-     * This class is used internally to set the internal event state
-     * of the wizard.
+     * Wizard id.
      */
-    public WizardActionListener(String wizardId, int event) {
+    private String wizardId;
+
+    /**
+     * Event id.
+     */
+    private int event;
+
+    /**
+     * Transient flag.
+     */
+    private boolean isTransient = false;
+
+    /**
+     * Create a new instance of {@code WizardActionListener} identifying
+     * the wizard and event this listener is registered for.This class is used
+     * internally to set the internal event state of the wizard.
+     *
+     * @param newWizardId wizard id
+     * @param newEvent event id
+     */
+    public WizardActionListener(final String newWizardId, final int newEvent) {
         super();
-        this.wizardId = wizardId;
-        this.event = event;
+        this.wizardId = newWizardId;
+        this.event = newEvent;
     }
 
     /**
-     * Default constructor for restoring and saving state
+     * Default constructor for restoring and saving state.
      */
     public WizardActionListener() {
         super();
     }
 
     /**
-     * This method locates the Wizard listening for this event and 
-     * sets the event state, for eventual broadcast to 
+     * This method locates the Wizard listening for this event and sets the
+     * event state, for eventual broadcast to
      * {@link WizardEventListeners WizardListeners}.
      *
      * @param actionEvent The ActionEvent generated
      */
-    public void processAction(ActionEvent actionEvent)
+    @Override
+    public void processAction(final ActionEvent actionEvent)
             throws AbortProcessingException {
 
-        Wizard wizard = Wizard.getWizard((UIComponent) actionEvent.getSource(), wizardId);
+        Wizard wizard = Wizard.getWizard((UIComponent) actionEvent.getSource(),
+                wizardId);
         if (wizard == null) {
             // Log  and throw
             if (LogUtil.infoEnabled()) {
@@ -72,41 +86,37 @@ public class WizardActionListener implements ActionListener, StateHolder {
                         new String[]{wizardId});
             }
             throw new AbortProcessingException(
-                    "Wizard parent not found processing " +
-                    event);
+                    "Wizard parent not found processing "
+                    + event);
         }
         wizard.broadcastEvent((UIComponent) actionEvent.getSource(), event);
     }
 
-    /**
-     * Save the state of this listener.
-     */
-    public Object saveState(FacesContext context) {
-        Object _values[] = new Object[3];
-        _values[0] = new Integer(event);
-        _values[1] = new String(wizardId);
-        _values[2] = new Boolean(_transient);
-        return _values;
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[3];
+        values[0] = event;
+        values[1] = wizardId;
+        values[2] = isTransient;
+        return values;
     }
 
-    /**
-     * Restor the state of this listener.
-     */
-    public void restoreState(FacesContext context, Object state) {
-        Object _values[] = (Object[]) state;
-        this.event = ((Integer) _values[0]).intValue();
-        this.wizardId = (String) _values[1];
-        this._transient = ((Boolean) _values[2]).booleanValue();
+    @Override
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        this.event = ((Integer) values[0]);
+        this.wizardId = (String) values[1];
+        this.isTransient = ((Boolean) values[2]);
     }
 
+    @Override
     public boolean isTransient() {
-        return _transient;
+        return isTransient;
     }
 
-    /**
-     * Set the transient nature of this StateHolder.
-     */
-    public void setTransient(boolean newTransientValue) {
+    @Override
+    public void setTransient(final boolean newTransientValue) {
         // Don't honor this.
     }
 }

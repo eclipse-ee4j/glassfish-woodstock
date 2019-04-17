@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -43,8 +43,6 @@ import java.lang.annotation.Target;
  * {@code PropertyCategory} must be used to annotate only publicly accessible
  * fields or static methods of type
  * {@link com.sun.rave.designtime.CategoryDescriptor}.
- *
- * @author gjmurphy
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
@@ -60,7 +58,7 @@ public @interface PropertyCategory {
      *
      * @return String
      */
-    public String name();
+    String name();
 
     /**
      * This category's sort key, used to determine the order in which this
@@ -72,6 +70,6 @@ public @interface PropertyCategory {
      *
      * @return String
      */
-    public String sortKey() default "";
+    String sortKey() default "";
 
 }

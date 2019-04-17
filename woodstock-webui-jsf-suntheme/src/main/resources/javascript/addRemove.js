@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-define(function () {
+define([
+    "webui/suntheme/common"
+], function (common) {
 
     return {
+        addOnInitCallback: common.addOnInitCallback,
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.
@@ -37,6 +40,9 @@ define(function () {
             var domNode = document.getElementById(props.id);
             if (domNode === null) {
                 return false;
+            }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
             }
 
             // Set given properties on domNode.
@@ -99,10 +105,9 @@ define(function () {
             // Calculate the value indices
             var itemString = document.getElementById(props.id + "_item_list");
             if (itemString !== null) {
-                var string = new String(itemString.value);
+                var string = new String(itemString.value).valueOf();
                 domNode.allValues = string.split(props.separator);
             } else {
-                alert("Did not construct value array");
                 domNode.allValues = new Array();
             }
 
@@ -120,6 +125,7 @@ define(function () {
             domNode.allowMultipleAdditions = this.allowMultipleAdditions;
             domNode.availableOnChange = this.availableOnChange;
             domNode.selectedOnChange = this.selectedOnChange;
+            common.setInitialized(domNode);
         },
 
         add: function () {
@@ -480,7 +486,7 @@ define(function () {
         },
 
         calculateIndex: function (value, lastIndex) {
-            var string = new String(value);
+            var string = new String(value).valueOf()
             for (var counter = 0; counter < this.allValues.length; counter++) {
                 if (string === this.allValues[counter]) {
                     return counter;

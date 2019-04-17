@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import java.util.Comparator;
@@ -25,60 +24,311 @@ import com.sun.faces.annotation.Property;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
-/** 
- * The Alarm component is used to display a theme-specific image to indicate  
- * the condition of an object.
+/**
+ * The Alarm component is used to display a theme-specific image to indicate the
+ * condition of an object.
  */
-@Component(type = "com.sun.webui.jsf.Alarm", family = "com.sun.webui.jsf.Alarm",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_alarm",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_alarm_props")
-public class Alarm extends ImageComponent implements Comparator {
+@Component(type = "com.sun.webui.jsf.Alarm",
+        family = "com.sun.webui.jsf.Alarm",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_alarm",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_alarm_props")
+        //CHECKSTYLE:ON
+public final class Alarm extends ImageComponent implements Comparator {
 
     /**
      * Down alarm severity.
      */
     public static final String SEVERITY_DOWN = "down";
+
     /**
      * Critical alarm severity.
      */
     public static final String SEVERITY_CRITICAL = "critical";
+
     /**
      * Major alarm severity.
      */
     public static final String SEVERITY_MAJOR = "major";
+
     /**
      * Minor alarm severity.
      */
     public static final String SEVERITY_MINOR = "minor";
+
     /**
-     * Ok alarm severity.
+     * OK alarm severity.
      */
     public static final String SEVERITY_OK = "ok";
+
     /**
      * Default severity, SEVERITY_OK.
      */
     public static final String DEFAULT_SEVERITY = SEVERITY_OK;
 
-    // Severity level of an alarm.
-    private final int SEVERITY_LEVEL_DOWN = 1;
-    private final int SEVERITY_LEVEL_CRITICAL = 2;
-    private final int SEVERITY_LEVEL_MAJOR = 3;
-    private final int SEVERITY_LEVEL_MINOR = 4;
-    private final int SEVERITY_LEVEL_OK = 5;
+    /**
+     * Down severity level.
+     */
+    private static final int SEVERITY_LEVEL_DOWN = 1;
 
-    /** Default constructor. */
+    /**
+     * Critical severity level.
+     */
+    private static final int SEVERITY_LEVEL_CRITICAL = 2;
+
+    /**
+     * Major severity level.
+     */
+    private static final int SEVERITY_LEVEL_MAJOR = 3;
+
+    /**
+     * Minor severity level.
+     */
+    private static final int SEVERITY_LEVEL_MINOR = 4;
+
+    /**
+     * OK severity level.
+     */
+    private static final int SEVERITY_LEVEL_OK = 5;
+
+    /**
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     */
+    @Property(name = "alt",
+            displayName = "Alt Text",
+            category = "Accessibility",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String alt = null;
+
+    /**
+     * Scripting code executed when a mouse click occurs over this component.
+     */
+    @Property(name = "onClick",
+            displayName = "Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onClick = null;
+
+    /**
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     */
+    @Property(name = "onDblClick",
+            displayName = "Double Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onDblClick = null;
+
+    /**
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     */
+    @Property(name = "onKeyDown",
+            displayName = "Key Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyDown = null;
+
+    /**
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     */
+    @Property(name = "onKeyPress",
+            displayName = "Key Press Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyPress = null;
+
+    /**
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     */
+    @Property(name = "onKeyUp",
+            displayName = "Key Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyUp = null;
+
+    /**
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseDown",
+            displayName = "Mouse Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseDown = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     */
+    @Property(name = "onMouseMove",
+            displayName = "Mouse Move Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseMove = null;
+
+    /**
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     */
+    @Property(name = "onMouseOut",
+            displayName = "Mouse Out Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOut = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     */
+    @Property(name = "onMouseOver",
+            displayName = "Mouse In Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOver = null;
+
+    /**
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseUp",
+            displayName = "Mouse Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseUp = null;
+
+    /**
+     * Specifies the severity of the alarm. Valid values are:
+     * <ul>
+     * <li>critical</li>
+     * <li>major</li>
+     * <li>minor</li>
+     * <li>down</li>
+     * <li>ok</li>
+     * </ul>
+     * The default value is "ok", which renders no alarm icon.
+     */
+    @Property(name = "severity",
+            displayName = "Severity",
+            category = "Appearance",
+            isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.AlertTypesEditor")
+            //CHECKSTYLE:ON
+    private String severity = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * The text description of the alarm.
+     */
+    @Property(name = "text",
+            displayName = "Alarm Text")
+    private String text = null;
+
+    /**
+     * Specifies where the text will be placed relative to the image. The valid
+     * values currently are "right" or "left". By default, text is placed to the
+     * right of the image.
+     */
+    @Property(name = "textPosition",
+            displayName = "Text Position")
+    private String textPosition = null;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * Visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Default constructor.
+     */
     public Alarm() {
     }
 
-    /** Create an instance with the given severity. */
-    public Alarm(String severity) {
-        setSeverity(severity);
+    /**
+     * Create an instance with the given severity.
+     *
+     * @param newSeverity severity
+     */
+    public Alarm(final String newSeverity) {
+        setSeverity(newSeverity);
         setRendererType("com.sun.webui.jsf.Alarm");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Alarm";
@@ -87,48 +337,65 @@ public class Alarm extends ImageComponent implements Comparator {
     /**
      * Compare the given objects for severity order.
      */
-    public int compare(Object o1, Object o2) throws ClassCastException {
+    @Override
+    public int compare(final Object o1, final Object o2) {
         int s1 = getSeverityLevel((Alarm) o1);
         int s2 = getSeverityLevel((Alarm) o2);
-        return (s1 > s2) ? -1 : s1 == s2 ? 0 : 1;
+        if (s1 > s2) {
+            return -1;
+        } else if (s1 == s2) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
-    /**
-     * Indicates whether some other object is "equal to" this Comparator.
-     */
-    //TODO implement hashcode
     @Override
-    public boolean equals(Object o) throws ClassCastException {
-        if (o == null) {
+    public boolean equals(final Object obj) {
+        if (obj == null) {
             return false;
         }
 
-        if (o instanceof Alarm) {
-            return getSeverityLevel(this) == getSeverityLevel((Alarm) o);
+        if (obj instanceof Alarm) {
+            return getSeverityLevel(this) == getSeverityLevel((Alarm) obj);
         } else {
             return false;
         }
     }
 
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash;
+        if (this.severity != null) {
+            hash = hash + this.severity.hashCode();
+        }
+        return hash;
+    }
+
     /**
      * Helper method to get the severity level of an alarm.
+     *
+     * @param alarm alarm to get the severity level
+     * @return int
      */
-    private int getSeverityLevel(Alarm alarm) {
-        int severity = SEVERITY_LEVEL_OK;
+    private static int getSeverityLevel(final Alarm alarm) {
+        int level = SEVERITY_LEVEL_OK;
         String alarmSeverity = alarm.getSeverity();
         if (alarmSeverity == null) {
-            return severity;
+            return level;
         }
         if (alarmSeverity.equals(SEVERITY_DOWN)) {
-            severity = SEVERITY_LEVEL_DOWN;
+            level = SEVERITY_LEVEL_DOWN;
         } else if (alarmSeverity.equals(SEVERITY_CRITICAL)) {
-            severity = SEVERITY_LEVEL_CRITICAL;
+            level = SEVERITY_LEVEL_CRITICAL;
         } else if (alarmSeverity.equals(SEVERITY_MAJOR)) {
-            severity = SEVERITY_LEVEL_MAJOR;
+            level = SEVERITY_LEVEL_MAJOR;
         } else if (alarmSeverity.equals(SEVERITY_MINOR)) {
-            severity = SEVERITY_LEVEL_MINOR;
+            level = SEVERITY_LEVEL_MINOR;
         }
-        return severity;
+        return level;
     }
 
     // Note that this component is implemented differently than
@@ -139,12 +406,10 @@ public class Alarm extends ImageComponent implements Comparator {
     // obtained AlarmRenderer would just call the returned component's
     // renderer.
     @Override
-    public void encodeBegin(FacesContext context) throws IOException {
-
+    public void encodeBegin(final FacesContext context) throws IOException {
         if (context == null) {
             throw new NullPointerException();
         }
-
         if (!isRendered()) {
             return;
         }
@@ -154,403 +419,243 @@ public class Alarm extends ImageComponent implements Comparator {
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
-    /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
-     */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
-    // Hide value 
+    // Hide value
     @Property(name = "value", isHidden = true, isAttribute = false)
     @Override
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * <p>Alternative textual description of the image rendered by this component. The alt
-     * text can be used by screen readers and in tool tips, and when image display is turned off in
-     * the web browser.</p>
-     */
-    @Property(name = "alt", displayName = "Alt Text", category = "Accessibility", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String alt = null;
 
-    /**
-     * <p>Alternative textual description of the image rendered by this component. The alt
-     * text can be used by screen readers and in tool tips, and when image display is turned off in
-     * the web browser.</p>
-     */
     @Override
     public String getAlt() {
         if (this.alt != null) {
             return this.alt;
         }
-        ValueExpression _vb = getValueExpression("alt");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("alt");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Alternative textual description of the image rendered by this component. The alt
-     * text can be used by screen readers and in tool tips, and when image display is turned off in
-     * the web browser.</p>
-     * @see #getAlt()
-     */
     @Override
-    public void setAlt(String alt) {
-        this.alt = alt;
+    public void setAlt(final String newAlt) {
+        this.alt = newAlt;
     }
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onClick", displayName = "Click Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onClick = null;
 
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
     @Override
     public String getOnClick() {
         if (this.onClick != null) {
             return this.onClick;
         }
-        ValueExpression _vb = getValueExpression("onClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     * @see #getOnClick()
-     */
     @Override
-    public void setOnClick(String onClick) {
-        this.onClick = onClick;
+    public void setOnClick(final String newOnClick) {
+        this.onClick = newOnClick;
     }
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onDblClick", displayName = "Double Click Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onDblClick = null;
 
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     */
     @Override
     public String getOnDblClick() {
         if (this.onDblClick != null) {
             return this.onDblClick;
         }
-        ValueExpression _vb = getValueExpression("onDblClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onDblClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     * @see #getOnDblClick()
-     */
     @Override
-    public void setOnDblClick(String onDblClick) {
-        this.onDblClick = onDblClick;
+    public void setOnDblClick(final String newOnDblClick) {
+        this.onDblClick = newOnDblClick;
     }
-    /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
-     */
-    @Property(name = "onKeyDown", displayName = "Key Down Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     * @return String
      */
     public String getOnKeyDown() {
         if (this.onKeyDown != null) {
             return this.onKeyDown;
         }
-        ValueExpression _vb = getValueExpression("onKeyDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     *
+     * @param newOnKeyDown onKeyDown
      * @see #getOnKeyDown()
      */
-    public void setOnKeyDown(String onKeyDown) {
-        this.onKeyDown = onKeyDown;
+    public void setOnKeyDown(final String newOnKeyDown) {
+        this.onKeyDown = newOnKeyDown;
     }
-    /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
-     */
-    @Property(name = "onKeyPress", displayName = "Key Press Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyPress = null;
 
     /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     * @return String
      */
     public String getOnKeyPress() {
         if (this.onKeyPress != null) {
             return this.onKeyPress;
         }
-        ValueExpression _vb = getValueExpression("onKeyPress");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyPress");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     * @param newOnKeyPress onKeyPress
      * @see #getOnKeyPress()
      */
-    public void setOnKeyPress(String onKeyPress) {
-        this.onKeyPress = onKeyPress;
+    public void setOnKeyPress(final String newOnKeyPress) {
+        this.onKeyPress = newOnKeyPress;
     }
-    /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
-     */
-    @Property(name = "onKeyUp", displayName = "Key Up Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     * @return String
      */
     public String getOnKeyUp() {
         if (this.onKeyUp != null) {
             return this.onKeyUp;
         }
-        ValueExpression _vb = getValueExpression("onKeyUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     *
+     * @param newOnKeyUp onKeyUp
      * @see #getOnKeyUp()
      */
-    public void setOnKeyUp(String onKeyUp) {
-        this.onKeyUp = onKeyUp;
+    public void setOnKeyUp(final String newOnKeyUp) {
+        this.onKeyUp = newOnKeyUp;
     }
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseDown", displayName = "Mouse Down Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseDown = null;
 
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
     @Override
     public String getOnMouseDown() {
         if (this.onMouseDown != null) {
             return this.onMouseDown;
         }
-        ValueExpression _vb = getValueExpression("onMouseDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     * @see #getOnMouseDown()
-     */
     @Override
-    public void setOnMouseDown(String onMouseDown) {
-        this.onMouseDown = onMouseDown;
+    public void setOnMouseDown(final String newOnMouseDown) {
+        this.onMouseDown = newOnMouseDown;
     }
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
-    @Property(name = "onMouseMove", displayName = "Mouse Move Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseMove = null;
 
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
     @Override
     public String getOnMouseMove() {
         if (this.onMouseMove != null) {
             return this.onMouseMove;
         }
-        ValueExpression _vb = getValueExpression("onMouseMove");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseMove");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     * @see #getOnMouseMove()
-     */
     @Override
-    public void setOnMouseMove(String onMouseMove) {
-        this.onMouseMove = onMouseMove;
+    public void setOnMouseMove(final String newOnMouseMove) {
+        this.onMouseMove = newOnMouseMove;
     }
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
-    @Property(name = "onMouseOut", displayName = "Mouse Out Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOut = null;
 
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
     @Override
     public String getOnMouseOut() {
         if (this.onMouseOut != null) {
             return this.onMouseOut;
         }
-        ValueExpression _vb = getValueExpression("onMouseOut");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOut");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     * @see #getOnMouseOut()
-     */
     @Override
-    public void setOnMouseOut(String onMouseOut) {
-        this.onMouseOut = onMouseOut;
+    public void setOnMouseOut(final String newOnMouseOut) {
+        this.onMouseOut = newOnMouseOut;
     }
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
-    @Property(name = "onMouseOver", displayName = "Mouse In Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOver = null;
 
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
     @Override
     public String getOnMouseOver() {
         if (this.onMouseOver != null) {
             return this.onMouseOver;
         }
-        ValueExpression _vb = getValueExpression("onMouseOver");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOver");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     * @see #getOnMouseOver()
-     */
     @Override
-    public void setOnMouseOver(String onMouseOver) {
-        this.onMouseOver = onMouseOver;
+    public void setOnMouseOver(final String newOnMouseOver) {
+        this.onMouseOver = newOnMouseOver;
     }
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseUp", displayName = "Mouse Up Script", category = "Javascript", editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseUp = null;
 
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
     @Override
     public String getOnMouseUp() {
         if (this.onMouseUp != null) {
             return this.onMouseUp;
         }
-        ValueExpression _vb = getValueExpression("onMouseUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     * @see #getOnMouseUp()
-     */
     @Override
-    public void setOnMouseUp(String onMouseUp) {
-        this.onMouseUp = onMouseUp;
+    public void setOnMouseUp(final String newOnMouseUp) {
+        this.onMouseUp = newOnMouseUp;
     }
-    /**
-     * <p>Specifies the severity of the alarm. Valid values are:
-     * <ul>
-     * <li>critical</li>
-     * <li>major</li>
-     * <li>minor</li>
-     * <li>down</li>
-     * <li>ok</li>
-     * </ul>
-     * The default value is "ok", which renders no alarm icon.</p>
-     */
-    @Property(name = "severity", displayName = "Severity", category = "Appearance", isDefault = true, editorClassName = "com.sun.webui.jsf.component.propertyeditors.AlertTypesEditor")
-    private String severity = null;
 
     /**
-     * <p>Specifies the severity of the alarm. Valid values are:
+     * Specifies the severity of the alarm. Valid values are:
      * <ul>
      * <li>critical</li>
      * <li>major</li>
@@ -558,21 +663,22 @@ public class Alarm extends ImageComponent implements Comparator {
      * <li>down</li>
      * <li>ok</li>
      * </ul>
-     * The default value is "ok", which renders no alarm icon.</p>
+     * The default value is "ok", which renders no alarm icon.
+     * @return String
      */
     public String getSeverity() {
         if (this.severity != null) {
             return this.severity;
         }
-        ValueExpression _vb = getValueExpression("severity");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("severity");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies the severity of the alarm. Valid values are:
+     * Specifies the severity of the alarm. Valid values are:
      * <ul>
      * <li>critical</li>
      * <li>major</li>
@@ -580,277 +686,199 @@ public class Alarm extends ImageComponent implements Comparator {
      * <li>down</li>
      * <li>ok</li>
      * </ul>
-     * The default value is "ok", which renders no alarm icon.</p>
+     * The default value is "ok", which renders no alarm icon.
+     *
      * @see #getSeverity()
+     * @param newSeverity severity
      */
-    public void setSeverity(String severity) {
-        this.severity = severity;
+    public void setSeverity(final String newSeverity) {
+        this.severity = newSeverity;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance", editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
     @Override
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     * @see #getStyle()
-     */
     @Override
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
     @Override
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     * @see #getStyleClass()
-     */
     @Override
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>The text description of the alarm.</p>
-     */
-    @Property(name = "text", displayName = "Alarm Text")
-    private String text = null;
 
     /**
-     * <p>The text description of the alarm.</p>
+     * The text description of the alarm.
+     * @return String
      */
     public String getText() {
         if (this.text != null) {
             return this.text;
         }
-        ValueExpression _vb = getValueExpression("text");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("text");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The text description of the alarm.</p>
+     * The text description of the alarm.
+     * @param newText text
      * @see #getText()
      */
-    public void setText(String text) {
-        this.text = text;
+    public void setText(final String newText) {
+        this.text = newText;
     }
-    /**
-     * <p>Specifies where the text will be placed relative to the image. The valid values
-     * currently are "right" or "left". By default, text is placed to the right of the image.</p>
-     */
-    @Property(name = "textPosition", displayName = "Text Position")
-    private String textPosition = null;
 
     /**
-     * <p>Specifies where the text will be placed relative to the image. The valid values
-     * currently are "right" or "left". By default, text is placed to the right of the image.</p>
+     * Specifies where the text will be placed relative to the image. The valid
+     * values currently are "right" or "left". By default, text is placed to the
+     * right of the image.
+     * @return String
      */
     public String getTextPosition() {
         if (this.textPosition != null) {
             return this.textPosition;
         }
-        ValueExpression _vb = getValueExpression("textPosition");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("textPosition");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return "right";
     }
 
     /**
-     * <p>Specifies where the text will be placed relative to the image. The valid values
-     * currently are "right" or "left". By default, text is placed to the right of the image.</p>
+     * Specifies where the text will be placed relative to the image. The valid
+     * values currently are "right" or "left". By default, text is placed to the
+     * right of the image.
+     * @param newTextPosition text position
      * @see #getTextPosition()
      */
-    public void setTextPosition(String textPosition) {
-        this.textPosition = textPosition;
+    public void setTextPosition(final String newTextPosition) {
+        this.textPosition = newTextPosition;
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
     @Override
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     * @see #getToolTip()
-     */
     @Override
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
     @Override
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     * @see #isVisible()
-     */
     @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.alt = (String) _values[1];
-        this.onClick = (String) _values[2];
-        this.onDblClick = (String) _values[3];
-        this.onKeyDown = (String) _values[4];
-        this.onKeyPress = (String) _values[5];
-        this.onKeyUp = (String) _values[6];
-        this.onMouseDown = (String) _values[7];
-        this.onMouseMove = (String) _values[8];
-        this.onMouseOut = (String) _values[9];
-        this.onMouseOver = (String) _values[10];
-        this.onMouseUp = (String) _values[11];
-        this.severity = (String) _values[12];
-        this.style = (String) _values[13];
-        this.styleClass = (String) _values[14];
-        this.text = (String) _values[15];
-        this.textPosition = (String) _values[16];
-        this.toolTip = (String) _values[17];
-        this.visible = ((Boolean) _values[18]).booleanValue();
-        this.visible_set = ((Boolean) _values[19]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.alt = (String) values[1];
+        this.onClick = (String) values[2];
+        this.onDblClick = (String) values[3];
+        this.onKeyDown = (String) values[4];
+        this.onKeyPress = (String) values[5];
+        this.onKeyUp = (String) values[6];
+        this.onMouseDown = (String) values[7];
+        this.onMouseMove = (String) values[8];
+        this.onMouseOut = (String) values[9];
+        this.onMouseOver = (String) values[10];
+        this.onMouseUp = (String) values[11];
+        this.severity = (String) values[12];
+        this.style = (String) values[13];
+        this.styleClass = (String) values[14];
+        this.text = (String) values[15];
+        this.textPosition = (String) values[16];
+        this.toolTip = (String) values[17];
+        this.visible = ((Boolean) values[18]);
+        this.visibleSet = ((Boolean) values[19]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[20];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.alt;
-        _values[2] = this.onClick;
-        _values[3] = this.onDblClick;
-        _values[4] = this.onKeyDown;
-        _values[5] = this.onKeyPress;
-        _values[6] = this.onKeyUp;
-        _values[7] = this.onMouseDown;
-        _values[8] = this.onMouseMove;
-        _values[9] = this.onMouseOut;
-        _values[10] = this.onMouseOver;
-        _values[11] = this.onMouseUp;
-        _values[12] = this.severity;
-        _values[13] = this.style;
-        _values[14] = this.styleClass;
-        _values[15] = this.text;
-        _values[16] = this.textPosition;
-        _values[17] = this.toolTip;
-        _values[18] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[19] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[20];
+        values[0] = super.saveState(context);
+        values[1] = this.alt;
+        values[2] = this.onClick;
+        values[3] = this.onDblClick;
+        values[4] = this.onKeyDown;
+        values[5] = this.onKeyPress;
+        values[6] = this.onKeyUp;
+        values[7] = this.onMouseDown;
+        values[8] = this.onMouseMove;
+        values[9] = this.onMouseOut;
+        values[10] = this.onMouseOver;
+        values[11] = this.onMouseUp;
+        values[12] = this.severity;
+        values[13] = this.style;
+        values[14] = this.styleClass;
+        values[15] = this.text;
+        values[16] = this.textPosition;
+        values[17] = this.toolTip;
+        if (this.visible) {
+            values[18] = Boolean.TRUE;
+        } else {
+            values[18] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[19] = Boolean.TRUE;
+        } else {
+            values[19] = Boolean.FALSE;
+        }
+        return values;
     }
 }

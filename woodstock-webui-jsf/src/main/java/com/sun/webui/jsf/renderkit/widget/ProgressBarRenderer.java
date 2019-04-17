@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -35,20 +35,20 @@ import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 /**
  * This class renders ProgressBar components.
  */
-@Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.ProgressBar",
-componentFamily = "com.sun.webui.jsf.ProgressBar"))
+@Renderer(@Renderer.Renders(
+        rendererType = "com.sun.webui.jsf.widget.ProgressBar",
+        componentFamily = "com.sun.webui.jsf.ProgressBar"))
 public final class ProgressBarRenderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
      */
-    private static final String ATTRIBUTES[] = {
+    private static final String[] ATTRIBUTES = {
         "style"
     };
 
     @Override
-    protected String[] getModuleNames(UIComponent component) {
-
+    protected String[] getModuleNames(final UIComponent component) {
         ProgressBar progressBar = (ProgressBar) component;
         if (progressBar.isAjaxify()) {
             return new String[]{
@@ -62,8 +62,8 @@ public final class ProgressBarRenderer extends RendererBase {
     }
 
     @Override
-    protected JsonObjectBuilder getProperties(FacesContext context,
-            UIComponent component) throws IOException {
+    protected JsonObjectBuilder getProperties(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         ProgressBar progressBar = (ProgressBar) component;
         Theme theme = getTheme(context);
@@ -93,8 +93,8 @@ public final class ProgressBarRenderer extends RendererBase {
     }
 
     @Override
-    protected void renderNestedContent(FacesContext context,
-            UIComponent component) throws IOException{
+    protected void renderNestedContent(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         ResponseWriter writer = context.getResponseWriter();
         ProgressBar pb = (ProgressBar) component;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,21 +23,35 @@ import javax.lang.model.element.TypeElement;
 
 /**
  * Represents a JSF renderer class declared in the current compilation unit.
- *
- * @author gjmurphy
  */
-public class DeclaredRendererInfo extends DeclaredClassInfo {
+public final class DeclaredRendererInfo extends DeclaredClassInfo {
 
-    static String VALUE = "value";
+    /**
+     * Renderer value key.
+     */
+    static final String VALUE = "value";
 
-    Map<String, Object> annotationValueMap;
-    List<RendersInfo> renderings;
+    /**
+     * Annotation value map.
+     */
+    private final Map<String, Object> annotationValueMap;
 
-    DeclaredRendererInfo(Map<String, Object> annotationValueMap,
-            ProcessingEnvironment env, TypeElement decl) {
+    /**
+     * List of render info.
+     */
+    private final List<RendersInfo> renderings;
+
+    /**
+     * Create a new instance.
+     * @param annotValueMap annotation value map
+     * @param env annotation processing environment
+     * @param decl element declaration representing this renderer
+     */
+    DeclaredRendererInfo(final Map<String, Object> annotValueMap,
+            final ProcessingEnvironment env, final TypeElement decl) {
 
         super(env, decl);
-        this.annotationValueMap = annotationValueMap;
+        this.annotationValueMap = annotValueMap;
         renderings = new ArrayList<RendersInfo>();
         if (this.annotationValueMap.containsKey(VALUE)) {
             for (Object value : (List) this.annotationValueMap.get(VALUE)) {
@@ -47,6 +61,10 @@ public class DeclaredRendererInfo extends DeclaredClassInfo {
         }
     }
 
+    /**
+     * Get the renderings.
+     * @return {@code List<RendersInfo>}
+     */
     public List<RendersInfo> getRenderings() {
         return this.renderings;
     }
@@ -54,15 +72,29 @@ public class DeclaredRendererInfo extends DeclaredClassInfo {
     /**
      * Represents a single rendering declared within a renderer annotation.
      */
-    static public class RendersInfo {
+    public static final class RendersInfo {
 
-        static String RENDERER_TYPE = "rendererType";
-        static String COMPONENT_FAMILY = "componentFamily";
+        /**
+         * Renderer type key.
+         */
+        static final String RENDERER_TYPE = "rendererType";
 
-        Map annotationValueMap;
+        /**
+         * Component family key.
+         */
+        static final String COMPONENT_FAMILY = "componentFamily";
 
-        RendersInfo(Map annotationValueMap) {
-            this.annotationValueMap = annotationValueMap;
+        /**
+         * Annotation value map.
+         */
+        private final Map annotationValueMap;
+
+        /**
+         * Create a new instance.
+         * @param annotValueMap annotation value map
+         */
+        RendersInfo(final Map annotValueMap) {
+            this.annotationValueMap = annotValueMap;
         }
 
         /**

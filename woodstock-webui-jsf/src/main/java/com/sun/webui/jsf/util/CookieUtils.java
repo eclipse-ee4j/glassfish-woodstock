@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,7 +32,7 @@ public final class CookieUtils {
     /**
      * Characters not allowed to be part of a cookie name (RFC 2109).
      */
-    private static final char BAD_COOKIE_CHARS[] = {
+    private static final char[] BAD_COOKIE_CHARS = {
         '(', ')', '<', '>', '@', ',', ';', ':', '\\',
         '\'', '/', '[', ']', '?', '=', '{', '}', ' ', '\t'
     };
@@ -48,10 +48,12 @@ public final class CookieUtils {
      * @param name cookie name
      * @return Cookie
      */
-    public static Cookie getCookieValue(FacesContext context, String name) {
-        name = CookieUtils.getValidCookieName(name);
+    public static Cookie getCookieValue(final FacesContext context,
+            final String name) {
+
+        String cookieName = CookieUtils.getValidCookieName(name);
         return (Cookie) context.getExternalContext().getRequestCookieMap()
-                .get(name);
+                .get(cookieName);
     }
 
     /**
@@ -64,11 +66,13 @@ public final class CookieUtils {
      * @param name cookie name
      * @param value cookie value
      */
-    public static void setCookieValue(FacesContext context, String name,
-            String value) {
+    public static void setCookieValue(final FacesContext context,
+            final String name, final String value) {
+
         // FIXME: not quite implemented...
-        name = CookieUtils.getValidCookieName(name);
-        context.getExternalContext().getRequestCookieMap().put(name, value);
+        String cookieName = CookieUtils.getValidCookieName(name);
+        context.getExternalContext().getRequestCookieMap()
+                .put(cookieName, value);
     }
 
     /**
@@ -76,10 +80,11 @@ public final class CookieUtils {
      * @param name cookie name
      * @return compliant cookie name
      */
-    public static String getValidCookieName(String name) {
+    public static String getValidCookieName(final String name) {
+        String cookieName = name;
         for (char ch : BAD_COOKIE_CHARS) {
-            name = name.replace(ch, '_');
+            cookieName = cookieName.replace(ch, '_');
         }
-        return name;
+        return cookieName;
     }
 }

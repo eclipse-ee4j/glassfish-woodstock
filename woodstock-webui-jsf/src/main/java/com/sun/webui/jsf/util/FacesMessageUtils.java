@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,9 +25,15 @@ import java.util.List;
 
 /**
  * Utilities for retrieving messages from FacesMessages.
- * TODO: Move to a superclass for Message and MessageGroup only
+ * FIXME: Move to a superclass for Message and MessageGroup only
  */
-public class FacesMessageUtils {
+public final class FacesMessageUtils {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private FacesMessageUtils() {
+    }
 
     /**
      * Return a iterator that can be used to retrieve messages from
@@ -39,8 +45,8 @@ public class FacesMessageUtils {
      *
      * @return an Iterator over FacesMessages that are queued.
      */
-    public static Iterator getMessageIterator(FacesContext context,
-            String forComponentId, UIComponent msgComponent) {
+    public static Iterator getMessageIterator(final FacesContext context,
+            final String forComponentId, final UIComponent msgComponent) {
 
         Iterator messageIterator;
 
@@ -79,8 +85,8 @@ public class FacesMessageUtils {
      *
      * @return the matching component, or null if no match is found.
      */
-    private static UIComponent getForComponent(FacesContext context,
-            String forComponentId, UIComponent msgComponent) {
+    private static UIComponent getForComponent(final FacesContext context,
+            final String forComponentId, final UIComponent msgComponent) {
 
         if (forComponentId == null || forComponentId.length() == 0) {
             return null;
@@ -89,7 +95,7 @@ public class FacesMessageUtils {
         UIComponent forComponent = null;
         UIComponent currentParent = msgComponent;
         try {
-            // Check the naming container of the current 
+            // Check the naming container of the current
             // component for the forComponent
             while (currentParent != null) {
                 // If the current component is a NamingContainer,
@@ -130,15 +136,15 @@ public class FacesMessageUtils {
 
     /**
      * Recursively searches for NamingContainers from the top of the tree
-     * looking for the specified component
+     * looking for the specified component.
      *
-     * @param context The FacesContext of the request
+     * @param startComponent UI component
      * @param forComponentId the component to search for
      *
      * @return the matching component, or null if no match is found.
      */
-    private static UIComponent findUIComponentBelow(UIComponent startComponent,
-            String forComponentId) {
+    private static UIComponent findUIComponentBelow(
+            final UIComponent startComponent, final String forComponentId) {
 
         UIComponent forComponent = null;
         List children = startComponent.getChildren();
@@ -146,7 +152,7 @@ public class FacesMessageUtils {
         for (int i = 0, size = children.size(); i < size; i++) {
             UIComponent comp = (UIComponent) children.get(i);
 
-            if(comp == null){
+            if (comp == null) {
                 continue;
             }
 

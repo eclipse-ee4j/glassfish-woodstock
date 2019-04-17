@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -27,29 +26,35 @@ import javax.faces.context.ResponseWriter;
 
 /**
  * Renderer for a {@link com.sun.webui.jsf.component.PanelGroup} component.
- *
- * @author gjmurphy
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.PanelGroup"))
-public class PanelGroupRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.PanelGroup"))
+public final class PanelGroupRenderer extends AbstractRenderer {
 
+    /**
+     * Element name.
+     */
     private String elementName;
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component, ResponseWriter writer)
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
+
         PanelGroup panelGroup = (PanelGroup) component;
         if (panelGroup.isBlock()) {
-            elementName = "div"; //NOI18N
+            elementName = "div";
         } else {
-            elementName = "span"; //NOI18N
+            elementName = "span";
         }
         writer.startElement(elementName, component);
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component, ResponseWriter writer)
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
+
         addCoreAttributes(context, component, writer, null);
     }
 
@@ -59,17 +64,21 @@ public class PanelGroupRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         PanelGroup panelGroup = (PanelGroup) component;
         List children = panelGroup.getChildren();
         ResponseWriter writer = context.getResponseWriter();
-        UIComponent separatorFacet = panelGroup.getFacet(PanelGroup.SEPARATOR_FACET);
+        UIComponent separatorFacet = panelGroup
+                .getFacet(PanelGroup.SEPARATOR_FACET);
         if (separatorFacet != null) {
             for (int i = 0; i < children.size(); i++) {
                 if (i > 0) {
                     RenderingUtilities.renderComponent(separatorFacet, context);
                 }
-                RenderingUtilities.renderComponent((UIComponent) children.get(i), context);
+                RenderingUtilities.renderComponent(
+                        (UIComponent) children.get(i), context);
             }
         } else {
             String separator = panelGroup.getSeparator();
@@ -80,14 +89,17 @@ public class PanelGroupRenderer extends AbstractRenderer {
                 if (i > 0) {
                     writer.write(separator);
                 }
-                RenderingUtilities.renderComponent((UIComponent) children.get(i), context);
+                RenderingUtilities.renderComponent(
+                        (UIComponent) children.get(i), context);
             }
         }
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component, ResponseWriter writer)
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
+
         writer.endElement(elementName);
     }
 }

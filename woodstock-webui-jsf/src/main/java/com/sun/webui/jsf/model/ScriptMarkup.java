@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,65 +14,55 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: ScriptMarkup.java,v 1.1.20.1 2009-12-29 03:47:57 jyeary Exp $
- */
 package com.sun.webui.jsf.model;
 
 /**
- * <p>Specialized version of {@link Markup} that automatically surrounds
+ * Specialized version of {@link Markup} that automatically surrounds
  * any accumulated markup in this element with the required prolog and
- * epilogue strings for an embedded script element.</p>
+ * epilogue strings for an embedded script element.
  */
-public class ScriptMarkup extends Markup {
+public final class ScriptMarkup extends Markup {
 
-
-    // ----------------------------------------------------- Instance Variables
     /**
-     * <p>The CDATA wrapping flag for this markup.</p>
+     * The CDATA wrapping flag for this markup.
      */
     private boolean cdata = false;
 
-
-    // ------------------------------------------------------------- Properties
     /**
-     * <p>Return the current state of CDATA wrapping for this markup.</p>
+     * Return the current state of CDATA wrapping for this markup.
+     * @return {@code true} if wrapping CDATA, {@code false} otherwise
      */
     public boolean isCdata() {
-
         return this.cdata;
-
     }
 
     /**
-     * <p>Set the new state of CDATA wrapping for this markup.</p>
-     *
-     * @param cdata New wrapping flag
+     * Set the new state of CDATA wrapping for this markup.
+     * @param newCdata New wrapping flag
      */
-    public void setCdata(boolean cdata) {
-
-        this.cdata = cdata;
-
+    public void setCdata(final boolean newCdata) {
+        this.cdata = newCdata;
     }
 
     /**
-     * <p>Return the accumulated markup for this element, surrounded by the
-     * required prolog and epilog strings for an embedded script element.</p>
+     * Return the accumulated markup for this element, surrounded by the
+     * required prolog and epilog strings for an embedded script element.
+     * @return String
      */
     @Override
     public String getMarkup() {
-
-        StringBuffer sb = new StringBuffer("<script type=\"text/javascript\">"); //NOI18N
+        StringBuilder sb =
+                new StringBuilder("<script type=\"text/javascript\">");
         if (isCdata()) {
-            sb.append("<![CDATA["); //NOI18N
+            sb.append("<![CDATA[");
         }
-        sb.append("\n"); //NOI18N
+        sb.append("\n");
         sb.append(super.getMarkup());
-        sb.append("\n"); //NOI18N
+        sb.append("\n");
         if (isCdata()) {
-            sb.append("]]>"); //NOI18N
+            sb.append("]]>");
         }
-        sb.append("</script>\n"); //NOI18N
+        sb.append("</script>\n");
         return sb.toString();
     }
 }

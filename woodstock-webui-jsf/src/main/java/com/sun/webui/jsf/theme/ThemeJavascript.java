@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,7 +18,7 @@ package com.sun.webui.jsf.theme;
 
 /**
  * This class contains JS related theme constants.
- * TODO: Eventually these need to move to a theme-based resource file.
+ * FIXME: Eventually these need to move to a theme-based resource file.
  */
 public final class ThemeJavascript {
 
@@ -67,7 +67,7 @@ public final class ThemeJavascript {
     /**
      * A JS file that contains helper functions.
      */
-    public static String HELPER = "helper";
+    public static final String HELPER = "helper";
 
     /**
      * A JS file that contains functions for manipulating

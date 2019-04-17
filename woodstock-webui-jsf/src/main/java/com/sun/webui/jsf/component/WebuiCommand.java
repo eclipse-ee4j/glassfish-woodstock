@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,29 +26,32 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.FacesEvent;
 
 /**
- *
- * @author mbohm
+ * WebUI command.
  */
 public class WebuiCommand extends UICommand {
 
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * This implementation invokes {@code set.setId}.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
     /**
      * Flag indicating that event handling for this component should be handled
-     * immediately (in Apply Request Values phase) rather than waiting until 
+     * immediately (in Apply Request Values phase) rather than waiting until
      * Invoke Application phase.
+     * This implementation invokes {@code set.setImmediate}.
+     * @param immediate immediate
      */
     @Property(name = "immediate")
     @Override
-    public void setImmediate(boolean immediate) {
+    public void setImmediate(final boolean immediate) {
         super.setImmediate(immediate);
     }
 
@@ -58,16 +61,19 @@ public class WebuiCommand extends UICommand {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * This implementation invokes {@code set.setRendered}.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
     /**
-     * {@inheritDoc}
-     **/
+     * This implementation invokes {@code super.getAction}.
+     * @return MethodBinding
+     */
     //Override to annotate
     @Property(isHidden = true, isAttribute = false)
     @Override
@@ -76,8 +82,9 @@ public class WebuiCommand extends UICommand {
     }
 
     /**
-     * {@inheritDoc}
-     **/
+     * This implementation invokes {@code super.getActionListener}.
+     * @return MethodBinding
+     */
     //Override to annotate
     @Property(isHidden = true, isAttribute = false)
     @Override
@@ -87,52 +94,67 @@ public class WebuiCommand extends UICommand {
 
     /**
      * MethodExpression representing the application action to invoke when this
-     * component is activated by the user. The expression must evaluate to a 
-     * either a String or a public method that takes no parameters, and returns 
-     * a String (the logical outcome) which is passed to the NavigationHandler 
+     * component is activated by the user. The expression must evaluate to a
+     * either a String or a public method that takes no parameters, and returns
+     * a String (the logical outcome) which is passed to the NavigationHandler
      * for this application.
+     * This implementation invokes {@code super.getActionExpression}
+     * @return MethodExpression
      */
-    @Property(name = "actionExpression", isHidden = true, displayName = "Action Expression")
+    @Property(name = "actionExpression",
+            isHidden = true,
+            displayName = "Action Expression")
     @Property.Method(signature = "java.lang.String action()")
     @Override
     public MethodExpression getActionExpression() {
         return super.getActionExpression();
     }
+
     /**
      * Use the actionListenerExpression attribute to cause the component to fire
      * an event. The value must be an EL expression and it must evaluate to the
      * name of a public method that takes an ActionEvent parameter and returns
      * void.
      */
-    @Property(name = "actionListenerExpression", displayName = "Action Listener Expression",
-    category = "Advanced", editorClassName = "com.sun.rave.propertyeditors.MethodBindingPropertyEditor")
+    @Property(name = "actionListenerExpression",
+            displayName = "Action Listener Expression",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.MethodBindingPropertyEditor")
+            //CHECKSTYLE:ON
+    //CHECKSTYLE:OFF
     @Property.Method(signature = "void processAction(javax.faces.event.ActionEvent)")
+    //CHECKSTYLE:ON
     private MethodExpression actionListenerExpression;
 
     /**
-     * <p>Simply return the stored <code>actionListenerExpression</code>.
-     * The <code>broadcast</code> method is overridden in 
-     * <code>WebuiCommand</code> to invoke the 
-     * <code>actionListenerExpression</code>.</p>
+     * Simply return the stored {@code actionListenerExpression}.
+     * The {@code broadcast} method is overridden in
+     * {@code WebuiCommand} to invoke the
+     * {@code actionListenerExpression}.
+     * @return MethodExpression
      */
     public MethodExpression getActionListenerExpression() {
         return this.actionListenerExpression;
     }
 
     /**
-     * <p>Simply store the <code>actionListenerExpression</code>.
-     * The <code>broadcast</code> method is overridden in 
-     * <code>WebuiCommand</code> to invoke the 
-     * <code>actionListenerExpression</code>.</p>
+     * Simply store the {@code actionListenerExpression}.
+     * The {@code broadcast} method is overridden in
+     * {@code WebuiCommand} to invoke the
+     * {@code actionListenerExpression}.
+     * @param newActionListenerExpression actionListenerExpression
      */
-    public void setActionListenerExpression(MethodExpression me) {
-        this.actionListenerExpression = me;
+    public void setActionListenerExpression(
+            final MethodExpression newActionListenerExpression) {
+
+        this.actionListenerExpression = newActionListenerExpression;
     }
 
     /**
-     * <p>Before calling <code>super.broadcast</code>,
+     * Before calling {@code super.broadcast},
      * pass the {@link ActionEvent} being broadcast to the
-     * method referenced by <code>actionListenerExpression</code> (if any).</p>
+     * method referenced by {@code actionListenerExpression} (if any).
      *
      * @param event {@link FacesEvent} to be broadcast
      *
@@ -141,47 +163,48 @@ public class WebuiCommand extends UICommand {
      *  should be performed
      * @throws IllegalArgumentException if the implementation class
      *  of this {@link FacesEvent} is not supported by this component
-     * @throws NullPointerException if <code>event</code> is
-     * <code>null</code>
+     * @throws NullPointerException if {@code event} is
+     * {@code null}
      */
     @Override
-    public void broadcast(FacesEvent event) throws AbortProcessingException {
+    public void broadcast(final FacesEvent event)
+            throws AbortProcessingException {
 
         if (event == null) {
             throw new NullPointerException();
         }
-
         if (event instanceof ActionEvent) {
             MethodExpression ale = getActionListenerExpression();
             if (ale != null) {
-                ale.invoke(getFacesContext().getELContext(), new Object[]{event});
+                ale.invoke(getFacesContext().getELContext(),
+                        new Object[]{event});
             }
         }
-
         super.broadcast(event);
     }
 
     /**
-     * {@inheritDoc}
-     **/
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
+     */
     @Override
-    public void restoreState(FacesContext context, Object state) {
-        Object values[] = (Object[]) state;
-
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
         super.restoreState(context, values[0]);
-        actionListenerExpression = (MethodExpression) restoreAttachedState(context, values[1]);
-
+        actionListenerExpression = (MethodExpression)
+                restoreAttachedState(context, values[1]);
     }
-
     /**
-     * {@inheritDoc}
-     **/
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
+     */
     @Override
-    public Object saveState(FacesContext context) {
-        Object values[] = new Object[2];
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[2];
         values[0] = super.saveState(context);
         values[1] = saveAttachedState(context, actionListenerExpression);
-
         return values;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import javax.el.ValueExpression;
@@ -28,38 +27,169 @@ import com.sun.faces.annotation.Property;
 /**
  * The VersionPage component is used to display a version page.
  */
-@Component(type = "com.sun.webui.jsf.VersionPage", family = "com.sun.webui.jsf.VersionPage",
-displayName = "Version Page", tagName = "versionPage",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_version_page",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_version_page_props")
-public class VersionPage extends UIOutput implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.VersionPage",
+        family = "com.sun.webui.jsf.VersionPage",
+        displayName = "Version Page",
+        tagName = "versionPage",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_version_page",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_version_page_props")
+        //CHECKSTYLE:ON
+public final class VersionPage extends UIOutput implements NamingContainer {
 
     /**
-     * <p>Construct a new <code>VersionPage</code>.</p>
+     * The application copyright information. This data is not escaped. If this
+     * is user-provided information (not common), the developer is responsible
+     * for escaping this property to prevent XSS attacks.
+     */
+    @Property(name = "copyrightString",
+            displayName = "Copyright String",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String copyrightString = null;
+
+    /**
+     * The description to use for the Product Name Image displayed in the
+     * version page.
+     */
+    @Property(name = "productImageDescription",
+            displayName = "Product Image Description",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String productImageDescription = null;
+
+    /**
+     * The height to use for the Product Name Image.
+     */
+    @Property(name = "productImageHeight",
+            displayName = "Product Image Height",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int productImageHeight = Integer.MIN_VALUE;
+
+    /**
+     * productImageHeight set flag.
+     */
+    private boolean productImageHeightSet = false;
+
+    /**
+     * The URL to use for the Product Name Image.
+     */
+    @Property(name = "productImageURL",
+            displayName = "Product Image URL",
+            category = "Navigation",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String productImageURL = null;
+
+    /**
+     * The width to use for the Product Name Image.
+     */
+    @Property(name = "productImageWidth",
+            displayName = "Product Image Width",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int productImageWidth = Integer.MIN_VALUE;
+
+    /**
+     * productImageWidth set flag.
+     */
+    private boolean productImageWidthSet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * The name of version information file containing the formatted application
+     * version and copyright message.
+     */
+    @Property(name = "versionInformationFile",
+            displayName = "Version Information File",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor",
+            //CHECKSTYLE:ON
+            isHidden = true, isAttribute = false)
+    private String versionInformationFile = null;
+
+    /**
+     * The application version.
+     */
+    @Property(name = "versionString",
+            displayName = "Version String",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String versionString = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Construct a new {@code VersionPage}.
      */
     public VersionPage() {
         super();
         setRendererType("com.sun.webui.jsf.VersionPage");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.VersionPage";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -69,10 +199,11 @@ public class VersionPage extends UIOutput implements NamingContainer {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
@@ -91,377 +222,353 @@ public class VersionPage extends UIOutput implements NamingContainer {
     }
 
     /**
-     *	<p> The application copyright information.  This data is not escaped.
-     *	    If this is user-provided information (not common), the developer is
-     *	    responsible for escaping this property to prevent XSS attacks.</p>
-     */
-    @Property(name = "copyrightString", displayName = "Copyright String", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String copyrightString = null;
-
-    /**
-     *	<p> The application copyright information.  This data is not escaped.
-     *	    If this is user-provided information (not common), the developer is
-     *	    responsible for escaping this property to prevent XSS attacks.</p>
+     * The application copyright information. This data is not escaped. If this
+     * is user-provided information (not common), the developer is responsible
+     * for escaping this property to prevent XSS attacks.
+     * @return String
      */
     public String getCopyrightString() {
         if (this.copyrightString != null) {
             return this.copyrightString;
         }
-        ValueExpression _vb = getValueExpression("copyrightString");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("copyrightString");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The application copyright information.</p>
+     * The application copyright information.
+     *
      * @see #getCopyrightString()
+     * @param newCopyrightString copyrightString
      */
-    public void setCopyrightString(String copyrightString) {
-        this.copyrightString = copyrightString;
+    public void setCopyrightString(final String newCopyrightString) {
+        this.copyrightString = newCopyrightString;
     }
-    /**
-     * <p>The description to use for the Product Name Image displayed in the version page.</p>
-     */
-    @Property(name = "productImageDescription", displayName = "Product Image Description",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String productImageDescription = null;
 
     /**
-     * <p>The description to use for the Product Name Image displayed in the version page.</p>
+     * The description to use for the Product Name Image displayed in the
+     * version page.
+     * @return String
      */
     public String getProductImageDescription() {
         if (this.productImageDescription != null) {
             return this.productImageDescription;
         }
-        ValueExpression _vb = getValueExpression("productImageDescription");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("productImageDescription");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The description to use for the Product Name Image displayed in the version page.</p>
+     * The description to use for the Product Name Image displayed in the
+     * version page.
+     *
      * @see #getProductImageDescription()
+     * @param newProductImageDescription productImageDescription
      */
-    public void setProductImageDescription(String productImageDescription) {
-        this.productImageDescription = productImageDescription;
+    public void setProductImageDescription(
+            final String newProductImageDescription) {
+
+        this.productImageDescription = newProductImageDescription;
     }
-    /**
-     * <p>The height to use for the Product Name Image</p>
-     */
-    @Property(name = "productImageHeight", displayName = "Product Image Height",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int productImageHeight = Integer.MIN_VALUE;
-    private boolean productImageHeight_set = false;
 
     /**
-     * <p>The height to use for the Product Name Image</p>
+     * The height to use for the Product Name Image.
+     * @return int
      */
     public int getProductImageHeight() {
-        if (this.productImageHeight_set) {
+        if (this.productImageHeightSet) {
             return this.productImageHeight;
         }
-        ValueExpression _vb = getValueExpression("productImageHeight");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("productImageHeight");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The height to use for the Product Name Image</p>
+     * The height to use for the Product Name Image.
+     *
      * @see #getProductImageHeight()
+     * @param newProductImageHeight productImageHeight
      */
-    public void setProductImageHeight(int productImageHeight) {
-        this.productImageHeight = productImageHeight;
-        this.productImageHeight_set = true;
+    public void setProductImageHeight(final int newProductImageHeight) {
+        this.productImageHeight = newProductImageHeight;
+        this.productImageHeightSet = true;
     }
-    /**
-     * <p>The url to use for the Product Name Image</p>
-     */
-    @Property(name = "productImageURL", displayName = "Product Image URL",
-    category = "Navigation", editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
-    private String productImageURL = null;
 
     /**
-     * <p>The url to use for the Product Name Image</p>
+     * The URL to use for the Product Name Image.
+     * @return String
      */
     public String getProductImageURL() {
         if (this.productImageURL != null) {
             return this.productImageURL;
         }
-        ValueExpression _vb = getValueExpression("productImageURL");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("productImageURL");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The url to use for the Product Name Image</p>
+     * The URL to use for the Product Name Image.
+     *
      * @see #getProductImageURL()
+     * @param newProductImageURL productImageURL
      */
-    public void setProductImageURL(String productImageURL) {
-        this.productImageURL = productImageURL;
+    public void setProductImageURL(final String newProductImageURL) {
+        this.productImageURL = newProductImageURL;
     }
-    /**
-     * <p>The width to use for the Product Name Image</p>
-     */
-    @Property(name = "productImageWidth", displayName = "Product Image Width",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int productImageWidth = Integer.MIN_VALUE;
-    private boolean productImageWidth_set = false;
 
     /**
-     * <p>The width to use for the Product Name Image</p>
+     * The width to use for the Product Name Image.
+     * @return int
      */
     public int getProductImageWidth() {
-        if (this.productImageWidth_set) {
+        if (this.productImageWidthSet) {
             return this.productImageWidth;
         }
-        ValueExpression _vb = getValueExpression("productImageWidth");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("productImageWidth");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The width to use for the Product Name Image</p>
+     * The width to use for the Product Name Image.
+     *
      * @see #getProductImageWidth()
+     * @param newProductImageWidth productImageWidth
      */
-    public void setProductImageWidth(int productImageWidth) {
-        this.productImageWidth = productImageWidth;
-        this.productImageWidth_set = true;
+    public void setProductImageWidth(final int newProductImageWidth) {
+        this.productImageWidth = newProductImageWidth;
+        this.productImageWidthSet = true;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>The name of version information file containing the formatted application version and copyright message.</p>
-     */
-    @Property(name = "versionInformationFile", displayName = "Version Information File",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor",
-    isHidden = true, isAttribute = false)
-    private String versionInformationFile = null;
 
     /**
-     * <p>The name of version information file containing the formatted application version and copyright message.</p>
+     * The name of version information file containing the formatted application
+     * version and copyright message.
+     * @return String
      */
     public String getVersionInformationFile() {
         if (this.versionInformationFile != null) {
             return this.versionInformationFile;
         }
-        ValueExpression _vb = getValueExpression("versionInformationFile");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("versionInformationFile");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The name of version information file containing the formatted application version and copyright message.</p>
+     * The name of version information file containing the formatted application
+     * version and copyright message.
+     *
      * @see #getVersionInformationFile()
+     * @param newVersionInformationFile versionInformationFile
      */
-    public void setVersionInformationFile(String versionInformationFile) {
-        this.versionInformationFile = versionInformationFile;
+    public void setVersionInformationFile(
+            final String newVersionInformationFile) {
+
+        this.versionInformationFile = newVersionInformationFile;
     }
-    /**
-     * <p>The application version.</p>
-     */
-    @Property(name = "versionString", displayName = "Version String", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String versionString = null;
 
     /**
-     * <p>The application version.</p>
+     * The application version.
+     * @return String
      */
     public String getVersionString() {
         if (this.versionString != null) {
             return this.versionString;
         }
-        ValueExpression _vb = getValueExpression("versionString");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("versionString");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The application version.</p>
+     * The application version.
+     *
      * @see #getVersionString()
+     * @param newVersionString versionString
      */
-    public void setVersionString(String versionString) {
-        this.versionString = versionString;
+    public void setVersionString(final String newVersionString) {
+        this.versionString = newVersionString;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.copyrightString = (String) _values[1];
-        this.productImageDescription = (String) _values[2];
-        this.productImageHeight = ((Integer) _values[3]).intValue();
-        this.productImageHeight_set = ((Boolean) _values[4]).booleanValue();
-        this.productImageURL = (String) _values[5];
-        this.productImageWidth = ((Integer) _values[6]).intValue();
-        this.productImageWidth_set = ((Boolean) _values[7]).booleanValue();
-        this.style = (String) _values[8];
-        this.styleClass = (String) _values[9];
-        this.versionInformationFile = (String) _values[10];
-        this.versionString = (String) _values[11];
-        this.visible = ((Boolean) _values[12]).booleanValue();
-        this.visible_set = ((Boolean) _values[13]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.copyrightString = (String) values[1];
+        this.productImageDescription = (String) values[2];
+        this.productImageHeight = ((Integer) values[3]);
+        this.productImageHeightSet = ((Boolean) values[4]);
+        this.productImageURL = (String) values[5];
+        this.productImageWidth = ((Integer) values[6]);
+        this.productImageWidthSet = ((Boolean) values[7]);
+        this.style = (String) values[8];
+        this.styleClass = (String) values[9];
+        this.versionInformationFile = (String) values[10];
+        this.versionString = (String) values[11];
+        this.visible = ((Boolean) values[12]);
+        this.visibleSet = ((Boolean) values[13]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[14];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.copyrightString;
-        _values[2] = this.productImageDescription;
-        _values[3] = new Integer(this.productImageHeight);
-        _values[4] = this.productImageHeight_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.productImageURL;
-        _values[6] = new Integer(this.productImageWidth);
-        _values[7] = this.productImageWidth_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[8] = this.style;
-        _values[9] = this.styleClass;
-        _values[10] = this.versionInformationFile;
-        _values[11] = this.versionString;
-        _values[12] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[13] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[14];
+        values[0] = super.saveState(context);
+        values[1] = this.copyrightString;
+        values[2] = this.productImageDescription;
+        values[3] = this.productImageHeight;
+        if (this.productImageHeightSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        values[5] = this.productImageURL;
+        values[6] = this.productImageWidth;
+        if (this.productImageWidthSet) {
+            values[7] = Boolean.TRUE;
+        } else {
+            values[7] = Boolean.FALSE;
+        }
+        values[8] = this.style;
+        values[9] = this.styleClass;
+        values[10] = this.versionInformationFile;
+        values[11] = this.versionString;
+        if (this.visible) {
+            values[12] = Boolean.TRUE;
+        } else {
+            values[12] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[13] = Boolean.TRUE;
+        } else {
+            values[13] = Boolean.FALSE;
+        }
+        return values;
     }
 }

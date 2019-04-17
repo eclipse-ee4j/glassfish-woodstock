@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.event;
 
 import com.sun.data.provider.RowKey;
@@ -30,8 +29,8 @@ import javax.faces.event.PhaseListener;
  * A utility class for radiobutton and checkbox components used to select rows
  * of a table.
  * <p>
- * Note: UI guidelines recomend that rows should be unselected when no longer in
- * view. For example, when a user selects rows of the table and navigates to
+ * Note: UI guidelines recommend that rows should be unselected when no longer
+ * in view. For example, when a user selects rows of the table and navigates to
  * another page. Or, when a user applies a filter or sort that may hide
  * previously selected rows from view. If a user invokes an action to delete the
  * currently selected rows, they may inadvertently remove rows not displayed on
@@ -40,82 +39,108 @@ import javax.faces.event.PhaseListener;
  * response phase. That said, there are cases when maintaining state across
  * table pages is necessary. In this scenario, use the keepSelected method to
  * prevent state from being cleared by this instance.
- * </p><p>
- * Note: To see the messages logged by this class, set the following global
- * defaults in your JDK's "jre/lib/logging.properties" file.
- * </p><p><pre>
+ * </p>
+ * <p>
+ * <pre>
  * java.util.logging.ConsoleHandler.level = FINE
  * com.sun.webui.jsf.event.TableSelectPhaseListener.level = FINE
- * </pre></p>
+ * </pre>
+ * </p>
  */
-public class TableSelectPhaseListener implements PhaseListener {
+public final class TableSelectPhaseListener implements PhaseListener {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 6955269103244653901L;
-    private Object unselected = null; // Unselected object for primitve values.
-    private HashMap<String, Object> selected = new HashMap<String, Object>(); // Selected values map.
-    private boolean keepSelected = false; // Do not clear selected flag.
 
-    /** Default constructor */
+    /**
+     * Unselected object for primitive values.
+     */
+    private Object unselected = null;
+
+    /**
+     * Selected values map.
+     */
+    private final HashMap<String, Object> selected =
+            new HashMap<String, Object>();
+
+    /**
+     *  Do not clear selected flag.
+     */
+    private boolean keepSelected = false;
+
+    /**
+     * Default constructor.
+     */
     public TableSelectPhaseListener() {
         // Add phase listener.
-        LifecycleFactory factory = (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+        LifecycleFactory factory = (LifecycleFactory) FactoryFinder
+                .getFactory(FactoryFinder.LIFECYCLE_FACTORY);
         Lifecycle lifecycle = factory.getLifecycle(
                 LifecycleFactory.DEFAULT_LIFECYCLE);
         lifecycle.addPhaseListener(this);
     }
 
-    /** 
+    /**
      * Construct an instance with the given flag indicating that selected
      * objects should not be cleared after the render response phase.
      *
-     * @param keepSelected If true, ojects are not cleared.
+     * @param newKeepSelected If true, objects are not cleared.
      */
-    public TableSelectPhaseListener(boolean keepSelected) {
+    public TableSelectPhaseListener(final boolean newKeepSelected) {
         this();
-        keepSelected(keepSelected);
-    }
-
-    /** Construct an instance with an unselected parameter.
-     * <p>
-     * The unselected parameter is only required if a primitve value is being 
-     * used for the selecteValue attribute of the checkbox or radiobutton. If 
-     * the selectedValue property is an Object value then unselected can be 
-     * null. If however it is a primitive type then it should be the MIN_VALUE 
-     * constant instance of the wrapper Object type. For example if the 
-     * application is assigning int values to selectedValue then unselected 
-     * should be new Integer(Integer.MIN_VALUE).
-     * </p>
-     * @param unselected the object to return for an unselected checkbox.
-     */
-    public TableSelectPhaseListener(Object unselected) {
-        this();
-        this.unselected = unselected;
+        keepSelected(newKeepSelected);
     }
 
     /**
-     * Called during the JSF Lifecycle after the RENDER_RESPONSE phase.
+     * Construct an instance with an unselected parameter.
+     * <p>
+     * The unselected parameter is only required if a primitive value is being
+     * used for the selecteValue attribute of the checkbox or radio button. If
+     * the selectedValue property is an Object value then unselected can be
+     * null. If however it is a primitive type then it should be the MIN_VALUE
+     * constant instance of the wrapper Object type. For example if the
+     * application is assigning int values to selectedValue then unselected
+     * should be new Integer(Integer.MIN_VALUE).
+     * </p>
+     *
+     * @param newUnselected the object to return for an unselected checkbox.
+     */
+    public TableSelectPhaseListener(final Object newUnselected) {
+        this();
+        this.unselected = newUnselected;
+    }
+
+    /**
+     * Called during the JSF life-cycle after the RENDER_RESPONSE phase.
      *
      * @param event The PhaseEvent object.
      */
-    public void afterPhase(PhaseEvent event) {
+    @Override
+    public void afterPhase(final PhaseEvent event) {
         if (!keepSelected) {
             selected.clear();
         } else {
-            log("afterPhase", //NOI18N
+            log("afterPhase",
                     "Selected values not cleared, keepSelected is false");
         }
     }
 
     /**
-     * Called during the JSF Lifecycle before the RENDER_RESPONSE phase.
+     * Called during the JSF life-cycle before the RENDER_RESPONSE phase.
      *
      * @param event The PhaseEvent object.
      */
-    public void beforePhase(PhaseEvent event) {
+    @Override
+    public void beforePhase(final PhaseEvent event) {
         // Not needed
     }
 
-    /** Get the phase id. */
+    /**
+     * Get the phase id.
+     */
+    @Override
     public PhaseId getPhaseId() {
         return PhaseId.RENDER_RESPONSE;
     }
@@ -130,25 +155,25 @@ public class TableSelectPhaseListener implements PhaseListener {
     /**
      * Get the selected object from this instance.
      * <p>
-     * Note: Call this method from the get method that that is bound to the 
+     * Note: Call this method from the get method that that is bound to the
      * selected attribute.
      * </p>
+     *
      * @param rowKey The current RowKey.
      * @return The selected object.
      */
-    public Object getSelected(RowKey rowKey) {
-        Object object = (rowKey != null)
-                ? selected.get(rowKey.getRowId()) : null;
-
-        // If null, return the unselected value.
-        return (object != null) ? object : unselected;
+    public Object getSelected(final RowKey rowKey) {
+        if (rowKey != null) {
+            return selected.get(rowKey.getRowId());
+        }
+        return unselected;
     }
 
     /**
-     * Test if the flag indicating that selected objects should be cleared
-     * after the render response phase.
+     * Test if the flag indicating that selected objects should be cleared after
+     * the render response phase.
      *
-     * @return true if ojects are not to be cleared.
+     * @return true if objects are not to be cleared.
      */
     public boolean isKeepSelected() {
         return keepSelected;
@@ -160,48 +185,49 @@ public class TableSelectPhaseListener implements PhaseListener {
      * @param rowKey The current RowKey.
      * @return A true or false value.
      */
-    public boolean isSelected(RowKey rowKey) {
+    public boolean isSelected(final RowKey rowKey) {
         Object object = getSelected(rowKey);
         return (object != null && object != unselected);
     }
 
     /**
-     * Set the flag indicating that selected objects should be cleared after
-     * the render response phase.
+     * Set the flag indicating that selected objects should be cleared after the
+     * render response phase.
      *
-     * @param keepSelected Selected objects are kept true, cleared if false.
+     * @param newKeepSelected Selected objects are kept true, cleared if false.
      */
-    public void keepSelected(boolean keepSelected) {
-        this.keepSelected = keepSelected;
+    public void keepSelected(final boolean newKeepSelected) {
+        this.keepSelected = newKeepSelected;
     }
 
     /**
      * Set the selected object for this instance.
      * <p>
-     * Note: Call this method from the set method that that is bound to the 
+     * Note: Call this method from the set method that that is bound to the
      * selected attribute.
      * </p>
+     *
      * @param rowKey The current RowKey.
      * @param object The selected object.
      */
-    public void setSelected(RowKey rowKey, Object object) {
+    public void setSelected(final RowKey rowKey, final Object object) {
         if (rowKey != null) {
             selected.put(rowKey.getRowId(), object);
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Log fine messages.
+     * @param method method name
+     * @param message message to log
      */
-    private void log(String method, String message) {
+    private static void log(final String method, final String message) {
         // Get class.
-        Class clazz = this.getClass();
+        Class clazz = TableSelectPhaseListener.class;
         if (LogUtil.fineEnabled(clazz)) {
             // Log method name and message.
-            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + message); //NOI18N
+            LogUtil.fine(clazz, clazz.getName() + "." + method + ": "
+                    + message);
         }
     }
 }

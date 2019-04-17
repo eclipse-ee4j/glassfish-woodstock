@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,11 +28,12 @@ import com.sun.webui.jsf.component.EditableList;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import javax.json.JsonObject;
 
-import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitCall;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
@@ -46,11 +47,17 @@ public class EditableListRenderer extends ListRendererBase {
     /**
      * Debug flag.
      */
-    private final static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
+    /**
+     * This implementation renders the component.
+     * @param context faces context
+     * @param component UI component
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (DEBUG) {
             log("encodeEnd()");
@@ -71,8 +78,15 @@ public class EditableListRenderer extends ListRendererBase {
         }
     }
 
+    /**
+     * This implementation decodes user input and delegates to
+     * {@link ListRendererBase#decode}.
+     * @param context faces context
+     * @param component UI component
+     */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         if (DEBUG) {
             log("decode()");
@@ -82,7 +96,6 @@ public class EditableListRenderer extends ListRendererBase {
         }
 
         EditableList list = (EditableList) component;
-
         if (list.isReadOnly()) {
             if (DEBUG) {
                 log("component is readonly...");
@@ -100,7 +113,6 @@ public class EditableListRenderer extends ListRendererBase {
         // respected when the action is remove.
         // Do it every time, since we cannot know which action
         // has taken place, an add or a remove.
-        //
         String listID;
         if (list instanceof ComplexComponent) {
             listID = list.getLabeledElementId(context);
@@ -122,7 +134,6 @@ public class EditableListRenderer extends ListRendererBase {
         // current contents of the select element.
         // It is important to not reference the values to
         // remove during an add action.
-        //
         list.setValuesToRemove(selections);
 
         // Always decode the list contents.
@@ -142,7 +153,7 @@ public class EditableListRenderer extends ListRendererBase {
         // by the ListRenderer containing the current list contents.
 
         String valueID = id.concat(ListSelector.VALUE_ID);
-        super.decode(context, component, valueID);
+        decode(context, component, valueID);
     }
 
     /**
@@ -151,11 +162,11 @@ public class EditableListRenderer extends ListRendererBase {
      * label that was defined as part of the component.
      *
      * <p>A label will be rendered if either of the following is true:
-     * </p> 
+     * </p>
      * <ul>
      * <li>The page author defined a label facet; or</li>
      * <li>The page author specified text in the label attribute.</li>
-     * </ul> 
+     * </ul>
      * <p>If there is a label, the component will be laid out using a
      * HTML table. If not, the component will be rendered as a
      * standalone HTML <tt>select</tt> element.</p>
@@ -173,8 +184,10 @@ public class EditableListRenderer extends ListRendererBase {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderListComponent(EditableList component, FacesContext context,
-            String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    void renderListComponent(final EditableList component,
+            final FacesContext context, final String[] styles)
+            throws IOException {
 
         if (DEBUG) {
             log("renderListComponent()");
@@ -249,22 +262,28 @@ public class EditableListRenderer extends ListRendererBase {
         renderJavaScript(component, context, writer);
     }
 
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @throws java.io.IOException if an error occurs
+     */
     @Override
-    public void encodeChildren(javax.faces.context.FacesContext context,
-            javax.faces.component.UIComponent component)
+    public void encodeChildren(final javax.faces.context.FacesContext context,
+            final javax.faces.component.UIComponent component)
             throws java.io.IOException {
     }
 
     /**
      * Renders a component in a table row.
+     * @param list list component
      * @param component The component
      * @param context The FacesContext of the request
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    private void addComponentSingleRow(EditableList list,
-            UIComponent component,
-            FacesContext context)
+    private void addComponentSingleRow(final EditableList list,
+            final UIComponent component, final FacesContext context)
             throws IOException {
 
         ResponseWriter writer = context.getResponseWriter();
@@ -282,15 +301,16 @@ public class EditableListRenderer extends ListRendererBase {
     }
 
     /**
-     * <p>Renders the list row</p>
+     * Renders the list row.
      * @param component The component
      * @param context The FacesContext of the request
+     * @param styles CSS styles
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    private void addListRow(EditableList component,
-            FacesContext context,
-            String[] styles)
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void addListRow(final EditableList component,
+            final FacesContext context, final String[] styles)
             throws IOException {
 
         // Perhaps this should depend on the dir?
@@ -347,12 +367,14 @@ public class EditableListRenderer extends ListRendererBase {
      * Renders the list row.
      * @param component The component
      * @param context The FacesContext of the request
+     * @param styles CSS styles
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    private void addFieldRow(EditableList component, FacesContext context,
-            String[] styles) throws IOException {
-
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void addFieldRow(final EditableList component,
+            final FacesContext context, final String[] styles)
+            throws IOException {
 
         // Perhaps this should depend on the dir?
         // writer.writeAttribute("align", "left", null);
@@ -426,30 +448,31 @@ public class EditableListRenderer extends ListRendererBase {
      * @param writer writer to use
      * @throws IOException if an IO error occurs
      */
-    private void renderJavaScript(UIComponent component, FacesContext context,
-            ResponseWriter writer) throws IOException {
+    private void renderJavaScript(final UIComponent component,
+            final FacesContext context, final ResponseWriter writer)
+            throws IOException {
 
         JsonObject initProps = JSON_BUILDER_FACTORY.createObjectBuilder()
                 .add("id", component.getClientId(context))
                 .build();
 
-        // ws_init
-        writer.append(renderInitCall("editableList", initProps));
-        // ws_update_buttons
-        writer.append(renderCall("update_buttons", "editableList",
-                component.getClientId(context)));
+        renderInitScriptTag(writer, "editableList", initProps,
+                // ws_update_buttons
+                renderCall("update_buttons", "editableList",
+                        component.getClientId(context)));
     }
 
     /**
      * Render the appropriate element end, depending on the value of the
      * {@code type} property.
      *
+     * @param component UI component
      * @param context {@code FacesContext}for the current request
-     * @param monospace {@code UIComponent} if true, use the mono space styles
-     * to render the list.
+     * @return String[]
      */
-    private String[] getStyles(UIComponent component,
-            FacesContext context) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static String[] getStyles(final UIComponent component,
+            final FacesContext context) {
 
         if (DEBUG) {
             log("getStyles()");
@@ -474,8 +497,17 @@ public class EditableListRenderer extends ListRendererBase {
         styles[12] = theme.getStyleClass(ThemeStyles.EDITABLELIST_ADD_BUTTON);
         styles[13] = theme.getStyleClass(ThemeStyles.EDITABLELIST_LIST_LABEL);
         styles[14] = theme.getStyleClass(ThemeStyles.EDITABLELIST_LIST);
-        styles[15] = theme.getStyleClass(ThemeStyles.EDITABLELIST_REMOVE_BUTTON);
+        styles[15] = theme.getStyleClass(
+                ThemeStyles.EDITABLELIST_REMOVE_BUTTON);
         styles[16] = null;
         return styles;
+    }
+
+    /**
+     * Log an error - only used during development time.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(EditableListRenderer.class.getName() + "::" + msg);
     }
 }

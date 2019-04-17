@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -49,7 +49,7 @@ public abstract class AbstractRenderer extends Renderer {
      * The list of attribute names in the HTML 4.01 Specification that
      * correspond to the entity type <em>%events;</em>.
      */
-    public static final String EVENTS_ATTRIBUTES[] = {
+    public static final String[] EVENTS_ATTRIBUTES = {
         "onClick",
         "onDblClick",
         "onChange",
@@ -67,7 +67,7 @@ public abstract class AbstractRenderer extends Renderer {
      * The list of attribute names in the HTML 4.01 Specification that
      * correspond to the entity type <em>%i18n;</em>.
      */
-    public static final String I18N_ATTRIBUTES[] = {
+    public static final String[] I18N_ATTRIBUTES = {
         "dir",
         "lang"
     };
@@ -75,7 +75,7 @@ public abstract class AbstractRenderer extends Renderer {
     /**
      * Core attributes that are simple pass through.
      */
-    private static final String CORE_ATTRIBUTES[] = {
+    private static final String[] CORE_ATTRIBUTES = {
         "style",
         "title"
     };
@@ -95,7 +95,8 @@ public abstract class AbstractRenderer extends Renderer {
      * is {@code null}
      */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         // Enforce NPE requirements in the Javadocs
         if ((context == null) || (component == null)) {
@@ -126,8 +127,8 @@ public abstract class AbstractRenderer extends Renderer {
      * @exception IOException if an input/output error occurs
      */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // Enforce NPE requirements in the Javadocs
         if ((context == null) || (component == null)) {
@@ -164,8 +165,8 @@ public abstract class AbstractRenderer extends Renderer {
      * @throws IOException if an input/output error occurs
      */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // We shouldn't bother with a default implementation - this is exactly
         // what happens when you rendersChildren = false. Why duplicate the
@@ -203,8 +204,8 @@ public abstract class AbstractRenderer extends Renderer {
      * @throws IOException if an input/output error occurs
      */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // Enforce NPE requirements in the Javadocs
         if ((context == null) || (component == null)) {
@@ -240,9 +241,9 @@ public abstract class AbstractRenderer extends Renderer {
      * @param names List of attribute names to be passed through
      * @throws IOException if an input/output error occurs
      */
-    protected void addBooleanAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer, String names[])
-            throws IOException {
+    protected void addBooleanAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final String[] names) throws IOException {
 
         if (names == null) {
             return;
@@ -294,9 +295,9 @@ public abstract class AbstractRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void addCoreAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer, String styles)
-            throws IOException {
+    protected void addCoreAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final String styles) throws IOException {
 
         String id = component.getId();
         writer.writeAttribute("id", component.getClientId(context), "id");
@@ -320,9 +321,9 @@ public abstract class AbstractRenderer extends Renderer {
      * @param names List of attribute names to be passed through
      * @throws IOException if an input/output error occurs
      */
-    protected void addIntegerAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer, String names[])
-            throws IOException {
+    protected void addIntegerAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final String[] names) throws IOException {
 
         if (names == null) {
             return;
@@ -358,9 +359,9 @@ public abstract class AbstractRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected static void addStringAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer, String names[])
-            throws IOException {
+    protected static void addStringAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final String[] names) throws IOException {
 
         if (names == null) {
             return;
@@ -400,8 +401,8 @@ public abstract class AbstractRenderer extends Renderer {
      * @param value String representation of the value
      * @return Object
      */
-    protected final Object getAsObject(FacesContext context,
-            UIComponent component, String value) {
+    protected final Object getAsObject(final FacesContext context,
+            final UIComponent component, final String value) {
 
         if (value == null) {
             return null;
@@ -432,10 +433,10 @@ public abstract class AbstractRenderer extends Renderer {
      * @return converted value, pr {@code null} if the value is null
      */
     @SuppressWarnings("unchecked")
-    protected final String getAsString(FacesContext context,
-            UIComponent component) {
+    protected final String getAsString(final FacesContext context,
+            final UIComponent component) {
 
-        if(component == null){
+        if (component == null) {
             return null;
         }
         if (component instanceof EditableValueHolder) {
@@ -489,8 +490,8 @@ public abstract class AbstractRenderer extends Renderer {
      * retrieved
      * @return Object
      */
-    protected Object getSubmittedValue(FacesContext context,
-            UIComponent component) {
+    protected Object getSubmittedValue(final FacesContext context,
+            final UIComponent component) {
 
         String clientId = component.getClientId(context);
         Map parameters = context.getExternalContext().getRequestParameterMap();
@@ -503,7 +504,7 @@ public abstract class AbstractRenderer extends Renderer {
      * @param component {@code UIComponent} to be checked
      * @return {@code true} if disabled, {@code false} otherwise
      */
-    protected final boolean isDisabled(UIComponent component) {
+    protected final boolean isDisabled(final UIComponent component) {
 
         Object disabled = component.getAttributes().get("disabled");
         if (disabled == null) {
@@ -522,7 +523,7 @@ public abstract class AbstractRenderer extends Renderer {
      * @param component {@code UIComponent} to be checked
      * @return {@code true} if ready, {@code false} otherwise
      */
-    protected final boolean isReadOnly(UIComponent component) {
+    protected final boolean isReadOnly(final UIComponent component) {
 
         Object readonly = component.getAttributes().get("readonly");
         if (readonly == null) {
@@ -553,8 +554,9 @@ public abstract class AbstractRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
     }
 
     /**
@@ -573,8 +575,9 @@ public abstract class AbstractRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
     }
 
     /**
@@ -587,9 +590,9 @@ public abstract class AbstractRenderer extends Renderer {
      * @param markup {@link Markup} to be rendered
      * @throws java.io.IOException if an input/output error occurs
      */
-    protected void renderMarkup(FacesContext context, UIComponent component,
-            ResponseWriter writer, Markup markup)
-            throws IOException {
+    protected void renderMarkup(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final Markup markup) throws IOException {
 
         writer.write(markup.getMarkup());
 
@@ -611,8 +614,9 @@ public abstract class AbstractRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
     }
 
     /**
@@ -630,8 +634,8 @@ public abstract class AbstractRenderer extends Renderer {
      * @param component {@code EditableValueHolder} component whose submitted
      * value is to be stored
      */
-    protected void setSubmittedValue(FacesContext context,
-            UIComponent component) {
+    protected void setSubmittedValue(final FacesContext context,
+            final UIComponent component) {
 
         if (!(component instanceof EditableValueHolder)) {
             return;

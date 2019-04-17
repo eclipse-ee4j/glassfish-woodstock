@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,419 +25,500 @@ import com.sun.faces.annotation.Property;
 /**
  * The FrameSet component defines a set of frames.
  */
-@Component(type = "com.sun.webui.jsf.FrameSet", family = "com.sun.webui.jsf.FrameSet",
-displayName = "Frame Set", tagName = "frameSet",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_frame_set",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_frame_set_props")
-public class FrameSet extends UIComponentBase {
+@Component(type = "com.sun.webui.jsf.FrameSet",
+        family = "com.sun.webui.jsf.FrameSet",
+        displayName = "Frame Set", tagName = "frameSet",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_frame_set",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_frame_set_props")
+        //CHECKSTYLE:ON
+public final class FrameSet extends UIComponentBase {
 
     /**
-     * <p>Construct a new <code>FrameSet</code>.</p>
+     * The width, in pixels, of the space around frames. The frameSpacing
+     * attribute and the border attribute set the same property in different
+     * browsers. Set frameSpacing and border to the same value.
+     */
+    @Property(name = "border",
+            displayName = "border",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int border = Integer.MIN_VALUE;
+
+    /**
+     * border set flag.
+     */
+    private boolean borderSet = false;
+
+    /**
+     * The {@code bordercolor} attribute allows you to set the color of the
+     * frame borders using a hex value or a color name.
+     */
+    @Property(name = "borderColor",
+            displayName = "Border Color",
+            category = "Appearance")
+    private String borderColor = null;
+
+    /**
+     * Defines the number and size of columns in a frame set. The size can be
+     * specified in pixels, percentage of the page width, or with an asterisk
+     * (*). Specifying * causes the columns to use available space. See the HTML
+     * specification for the frame set element for more details.
+     */
+    @Property(name = "cols",
+            displayName = "Number of Columns",
+            category = "Appearance",
+            isDefault = true)
+    private String cols = null;
+
+    /**
+     * Flag indicating whether frames should have borders or not. If frameBorder
+     * is true, decorative borders are drawn. If frameBorder is false, a space
+     * between frames shows up as the background color of the page. To show no
+     * border or space between frames, you should set frameBorder to false, and
+     * set frameSpacing and border to 0.
+     */
+    @Property(name = "frameBorder",
+            displayName = "Frame Border",
+            category = "Appearance")
+    private boolean frameBorder = false;
+
+    /**
+     * frameBorder set flag.
+     */
+    private boolean frameBorderSet = false;
+
+    /**
+     * The width, in pixels, of the space around frames. The frameSpacing
+     * attribute and the border attribute set the same property in different
+     * browsers. Set frameSpacing and border to the same value.
+     */
+    @Property(name = "frameSpacing",
+            displayName = "Frame Spacing",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int frameSpacing = Integer.MIN_VALUE;
+
+    /**
+     * frameSpacing set flag.
+     */
+    private boolean frameSpacingSet = false;
+
+    /**
+     * Defines the number and size of rows in a frame set. The size can be
+     * specified in pixels, percentage of the page length, or with an asterisk
+     * (*). Specifying * causes the rows to use available space. See the HTML
+     * specification for the frame set element for more details.
+     */
+    @Property(name = "rows",
+            displayName = "Number of Rows",
+            category = "Appearance")
+    private String rows = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Construct a new {@code FrameSet}.
      */
     public FrameSet() {
         super();
         setRendererType("com.sun.webui.jsf.FrameSet");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.FrameSet";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
-    /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
-     */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * <p>The width, in pixels, of the space around frames. The frameSpacing 
-     * attribute and the border attribute set the same property in different 
-     * browsers.  Set frameSpacing and border to the same value.</p>
-     */
-    @Property(name = "border", displayName = "border", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int border = Integer.MIN_VALUE;
-    private boolean border_set = false;
 
     /**
-     * <p>The width, in pixels, of the space around frames. The frameSpacing 
-     * attribute and the border attribute set the same property in different 
-     * browsers.  Set frameSpacing and border to the same value.</p>
+     * The width, in pixels, of the space around frames. The frameSpacing
+     * attribute and the border attribute set the same property in different
+     * browsers. Set frameSpacing and border to the same value.
+     * @return int
      */
     public int getBorder() {
-        if (this.border_set) {
+        if (this.borderSet) {
             return this.border;
         }
-        ValueExpression _vb = getValueExpression("border");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("border");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The width, in pixels, of the space around frames. The frameSpacing 
-     * attribute and the border attribute set the same property in different 
-     * browsers.  Set frameSpacing and border to the same value.</p>
+     * The width, in pixels, of the space around frames. The frameSpacing
+     * attribute and the border attribute set the same property in different
+     * browsers.  Set frameSpacing and border to the same value.
      * @see #getBorder()
+     * @param newBorder border
      */
-    public void setBorder(int border) {
-        this.border = border;
-        this.border_set = true;
+    public void setBorder(final int newBorder) {
+        this.border = newBorder;
+        this.borderSet = true;
     }
-    /**
-     * <p>The bordercolor attribute allows you to set the color of the frame 
-     * borders using a hex value or a color name.</p>
-     */
-    @Property(name = "borderColor", displayName = "Border Color", category = "Appearance")
-    private String borderColor = null;
 
     /**
-     * <p>The bordercolor attribute allows you to set the color of the frame 
-     * borders using a hex value or a color name.</p>
+     * The {@code bordercolor} attribute allows you to set the color of the
+     * frame borders using a hex value or a color name.
+     *
+     * @return String
      */
     public String getBorderColor() {
         if (this.borderColor != null) {
             return this.borderColor;
         }
-        ValueExpression _vb = getValueExpression("borderColor");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("borderColor");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The bordercolor attribute allows you to set the color of the frame 
-     * borders using a hex value or a color name.</p>
+     * The {@code bordercolor} attribute allows you to set the color of the
+     * frame borders using a hex value or a color name.
+     *
      * @see #getBorderColor()
+     * @param newBorderColor borderColor
      */
-    public void setBorderColor(String borderColor) {
-        this.borderColor = borderColor;
+    public void setBorderColor(final String newBorderColor) {
+        this.borderColor = newBorderColor;
     }
-    /**
-     * <p>Defines the number and size of columns in a frameset. The size can be 
-     * specified in pixels, percentage of the page width, or with an 
-     * asterisk (*).  Specifying * causes the columns to use available space.
-     * See the HTML specification for the frameset element for more details.</p>
-     */
-    @Property(name = "cols", displayName = "Number of Columns", category = "Appearance", isDefault = true)
-    private String cols = null;
 
     /**
-     * <p>Defines the number and size of columns in a frameset. The size can be 
-     * specified in pixels, percentage of the page width, or with an 
-     * asterisk (*).  Specifying * causes the columns to use available space.
-     * See the HTML specification for the frameset element for more details.</p>
+     * Defines the number and size of columns in a frame set. The size can be
+     * specified in pixels, percentage of the page width, or with an asterisk
+     * (*). Specifying * causes the columns to use available space. See the HTML
+     * specification for the frame set element for more details.
+     *
+     * @return String
      */
     public String getCols() {
         if (this.cols != null) {
             return this.cols;
         }
-        ValueExpression _vb = getValueExpression("cols");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("cols");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Defines the number and size of columns in a frameset. The size can be 
-     * specified in pixels, percentage of the page width, or with an 
-     * asterisk (*).  Specifying * causes the columns to use available space.
-     * See the HTML specification for the frameset element for more details.</p>
+     * Defines the number and size of columns in a frame set. The size can be
+     * specified in pixels, percentage of the page width, or with an asterisk
+     * (*). Specifying * causes the columns to use available space. See the HTML
+     * specification for the frame set element for more details.
+     *
      * @see #getCols()
+     * @param newCols cols
      */
-    public void setCols(String cols) {
-        this.cols = cols;
+    public void setCols(final String newCols) {
+        this.cols = newCols;
     }
-    /**
-     * <p>Flag indicating whether frames should have borders or not. If 
-     * frameBorder is true, decorative borders are drawn. If frameBorder is  
-     * false, a space between frames shows up as the background color of the
-     * page.  To show no border or space between frames, you should set 
-     * frameBorder to false, and set frameSpacing and border to 0.</p>
-     */
-    @Property(name = "frameBorder", displayName = "Frame Border", category = "Appearance")
-    private boolean frameBorder = false;
-    private boolean frameBorder_set = false;
 
     /**
-     * <p>Flag indicating whether frames should have borders or not. If 
-     * frameBorder is true, decorative borders are drawn. If frameBorder is  
-     * false, a space between frames shows up as the background color of the
-     * page.  To show no border or space between frames, you should set 
-     * frameBorder to false, and set frameSpacing and border to 0.</p>
+     * Flag indicating whether frames should have borders or not. If frameBorder
+     * is true, decorative borders are drawn. If frameBorder is false, a space
+     * between frames shows up as the background color of the page. To show no
+     * border or space between frames, you should set frameBorder to false, and
+     * set frameSpacing and border to 0.
+     *
+     * @return {@code boolean}
      */
     public boolean isFrameBorder() {
-        if (this.frameBorder_set) {
+        if (this.frameBorderSet) {
             return this.frameBorder;
         }
-        ValueExpression _vb = getValueExpression("frameBorder");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("frameBorder");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag indicating whether frames should have borders or not. If 
-     * frameBorder is true, decorative borders are drawn. If frameBorder is  
-     * false, a space between frames shows up as the background color of the
-     * page.  To show no border or space between frames, you should set 
-     * frameBorder to false, and set frameSpacing and border to 0.</p>
+     * Flag indicating whether frames should have borders or not. If frameBorder
+     * is true, decorative borders are drawn. If frameBorder is false, a space
+     * between frames shows up as the background color of the page. To show no
+     * border or space between frames, you should set frameBorder to false, and
+     * set frameSpacing and border to 0.
+     *
      * @see #isFrameBorder()
+     * @param newFrameBorder frameBorder
      */
-    public void setFrameBorder(boolean frameBorder) {
-        this.frameBorder = frameBorder;
-        this.frameBorder_set = true;
+    public void setFrameBorder(final boolean newFrameBorder) {
+        this.frameBorder = newFrameBorder;
+        this.frameBorderSet = true;
     }
-    /**
-     * <p>The width, in pixels, of the space around frames. The frameSpacing attribute 
-     * and the border attribute set the same property in different browsers.  
-     * Set frameSpacing and border to the same value.</p>
-     */
-    @Property(name = "frameSpacing", displayName = "Frame Spacing", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int frameSpacing = Integer.MIN_VALUE;
-    private boolean frameSpacing_set = false;
 
     /**
-     * <p>The width, in pixels, of the space around frames. The frameSpacing attribute 
-     * and the border attribute set the same property in different browsers.  
-     * Set frameSpacing and border to the same value.</p>
+     * The width, in pixels, of the space around frames. The frameSpacing
+     * attribute and the border attribute set the same property in different
+     * browsers. Set frameSpacing and border to the same value.
+     *
+     * @return int
      */
     public int getFrameSpacing() {
-        if (this.frameSpacing_set) {
+        if (this.frameSpacingSet) {
             return this.frameSpacing;
         }
-        ValueExpression _vb = getValueExpression("frameSpacing");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("frameSpacing");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The width, in pixels, of the space around frames. The frameSpacing attribute 
-     * and the border attribute set the same property in different browsers.  
-     * Set frameSpacing and border to the same value.</p>
+     * The width, in pixels, of the space around frames. The frameSpacing
+     * attribute and the border attribute set the same property in different
+     * browsers. Set frameSpacing and border to the same value.
+     *
      * @see #getFrameSpacing()
+     * @param newFrameSpacing frameSpacing
      */
-    public void setFrameSpacing(int frameSpacing) {
-        this.frameSpacing = frameSpacing;
-        this.frameSpacing_set = true;
+    public void setFrameSpacing(final int newFrameSpacing) {
+        this.frameSpacing = newFrameSpacing;
+        this.frameSpacingSet = true;
     }
-    /**
-     * <p>Defines the number and size of rows in a frameset. The size can be 
-     * specified in pixels, percentage of the page length, or with an 
-     * asterisk (*).  Specifying * causes the rows to use available space.
-     * See the HTML specification for the frameset element for more details.</p>
-     */
-    @Property(name = "rows", displayName = "Number of Rows", category = "Appearance")
-    private String rows = null;
 
     /**
-     * <p>Defines the number and size of rows in a frameset. The size can be 
-     * specified in pixels, percentage of the page length, or with an 
-     * asterisk (*).  Specifying * causes the rows to use available space.
-     * See the HTML specification for the frameset element for more details.</p>
+     * Defines the number and size of rows in a frame set. The size can be
+     * specified in pixels, percentage of the page length, or with an asterisk
+     * (*). Specifying * causes the rows to use available space. See the HTML
+     * specification for the frames et element for more details.
+     *
+     * @return String
      */
     public String getRows() {
         if (this.rows != null) {
             return this.rows;
         }
-        ValueExpression _vb = getValueExpression("rows");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("rows");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Defines the number and size of rows in a frameset. The size can be 
-     * specified in pixels, percentage of the page length, or with an 
-     * asterisk (*).  Specifying * causes the rows to use available space.
-     * See the HTML specification for the frameset element for more details.</p>
+     * Defines the number and size of rows in a frame set. The size can be
+     * specified in pixels, percentage of the page length, or with an asterisk
+     * (*). Specifying * causes the rows to use available space. See the HTML
+     * specification for the frame set element for more details.
+     *
      * @see #getRows()
+     * @param newRows rows
      */
-    public void setRows(String rows) {
-        this.rows = rows;
+    public void setRows(final String newRows) {
+        this.rows = newRows;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element.The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
+     * @return String
      */
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
      * @see #getToolTip()
+     * @param newToolTip tool tip
      */
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.border = ((Integer) _values[1]).intValue();
-        this.border_set = ((Boolean) _values[2]).booleanValue();
-        this.borderColor = (String) _values[3];
-        this.cols = (String) _values[4];
-        this.frameBorder = ((Boolean) _values[5]).booleanValue();
-        this.frameBorder_set = ((Boolean) _values[6]).booleanValue();
-        this.frameSpacing = ((Integer) _values[7]).intValue();
-        this.frameSpacing_set = ((Boolean) _values[8]).booleanValue();
-        this.rows = (String) _values[9];
-        this.style = (String) _values[10];
-        this.styleClass = (String) _values[11];
-        this.toolTip = (String) _values[12];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.border = ((Integer) values[1]);
+        this.borderSet = ((Boolean) values[2]);
+        this.borderColor = (String) values[3];
+        this.cols = (String) values[4];
+        this.frameBorder = ((Boolean) values[5]);
+        this.frameBorderSet = ((Boolean) values[6]);
+        this.frameSpacing = ((Integer) values[7]);
+        this.frameSpacingSet = ((Boolean) values[8]);
+        this.rows = (String) values[9];
+        this.style = (String) values[10];
+        this.styleClass = (String) values[11];
+        this.toolTip = (String) values[12];
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[13];
-        _values[0] = super.saveState(_context);
-        _values[1] = new Integer(this.border);
-        _values[2] = this.border_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.borderColor;
-        _values[4] = this.cols;
-        _values[5] = this.frameBorder ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.frameBorder_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = new Integer(this.frameSpacing);
-        _values[8] = this.frameSpacing_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = this.rows;
-        _values[10] = this.style;
-        _values[11] = this.styleClass;
-        _values[12] = this.toolTip;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[13];
+        values[0] = super.saveState(context);
+        values[1] = this.border;
+        if (this.borderSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] =  Boolean.FALSE;
+        }
+        values[3] = this.borderColor;
+        values[4] = this.cols;
+        if (this.frameBorder) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] =  Boolean.FALSE;
+        }
+        if (this.frameBorderSet) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] =  Boolean.FALSE;
+        }
+        values[7] = this.frameSpacing;
+        if (this.frameSpacingSet) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] =  Boolean.FALSE;
+        }
+        values[9] = this.rows;
+        values[10] = this.style;
+        values[11] = this.styleClass;
+        values[12] = this.toolTip;
+        return values;
     }
 }

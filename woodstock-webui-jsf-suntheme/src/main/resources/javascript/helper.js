@@ -136,7 +136,7 @@ function ws_dropdown_changed(eltId) {
  * @returns {undefined}
  */
 function ws_hyperlink_submit(elt, formId, params){
-    if (elt === null || elt === "undefined" || params !== null
+    if (elt === null || elt === undefined || params !== null
             && (typeof params !== "object" || params.constructor !== Array)) {
         return;
     }
@@ -145,16 +145,32 @@ function ws_hyperlink_submit(elt, formId, params){
 
 /**
  * Register a callback  that invokes {@code updateButtons} on a DOM element
- *  that may not be initialized yet.
+ * that may not be initialized yet.
  * @param {string} type component type
  * @param {string} eltId DOM element id
  * @returns {undefined}
  */
 function ws_update_buttons(type, eltId) {
     var elt = document.getElementById(eltId);
-    if (elt !== "undefined") {
+    if (elt !== undefined) {
         __addOnInitCallback(type, elt, function (e) {
             e.updateButtons();
+        });
+    }
+}
+
+/**
+ * Register a callback that invokes {@code addCommonTask} on a DOM element
+ * that may not be initialized yet.
+ * @param {string} eltId DOM element id
+ * @param {object} props properties
+ * @returns {undefined}
+ */
+function ws_add_common_task(eltId, props){
+    var elt = document.getElementById(eltId);
+    if (elt !== undefined) {
+        __addOnInitCallback('commonTasksSection', elt, function (e) {
+            e.addCommonTask(props);
         });
     }
 }
@@ -200,13 +216,15 @@ function ws_init_body(viewId, urlString, defaultFocusElementId, focusElementId,
 
 /**
  * Initialize a tree component.
+ * @param {Object} props init props
  * @param {string} clientId DOM element id to highlight if nodeId is {@code null}
  * @param {string} nodeId the id of the node to highlight
  * @returns {undefined}
  */
-function ws_init_tree(clientId, nodeId) {
+function ws_init_tree(props, clientId, nodeId) {
     require(["webui/suntheme/tree"], function (tree) {
-        if (nodeId === null || nodeId === "undefined") {
+        tree.init(props);
+        if (nodeId === null || nodeId === undefined) {
             tree.updateHighlight(clientId);
         } else {
             tree.selectTreeNode(nodeId);

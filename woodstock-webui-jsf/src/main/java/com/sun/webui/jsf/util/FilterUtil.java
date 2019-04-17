@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,7 +23,7 @@ import java.io.FileFilter;
  * A utility class that checks if a file or folder should be displayed based on
  * the filter entered by the user.
  */
-public class FilterUtil implements FileFilter {
+public final class FilterUtil implements FileFilter {
 
     /**
      * Filter string.
@@ -48,12 +48,12 @@ public class FilterUtil implements FileFilter {
 
     /**
      * Create a new instance.
-     * @param filterString filter string
+     * @param filterStr filter string
      */
-    public FilterUtil(String filterString) {
-        if (filterString != null) {
-            this.filterString = filterString;
-            this.filterString.trim();
+    public FilterUtil(final String filterStr) {
+        if (filterStr != null) {
+            this.filterString = filterStr;
+            this.filterString = filterStr.trim();
             int index = filterString.indexOf('.');
             if (index == -1) {
                 namePattern = filterString;
@@ -71,7 +71,7 @@ public class FilterUtil implements FileFilter {
     }
 
     @Override
-    public boolean accept(File f) {
+    public boolean accept(final File f) {
 
         if (f.isDirectory()
                 || filterString == null
@@ -86,19 +86,19 @@ public class FilterUtil implements FileFilter {
         }
 
         // Now we should get both name and extension
-        // and then match name against name pattern and 
-        // extension against ext pattern. Only if both 
+        // and then match name against name pattern and
+        // extension against ext pattern. Only if both
         // match return true.
         String extension = getExtension(fileName);
         String name = getName(fileName);
 
         // if pattern does not have a dot there is no need to
-        // check for filename and the extension separately. 
+        // check for filename and the extension separately.
         if (filterString.indexOf('.') == -1) {
             return check(fileName, filterString);
         }
 
-        // if filename does not have an extension and there 
+        // if filename does not have an extension and there
         // exists an extension pattern return false
         if (filterString.indexOf('.') != -1) {
             if (fileName.indexOf('.') == -1) {
@@ -106,7 +106,7 @@ public class FilterUtil implements FileFilter {
             }
         }
 
-        // check for name and extension match separately and 
+        // check for name and extension match separately and
         // return true if both are true
         boolean nameFlag = check(name, namePattern);
         boolean extFlag = check(extension, extPattern);
@@ -117,8 +117,11 @@ public class FilterUtil implements FileFilter {
      * This function checks to see if the value matches a pattern. If the value
      * is null and the pattern is * this is also considered a match. The result
      * of the comparison is returned as a {@code boolean} value.
+     * @param value value to check
+     * @param pattern pattern to use
+     * @return {@code boolean}
      */
-    private boolean check(String value, String pattern) {
+    private static boolean check(final String value, final String pattern) {
         boolean flag = false;
         if ((value == null) && (pattern == null)) {
             flag = true;
@@ -155,8 +158,13 @@ public class FilterUtil implements FileFilter {
 
     /**
      * Get the extension of a file.
+     * @param token tokenizer to use
+     * @param name file name
+     * @return {@code true} if the filename has an extension, {@code false}
+     *  otherwise
      */
-    private boolean checkPattern(StringTokenizer token, String name) {
+    private static boolean checkPattern(final StringTokenizer token,
+            final String name) {
 
         int position = 0;
         boolean flag = true;
@@ -173,10 +181,12 @@ public class FilterUtil implements FileFilter {
         return flag;
     }
 
-    /*
-         * Get the extension of a file.
+    /**
+     * Get the extension of a file.
+     * @param name file name
+     * @return String
      */
-    private String getExtension(String name) {
+    private static String getExtension(final String name) {
         String ext = null;
         if (name != null) {
             int i = name.indexOf('.');
@@ -196,8 +206,9 @@ public class FilterUtil implements FileFilter {
     /**
      * Get the name part of a file.
      * @param name file name
+     * @return String
      */
-    private String getName(String name) {
+    private static String getName(final String name) {
         if (name == null) {
             return null;
         }

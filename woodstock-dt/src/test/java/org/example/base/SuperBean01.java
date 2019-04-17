@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,19 +13,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package org.example.base;
 
-/**
- *
- * @author gjmurphy
- */
-public class SuperBean01 extends SuperSuperBean01{
-    
+public class SuperBean01 extends SuperSuperBean01 {
+
     private String two;
 
     /**
      * Getter for property two.
+     *
      * @return Value of property two.
      */
     public String getTwo() {
@@ -34,10 +30,11 @@ public class SuperBean01 extends SuperSuperBean01{
 
     /**
      * Setter for property two.
+     *
      * @param two New value of property two.
      */
     public void setTwo(String two) {
         this.two = two;
     }
-    
+
 }

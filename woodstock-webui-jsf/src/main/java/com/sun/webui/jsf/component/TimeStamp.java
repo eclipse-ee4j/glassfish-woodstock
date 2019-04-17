@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -30,11 +29,53 @@ import javax.faces.convert.Converter;
  * updated or displayed. This tag is typically specified as part of the Masthead
  * component's statusArea facet.
  */
-@Component(type = "com.sun.webui.jsf.TimeStamp", family = "com.sun.webui.jsf.TimeStamp",
-displayName = "Time Stamp", tagName = "timeStamp",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_time_stamp",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_time_stamp_props")
-public class TimeStamp extends UIOutput {
+@Component(type = "com.sun.webui.jsf.TimeStamp",
+        family = "com.sun.webui.jsf.TimeStamp",
+        displayName = "Time Stamp", tagName = "timeStamp",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_time_stamp",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_time_stamp_props")
+        //CHECKSTYLE:ON
+public final class TimeStamp extends UIOutput {
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style", displayName = "CSS Style(s)")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass", displayName = "CSS Style Class(es)")
+    private String styleClass = null;
+
+    /**
+     * The text to display for this time stamp. A default string of "Last
+     * Updated:" will be displayed if no value is specified for the text
+     * property.
+     */
+    @Property(name = "text", displayName = "Text")
+    private String text = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible", displayName = "Visible")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
 
     /**
      * Default constructor.
@@ -44,37 +85,20 @@ public class TimeStamp extends UIOutput {
         setRendererType("com.sun.webui.jsf.TimeStamp");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.TimeStamp";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
-    /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
-     */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
@@ -91,178 +115,163 @@ public class TimeStamp extends UIOutput {
     public Converter getConverter() {
         return super.getConverter();
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>The text to display for this time stamp. A default string of 
-     * "Last Updated:" will be displayed if no value is specified for the text
-     * property.</p>
-     */
-    @Property(name = "text", displayName = "Text")
-    private String text = null;
 
     /**
-     * <p>The text to display for this time stamp. A default string of 
-     * "Last Updated:" will be displayed if no value is specified for the text
-     * property.</p>
+     * The text to display for this time stamp. A default string of "Last
+     * Updated:" will be displayed if no value is specified for the text
+     * property.
+     * @return String
      */
     public String getText() {
         if (this.text != null) {
             return this.text;
         }
-        ValueExpression _vb = getValueExpression("text");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("text");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The text to display for this time stamp. A default string of 
-     * "Last Updated:" will be displayed if no value is specified for the text
-     * property.</p>
+     * The text to display for this time stamp. A default string of "Last
+     * Updated:" will be displayed if no value is specified for the text
+     * property.
+     *
      * @see #getText()
+     * @param newText text
      */
-    public void setText(String text) {
-        this.text = text;
+    public void setText(final String newText) {
+        this.text = newText;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.style = (String) _values[1];
-        this.styleClass = (String) _values[2];
-        this.text = (String) _values[3];
-        this.visible = ((Boolean) _values[4]).booleanValue();
-        this.visible_set = ((Boolean) _values[5]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.style = (String) values[1];
+        this.styleClass = (String) values[2];
+        this.text = (String) values[3];
+        this.visible = ((Boolean) values[4]);
+        this.visibleSet = ((Boolean) values[5]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[6];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.style;
-        _values[2] = this.styleClass;
-        _values[3] = this.text;
-        _values[4] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[6];
+        values[0] = super.saveState(context);
+        values[1] = this.style;
+        values[2] = this.styleClass;
+        values[3] = this.text;
+        if (this.visible) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        return values;
     }
 }

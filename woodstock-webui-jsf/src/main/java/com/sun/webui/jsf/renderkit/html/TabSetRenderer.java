@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * TabSetRenderer.java
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -37,42 +34,48 @@ import javax.el.MethodExpression;
 
 /**
  * Renders a TabSet component.
- *
- * @author  Sean Comerford
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TabSet"))
-public class TabSetRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TabSet"))
+public final class TabSetRenderer extends AbstractRenderer {
 
-    private static final String SKIP_ANCHOR_NAME = "tabSetSkipAnchor"; // NOI18N
-    private static final String SELECTED_TAB_ANCHOR_NAME = "selectedTabAnchor"; // NOI18N
-    private static final String EMPTY_STR = ""; // NOI18N
-    private static final String SPACE = " "; // NOI18N
+    /**
+     * Skip anchor name.
+     */
+    private static final String SKIP_ANCHOR_NAME = "tabSetSkipAnchor";
 
-    /** Default constructor */
+    /**
+     * Selected tab anchor name.
+     */
+    private static final String SELECTED_TAB_ANCHOR_NAME = "selectedTabAnchor";
+
+    /**
+     * Empty string.
+     */
+    private static final String EMPTY_STR = "";
+
+    /**
+     * Space character.
+     */
+    private static final String SPACE = " ";
+
+    /**
+     * Default constructor.
+     */
     public TabSetRenderer() {
         super();
     }
 
-    /**
-     * <p>Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns <code>false</code>.</p>
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    /**
-     * <p>Render the end tag for this component.</p>
-     *
-     * @param context The current FacesContext.
-     * @param component The current TabSet component.
-     * @param writer The current ResponseWriter.
-     */
     @Override
-    public void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    public void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // render any kids of the selected tab component now
         TabSet tabSet = (TabSet) component;
         String selectedTabId = tabSet.getSelected();
@@ -82,35 +85,35 @@ public class TabSetRenderer extends AbstractRenderer {
 
         if (selectedTabId == null) {
             if (tabSet.isMini() && tabSet.isLite()) {
-                writer.startElement("div", tabSet); //NOI18N
-                writer.writeAttribute("class", lite, null); //NOI18N
-                writer.endElement("div"); //NOI18N
+                writer.startElement("div", tabSet);
+                writer.writeAttribute("class", lite, null);
+                writer.endElement("div");
             }
-            writer.endElement("div"); //NOI18N
-
+            writer.endElement("div");
             return;
         }
 
         Tab selectedTab = tabSet.findChildTab(selectedTabId);
         if (selectedTab == null) {
             if (tabSet.isMini() && tabSet.isLite()) {
-                writer.startElement("div", tabSet); //NOI18N
-                writer.writeAttribute("class", lite, null); //NOI18N
-                writer.endElement("div"); //NOI18N
+                writer.startElement("div", tabSet);
+                writer.writeAttribute("class", lite, null);
+                writer.endElement("div");
             }
-            writer.endElement("div"); //NOI18N
+            writer.endElement("div");
             return;
         }
 
         if (tabSet.isMini() && tabSet.isLite()) {
-            writer.startElement("div", tabSet); //NOI18N
-            writer.writeAttribute("class", lite, null); //NOI18N
+            writer.startElement("div", tabSet);
+            writer.writeAttribute("class", lite, null);
         }
 
         while (selectedTab.getTabChildCount() > 0) {
             selectedTabId = selectedTab.getSelectedChildId();
             if (selectedTabId == null) {
-                selectedTabId = ((Tab) selectedTab.getChildren().get(0)).getId();
+                selectedTabId = ((Tab) selectedTab.getChildren().get(0))
+                        .getId();
             }
             selectedTab = (Tab) selectedTab.findComponent(selectedTabId);
         }
@@ -136,21 +139,16 @@ public class TabSetRenderer extends AbstractRenderer {
             }
         }
         if (tabSet.isMini() && tabSet.isLite()) {
-            writer.endElement("div"); //NOI18N
+            writer.endElement("div");
         }
-        writer.endElement("div"); //NOI18N
-
+        writer.endElement("div");
     }
 
-    /**
-     * <p>Encode the Tab children of this TabSet component.</p>
-     *
-     * @param context The current FacesContext
-     * @param component The current TabSet component
-     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         TabSet tabSet = (TabSet) component;
         ResponseWriter writer = context.getResponseWriter();
         Theme theme = ThemeUtilities.getTheme(context);
@@ -173,13 +171,13 @@ public class TabSetRenderer extends AbstractRenderer {
         renderSkipLink(context, tabSet, theme);
 
         // render the first level of tabs and get the 2nd level if any
-        List level2Tabs =
-                renderLevel(context, tabSet, writer, 1, tabSet.getChildren());
+        List level2Tabs
+                = renderLevel(context, tabSet, writer, 1, tabSet.getChildren());
 
         // if there are any level 2 tabs render those now
         if (level2Tabs != null) {
-            List level3Tabs =
-                    renderLevel(context, tabSet, writer, 2, level2Tabs);
+            List level3Tabs
+                    = renderLevel(context, tabSet, writer, 2, level2Tabs);
 
             // if there are any level 3 tabs render those now
             if (level3Tabs != null) {
@@ -193,8 +191,16 @@ public class TabSetRenderer extends AbstractRenderer {
 
     /**
      * Helper function called by encodeChildren to open the TabSet div.
+     * @param context faces context
+     * @param writer writer to use
+     * @param tabSet tabSet component
+     * @param theme the current theme
+     * @throws IOException if an IO error occurs
      */
-    private void startTabSetDiv(FacesContext context, ResponseWriter writer, TabSet tabSet, Theme theme) throws IOException {
+    private void startTabSetDiv(final FacesContext context,
+            final ResponseWriter writer, final TabSet tabSet,
+            final Theme theme) throws IOException {
+
         String style = tabSet.getStyle();
         String styleClass = tabSet.getStyleClass();
 
@@ -218,17 +224,27 @@ public class TabSetRenderer extends AbstractRenderer {
         }
 
         writer.startElement("div", tabSet);
-        writer.writeAttribute("id", tabSet.getClientId(context), "id"); // NOI18N
+        writer.writeAttribute("id", tabSet.getClientId(context), "id");
 
         if (style != null) {
-            writer.writeAttribute("style", style, null); // NOI18N
+            writer.writeAttribute("style", style, null);
         }
         if (styleClass != null) {
-            writer.writeAttribute("class", styleClass, null); // NOI18N
+            writer.writeAttribute("class", styleClass, null);
         }
     }
 
-    private String[] getStyles(TabSet tabSet, Theme theme, int level) {
+    /**
+     * Get the styles.
+     * @param tabSet tabSet component
+     * @param theme the current theme
+     * @param level tab set level
+     * @return String[]
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private String[] getStyles(final TabSet tabSet, final Theme theme,
+            final  int level) {
+
         // get the various level specific tab styles we'll need
         String divStyle = EMPTY_STR;
         String tableStyle = EMPTY_STR;
@@ -240,56 +256,67 @@ public class TabSetRenderer extends AbstractRenderer {
             case 1: // get the level 1 tab styles
                 if (tabSet.isMini()) {
                     divStyle = theme.getStyleClass(ThemeStyles.MINI_TAB_DIV);
-                    tableStyle =
-                            theme.getStyleClass(ThemeStyles.MINI_TAB_TABLE);
+                    tableStyle
+                            = theme.getStyleClass(ThemeStyles.MINI_TAB_TABLE);
                     linkStyle = theme.getStyleClass(ThemeStyles.MINI_TAB_LINK);
                     selectedTdStyle = theme.getStyleClass(
                             ThemeStyles.MINI_TAB_TABLE_SELECTED_TD);
-                    selectedTextStyle =
-                            theme.getStyleClass(ThemeStyles.MINI_TAB_SELECTED_TEXT);
+                    selectedTextStyle
+                            = theme.getStyleClass(
+                                    ThemeStyles.MINI_TAB_SELECTED_TEXT);
                 } else {
                     divStyle = theme.getStyleClass(ThemeStyles.TAB1_DIV);
-                    tableStyle =
-                            theme.getStyleClass(ThemeStyles.TAB1_TABLE_NEW);
+                    tableStyle
+                            = theme.getStyleClass(ThemeStyles.TAB1_TABLE_NEW);
                     linkStyle = theme.getStyleClass(ThemeStyles.TAB1_LINK);
-                    selectedTdStyle =
-                            theme.getStyleClass(ThemeStyles.TAB1_TABLE_SELECTED_TD);
-                    selectedTextStyle =
-                            theme.getStyleClass(ThemeStyles.TAB1_SELECTED_TEXT_NEW);
+                    selectedTdStyle
+                            = theme.getStyleClass(
+                                    ThemeStyles.TAB1_TABLE_SELECTED_TD);
+                    selectedTextStyle
+                            = theme.getStyleClass(
+                                    ThemeStyles.TAB1_SELECTED_TEXT_NEW);
                 }
                 break;
             case 2: // get the level 2 tab styles
                 divStyle = theme.getStyleClass(ThemeStyles.TAB2_DIV);
                 tableStyle = theme.getStyleClass(ThemeStyles.TAB2_TABLE_NEW);
                 linkStyle = theme.getStyleClass(ThemeStyles.TAB2_LINK);
-                selectedTdStyle =
-                        theme.getStyleClass(ThemeStyles.TAB2_TABLE_SELECTED_TD);
-                selectedTextStyle =
-                        theme.getStyleClass(ThemeStyles.TAB2_SELECTED_TEXT);
+                selectedTdStyle
+                        = theme.getStyleClass(
+                                ThemeStyles.TAB2_TABLE_SELECTED_TD);
+                selectedTextStyle
+                        = theme.getStyleClass(ThemeStyles.TAB2_SELECTED_TEXT);
                 break;
             case 3: // get the level 3 tab styles
                 divStyle = theme.getStyleClass(ThemeStyles.TAB3_DIV);
                 tableStyle = theme.getStyleClass(ThemeStyles.TAB3_TABLE_NEW);
                 linkStyle = theme.getStyleClass(ThemeStyles.TAB3_LINK);
-                selectedTdStyle =
-                        theme.getStyleClass(ThemeStyles.TAB3_TABLE_SELECTED_TD);
-                selectedTextStyle =
-                        theme.getStyleClass(ThemeStyles.TAB3_SELECTED_TEXT);
+                selectedTdStyle
+                        = theme.getStyleClass(
+                                ThemeStyles.TAB3_TABLE_SELECTED_TD);
+                selectedTextStyle
+                        = theme.getStyleClass(ThemeStyles.TAB3_SELECTED_TEXT);
+                break;
+            default:
                 break;
         }
 
         String[] styles = new String[]{
             divStyle, tableStyle, linkStyle, selectedTdStyle, selectedTextStyle
         };
-
         return styles;
     }
 
     /**
      * Helper function called by encodeChildren to write out the a11y skip link.
+     * @param context faces context
+     * @param tabSet tabSet component
+     * @param theme the current theme
+     * @throws IOException if an IO error occurs
      */
-    private void renderSkipLink(FacesContext context, TabSet tabSet,
-            Theme theme) throws IOException {
+    private void renderSkipLink(final FacesContext context, final TabSet tabSet,
+            final Theme theme) throws IOException {
+
         // need the label of currently selected tab for skip alt text
         Tab selectedTab = tabSet.findChildTab(tabSet.getSelected());
 
@@ -303,23 +330,31 @@ public class TabSetRenderer extends AbstractRenderer {
         }
 
         // render the skip link for a11y
-        String toolTip = theme.getMessage("tab.skipTagAltText", args); //NOI18N
+        String toolTip = theme.getMessage("tab.skipTagAltText", args);
         String styleClass = theme.getStyleClass(ThemeStyles.SKIP_MEDIUM_GREY1);
         RenderingUtilities.renderSkipLink(SKIP_ANCHOR_NAME, styleClass, null,
                 toolTip, null, tabSet, context);
     }
 
-    private void layoutLevel(ResponseWriter writer, TabSet tabSet,
-            String[] styles) throws IOException {
+    /**
+     * Set the layout level.
+     * @param writer writer to use
+     * @param tabSet tabSet component
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
+    private void layoutLevel(final ResponseWriter writer, final TabSet tabSet,
+            final String[] styles) throws IOException {
+
         writer.startElement("div", tabSet);
-        writer.writeAttribute("class", styles[0], null); // NOI18N
-        writer.startElement("table", tabSet); // NOI18N
-        writer.writeAttribute("border", "0", null); // NOI18N
-        writer.writeAttribute("cellspacing", "0", null); // NOI18N
-        writer.writeAttribute("cellpadding", "0", null); // NOI18N
-        writer.writeAttribute("class", styles[1], null); // NOI18N
-        writer.writeAttribute("title", EMPTY_STR, null); // NOI18N
-        writer.startElement("tr", tabSet); //NOI18N
+        writer.writeAttribute("class", styles[0], null);
+        writer.startElement("table", tabSet);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("class", styles[1], null);
+        writer.writeAttribute("title", EMPTY_STR, null);
+        writer.startElement("tr", tabSet);
     }
 
     /**
@@ -330,13 +365,16 @@ public class TabSetRenderer extends AbstractRenderer {
      * @param writer The current ResponseWriter
      * @param level The level (1, 2 or 3) of the Tab set to be rendered
      * @param currentLevelTabs A List containing the Tab objects for the current
-     *  level
+     * level
+     * @return List
+     * @throws IOException if an IO error occurs
      */
-    protected List renderLevel(FacesContext context, TabSet tabSet,
-            ResponseWriter writer, int level, List currentLevelTabs)
-            throws IOException {
-        int numTabs = currentLevelTabs.size();
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected List renderLevel(final FacesContext context, final TabSet tabSet,
+            final ResponseWriter writer, final int level,
+            final List currentLevelTabs) throws IOException {
 
+        int numTabs = currentLevelTabs.size();
         if (numTabs == 0) {
             // no tabs in given level
             return null;
@@ -350,7 +388,6 @@ public class TabSetRenderer extends AbstractRenderer {
 
         // need to ensure at least one tab in this level is selected
         boolean levelHasSelection = false;
-
         for (int i = 0; i < numTabs; i++) {
             try {
                 currentLevelSelection = (Tab) currentLevelTabs.get(i);
@@ -358,7 +395,6 @@ public class TabSetRenderer extends AbstractRenderer {
                 // not a Tab instance
                 continue;
             }
-
             if (isSelected(currentLevelSelection, selectedTabId)) {
                 // sTab is either selected or part of selection
                 levelHasSelection = true;
@@ -375,17 +411,17 @@ public class TabSetRenderer extends AbstractRenderer {
             }
         }
 
-        if (currentLevelSelection != null &&
-                (currentLevelSelection.getTabChildCount() > 0)) {
+        if (currentLevelSelection != null
+                && (currentLevelSelection.getTabChildCount() > 0)) {
             // selected tab in this level has children - must adjust table style
             switch (level) {
                 case 1:
-                    styles[1] =
-                            theme.getStyleClass(ThemeStyles.TAB1_TABLE2_NEW);
+                    styles[1]
+                            = theme.getStyleClass(ThemeStyles.TAB1_TABLE2_NEW);
                     break;
                 case 2:
-                    styles[1] =
-                            theme.getStyleClass(ThemeStyles.TAB2_TABLE3_NEW);
+                    styles[1]
+                            = theme.getStyleClass(ThemeStyles.TAB2_TABLE3_NEW);
                     break;
                 default:
                     break;
@@ -396,15 +432,15 @@ public class TabSetRenderer extends AbstractRenderer {
         layoutLevel(writer, tabSet, styles);
 
         // get the developer specified binding for action listener
-        MethodExpression actionListenerExpression = tabSet.getActionListenerExpression();
+        MethodExpression actionListenerExpression =
+                tabSet.getActionListenerExpression();
 
         // need a variable to save next level of tabs if we have one
         List nextLevelToRender = null;
 
         // render each tab in this level
         for (int i = 0; i < numTabs; i++) {
-            Tab tab = null;
-
+            Tab tab;
             try {
                 tab = (Tab) currentLevelTabs.get(i);
             } catch (ClassCastException cce) {
@@ -423,8 +459,8 @@ public class TabSetRenderer extends AbstractRenderer {
             String newNonSelectedClass = null;
 
             if (!tab.isVisible()) {
-                newSelectedClass =
-                        newSelectedClass.concat(SPACE).concat(hidden);
+                newSelectedClass
+                        = newSelectedClass.concat(SPACE).concat(hidden);
                 newNonSelectedClass = hidden;
             }
 
@@ -449,11 +485,25 @@ public class TabSetRenderer extends AbstractRenderer {
         return nextLevelToRender;
     }
 
-    private List renderSelectedTab(FacesContext context, ResponseWriter writer,
-            Theme theme, TabSet tabSet, Tab tab, String[] styles,
-            String selectedClass) throws IOException {
-        UIComponent parent = tab.getParent();
+    /**
+     * Render the selected tab.
+     * @param context faces context
+     * @param writer writer to use
+     * @param theme the current theme
+     * @param tabSet tabSet component
+     * @param tab tab component
+     * @param styles CSS styles
+     * @param selectedClass selected CSS class
+     * @return List
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private List renderSelectedTab(final FacesContext context,
+            final ResponseWriter writer, final Theme theme, final TabSet tabSet,
+            final Tab tab, final String[] styles, final String selectedClass)
+            throws IOException {
 
+        UIComponent parent = tab.getParent();
         if (parent != null && parent instanceof Tab) {
             if (tabSet.isLastSelectedChildSaved()) {
                 // ensure that the parent tab knows this one is selected
@@ -471,46 +521,49 @@ public class TabSetRenderer extends AbstractRenderer {
         }
 
         String selectionDivClass = styles[4];
-
         if (label.length() < 6) {
             // short label, apply TabPad style class to div enclosing selection
             String padClass = theme.getStyleClass(ThemeStyles.TAB_PADDING);
-            selectionDivClass =
-                    selectionDivClass.concat(SPACE).concat(padClass);
+            selectionDivClass
+                    = selectionDivClass.concat(SPACE).concat(padClass);
         }
 
-        writer.writeAttribute("class", selectedClass, null); // NOI18N
-        writer.startElement("div", tab); //NOI18N
-        writer.writeAttribute("class", selectionDivClass, null); // NOI18N
+        writer.writeAttribute("class", selectedClass, null);
+        writer.startElement("div", tab);
+        writer.writeAttribute("class", selectionDivClass, null);
         String titleString = theme.getMessage(
-                "tabSet.selectedTab", new Object[]{label}); //NOI18N
-        writer.writeAttribute("title", titleString, null); //NOI18N        
+                "tabSet.selectedTab", new Object[]{label});
+        writer.writeAttribute("title", titleString, null);
 
-        // Write a named anchor for the selected tab, so that focus will return to 
-        // the current tab after it is selected. In that way tab focus will next
-        // shift to the first input component that is a child of the selected tab.
-        writer.startElement("a", tab); //NOI18N
-        writer.writeAttribute("id", tab.getClientId(context), "id"); // NOI18N
-        writer.writeAttribute("name", SELECTED_TAB_ANCHOR_NAME, "name"); // NOI18N
-        writer.endElement("a"); //NOI18N
+        // Write a named anchor for the selected tab, so that focus will return
+        // to the current tab after it is selected. In that way tab focus will
+        // next shift to the first input component that is a child of the
+        // selected tab.
+        writer.startElement("a", tab);
+        writer.writeAttribute("id", tab.getClientId(context), "id");
+        writer.writeAttribute("name", SELECTED_TAB_ANCHOR_NAME, "name");
+        writer.endElement("a");
 
         // just write the label of the selected tab
         writer.write(label);
-
-        writer.endElement("div"); //NOI18N
+        writer.endElement("div");
 
         // return any children of the selected tab to render as next level
-        return tab.getTabChildCount() == 0 ? null : tab.getTabChildren();
+        if (tab.getTabChildCount() == 0) {
+            return null;
+        }
+        return tab.getTabChildren();
     }
 
     /**
-     * Utility method that determines if the given Tab component or any one
-     * of its descendants is the selected tab.
+     * Utility method that determines if the given Tab component or any one of
+     * its descendants is the selected tab.
      *
      * @param tab The Tab component to check for selection
      * @param selectedTabId The id of the currently selected Tab
+     * @return {@code boolean}
      */
-    protected boolean isSelected(Tab tab, String selectedTabId) {
+    protected boolean isSelected(final Tab tab, final String selectedTabId) {
         if (selectedTabId == null) {
             return false;
         }
@@ -529,7 +582,9 @@ public class TabSetRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         // TabSet does not encode or decode its input value. The input
         // value is determined by the selected and/or current child
         // tab component.

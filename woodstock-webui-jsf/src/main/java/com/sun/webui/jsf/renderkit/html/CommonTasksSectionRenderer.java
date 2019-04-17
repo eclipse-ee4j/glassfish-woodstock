@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -42,17 +42,27 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
- * Renderer for a {@link com.sun.webui.jsf.component.CommonTasksSection} component.
+ * Renderer for a {@link com.sun.webui.jsf.component.CommonTasksSection}
+ * component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CommonTasksSection"))
+@Renderer(
+        @Renderer.Renders(
+        componentFamily = "com.sun.webui.jsf.CommonTasksSection"))
 public class CommonTasksSectionRenderer extends AbstractRenderer {
 
     /**
-     *Append this string for the id of the  spacer image.
+     * Append this string for the id of the  spacer image.
      */
     private static final String SPACER_IMAGE = "_spacerImg";
+
+    /**
+     * White space HTML encoded.
+     */
     private static final String WHITE_SPACE = "&nbsp;";
-    private static final String COLUMN_COUNT = "commonTasks.columnCount";
+
+    /**
+     * Section title.
+     */
     private static final String SECTION_TITLE = "commonTasks.sectionTitle";
 
     /**
@@ -62,15 +72,15 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // purposefully don't want to do anything here!
     }
 
     /**
      * Render a common tasks section.
-     * 
+     *
      * @param context The current FacesContext
      * @param component The CommonTasksSection object to render
      * @param writer The current ResponseWriter
@@ -78,8 +88,9 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
      * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         if (context == null || component == null) {
@@ -182,8 +193,9 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
      * @param context faces context
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderJavascript(Theme theme, ResponseWriter writer,
-            UIComponent component, FacesContext context) throws IOException {
+    protected void renderJavascript(final Theme theme,
+            final ResponseWriter writer, final UIComponent component,
+            final FacesContext context) throws IOException {
 
         JsonObject initProps = JSON_BUILDER_FACTORY.createObjectBuilder()
                 .add("id", component.getClientId(context))
@@ -206,10 +218,11 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
      * @param cts The commonTasksSection object
      * @param theme The current theme
      * @param context The FacesContext
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderHeading(String title, ResponseWriter writer,
-            CommonTasksSection cts, Theme theme, FacesContext context)
+    protected void renderHeading(final String title,
+            final ResponseWriter writer, final CommonTasksSection cts,
+            final Theme theme, final FacesContext context)
             throws IOException {
 
         writer.startElement(HTMLElements.TR, cts);
@@ -256,7 +269,7 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
 
     /**
      * Set appropriate column widths for the {@code commontaskssection}.
-     * 
+     *
      * @param context The current FacesContext
      * @param cts The commonTasksSection object.
      * @param writer The ResponseWriter object
@@ -264,44 +277,46 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
      * @param numColumns The number of columns for the commonTasksSection.
      * @exception IOException if an input/output error occurs
      */
-    protected void renderSpacer(ResponseWriter writer, UIComponent cts,
-            Theme theme, int numColumns, FacesContext context)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void renderSpacer(final ResponseWriter writer,
+            final UIComponent cts, final Theme theme, final int numColumns,
+            final FacesContext context) throws IOException {
 
-        int _spacerWidth = 40;
-        int columnWidth = 200;
-        int _sepWidth = 9;
-        int _initWidth = 5;
+        int spacerWidthInt = 40;
+        int columnWidthInt = 200;
+        int sepWidthInt = 9;
+        int initWidthInt = 5;
 
-        if (numColumns > 1) {
-            _spacerWidth = _spacerWidth / (numColumns - 1);
-            columnWidth = columnWidth / (numColumns - 1);
-            _sepWidth = _sepWidth / (numColumns - 1);
-            _initWidth = _initWidth / (numColumns - 1);
+        int numCols = numColumns;
+        if (numCols > 1) {
+            spacerWidthInt = spacerWidthInt / (numCols - 1);
+            columnWidthInt = columnWidthInt / (numCols - 1);
+            sepWidthInt = sepWidthInt / (numCols - 1);
+            initWidthInt = initWidthInt / (numCols - 1);
         }
-        String spacerWidth = "" + _spacerWidth + "%";
-        String sepWidth = "" + _sepWidth + "%";
-        String initWidth = "" + _initWidth + "%";
+        String spacerWidth = "" + spacerWidthInt + "%";
+        String sepWidth = "" + sepWidthInt + "%";
+        String initWidth = "" + initWidthInt + "%";
 
         writer.startElement(HTMLElements.TR, cts);
         // This is for tasks
 
-        if (numColumns == 1) {
+        if (numCols == 1) {
             // Fix the case when only one column exists.
-            numColumns = 2;
+            numCols = 2;
         }
-        for (int i = 0; i < numColumns; i++) {
+        for (int i = 0; i < numCols; i++) {
             // Set the spacing for each commontask element
             writer.startElement(HTMLElements.TD, cts);
             writer.writeAttribute(HTMLAttributes.WIDTH, spacerWidth,
                     HTMLAttributes.WIDTH);
-            renderSpacerImage(cts, 1, columnWidth, theme, context,
+            renderSpacerImage(cts, 1, columnWidthInt, theme, context,
                     SPACER_IMAGE + i);
             writer.endElement(HTMLElements.TD);
 
             //set the spacing between two columns
             writer.startElement(HTMLElements.TD, cts);
-            if (i == numColumns - 1) {
+            if (i == numCols - 1) {
                 writer.writeAttribute(HTMLAttributes.WIDTH, initWidth,
                         HTMLAttributes.WIDTH);
             } else {
@@ -313,13 +328,12 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
         }
 
         // End of tasks
-
         writer.endElement(HTMLElements.TR);
     }
 
     /**
      * Render The spacer image.
-     * 
+     *
      * @param context The current FacesContext
      * @param height height value
      * @param width width value
@@ -329,8 +343,9 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderSpacerImage(UIComponent component, int height,
-            int width, Theme theme, FacesContext context, String id)
+    protected void renderSpacerImage(final UIComponent component,
+            final int height, final int width, final Theme theme,
+            final FacesContext context, final String id)
             throws IOException {
 
         Icon img = getIcon(theme, ThemeImages.CTS_SPACER_IMAGE);
@@ -339,12 +354,23 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
         renderComponent(img, context);
     }
 
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
     }
 
+    /**
+     * This implementation returns {@code true}.
+     * @return {@code boolean}
+     */
     @Override
     public boolean getRendersChildren() {
         return true;
@@ -356,14 +382,14 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
      *
      * @param cts The common tasks section component
      * @param theme The current theme
-     * @param context
-     * @throws java.io.IOException
-     * @oaram context The faces context
+     * @param context faces context
      * @param writer the writer to use
      * @param numColumns The number of columns the common tasks section has.
+     * @throws java.io.IOException if an IO error occurs
      */
-    protected void layoutCommonTasks(CommonTasksSection cts, Theme theme,
-            FacesContext context, ResponseWriter writer, int numColumns)
+    protected void layoutCommonTasks(final CommonTasksSection cts,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer, final int numColumns)
             throws IOException {
 
         List children = cts.getChildren();
@@ -371,9 +397,9 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
         UIComponent comp;
         int commonTaskCount = cts.getCommonTaskCount();
         int cnt = numColumns;
-        int separator =
-                (int) java.lang.Math.ceil((double) commonTaskCount /
-                (double) numColumns);
+        int separator
+                = (int) java.lang.Math.ceil((double) commonTaskCount
+                        / (double) numColumns);
 
         // Keep track of number of commontasks that have been rendered;
         int tmp, count = 0;
@@ -387,7 +413,7 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
 
             // For the case when number of common tasks groups is lesser than
             // or equal to the number of columns, just renderer each task group
-            // in each column. 
+            // in each column.
 
             if (cts.getCommonTaskCount() <= numColumns && count > 0) {
                 writer.endElement(HTMLElements.TD);
@@ -401,12 +427,11 @@ public class CommonTasksSectionRenderer extends AbstractRenderer {
             // For other cases, try to distribute the commonTasks between
             // all the columns as evenly as possible.
             // CommonTasks for a particular commonTasksGroup cannot be
-            // split between two columns.
-
+                // split between two columns.
             } else if ((count >= separator
                     || ((comp instanceof CommonTasksGroup)
                     && (count + ((CommonTasksGroup) comp)
-                            .getChildCount() > separator)&& count > 0))
+                            .getChildCount() > separator) && count > 0))
                     && cnt > 1) {
 
                 cnt--;

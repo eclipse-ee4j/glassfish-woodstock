@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,14 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 /**
  * Widget is an interface that must be implemented by any UIComponent that wants
  * to be a client-side widget. A Widget does not necessarily need to implement
  * all methods, but the interface still affects the behavior of the
- * {@link RendererBase#encodeBegin} and {@link RendererBase#encodEnd} methods; 
+ * {@link RendererBase#encodeBegin} and {@link RendererBase#encodEnd} methods;
  * see those methods for more information.
  */
 public interface Widget {
@@ -30,5 +29,5 @@ public interface Widget {
      *
      * @return The type of widget represented by this component.
      */
-    public String getWidgetType();
+    String getWidgetType();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -23,42 +22,131 @@ import javax.faces.context.FacesContext;
 import javax.el.ValueExpression;
 
 /**
- *
- * @author deep
+ * Mastfooter component.
  */
 @Component(type = "com.sun.webui.jsf.MastFooter",
-family = "com.sun.webui.jsf.MastFooter",
-displayName = "MastFooter Section",
-instanceName = "mastFooter",
-tagName = "mastFooter")
-public class MastFooter extends javax.faces.component.UIComponentBase
+        family = "com.sun.webui.jsf.MastFooter",
+        displayName = "MastFooter Section",
+        instanceName = "mastFooter",
+        tagName = "mastFooter")
+public final class MastFooter extends javax.faces.component.UIComponentBase
         implements NamingContainer {
 
     /**
-     * Creates a new instance of MastFooter
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)")
+    private String styleClass = null;
+
+    /**
+     * The URL to the image file to use for the Corporate Image. Use this
+     * attribute to override the corporate image that is set in the theme.
+     */
+    @Property(name = "corporateImageURL",
+            displayName = "Corporate Image URL",
+            category = "Navigation",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String corporateImageURL = null;
+
+    /**
+     * The description for the Corporate Image, used as alt text for the image.
+     */
+    @Property(name = "corporateImageDescription",
+            displayName = "Corporate Image Description",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String corporateImageDescription = null;
+
+    /**
+     * The height to use for the Corporate Image, in pixels. Use this attribute
+     * when specifying the corporateImageURL, along with the corporateImageWidth
+     * attribute, to specify dimensions of PNG images for use in Internet
+     * Explorer.
+     */
+    @Property(name = "corporateImageHeight",
+            displayName = "Corporate Image Height",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int corporateImageHeight = Integer.MIN_VALUE;
+
+    /**
+     * corporateImageHeight set flag.
+     */
+    private boolean corporateImageHeightSet = false;
+
+    /**
+     * The width to use for the Corporate Image URL, in pixels. Use this
+     * attribute along with the corporateImageHeight attribute to specify
+     * dimensions of PNG images for use in Internet Explorer.
+     */
+    @Property(name = "corporateImageWidth",
+            displayName = "Corporate Image Width",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int corporateImageWidth = Integer.MIN_VALUE;
+
+    /**
+     * corporateImageWidth set flag.
+     */
+    private boolean corporateImageWidthSet = false;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Creates a new instance of MastFooter.
      */
     public MastFooter() {
         super();
         setRendererType("com.sun.webui.jsf.MastFooter");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.MastFooter";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -68,305 +156,286 @@ public class MastFooter extends javax.faces.component.UIComponentBase
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>The url to the image file to use for the Corporate Image. Use this 
-     * attribute to override the corporate image that is set in the theme.</p>
-     */
-    @Property(name = "corporateImageURL", displayName = "Corporate Image URL", category = "Navigation",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
-    private String corporateImageURL = null;
 
     /**
-     * <p>The url to the image file to use for the Corporate Image. Use this 
-     * attribute to override the corporate image that is set in the theme.</p>
+     * The URL to the image file to use for the Corporate Image. Use this
+     * attribute to override the corporate image that is set in the theme.
+     * @return String
      */
     public String getCorporateImageURL() {
         if (this.corporateImageURL != null) {
             return this.corporateImageURL;
         }
-        ValueExpression _vb = getValueExpression("corporateImageURL");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("corporateImageURL");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The url to the image file to use for the Corporate Image. Use this 
-     * attribute to override the corporate image that is set in the theme.</p>
+     * The URL to the image file to use for the Corporate Image. Use this
+     * attribute to override the corporate image that is set in the theme.
+     *
      * @see #getCorporateImageURL()
+     * @param newCorporateImageURL corporateImageURL
      */
-    public void setCorporateImageURL(String corporateImageURL) {
-        this.corporateImageURL = corporateImageURL;
+    public void setCorporateImageURL(final String newCorporateImageURL) {
+        this.corporateImageURL = newCorporateImageURL;
     }
-    /**
-     * <p>The description for the Corporate Image, used as alt text for the image.</p>
-     */
-    @Property(name = "corporateImageDescription", displayName = "Corporate Image Description",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String corporateImageDescription = null;
 
     /**
-     * <p>The description for the Corporate Image, used as alt text for the image.</p>
+     * The description for the Corporate Image, used as alt text for the
+     * image.
+     * @return String
      */
     public String getCorporateImageDescription() {
         if (this.corporateImageDescription != null) {
             return this.corporateImageDescription;
         }
-        ValueExpression _vb = getValueExpression("corporateImageDescription");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("corporateImageDescription");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The description for the Corporate Image, used as alt text for the image.</p>
+     * The description for the Corporate Image, used as alt text for the
+     * image.
+     *
      * @see #getCorporateImageDescription()
+     * @param newCorporateImageDescription corporateImageDescription
      */
-    public void setCorporateImageDescription(String corporateImageDescription) {
-        this.corporateImageDescription = corporateImageDescription;
+    public void setCorporateImageDescription(
+            final String newCorporateImageDescription) {
+        this.corporateImageDescription = newCorporateImageDescription;
     }
-    /**
-     * <p>The height to use for the Corporate Image, in pixels. 
-     * Use this attribute when specifying the corporateImageURL, along with 
-     * the corporateImageWidth attribute, to specify dimensions of  PNG images 
-     * for use in Internet Explorer.</p>
-     */
-    @Property(name = "corporateImageHeight", displayName = "Corporate Image Height",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int corporateImageHeight = Integer.MIN_VALUE;
-    private boolean corporateImageHeight_set = false;
 
     /**
-     * <p>The height to use for the Corporate Image, in pixels. 
-     * Use this attribute when specifying the corporateImageURL, along with 
-     * the corporateImageWidth attribute, to specify dimensions of  PNG images 
-     * for use in Internet Explorer.</p>
+     * The height to use for the Corporate Image, in pixels. Use this attribute
+     * when specifying the corporateImageURL, along with the corporateImageWidth
+     * attribute, to specify dimensions of PNG images for use in Internet
+     * Explorer.
+     * @return int
      */
     public int getCorporateImageHeight() {
-        if (this.corporateImageHeight_set) {
+        if (this.corporateImageHeightSet) {
             return this.corporateImageHeight;
         }
-        ValueExpression _vb = getValueExpression("corporateImageHeight");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("corporateImageHeight");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The height to use for the Corporate Image, in pixels. 
-     * Use this attribute when specifying the corporateImageURL, along with 
-     * the corporateImageWidth attribute, to specify dimensions of  PNG images 
-     * for use in Internet Explorer.</p>
+     * The height to use for the Corporate Image, in pixels. Use this attribute
+     * when specifying the corporateImageURL, along with the corporateImageWidth
+     * attribute, to specify dimensions of PNG images for use in Internet
+     * Explorer.
+     *
      * @see #getCorporateImageHeight()
+     * @param newCorporateImageHeight corporateImageHeight
      */
-    public void setCorporateImageHeight(int corporateImageHeight) {
-        this.corporateImageHeight = corporateImageHeight;
-        this.corporateImageHeight_set = true;
+    public void setCorporateImageHeight(final int newCorporateImageHeight) {
+        this.corporateImageHeight = newCorporateImageHeight;
+        this.corporateImageHeightSet = true;
     }
-    /**
-     * <p>The width to use for the Corporate Image URL, in pixels. Use this 
-     * attribute along with the corporateImageHeight attribute to specify 
-     * dimensions of  PNG images for use in Internet Explorer.</p>
-     */
-    @Property(name = "corporateImageWidth", displayName = "Corporate Image Width",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int corporateImageWidth = Integer.MIN_VALUE;
-    private boolean corporateImageWidth_set = false;
 
     /**
-     * <p>The width to use for the Corporate Image URL, in pixels. Use this 
-     * attribute along with the corporateImageHeight attribute to specify 
-     * dimensions of  PNG images for use in Internet Explorer.</p>
+     * The width to use for the Corporate Image URL, in pixels. Use this
+     * attribute along with the corporateImageHeight attribute to specify
+     * dimensions of PNG images for use in Internet Explorer.
+     * @return int
      */
     public int getCorporateImageWidth() {
-        if (this.corporateImageWidth_set) {
+        if (this.corporateImageWidthSet) {
             return this.corporateImageWidth;
         }
-        ValueExpression _vb = getValueExpression("corporateImageWidth");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("corporateImageWidth");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The width to use for the Corporate Image URL, in pixels. Use this 
-     * attribute along with the corporateImageHeight attribute to specify 
-     * dimensions of  PNG images for use in Internet Explorer.</p>
+     * The width to use for the Corporate Image URL, in pixels. Use this
+     * attribute along with the corporateImageHeight attribute to specify
+     * dimensions of PNG images for use in Internet Explorer.
+     *
      * @see #getCorporateImageWidth()
+     * @param newCorporateImageWidth corporateImageWidth
      */
-    public void setCorporateImageWidth(int corporateImageWidth) {
-        this.corporateImageWidth = corporateImageWidth;
-        this.corporateImageWidth_set = true;
+    public void setCorporateImageWidth(final int newCorporateImageWidth) {
+        this.corporateImageWidth = newCorporateImageWidth;
+        this.corporateImageWidthSet = true;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.style = (String) _values[1];
-        this.styleClass = (String) _values[2];
-        this.corporateImageURL = (String) _values[3];
-        this.visible = ((Boolean) _values[4]).booleanValue();
-        this.visible_set = ((Boolean) _values[5]).booleanValue();
-        this.corporateImageDescription = (String) _values[6];
-        this.corporateImageHeight = ((Integer) _values[7]).intValue();
-        this.corporateImageHeight_set = ((Boolean) _values[8]).booleanValue();
-        this.corporateImageWidth = ((Integer) _values[9]).intValue();
-        this.corporateImageWidth_set = ((Boolean) _values[10]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.style = (String) values[1];
+        this.styleClass = (String) values[2];
+        this.corporateImageURL = (String) values[3];
+        this.visible = ((Boolean) values[4]);
+        this.visibleSet = ((Boolean) values[5]);
+        this.corporateImageDescription = (String) values[6];
+        this.corporateImageHeight = ((Integer) values[7]);
+        this.corporateImageHeightSet = ((Boolean) values[8]);
+        this.corporateImageWidth = ((Integer) values[9]);
+        this.corporateImageWidthSet = ((Boolean) values[10]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[11];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.style;
-        _values[2] = this.styleClass;
-        _values[3] = this.corporateImageURL;
-        _values[4] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.corporateImageDescription;
-        _values[7] = new Integer(this.corporateImageHeight);
-        _values[8] = this.corporateImageHeight_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = new Integer(this.corporateImageWidth);
-        _values[10] = this.corporateImageWidth_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[11];
+        values[0] = super.saveState(context);
+        values[1] = this.style;
+        values[2] = this.styleClass;
+        values[3] = this.corporateImageURL;
+        if (this.visible) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        values[6] = this.corporateImageDescription;
+        values[7] = this.corporateImageHeight;
+        if (this.corporateImageHeightSet) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] = Boolean.FALSE;
+        }
+        values[9] = this.corporateImageWidth;
+        if (this.corporateImageWidthSet) {
+            values[10] = Boolean.TRUE;
+        } else {
+            values[10] = Boolean.FALSE;
+        }
+        return values;
     }
 }

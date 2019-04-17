@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,24 +19,49 @@ import java.util.Map;
 
 /**
  * Represents a category descriptor.
- *
- * @author gjmurphy
  */
-public class CategoryInfo implements Comparable {
+public final class CategoryInfo implements Comparable {
 
-    static final String NAME = "name";
-    static final String SORT_KEY = "sortKey";
+    /**
+     * Category name.
+     */
+    private static final String NAME = "name";
 
-    Map<String, Object> annotationValueMap;
+    /**
+     * Category sort key.
+     */
+    private static final String SORT_KEY = "sortKey";
 
-    CategoryInfo(Map<String, Object> annotationValueMap) {
-        this.annotationValueMap = annotationValueMap;
+    /**
+     * Annotation value map.
+     */
+    private final Map<String, Object> annotationValueMap;
+
+    /**
+     * Field name.
+     */
+    private String fieldName;
+
+    /**
+     * Create a new instance.
+     * @param annotValueMap annotation value map
+     */
+    CategoryInfo(final Map<String, Object> annotValueMap) {
+        this.annotationValueMap = annotValueMap;
     }
 
+    /**
+     * Get the category name.
+     * @return String
+     */
     public String getName() {
         return (String) this.annotationValueMap.get(NAME);
     }
 
+    /**
+     * Get the category sort key.
+     * @return String
+     */
     public String getSortKey() {
         if (this.annotationValueMap.containsKey(SORT_KEY)) {
             return (String) this.annotationValueMap.get(SORT_KEY);
@@ -45,17 +70,22 @@ public class CategoryInfo implements Comparable {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + (this.annotationValueMap != null
-                ? this.annotationValueMap.hashCode() : 0);
-        hash = 59 * hash + (this.fieldName != null
-                ? this.fieldName.hashCode() : 0);
+        hash = 59 * hash;
+        if (this.annotationValueMap != null) {
+            hash = hash + this.annotationValueMap.hashCode();
+        }
+        hash = 59 * hash;
+        if (this.fieldName != null) {
+            hash = hash + this.fieldName.hashCode();
+        }
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof CategoryInfo) {
             return ((CategoryInfo) obj).getName().equals(this.getName());
         }
@@ -63,21 +93,27 @@ public class CategoryInfo implements Comparable {
     }
 
     @Override
-    public int compareTo(Object obj) {
+    public int compareTo(final Object obj) {
         if (obj instanceof CategoryInfo) {
-            return this.getSortKey().compareTo(((CategoryInfo) obj).getSortKey());
+            return this.getSortKey().compareTo(((CategoryInfo) obj)
+                    .getSortKey());
         }
         return -1;
     }
 
-    private String fieldName;
-
+    /**
+     * Get the field name.
+     * @return String
+     */
     public String getFieldName() {
         return this.fieldName;
     }
 
-    void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    /**
+     * Set the field name.
+     * @param fName new field name
+     */
+    void setFieldName(final String fName) {
+        this.fieldName = fName;
     }
-
 }

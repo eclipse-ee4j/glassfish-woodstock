@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -23,14 +22,18 @@ import javax.faces.context.FacesContext;
  * The Icon component is used to display a clickable icon image from the current
  * theme in the rendered HTML page.
  */
-@Component(type = "com.sun.webui.jsf.IconHyperlink", family = "com.sun.webui.jsf.IconHyperlink",
-displayName = "Hyperlink", isTag = false,
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_icon_hyperlink",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_icon_hyperlink_props")
+@Component(type = "com.sun.webui.jsf.IconHyperlink",
+        family = "com.sun.webui.jsf.IconHyperlink",
+        displayName = "Hyperlink",
+        isTag = false,
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_icon_hyperlink",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_icon_hyperlink_props")
+        //CHECKSTYLE:ON
 public class IconHyperlink extends ImageHyperlink {
 
     /**
-     * <p>Construct a new <code>IconHyperlink</code>.</p>
+     * Construct a new {@code IconHyperlink}.
      */
     public IconHyperlink() {
         super();
@@ -38,7 +41,8 @@ public class IconHyperlink extends ImageHyperlink {
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * This implementation returns {@code "com.sun.webui.jsf.IconHyperlink"}.
+     * @return String
      */
     @Override
     public String getFamily() {
@@ -46,21 +50,25 @@ public class IconHyperlink extends ImageHyperlink {
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[1];
-        _values[0] = super.saveState(_context);
-        return _values;
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[1];
+        values[0] = super.saveState(context);
+        return values;
     }
 }

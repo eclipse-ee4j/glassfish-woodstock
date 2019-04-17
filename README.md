@@ -38,3 +38,24 @@ Once you know JSF, you need to decide how you want to build your application.
 
 Netbeans 5.5 is recommended because of its source level debugging, and full
 featured editor for building web applications.
+
+## Build
+
+You must build using JDK 8. You also need Maven. We recommend 3.5 or
+ newer.
+
+**Full build**
+```bash
+$ mvn install
+```
+
+**Checkstyle**
+```bash
+$ mvn validate  -Pcheckstyle
+```
+
+**Copyright**
+
+```bash
+$ mvn validate  -Pcopyright
+```

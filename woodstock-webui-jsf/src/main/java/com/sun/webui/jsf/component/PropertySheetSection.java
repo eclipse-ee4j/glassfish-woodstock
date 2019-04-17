@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import java.io.IOException;
@@ -27,47 +26,116 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 
 /**
- * The <code>PropertySheetSection</code> component was written to be used
- * within the <code>PropertySheet</code> component.  It allows you to group
- * <code>Property<code> components together in sections within the
- * <code>PropertySheet</code> component.</p><p> When you use this component to
- * create a grouping of <code>Property</code> components, you may provide a 
- * description for the<code>PropertySheetSection</code>. This is done via the
- * <code>label</code> attribute. Set this attribute to the desired value, 
- * which, of course, may be a ValueBinding expression or a literal String.<p>For
- * an example, please see the documentation for the <code>propertySheet</code> 
+ * The {@code PropertySheetSection} component was written to be used within the
+ * {@code PropertySheet} component. It allows you to group null {@code Property}
+ * components together in sections within the {@code PropertySheet}
+ * component.
+ * <p>
+ * When you use this component to create a grouping of {@code Property}
+ * components, you may provide a description for
+ * the{@code PropertySheetSection}. This is done via the {@code label}
+ * attribute. Set this attribute to the desired value, which, of course, may be
+ * a ValueBinding expression or a literal String.<p>
+ * For an example, please see the documentation for the {@code propertySheet}
  * Tag.</p>
  */
-@com.sun.faces.annotation.Component(type = "com.sun.webui.jsf.PropertySheetSection",
-family = "com.sun.webui.jsf.PropertySheetSection",
-displayName = "Property Sheet Section", instanceName = "section", tagName = "propertySheetSection",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_property_sheet_sections")
-public class PropertySheetSection extends UIComponentBase
+@com.sun.faces.annotation.Component(
+        type = "com.sun.webui.jsf.PropertySheetSection",
+        family = "com.sun.webui.jsf.PropertySheetSection",
+        displayName = "Property Sheet Section",
+        instanceName = "section",
+        tagName = "propertySheetSection",
+        //CHECKSTYLE:OFF
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_property_sheet_sections")
+        //CHECKSTYLE:ON
+public final class PropertySheetSection extends UIComponentBase
         implements NamingContainer {
 
     /**
-     *	Constructor.
+     * This attribute allows you to provide a label or title for the section
+     * this {@code PropertySheetSection} defines for the{@code PropertySheet}
+     * component. The value may be a literal String, or it may be a ValueBinding
+     * expression (useful for localization).
+     */
+    @com.sun.faces.annotation.Property(name = "label",
+            displayName = "Label",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String label = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @com.sun.faces.annotation.Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @com.sun.faces.annotation.Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @com.sun.faces.annotation.Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Used to cache the visible children.
+     */
+    private transient List<UIComponentBase> visibleChildren = null;
+
+    /**
+     * Child count.
+     */
+    private transient int childCount = -1;
+
+    /**
+     * Constructor.
      */
     public PropertySheetSection() {
         super();
         setRendererType("com.sun.webui.jsf.PropertySheetSection");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.PropertySheetSection";
     }
 
     /**
-     *	<p> This method calculates the number of visible child
-     *	    {@link PropertySheetSection} or {@link Property}
-     *	    <code>UIComponent</code>s.  A {@link PropertySheetSection}
-     *	    or {@link Property} can be made not visible by setting their
-     *	    rendered property to false.</p>
+     * This method calculates the number of visible child
+     * {@link PropertySheetSection} or {@link Property} {@code UIComponent}. A
+     * {@link PropertySheetSection} or {@link Property} can be made not visible
+     * by setting their rendered property to false.
      *
-     *	@return The number of visible {@link PropertySheetSection} children.
+     * @return The number of visible {@link PropertySheetSection} children.
      */
     public int getSectionChildrenCount() {
         // Set the output value
@@ -75,60 +143,51 @@ public class PropertySheetSection extends UIComponentBase
     }
 
     /**
-     *	<p> This method creates a <code>List</code> of visible (rendered=true)
-     *	    child {@link PropertySheetSection} or {@link Property}
-     *	    components.</p>
+     * This method creates a {@code List} of visible (rendered=true) child
+     * {@link PropertySheetSection} or {@link Property} components.
      *
-     *	@return	<code>List</code> of child {@link PropertySheetSection} or
-     *	    {@link Property} <code>UIComponent</code> objects.
+     * @return {@code List} of child {@link PropertySheetSection} or
+     * {@link Property} {@code UIComponent} objects.
      */
     public List getVisibleSectionChildren() {
         int numChildren = getChildCount();
 
         // See if we've already figured this out
-        if ((_visibleChildren != null) && (_childCount == numChildren)) {
-            return _visibleChildren;
+        if ((visibleChildren != null) && (childCount == numChildren)) {
+            return visibleChildren;
         }
-        _childCount = numChildren;
+        childCount = numChildren;
 
         // Make sure we have children
         if (numChildren == 0) {
             // Avoid creating child UIComponent List by checking for 0 sections
-            _visibleChildren = new ArrayList<UIComponentBase>(0);
-            return _visibleChildren;
+            visibleChildren = new ArrayList<UIComponentBase>(0);
+            return visibleChildren;
         }
 
         // Add the visible sections to the result List
-        UIComponent child = null;
-        _visibleChildren = new ArrayList<UIComponentBase>();
+        UIComponent child;
+        visibleChildren = new ArrayList<UIComponentBase>();
         Iterator it = getChildren().iterator();
         while (it.hasNext()) {
             child = (UIComponent) it.next();
-            if (((child instanceof Property) ||
-                    (child instanceof PropertySheetSection)) &&
-                    child.isRendered()) {
-                _visibleChildren.add((UIComponentBase)child);
+            if (((child instanceof Property)
+                    || (child instanceof PropertySheetSection))
+                    && child.isRendered()) {
+                visibleChildren.add((UIComponentBase) child);
             }
         }
 
         // Return the List
-        return _visibleChildren;
+        return visibleChildren;
     }
-    /**
-     *	<p> Used to cache the visible children.</p>
-     */
-    private transient List<UIComponentBase> _visibleChildren = null;
-    private transient int _childCount = -1;
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // UIComponent methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * If the rendered property is true, render the begining of the current
+     * If the rendered property is true, render the beginning of the current
      * state of this UIComponent to the response contained in the specified
      * FacesContext.
      *
-     * If a Renderer is associated with this UIComponent, the actual encoding 
+     * If a Renderer is associated with this UIComponent, the actual encoding
      * will be delegated to Renderer.encodeBegin(FacesContext, UIComponent).
      *
      * @param context FacesContext for the current request.
@@ -137,23 +196,22 @@ public class PropertySheetSection extends UIComponentBase
      * @exception NullPointerException if FacesContext is null.
      */
     @Override
-    public void encodeBegin(FacesContext context) throws IOException {
+    public void encodeBegin(final FacesContext context) throws IOException {
         // Clear cached variables -- bugtraq #6270214.
-        _visibleChildren = null;
-        _childCount = -1;
+        visibleChildren = null;
+        childCount = -1;
         super.encodeBegin(context);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     *
+     * @param id id
      */
     @com.sun.faces.annotation.Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -166,188 +224,172 @@ public class PropertySheetSection extends UIComponentBase
      */
     @com.sun.faces.annotation.Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * <p>This attribute allows you to provide a label or title for the section
-     * 	this <code>PropertySheetSection</code> defines for the<code>PropertySheet</code> component.  The value may be a literal
-     * 	String, or it may be a ValueBinding expression (useful for
-     * 	localization).</p>
-     */
-    @com.sun.faces.annotation.Property(name = "label", displayName = "Label",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String label = null;
 
     /**
-     * <p>This attribute allows you to provide a label or title for the section
-     * 	this <code>PropertySheetSection</code> defines for the<code>PropertySheet</code> component.
-     * The value may be a literal
-     * 	String, or it may be a ValueBinding expression (useful for
-     * 	localization).</p>
+     * This attribute allows you to provide a label or title for the section
+     * this {@code PropertySheetSection} defines for the{@code PropertySheet}
+     * component. The value may be a literal String, or it may be a ValueBinding
+     * expression (useful for localization).
+     *
+     * @return String
      */
     public String getLabel() {
         if (this.label != null) {
             return this.label;
         }
-        ValueExpression _vb = getValueExpression("label");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("label");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>This attribute allows you to provide a label or title for the section
-     * 	this <code>PropertySheetSection</code> defines for the<code>PropertySheet</code> component.
-     * The value may be a literal
-     * 	String, or it may be a ValueBinding expression (useful for
-     * 	localization).</p>
+     * This attribute allows you to provide a label or title for the section
+     * this {@code PropertySheetSection} defines for the{@code PropertySheet}
+     * component. The value may be a literal String, or it may be a ValueBinding
+     * expression (useful for localization).
+     *
      * @see #getLabel()
+     * @param newLabel label
      */
-    public void setLabel(String label) {
-        this.label = label;
+    public void setLabel(final String newLabel) {
+        this.label = newLabel;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @com.sun.faces.annotation.Property(name = "style", displayName = "CSS Style(s)",
-    category = "Appearance", editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @com.sun.faces.annotation.Property(name = "styleClass", displayName = "CSS Style Class(es)",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @com.sun.faces.annotation.Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so HTML for the component
-     * HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so HTML for the component HTML
-     * is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.label = (String) _values[1];
-        this.style = (String) _values[2];
-        this.styleClass = (String) _values[3];
-        this.visible = ((Boolean) _values[4]).booleanValue();
-        this.visible_set = ((Boolean) _values[5]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.label = (String) values[1];
+        this.style = (String) values[2];
+        this.styleClass = (String) values[3];
+        this.visible = ((Boolean) values[4]);
+        this.visibleSet = ((Boolean) values[5]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[6];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.label;
-        _values[2] = this.style;
-        _values[3] = this.styleClass;
-        _values[4] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[6];
+        values[0] = super.saveState(context);
+        values[1] = this.label;
+        values[2] = this.style;
+        values[3] = this.styleClass;
+        if (this.visible) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        return values;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * $Id: StaticTextRenderer.java,v 1.1.20.1 2009-12-29 04:52:44 jyeary Exp $
  */
 package com.sun.webui.jsf.renderkit.html;
@@ -31,99 +31,64 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 /**
- * <p>Renderer for a {@link StaticText} component.</p>
+ * Renderer for a {@link StaticText} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.StaticText"))
-public class StaticTextRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.StaticText"))
+public final class StaticTextRenderer extends AbstractRenderer {
 
-
-    // ======================================================== Static Variables
     /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
+     * The set of String pass-through attributes to be rendered.
      */
-    private static final String stringAttributes[] = {"onClick", "onDblClick", "onMouseUp", //NOI18N
-        "onMouseDown", "onMouseMove", "onMouseOut", "onMouseOver"}; //NOI18N
+    private static final String[] STRING_ATTRIBUTES = {
+        "onClick",
+        "onDblClick",
+        "onMouseUp",
+        "onMouseDown",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver"
+    };
 
-
-    // -------------------------------------------------------- Renderer Methods
-    /**
-     * <p>Render the appropriate element start, depending on whether the
-     * <code>for</code> property is set or not.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component StaticText component
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         writer.startElement("span", component);
     }
 
-    /**
-     * <p>Render the appropriate element attributes, followed by the
-     * label content, depending on whether the <code>for</code> property
-     * is set or not.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component StaticText component
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         StaticText st = (StaticText) component;
         addCoreAttributes(context, component, writer, null);
-        addStringAttributes(context, component, writer, stringAttributes);
+        addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
         if (st.getToolTip() != null) {
             writer.writeAttribute("title", st.getToolTip(), null);
         }
     }
 
-    /**
-     * <p>Render the appropriate element end, depending on whether the
-     * <code>for</code> property is set or not.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
-        StaticText staticText = (StaticText) component;
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
-        String currentValue =
-                ConversionUtilities.convertValueToString(component,
-                staticText.getText());
+        StaticText staticText = (StaticText) component;
+        String currentValue = ConversionUtilities
+                .convertValueToString(component, staticText.getText());
 
         String style = staticText.getStyle();
         String styleClass = staticText.getStyleClass();
 
         if (currentValue != null) {
             ArrayList<Object> parameterList = new ArrayList<Object>();
-
             // get UIParameter children...
-
-            java.util.Iterator kids = component.getChildren().iterator();
-            while (kids.hasNext()) {
-                UIComponent kid = (UIComponent) kids.next();
-
+            for (UIComponent kid : component.getChildren()) {
                 //PENDING(rogerk) ignore if child is not UIParameter?
-
                 if (!(kid instanceof UIParameter)) {
                     continue;
                 }
@@ -133,9 +98,11 @@ public class StaticTextRenderer extends AbstractRenderer {
 
             // If at least one substitution parameter was specified,
             // use the string as a MessageFormat instance.
-            String message = null;
+            String message;
             if (parameterList.size() > 0) {
-                message = MessageFormat.format(currentValue, parameterList.toArray(new Object[parameterList.size()]));
+                message = MessageFormat.format(currentValue,
+                        parameterList.toArray(
+                                new Object[parameterList.size()]));
             } else {
                 message = currentValue;
             }
@@ -150,5 +117,4 @@ public class StaticTextRenderer extends AbstractRenderer {
         }
         writer.endElement("span");
     }
-    // --------------------------------------------------------- Private Methods
 }

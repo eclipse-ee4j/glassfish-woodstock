@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import javax.el.ValueExpression;
@@ -23,17 +22,298 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
 /**
- * The ImageComponent is used to display in inline graphic image. 
+ * The ImageComponent is used to display inline graphic image.
  */
-@Component(type = "com.sun.webui.jsf.Image", family = "com.sun.webui.jsf.Image",
-displayName = "Image",
-tagName = "image", instanceName = "image",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_image_component",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_image_component_props")
+@Component(type = "com.sun.webui.jsf.Image",
+        family = "com.sun.webui.jsf.Image",
+        displayName = "Image",
+        tagName = "image", instanceName = "image",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_image_component",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_image_component_props")
+        //CHECKSTYLE:ON
 public class ImageComponent extends UIGraphic {
 
     /**
-     * <p>Construct a new <code>ImageComponent</code>.</p>
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     */
+    @Property(name = "align",
+            displayName = "Align",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlAlignEditor")
+            //CHECKSTYLE:ON
+    private String align = null;
+
+    /**
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     */
+    @Property(name = "alt",
+            displayName = "Alt Text",
+            category = "Accessibility",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String alt = null;
+
+    /**
+     * Specifies the width of the img border in pixels. The default value for
+     * this attribute depends on the web browser.
+     */
+    @Property(name = "border",
+            displayName = "Border",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int border = Integer.MIN_VALUE;
+
+    /**
+     * border set flag.
+     */
+    private boolean borderSet = false;
+
+    /**
+     * Image height override. When specified, the width and height attributes
+     * tell web browsers to override the natural image or object size in favor
+     * of these values, specified in pixels. Some browsers might not support
+     * this behavior.
+     */
+    @Property(name = "height",
+            displayName = "Height",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int height = Integer.MIN_VALUE;
+
+    /**
+     * height set flag.
+     */
+    private boolean heightSet = false;
+
+    /**
+     * Specifies the amount of white space in pixels to be inserted to the left
+     * and right of the image. The default value is not specified but is
+     * generally a small, non-zero size.
+     */
+    @Property(name = "hspace",
+            displayName = "Horizontal Space",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int hspace = Integer.MIN_VALUE;
+
+    /**
+     * hspace set flag.
+     */
+    private boolean hspaceSet = false;
+
+    /**
+     * The identifier of the desired theme image.
+     */
+    @Property(name = "icon",
+            displayName = "Icon",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.ThemeIconsEditor")
+            //CHECKSTYLE:ON
+    private String icon = null;
+
+    /**
+     * A verbose description of this image.
+     */
+    @Property(name = "longDesc",
+            displayName = "Long Description",
+            category = "Accessibility",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String longDesc = null;
+
+    /**
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     */
+    @Property(name = "onClick",
+            displayName = "Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onClick = null;
+
+    /**
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     */
+    @Property(name = "onDblClick",
+            displayName = "Double Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onDblClick = null;
+
+    /**
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseDown",
+            displayName = "Mouse Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseDown = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     */
+    @Property(name = "onMouseMove",
+            displayName = "Mouse Move Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseMove = null;
+
+    /**
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     */
+    @Property(name = "onMouseOut",
+            displayName = "Mouse Out Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOut = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     */
+    @Property(name = "onMouseOver",
+            displayName = "Mouse In Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOver = null;
+
+    /**
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseUp",
+            displayName = "Mouse Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseUp = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+            //CHECKSTYLE:ON
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Specifies the amount of white space in pixels to be inserted above and
+     * below the image. The default value is not specified but is generally a
+     * small, non-zero size.
+     */
+    @Property(name = "vspace",
+            displayName = "Vertical Space",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int vspace = Integer.MIN_VALUE;
+
+    /**
+     * vspace set flag.
+     */
+    private boolean vspaceSet = false;
+
+    /**
+     * Image width override. When specified, the width and height attributes
+     * tell web browsers to override the natural image or object size in favor
+     * of these values, specified in pixels. Some browsers might not support
+     * this behavior.
+     */
+    @Property(name = "width",
+            displayName = "Width",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int width = Integer.MIN_VALUE;
+
+    /**
+     * width set flag.
+     */
+    private boolean widthSet = false;
+
+    /**
+     * Construct a new {@code ImageComponent}.
      */
     public ImageComponent() {
         super();
@@ -41,47 +321,42 @@ public class ImageComponent extends UIGraphic {
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * This implementation returns {@code "com.sun.webui.jsf.Image"}.
+     * @return String
      */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Image";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
+     * This implementation invokes {@code super.setId}.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
     /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
+     * This implementation invokes {@code super.setRendered}.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
     /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
-     *
-     * @param name Name of value binding expression to retrieve
+     * This implementation aliases {@code url} with {@code value} and invokes
+     * {@code super.getValueExpression}.
+     * @param name name
+     * @return ValueExpression
      */
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("url")) {
             return super.getValueExpression("value");
         }
@@ -89,15 +364,14 @@ public class ImageComponent extends UIGraphic {
     }
 
     /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
-     *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
+     * This implementation aliases {@code url} with {@code value} and invokes
+     * {@code super.setValueExpression}.
+     * @param name name
      */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("url")) {
             super.setValueExpression("value", binding);
             return;
@@ -105,794 +379,744 @@ public class ImageComponent extends UIGraphic {
         super.setValueExpression(name, binding);
     }
 
+    /**
+     * This implementation invokes {@code super.getValue}.
+     * @return Object
+     */
     // Hide value
     @Property(name = "value", isHidden = true, isAttribute = false)
     @Override
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
-     */
-    @Property(name = "align", displayName = "Align", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlAlignEditor")
-    private String align = null;
 
     /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     * @return String
      */
     public String getAlign() {
         if (this.align != null) {
             return this.align;
         }
-        ValueExpression _vb = getValueExpression("align");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("align");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     *
      * @see #getAlign()
+     * @param newAlign align
      */
-    public void setAlign(String align) {
-        this.align = align;
+    public void setAlign(final String newAlign) {
+        this.align = newAlign;
     }
-    /**
-     * <p>Alternative textual description of the image rendered by this
-     * component. The alt text can be used by screen readers and in tool tips,
-     * and when image display is turned off in the web browser.</p>
-     */
-    @Property(name = "alt", displayName = "Alt Text", category = "Accessibility",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String alt = null;
 
     /**
-     * <p>Alternative textual description of the image rendered by this
-     * component. The alt text can be used by screen readers and in tool tips,
-     * and when image display is turned off in the web browser.</p>
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     * @return String
      */
     public String getAlt() {
         if (this.alt != null) {
             return this.alt;
         }
-        ValueExpression _vb = getValueExpression("alt");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("alt");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Alternative textual description of the image rendered by this 
-     * component. The alt text can be used by screen readers and in tool tips,
-     * and when image display is turned off in the web browser.</p>
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     *
      * @see #getAlt()
+     * @param newAlt alt
      */
-    public void setAlt(String alt) {
-        this.alt = alt;
+    public void setAlt(final String newAlt) {
+        this.alt = newAlt;
     }
-    /**
-     * <p>Specifies the width of the img border in pixels.
-     * The default value for this attribute depends on the web browser.</p>
-     */
-    @Property(name = "border", displayName = "Border", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int border = Integer.MIN_VALUE;
-    private boolean border_set = false;
 
     /**
-     * <p>Specifies the width of the img border in pixels.
-     * The default value for this attribute depends on the web browser.</p>
+     * Specifies the width of the img border in pixels. The default value for
+     * this attribute depends on the web browser.
+     * @return int
      */
     public int getBorder() {
-        if (this.border_set) {
+        if (this.borderSet) {
             return this.border;
         }
-        ValueExpression _vb = getValueExpression("border");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("border");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 0;
     }
 
     /**
-     * <p>Specifies the width of the img border in pixels.
-     * The default value for this attribute depends on the web browser.</p>
+     * Specifies the width of the img border in pixels. The default value for
+     * this attribute depends on the web browser.
+     *
      * @see #getBorder()
+     * @param newBorder border
      */
-    public void setBorder(int border) {
-        this.border = border;
-        this.border_set = true;
+    public void setBorder(final int newBorder) {
+        this.border = newBorder;
+        this.borderSet = true;
     }
-    /**
-     * <p>Image height override. When specified, the width and height attributes 
-     * tell web browsers to override the natural image or object size in favor 
-     * of these values, specified in pixels. Some browsers might not support 
-     * this behavior.</p>
-     */
-    @Property(name = "height", displayName = "Height", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int height = Integer.MIN_VALUE;
-    private boolean height_set = false;
 
     /**
-     * <p>Image height override. When specified, the width and height attributes 
-     * tell web browsers to override the natural image or object size in favor 
-     * of these values, specified in pixels. Some browsers might not support 
-     * this behavior.</p>
+     * Image height override. When specified, the width and height attributes
+     * tell web browsers to override the natural image or object size in favor
+     * of these values, specified in pixels. Some browsers might not support
+     * this behavior.
+     * @return int
      */
     public int getHeight() {
-        if (this.height_set) {
+        if (this.heightSet) {
             return this.height;
         }
-        ValueExpression _vb = getValueExpression("height");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("height");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Image height override. When specified, the width and height attributes 
-     * tell web browsers to override the natural image or object size in favor 
-     * of these values, specified in pixels. Some browsers might not support 
+     * <p>
+     * Image height override. When specified, the width and height attributes
+     * tell web browsers to override the natural image or object size in favor
+     * of these values, specified in pixels. Some browsers might not support
      * this behavior.</p>
+     *
      * @see #getHeight()
+     * @param newHeight height
      */
-    public void setHeight(int height) {
-        this.height = height;
-        this.height_set = true;
+    public void setHeight(final int newHeight) {
+        this.height = newHeight;
+        this.heightSet = true;
     }
-    /**
-     * <p>Specifies the amount of white space in pixels to be inserted to the
-     * left and right of the image. The default value is not specified but is       
-     * generally a small, non-zero size.</p>
-     */
-    @Property(name = "hspace", displayName = "Horizontal Space", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int hspace = Integer.MIN_VALUE;
-    private boolean hspace_set = false;
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted to the
-     * left and right of the image. The default value is not specified but is       
-     * generally a small, non-zero size.</p>
+     * Specifies the amount of white space in pixels to be inserted to the left
+     * and right of the image. The default value is not specified but is
+     * generally a small, non-zero size.
+     * @return int
      */
     public int getHspace() {
-        if (this.hspace_set) {
+        if (this.hspaceSet) {
             return this.hspace;
         }
-        ValueExpression _vb = getValueExpression("hspace");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("hspace");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted to the
-     * left and right of the image. The default value is not specified but is       
-     * generally a small, non-zero size.</p>
+     * Specifies the amount of white space in pixels to be inserted to the left
+     * and right of the image. The default value is not specified but is
+     * generally a small, non-zero size.
+     *
      * @see #getHspace()
+     * @param newHspace hspace
      */
-    public void setHspace(int hspace) {
-        this.hspace = hspace;
-        this.hspace_set = true;
+    public void setHspace(final int newHspace) {
+        this.hspace = newHspace;
+        this.hspaceSet = true;
     }
-    /**
-     * <p>The identifier of the desired theme image.</p>
-     */
-    @Property(name = "icon", displayName = "Icon", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.ThemeIconsEditor")
-    private String icon = null;
 
     /**
-     * <p>The identifier of the desired theme image.</p>
+     * The identifier of the desired theme image.
+     * @return String
      */
     public String getIcon() {
         if (this.icon != null) {
             return this.icon;
         }
-        ValueExpression _vb = getValueExpression("icon");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("icon");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The identifier of the desired theme image.</p>
+     * The identifier of the desired theme image.
+     *
      * @see #getIcon()
+     * @param newIcon icon
      */
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setIcon(final String newIcon) {
+        this.icon = newIcon;
     }
-    /**
-     * <p>A verbose description of this image.</p>
-     */
-    @Property(name = "longDesc", displayName = "Long Description", category = "Accessibility",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String longDesc = null;
 
     /**
-     * <p>A verbose description of this image.</p>
+     * A verbose description of this image.
+     * @return String
      */
     public String getLongDesc() {
         if (this.longDesc != null) {
             return this.longDesc;
         }
-        ValueExpression _vb = getValueExpression("longDesc");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("longDesc");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>A verbose description of this image.</p>
+     * A verbose description of this image.
+     *
      * @see #getLongDesc()
+     * @param newLongDesc longDesc
      */
-    public void setLongDesc(String longDesc) {
-        this.longDesc = longDesc;
+    public void setLongDesc(final String newLongDesc) {
+        this.longDesc = newLongDesc;
     }
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onClick", displayName = "Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     * @return String
      */
     public String getOnClick() {
         if (this.onClick != null) {
             return this.onClick;
         }
-        ValueExpression _vb = getValueExpression("onClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     *
      * @see #getOnClick()
+     * @param newOnClick onClick
      */
-    public void setOnClick(String onClick) {
-        this.onClick = onClick;
+    public void setOnClick(final String newOnClick) {
+        this.onClick = newOnClick;
     }
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onDblClick", displayName = "Double Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onDblClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     * @return String
      */
     public String getOnDblClick() {
         if (this.onDblClick != null) {
             return this.onDblClick;
         }
-        ValueExpression _vb = getValueExpression("onDblClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onDblClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     *
      * @see #getOnDblClick()
+     * @param newOnDblClick onDblClick
      */
-    public void setOnDblClick(String onDblClick) {
-        this.onDblClick = onDblClick;
+    public void setOnDblClick(final String newOnDblClick) {
+        this.onDblClick = newOnDblClick;
     }
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseDown", displayName = "Mouse Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseDown() {
         if (this.onMouseDown != null) {
             return this.onMouseDown;
         }
-        ValueExpression _vb = getValueExpression("onMouseDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseDown()
+     * @param newOnMouseDown onMouseDown
      */
-    public void setOnMouseDown(String onMouseDown) {
-        this.onMouseDown = onMouseDown;
+    public void setOnMouseDown(final String newOnMouseDown) {
+        this.onMouseDown = newOnMouseDown;
     }
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
-    @Property(name = "onMouseMove", displayName = "Mouse Move Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseMove = null;
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     * @return String
      */
     public String getOnMouseMove() {
         if (this.onMouseMove != null) {
             return this.onMouseMove;
         }
-        ValueExpression _vb = getValueExpression("onMouseMove");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseMove");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     *
      * @see #getOnMouseMove()
+     * @param newOnMouseMove onMouseMove
      */
-    public void setOnMouseMove(String onMouseMove) {
-        this.onMouseMove = onMouseMove;
+    public void setOnMouseMove(final String newOnMouseMove) {
+        this.onMouseMove = newOnMouseMove;
     }
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
-    @Property(name = "onMouseOut", displayName = "Mouse Out Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOut = null;
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     * @return String
      */
     public String getOnMouseOut() {
         if (this.onMouseOut != null) {
             return this.onMouseOut;
         }
-        ValueExpression _vb = getValueExpression("onMouseOut");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOut");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     *
      * @see #getOnMouseOut()
+     * @param newOnMouseOut onMouseOut
      */
-    public void setOnMouseOut(String onMouseOut) {
-        this.onMouseOut = onMouseOut;
+    public void setOnMouseOut(final String newOnMouseOut) {
+        this.onMouseOut = newOnMouseOut;
     }
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
-    @Property(name = "onMouseOver", displayName = "Mouse In Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOver = null;
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * <p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.</p>
+     * @return String
      */
     public String getOnMouseOver() {
         if (this.onMouseOver != null) {
             return this.onMouseOver;
         }
-        ValueExpression _vb = getValueExpression("onMouseOver");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOver");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     *
      * @see #getOnMouseOver()
+     * @param newOnMouseOver onMouseOver
      */
-    public void setOnMouseOver(String onMouseOver) {
-        this.onMouseOver = onMouseOver;
+    public void setOnMouseOver(final String newOnMouseOver) {
+        this.onMouseOver = newOnMouseOver;
     }
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseUp", displayName = "Mouse Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseUp() {
         if (this.onMouseUp != null) {
             return this.onMouseUp;
         }
-        ValueExpression _vb = getValueExpression("onMouseUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseUp()
+     * @param newOnMouseUp onMouseUp
      */
-    public void setOnMouseUp(String onMouseUp) {
-        this.onMouseUp = onMouseUp;
+    public void setOnMouseUp(final String newOnMouseUp) {
+        this.onMouseUp = newOnMouseUp;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     * @return String
      */
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
      * @see #getToolTip()
+     * @param newToolTip tool tip
      */
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
 
     /**
-     * <p>Absolute or relative URL to the image to be rendered.</p>
+     * Absolute or relative URL to the image to be rendered.
+     * @return String
      */
-    @Property(name = "url", displayName = "Url", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.ImageUrlPropertyEditor")
+    @Property(name = "url",
+            displayName = "Url",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.ImageUrlPropertyEditor")
+            //CHECKSTYLE:ON
     @Override
     public String getUrl() {
         return (String) getValue();
     }
 
     /**
-     * <p>Absolute or relative URL to the image to be rendered.</p>
+     * Absolute or relative URL to the image to be rendered.
+     *
      * @see #getUrl()
      */
     @Override
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         setValue((Object) url);
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
-    /**
-     * <p>Specifies the amount of white space in pixels to be inserted above and
-     * below the image. The default value is not specified but is generally a
-     * small, non-zero size.</p>
-     */
-    @Property(name = "vspace", displayName = "Vertical Space", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int vspace = Integer.MIN_VALUE;
-    private boolean vspace_set = false;
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted above and
+     * Specifies the amount of white space in pixels to be inserted above and
      * below the image. The default value is not specified but is generally a
-     * small, non-zero size.</p>
+     * small, non-zero size.
+     * @return int
      */
     public int getVspace() {
-        if (this.vspace_set) {
+        if (this.vspaceSet) {
             return this.vspace;
         }
-        ValueExpression _vb = getValueExpression("vspace");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("vspace");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted above and
+     * Specifies the amount of white space in pixels to be inserted above and
      * below the image. The default value is not specified but is generally a
-     * small, non-zero size.</p>
+     * small, non-zero size.
+     *
      * @see #getVspace()
+     * @param newVspace vspace
      */
-    public void setVspace(int vspace) {
-        this.vspace = vspace;
-        this.vspace_set = true;
+    public void setVspace(final int newVspace) {
+        this.vspace = newVspace;
+        this.vspaceSet = true;
     }
-    /**
-     * <p>Image width override. When specified, the width and height attributes 
-     * tell web browsers to override the natural image or object size in favor 
-     * of these values, specified in pixels. Some browsers might not support 
-     * this behavior.</p>
-     */
-    @Property(name = "width", displayName = "Width", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int width = Integer.MIN_VALUE;
-    private boolean width_set = false;
 
     /**
-     * <p>Image width override. When specified, the width and height attributes 
-     * tell web browsers to override the natural image or object size in favor 
-     * of these values, specified in pixels. Some browsers might not support 
-     * this behavior.</p>
+     * Image width override. When specified, the width and height attributes
+     * tell web browsers to override the natural image or object size in favor
+     * of these values, specified in pixels. Some browsers might not support
+     * this behavior.
+     * @return int
      */
     public int getWidth() {
-        if (this.width_set) {
+        if (this.widthSet) {
             return this.width;
         }
-        ValueExpression _vb = getValueExpression("width");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("width");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Image width override. When specified, the width and height attributes 
-     * tell web browsers to override the natural image or object size in favor 
-     * of these values, specified in pixels. Some browsers might not support 
-     * this behavior.</p>
+     * Image width override. When specified, the width and height attributes
+     * tell web browsers to override the natural image or object size in favor
+     * of these values, specified in pixels. Some browsers might not support
+     * this behavior.
+     *
      * @see #getWidth()
+     * @param newWidth width
      */
-    public void setWidth(int width) {
-        this.width = width;
-        this.width_set = true;
+    public void setWidth(final int newWidth) {
+        this.width = newWidth;
+        this.widthSet = true;
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.align = (String) _values[1];
-        this.alt = (String) _values[2];
-        this.border = ((Integer) _values[3]).intValue();
-        this.border_set = ((Boolean) _values[4]).booleanValue();
-        this.height = ((Integer) _values[5]).intValue();
-        this.height_set = ((Boolean) _values[6]).booleanValue();
-        this.hspace = ((Integer) _values[7]).intValue();
-        this.hspace_set = ((Boolean) _values[8]).booleanValue();
-        this.icon = (String) _values[9];
-        this.longDesc = (String) _values[10];
-        this.onClick = (String) _values[11];
-        this.onDblClick = (String) _values[12];
-        this.onMouseDown = (String) _values[13];
-        this.onMouseMove = (String) _values[14];
-        this.onMouseOut = (String) _values[15];
-        this.onMouseOver = (String) _values[16];
-        this.onMouseUp = (String) _values[17];
-        this.style = (String) _values[18];
-        this.styleClass = (String) _values[19];
-        this.toolTip = (String) _values[20];
-        this.visible = ((Boolean) _values[21]).booleanValue();
-        this.visible_set = ((Boolean) _values[22]).booleanValue();
-        this.vspace = ((Integer) _values[23]).intValue();
-        this.vspace_set = ((Boolean) _values[24]).booleanValue();
-        this.width = ((Integer) _values[25]).intValue();
-        this.width_set = ((Boolean) _values[26]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.align = (String) values[1];
+        this.alt = (String) values[2];
+        this.border = ((Integer) values[3]);
+        this.borderSet = ((Boolean) values[4]);
+        this.height = ((Integer) values[5]);
+        this.heightSet = ((Boolean) values[6]);
+        this.hspace = ((Integer) values[7]);
+        this.hspaceSet = ((Boolean) values[8]);
+        this.icon = (String) values[9];
+        this.longDesc = (String) values[10];
+        this.onClick = (String) values[11];
+        this.onDblClick = (String) values[12];
+        this.onMouseDown = (String) values[13];
+        this.onMouseMove = (String) values[14];
+        this.onMouseOut = (String) values[15];
+        this.onMouseOver = (String) values[16];
+        this.onMouseUp = (String) values[17];
+        this.style = (String) values[18];
+        this.styleClass = (String) values[19];
+        this.toolTip = (String) values[20];
+        this.visible = ((Boolean) values[21]);
+        this.visibleSet = ((Boolean) values[22]);
+        this.vspace = ((Integer) values[23]);
+        this.vspaceSet = ((Boolean) values[24]);
+        this.width = ((Integer) values[25]);
+        this.widthSet = ((Boolean) values[26]);
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[27];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.align;
-        _values[2] = this.alt;
-        _values[3] = new Integer(this.border);
-        _values[4] = this.border_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = new Integer(this.height);
-        _values[6] = this.height_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = new Integer(this.hspace);
-        _values[8] = this.hspace_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = this.icon;
-        _values[10] = this.longDesc;
-        _values[11] = this.onClick;
-        _values[12] = this.onDblClick;
-        _values[13] = this.onMouseDown;
-        _values[14] = this.onMouseMove;
-        _values[15] = this.onMouseOut;
-        _values[16] = this.onMouseOver;
-        _values[17] = this.onMouseUp;
-        _values[18] = this.style;
-        _values[19] = this.styleClass;
-        _values[20] = this.toolTip;
-        _values[21] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[22] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[23] = new Integer(this.vspace);
-        _values[24] = this.vspace_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[25] = new Integer(this.width);
-        _values[26] = this.width_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[27];
+        values[0] = super.saveState(context);
+        values[1] = this.align;
+        values[2] = this.alt;
+        values[3] = this.border;
+        if (this.borderSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        values[5] = this.height;
+        if (this.heightSet) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        values[7] = this.hspace;
+        if (this.hspaceSet) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] = Boolean.FALSE;
+        }
+        values[9] = this.icon;
+        values[10] = this.longDesc;
+        values[11] = this.onClick;
+        values[12] = this.onDblClick;
+        values[13] = this.onMouseDown;
+        values[14] = this.onMouseMove;
+        values[15] = this.onMouseOut;
+        values[16] = this.onMouseOver;
+        values[17] = this.onMouseUp;
+        values[18] = this.style;
+        values[19] = this.styleClass;
+        values[20] = this.toolTip;
+        if (this.visible) {
+            values[21] = Boolean.TRUE;
+        } else {
+            values[21] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[22] = Boolean.TRUE;
+        } else {
+            values[22] = Boolean.FALSE;
+        }
+        values[23] = this.vspace;
+        if (this.vspaceSet) {
+            values[24] = Boolean.TRUE;
+        } else {
+            values[24] = Boolean.FALSE;
+        }
+        values[25] = this.width;
+        if (this.widthSet) {
+            values[26] = Boolean.TRUE;
+        } else {
+            values[26] = Boolean.FALSE;
+        }
+        return values;
     }
 }

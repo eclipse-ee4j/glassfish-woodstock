@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,11 +20,11 @@ import com.sun.rave.designtime.CategoryDescriptor;
 
 public class CategoryDescriptors {
 
-    @PropertyCategory(name="myFavoriteProperties")
-    public static final CategoryDescriptor FAVORITE_PROPS_CATEGORY = 
-            new CategoryDescriptor("myFavoriteProperties", "Nothing here, move along", false);
+    @PropertyCategory(name = "myFavoriteProperties")
+    public static final CategoryDescriptor FAVORITE_PROPS_CATEGORY
+            = new CategoryDescriptor("myFavoriteProperties", "Nothing here, move along", false);
 
-    @PropertyCategory(name="category")
+    @PropertyCategory(name = "category")
     public static final CategoryDescriptor CATEGORY = new CategoryDescriptor(
             "category", "Nothing here, move along", false);
 }

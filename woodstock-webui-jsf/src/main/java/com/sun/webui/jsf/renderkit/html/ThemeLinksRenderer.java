@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -34,23 +33,25 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 /**
  * Renderer for a {@link Theme} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.ThemeLinks"))
-public class ThemeLinksRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.ThemeLinks"))
+public final class ThemeLinksRenderer extends javax.faces.render.Renderer {
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
 
-        if(component == null){
+        if (component == null) {
             return;
         }
         if (!(component instanceof ThemeLinks)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
                 ThemeLinks.class.getName()
             };
@@ -87,7 +88,7 @@ public class ThemeLinksRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,28 +28,54 @@ import javax.faces.component.ValueHolder;
 /**
  * Represents a component class or a non-component base class from a dependent
  * library, discovered using introspection.
- *
- * @author gjmurphy
  */
-public class IntrospectedClassInfo extends ClassInfo {
+public final class IntrospectedClassInfo extends ClassInfo {
 
-    BeanInfo beanInfo;
-    Map<String, PropertyInfo> propertyInfoMap;
-    Map<String, EventInfo> eventInfoMap;
-    Set<CategoryDescriptor> categoryDescriptors;
-    Set<String> methodNameSet;
+    /**
+     * Bean info for the introspected class.
+     */
+    private final BeanInfo beanInfo;
 
-    IntrospectedClassInfo(BeanInfo beanInfo) {
-        this.beanInfo = beanInfo;
+    /**
+     * Property info map.
+     */
+    private Map<String, PropertyInfo> propertyInfoMap;
+
+    /**
+     * Event info map.
+     */
+    private Map<String, EventInfo> eventInfoMap;
+
+    /**
+     * Category descriptors.
+     */
+    private Set<CategoryDescriptor> categoryDescriptors;
+
+    /**
+     * Method names.
+     */
+    private Set<String> methodNameSet;
+
+    /**
+     * Create a new instance.
+     * @param bInfo bean info
+     */
+    IntrospectedClassInfo(final BeanInfo bInfo) {
+        this.beanInfo = bInfo;
     }
 
+    /**
+     * Get the class name.
+     * @return String
+     */
     public String getName() {
         return this.beanInfo.getBeanDescriptor().getName();
     }
 
     @Override
     public String getClassName() {
-        return this.beanInfo.getBeanDescriptor().getBeanClass().getSimpleName();
+        return this.beanInfo.getBeanDescriptor().getBeanClass()
+                .getSimpleName();
     }
 
     @Override
@@ -58,6 +84,10 @@ public class IntrospectedClassInfo extends ClassInfo {
                 .getName();
     }
 
+    /**
+     * Get the bean info.
+     * @return BeanInfo
+     */
     public BeanInfo getBeanInfo() {
         return beanInfo;
     }
@@ -69,7 +99,7 @@ public class IntrospectedClassInfo extends ClassInfo {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean isAssignableTo(String qualifiedClassName) {
+    public boolean isAssignableTo(final String qualifiedClassName) {
         try {
             Class superClass = Class.forName(qualifiedClassName);
             if (superClass.isAssignableFrom(this.getBeanInfo()
@@ -87,8 +117,12 @@ public class IntrospectedClassInfo extends ClassInfo {
         return this.propertyInfoMap;
     }
 
-    void setPropertyInfos(Map<String, PropertyInfo> propertyInfoMap) {
-        this.propertyInfoMap = propertyInfoMap;
+    /**
+     * Set the property info map.
+     * @param propInfoMap new property info map
+     */
+    void setPropertyInfos(final Map<String, PropertyInfo> propInfoMap) {
+        this.propertyInfoMap = propInfoMap;
     }
 
     @Override
@@ -96,8 +130,12 @@ public class IntrospectedClassInfo extends ClassInfo {
         return this.eventInfoMap;
     }
 
-    void setEventInfos(Map<String, EventInfo> eventInfoMap) {
-        this.eventInfoMap = eventInfoMap;
+    /**
+     * Set the event info map.
+     * @param evtInfoMap new event info map
+     */
+    void setEventInfos(final Map<String, EventInfo> evtInfoMap) {
+        this.eventInfoMap = evtInfoMap;
     }
 
     @Override

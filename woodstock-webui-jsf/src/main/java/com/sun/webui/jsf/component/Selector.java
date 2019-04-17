@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -27,39 +26,384 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
-import javax.faces.render.Renderer;
 
-/** 
+/**
  * Base component for UI components that allow the user to make a selection from
- * a set of options. 
+ * a set of options.
  */
-@Component(type = "com.sun.webui.jsf.Selector", family = "com.sun.webui.jsf.Selector",
-displayName = "Selector", isTag = false,
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_selector",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_selector_props")
+@Component(type = "com.sun.webui.jsf.Selector",
+        family = "com.sun.webui.jsf.Selector",
+        displayName = "Selector",
+        isTag = false,
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_selector",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_selector_props")
+        //CHECKSTYLE:ON
 public class Selector extends WebuiInput implements SelectorManager {
 
-    // If true, debugging statements are printed to stdout
-    private static final boolean DEBUG = false;
     /**
-     * Read only separator string
+     * Debug flag.
      */
-    private static final String READ_ONLY_SEPARATOR = ", "; //NOI18N
+    private static final boolean DEBUG = false;
+
+    /**
+     * Read only separator string.
+     */
+    private static final String READ_ONLY_SEPARATOR = ", ";
+
+    /**
+     * Multiple flag.
+     */
     private boolean multiple;
 
-    // Holds the ValueType of this component
-    protected ValueTypeEvaluator valueTypeEvaluator = null;
+    /**
+     * Holds the ValueType of this component.
+     */
+    private ValueTypeEvaluator valueTypeEvaluator = null;
 
+    /**
+     * If set, a label is rendered adjacent to the component with the value of
+     * this attribute as the label text.
+     */
+    @Property(name = "label",
+            displayName = "Label",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String label = null;
+
+    /**
+     * Sets the style level for the generated label, provided the label
+     * attribute has been set. Valid values are 1 (largest), 2 and 3 (smallest).
+     * The default value is 2.
+     */
+    @Property(name = "labelLevel",
+            displayName = "Label Level",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.LabelLevelsEditor")
+            //CHECKSTYLE:ON
+    private int labelLevel = Integer.MIN_VALUE;
+
+    /**
+     * labelLevel set flag.
+     */
+    private boolean labelLevelSet = false;
+
+    /**
+     * Scripting code executed when this element loses focus.
+     */
+    @Property(name = "onBlur",
+            displayName = "Blur Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onBlur = null;
+
+    /**
+     * Scripting code executed when the element value of this component is
+     * changed.
+     */
+    @Property(name = "onChange",
+            displayName = "Value Change Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onChange = null;
+
+    /**
+     * Specifies the options that the web application user can choose from. The
+     * value must be one of an array, Map or Collection whose members are all
+     * subclasses of{@code com.sun.webui.jsf.model.Option}.
+     */
+    @Property(name = "items",
+            displayName = "Items",
+            category = "Data",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
+            //CHECKSTYLE:ON
+    private Object items = null;
+
+    /**
+     * Flag indicating that the user is not permitted to activate this
+     * component, and that the component's value will not be submitted with the
+     * form.
+     */
+    @Property(name = "disabled",
+            displayName = "Disabled",
+            category = "Behavior")
+    private boolean disabled = false;
+
+    /**
+     * Disabled set flag.
+     */
+    private boolean disabledSet = false;
+
+    /**
+     * Scripting code executed when a mouse click occurs over this component.
+     */
+    @Property(name = "onClick",
+            displayName = "Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onClick = null;
+
+    /**
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     */
+    @Property(name = "onDblClick",
+            displayName = "Double Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onDblClick = null;
+
+    /**
+     * Scripting code executed when this component receives focus. An element
+     * receives focus when the user selects the element by pressing the tab key
+     * or clicking the mouse.
+     */
+    @Property(name = "onFocus",
+            displayName = "Focus Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onFocus = null;
+
+    /**
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     */
+    @Property(name = "onKeyDown",
+            displayName = "Key Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyDown = null;
+
+    /**
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     */
+    @Property(name = "onKeyPress",
+            displayName = "Key Press Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyPress = null;
+
+    /**
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     */
+    @Property(name = "onKeyUp",
+            displayName = "Key Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyUp = null;
+
+    /**
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseDown",
+            displayName = "Mouse Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseDown = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     */
+    @Property(name = "onMouseMove",
+            displayName = "Mouse Move Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseMove = null;
+
+    /**
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     */
+    @Property(name = "onMouseOut",
+            displayName = "Mouse Out Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOut = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     */
+    @Property(name = "onMouseOver",
+            displayName = "Mouse In Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOver = null;
+
+    /**
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseUp",
+            displayName = "Mouse Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseUp = null;
+
+    /**
+     * Scripting code executed when some text in this component value is
+     * selected.
+     */
+    @Property(name = "onSelect",
+            displayName = "Text Selected Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onSelect = null;
+
+    /**
+     * If this attribute is set to true, the value of the component is rendered
+     * as text, preceded by the label if one was defined.
+     */
+    @Property(name = "readOnly",
+            displayName = "Read-only",
+            category = "Behavior")
+    private boolean readOnly = false;
+
+    /**
+     * readOnly set flag.
+     */
+    private boolean readOnlySet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     */
+    @Property(name = "tabIndex",
+            displayName = "Tab Index",
+            category = "Accessibility",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int tabIndex = Integer.MIN_VALUE;
+
+    /**
+     * tabIndex set flag.
+     */
+    private boolean tabIndexSet = false;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * Visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Create a new instance.
+     */
     public Selector() {
         valueTypeEvaluator = new ValueTypeEvaluator(this);
         setRendererType("com.sun.webui.jsf.Selector");
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * Set the value type evaluator.
+     * @param newValueTypeEvaluator value type evaluator
+     */
+    protected void setValueTypeEvaluator(
+            final ValueTypeEvaluator newValueTypeEvaluator) {
+
+        this.valueTypeEvaluator = newValueTypeEvaluator;
+    }
+
+    /**
+     * Get the value type evaluator.
+     * @return ValueTypeEvaluator
+     */
+    protected ValueTypeEvaluator getValueTypeEvaluator() {
+        return valueTypeEvaluator;
+    }
+
+    /**
+     * This implementation returns {@code "com.sun.webui.jsf.Selector"}.
+     * @return String
      */
     @Override
     public String getFamily() {
@@ -67,15 +411,9 @@ public class Selector extends WebuiInput implements SelectorManager {
     }
 
     /**
-     * <p>Return a flag indicating whether this component is responsible
-     * for rendering its child components.  The default implementation
-     * in {@link UIComponentBase#getRendersChildren} tries to find the
-     * renderer for this component.  If it does, it calls {@link
-     * Renderer#getRendersChildren} and returns the result.  If it
-     * doesn't, it returns false.  As of version 1.2 of the JavaServer
-     * Faces Specification, component authors are encouraged to return
-     * <code>true</code> from this method and rely on {@link
-     * UIComponentBase#encodeChildren}.</p>
+     * This implementation returns {@code true}.
+     *
+     * @return {@code boolean}
      */
     @Override
     public boolean getRendersChildren() {
@@ -83,37 +421,39 @@ public class Selector extends WebuiInput implements SelectorManager {
     }
 
     /**
-     * Retrieve the value of this component (the "selected" property) as an  
-     * object. This method is invoked by the JSF engine during the validation 
-     * phase. The JSF default behaviour is for components to defer the 
-     * conversion and validation to the renderer, but for the Selector based
-     * components, the renderers do not share as much functionality as the 
-     * components do, so it is more efficient to do it here. 
-     * @param context The FacesContext of the request
-     * @param submittedValue The submitted value of the component
+     * This implementation uses
+     * {@link ConversionUtilities.convertValueToObject}.
+     * @param context faces context
+     * @param submittedValue raw value
+     * @return Object
+     * @throws ConverterException if a conversion error occurs
      */
     @Override
-    public Object getConvertedValue(FacesContext context,
-            Object submittedValue)
-            throws ConverterException {
-        return getConvertedValue(this, valueTypeEvaluator, context, submittedValue);
+    public Object getConvertedValue(final FacesContext context,
+            final Object submittedValue) throws ConverterException {
+
+        return getConvertedValue(this, valueTypeEvaluator, context,
+                submittedValue);
     }
 
     /**
-     * Retrieve the value of this component (the "selected" property) as an  
-     * object. This method is invoked by the JSF engine during the validation 
-     * phase. The JSF default behaviour is for components to defer the 
-     * conversion and validation to the renderer, but for the Selector based
-     * components, the renderers do not share as much functionality as the 
-     * components do, so it is more efficient to do it here. 
+     * Retrieve the value of this component (the "selected" property) as an
+     * object. This method is invoked by the JSF engine during the validation
+     * phase. The JSF default behavior is for components to defer the conversion
+     * and validation to the renderer, but for the Selector based components,
+     * the renderers do not share as much functionality as the components do, so
+     * it is more efficient to do it here.
+     *
      * @param component The component whose value to convert
+     * @param evaluator value type evaluator
      * @param context The FacesContext of the request
      * @param submittedValue The submitted value of the component
+     * @return Object
+     * @throws ConverterException if a conversion error occurs
      */
-    private Object getConvertedValue(UIComponent component,
-            ValueTypeEvaluator valueTypeEvaluator,
-            FacesContext context,
-            Object submittedValue)
+    private Object getConvertedValue(final UIComponent component,
+            final ValueTypeEvaluator evaluator,
+            final FacesContext context, final Object submittedValue)
             throws ConverterException {
 
         if (DEBUG) {
@@ -121,29 +461,30 @@ public class Selector extends WebuiInput implements SelectorManager {
         }
 
         if (!(submittedValue instanceof String[])) {
-            Object[] args = {component.getClass().getName()};
-            String msg = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Selector.invalidSubmittedValue", args); //NOI18N
-
+            Object[] args = {
+                component.getClass().getName()
+            };
+            String msg = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Selector.invalidSubmittedValue", args);
             throw new ConverterException(msg);
         }
 
         String[] rawValues = (String[]) submittedValue;
 
         // This should never happen
-        //
-        if (rawValues.length == 1 &&
-                OptionTitle.NONESELECTED.equals(rawValues[0])) {
-            Object[] args = {OptionTitle.NONESELECTED};
-            String msg = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Selector.invalidSubmittedValue", args); //NOI18N
+        if (rawValues.length == 1
+                && OptionTitle.NONESELECTED.equals(rawValues[0])) {
 
+            Object[] args = {OptionTitle.NONESELECTED};
+            String msg = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Selector.invalidSubmittedValue", args);
             throw new ConverterException(msg);
         }
 
         // If there are no elements in rawValue nothing was submitted.
         // If null was rendered, return null
-        //
         if (rawValues.length == 0) {
             if (DEBUG) {
                 log("\t no values submitted, we return null", component);
@@ -153,27 +494,22 @@ public class Selector extends WebuiInput implements SelectorManager {
             }
         }
 
-        // Why does getAttributes.get("multiple") not work? 
+        // Why does getAttributes.get("multiple") not work?
         if (((SelectorManager) component).isMultiple()) {
             if (DEBUG) {
                 log("\tComponent accepts multiple values", component);
             }
-
-            if (valueTypeEvaluator.getValueType() == ValueType.ARRAY) {
+            if (evaluator.getValueType() == ValueType.ARRAY) {
                 if (DEBUG) {
                     log("\tComponent value is an array", component);
                 }
-                return ConversionUtilities.convertValueToArray(component, rawValues, context);
-            } // This case is not supported yet!
-            else if (valueTypeEvaluator.getValueType() == ValueType.LIST) {
+                return ConversionUtilities
+                        .convertValueToArray(component, rawValues, context);
+            } else if (evaluator.getValueType() == ValueType.LIST) {
+                // This case is not supported yet!
                 if (DEBUG) {
                     log("\tComponent value is a list", component);
                 }
-                /* Until this is fixed throw exception saying it is
-                unsupported
-                return ConversionUtilities.convertValueToList
-                (component, rawValues, context);
-                 */
                 throw new javax.faces.FacesException(
                         "List is not a supported value.");
             } else {
@@ -182,9 +518,9 @@ public class Selector extends WebuiInput implements SelectorManager {
                             component);
                 }
                 Object[] params = {component.getClass().getName()};
-                String msg = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                        "Selector.multipleError", //NOI18N
-                        params);
+                String msg = MessageUtil.getMessage(
+                        "com.sun.webui.jsf.resources.LogMessages",
+                        "Selector.multipleError", params);
                 throw new ConverterException(msg);
             }
         }
@@ -193,22 +529,14 @@ public class Selector extends WebuiInput implements SelectorManager {
             log("\tComponent value is an object", component);
         }
 
-        // Not sure if this case is taken care of consistently
-        // Need to formulate the possible states for the
-        // submitted value and what they mean.
-        //
-        // This can overwrite an unchanged value property
-        // with null when it was originally empty string.
-	/*
-        if(rawValues[0].length() == 0) {
-        if(DEBUG) log("\t empty string submitted, return null", component);
-        return null;
+        String cv;
+        if (rawValues.length == 0) {
+            cv = "";
+        } else {
+            cv = rawValues[0];
         }
-         */
 
-        String cv = rawValues.length == 0 ? "" : rawValues[0];
-
-        if (valueTypeEvaluator.getValueType() == ValueType.NONE) {
+        if (evaluator.getValueType() == ValueType.NONE) {
             if (DEBUG) {
                 log("\t valuetype == none, return rawValue", component);
             }
@@ -222,60 +550,47 @@ public class Selector extends WebuiInput implements SelectorManager {
     }
 
     /**
-     * Return a string suitable for displaying the value in read only mode.
-     * The default is to separate the list values with a comma.
+     * Return a string suitable for displaying the value in read only mode.The
+     * default is to separate the list values with a comma.
      *
      * @param context The FacesContext
+     * @return String
      * @throws javax.faces.FacesException If the list items cannot be processed
      */
-    // AVK - instead of doing this here, I think we 
-    // should set the value to be displayed when we get the readOnly 
-    // child component. It would be a good idea to separate the listItems 
+    // AVK - instead of doing this here, I think we
+    // should set the value to be displayed when we get the readOnly
+    // child component. It would be a good idea to separate the listItems
     // processing for the renderer - where we have to reprocess the items
     // every time, from other times, when this may not be necessary.
-    // I note that although this code has been refactored by Rick, my 
-    // original code already did this so the fault is wtih me. 
-    protected String getValueAsReadOnly(FacesContext context) {
+    // I note that although this code has been refactored by Rick, my
+    // original code already did this so the fault is wtih me.
+    protected String getValueAsReadOnly(final FacesContext context) {
 
         // The comma format READ_ONLY_SEPARATOR should be part of the theme
         // and/or configurable by the application
-        //
         return getValueAsString(context, READ_ONLY_SEPARATOR, true);
     }
 
     /**
-     * Get the value (the object representing the selection(s)) of this 
-     * component as a String. If the component allows multiple selections,
-     * the strings corresponding to the individual options are separated by 
-     * spaces. 
-     * @param context The FacesContext of the request
-     * @param separator A String separator between the values
-    
-    public String getValueAsString(FacesContext context, String separator) { 
-    return getValueAsString(context, separator, false);
-    }
-     */
-    /**
-     * Get the value (the object representing the selection(s)) of this 
-     * component as a String. If the component allows multiple selections,
-     * the strings corresponding to the individual options are separated
-     * by the separator argument. If readOnly is true, leading and
-     * and trailing separators are omitted.
-     * If readOnly is false the formatted String is suitable for decoding
-     * by ListRendererBase.decode.
+     * Get the value (the object representing the selection(s)) of this
+     * component as a String. If the component allows multiple selections, the
+     * strings corresponding to the individual options are separated by the
+     * separator argument. If readOnly is true, leading and and trailing
+     * separators are omitted. If readOnly is false the formatted String is
+     * suitable for decoding by ListRendererBase.decode.
      *
      * @param context The FacesContext of the request
      * @param separator A String separator between the values
-     * @param readOnly A readonly formatted String, no leading or trailing
+     * @param isReadOnly A read-only formatted String, no leading or trailing
      * separator string.
+     * @return String
      */
-    private String getValueAsString(FacesContext context, String separator,
-            boolean readOnly) {
+    private String getValueAsString(final FacesContext context,
+            final String separator, final boolean isReadOnly) {
 
         // Need to distinguish null value from an empty string
         // value. See the end of this method for empty string
         // value formatting
-        //
         Object value = getValue();
         if (value == null) {
             return new String();
@@ -295,27 +610,26 @@ public class Selector extends WebuiInput implements SelectorManager {
         // from the javascript which always has a leading
         // and terminating separator. And suitable for decoding
         // by ListRendererBase.decode
-        //
         if (valueTypeEvaluator.getValueType() == ValueType.LIST) {
 
-            StringBuffer valueBuffer = new StringBuffer(256);
+            StringBuilder valueBuffer = new StringBuilder();
 
             java.util.List list = (java.util.List) value;
             Iterator valueIterator = ((java.util.List) value).iterator();
-            String valueString = null;
+            String valueString;
 
             // Leading delimiter
-            //
-            if (!readOnly && valueIterator.hasNext()) {
+            if (!isReadOnly && valueIterator.hasNext()) {
                 valueBuffer.append(separator);
             }
 
             while (valueIterator.hasNext()) {
-                valueString = ConversionUtilities.convertValueToString(this, valueIterator.next());
+                valueString = ConversionUtilities
+                        .convertValueToString(this, valueIterator.next());
                 valueBuffer.append(valueString);
                 // Add terminating delimiter
                 //
-                if (!readOnly || (readOnly && valueIterator.hasNext())) {
+                if (!isReadOnly || (isReadOnly && valueIterator.hasNext())) {
                     valueBuffer.append(separator);
                 }
             }
@@ -324,23 +638,22 @@ public class Selector extends WebuiInput implements SelectorManager {
 
         if (valueTypeEvaluator.getValueType() == ValueType.ARRAY) {
 
-            StringBuffer valueBuffer = new StringBuffer(256);
-
+            StringBuilder valueBuffer = new StringBuilder();
             int length = Array.getLength(value);
-            Object valueObject = null;
-            String valueString = null;
+            Object valueObject;
+            String valueString;
 
-            if (!readOnly && length != 0) {
+            if (!isReadOnly && length != 0) {
                 valueBuffer.append(separator);
             }
             for (int counter = 0; counter < length; ++counter) {
                 valueObject = Array.get(value, counter);
-                valueString =
-                        ConversionUtilities.convertValueToString(this, valueObject);
+                valueString
+                        = ConversionUtilities.convertValueToString(this,
+                                valueObject);
                 valueBuffer.append(valueString);
                 // Add terminating delimiter
-                //
-                if (!readOnly || (readOnly && counter < length - 1)) {
+                if (!isReadOnly || (isReadOnly && counter < length - 1)) {
                     valueBuffer.append(separator);
                 }
             }
@@ -349,48 +662,55 @@ public class Selector extends WebuiInput implements SelectorManager {
 
         // Empty string looks like '<sep><sep>' or if separator == "|"
         // it'll be "||"
-        //
         String cv = ConversionUtilities.convertValueToString(this, value);
-        if (readOnly) {
+        if (isReadOnly) {
             return cv;
         } else {
-            StringBuffer sb = new StringBuffer(64);
+            StringBuilder sb = new StringBuilder();
             return sb.append(separator).append(cv).append(separator).toString();
         }
     }
 
+    /**
+     * This implementation evaluates the expression {@code "labelLevel"}
+     * if not already done, and sets the label level, then returns the level
+     * value.
+     * @return int
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
     public int getLabelLevel() {
-        int labelLevel = _getLabelLevel();
-        if (labelLevel < 1 || labelLevel > 3) {
-            labelLevel = 2;
-            setLabelLevel(labelLevel);
+        int level = doGetLabelLevel();
+        if (level < 1 || level > 3) {
+            level = 2;
+            setLabelLevel(level);
         }
-        return labelLevel;
+        return level;
     }
 
     /**
-     * Getter for property multiple.
-     * @return Value of property multiple.
+     * This implementation returns the value of the {@code multiple attribute}.
+     * @return {@code boolean}
      */
+    @Override
     public boolean isMultiple() {
-
         return this.multiple;
     }
 
     /**
      * Setter for property multiple.
-     * @param multiple New value of property multiple.
+     *
+     * @param newMultiple New value of property multiple.
      */
-    public void setMultiple(boolean multiple) {
-        if (this.multiple != multiple) {
+    public void setMultiple(final boolean newMultiple) {
+        if (this.multiple != newMultiple) {
             valueTypeEvaluator.reset();
-            this.multiple = multiple;
+            this.multiple = newMultiple;
         }
     }
 
     /**
-     * Public method toString() 
-     * @return A String representation of this component
+     * This implementation returns the instance class name.
+     * @return String
      */
     @Override
     public String toString() {
@@ -399,40 +719,25 @@ public class Selector extends WebuiInput implements SelectorManager {
     }
 
     /**
-     * private method for development time error detecting
-     */
-    static void log(String s, Object o) {
-        System.out.println(o.getClass().getName() + "::" + s); //NOI18N
-    }
-
-    /**
-     * private method for development time error detecting
-     */
-    void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
-    }
-
-    /**
-     * <p>Return <code>true</code> if the new value is different from the
-     * previous value.</p>
+     * Return {@code true} if the new value is different from the previous
+     * value.
      *
-     * This only implements a compareValues for value if it is an Array.
-     * If value is not an Array, defer to super.compareValues.
-     * The assumption is that the ordering of the elements
-     * between the previous value and the new value is determined
-     * in the same manner.
+     * This only implements a compareValues for value if it is an Array. If
+     * value is not an Array, defer to super.compareValues. The assumption is
+     * that the ordering of the elements between the previous value and the new
+     * value is determined in the same manner.
      *
-     * Another assumption is that the two object arguments
-     * are of the same type, both arrays of both not arrays.
+     * Another assumption is that the two object arguments are of the same type,
+     * both arrays of both not arrays.
      *
      * @param previous old value of this component (if any)
      * @param value new value of this component (if any)
+     * @return {@code boolean}
      */
     @Override
-    protected boolean compareValues(Object previous, Object value) {
+    protected boolean compareValues(final Object previous, final Object value) {
 
         // Let super take care of null cases
-        //
         if (previous == null || value == null) {
             return super.compareValues(previous, value);
         }
@@ -445,7 +750,6 @@ public class Selector extends WebuiInput implements SelectorManager {
             }
             // Each element at index "i" in previous must be equal to the
             // elementa at index "i" in value.
-            //
             for (int i = 0; i < length; ++i) {
 
                 Object newValue = Array.get(value, i);
@@ -453,7 +757,6 @@ public class Selector extends WebuiInput implements SelectorManager {
 
                 // This is probably not necessary since
                 // an Option's value cannot be null
-                //
                 if (newValue == null) {
                     if (prevValue == null) {
                         continue;
@@ -474,22 +777,23 @@ public class Selector extends WebuiInput implements SelectorManager {
         return super.compareValues(previous, value);
     }
 
-    public void setSelected(Object selected) {
-        _setSelected(selected);
+    /**
+     * This implementation invokes {@code UIInput.setValue}.
+     * @param selected object to mark selected
+     */
+    public void setSelected(final Object selected) {
+        doSetSelected(selected);
         valueTypeEvaluator.reset();
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
-     *
-     * @param name Name of value binding expression to retrieve
+     * This implementation aliases {@code "selected"} with {@code "value"}
+     * and delegates the call to {@code UIInput.getValueExpression}.
+     * @param name property name
+     * @return ValueExpression
      */
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("selected")) {
             return super.getValueExpression("value");
         }
@@ -497,928 +801,892 @@ public class Selector extends WebuiInput implements SelectorManager {
     }
 
     /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
-     *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
+     * This implementation aliases {@code "selected"} with {@code "value"}
+     * and delegates the call to {@code UIInput.setValueExpression}.
+     * @param name property name
+     * @param binding the value expression to set
      */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("selected")) {
             super.setValueExpression("value", binding);
             return;
         }
         super.setValueExpression(name, binding);
     }
-    /**
-     * <p>Flag indicating that the user is not permitted to activate this
-     * component, and that the component's value will not be submitted with the
-     * form.</p>
-     */
-    @Property(name = "disabled", displayName = "Disabled", category = "Behavior")
-    private boolean disabled = false;
-    private boolean disabled_set = false;
 
     /**
-     * <p>Flag indicating that the user is not permitted to activate this
-     * component, and that the component's value will not be submitted with the
-     * form.</p>
+     * This implementation evaluates the {@code "disabled"} value expression
+     *  if not already done.
+     * @return {@code boolean}
      */
+    @Override
     public boolean isDisabled() {
-        if (this.disabled_set) {
+        if (this.disabledSet) {
             return this.disabled;
         }
-        ValueExpression _vb = getValueExpression("disabled");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("disabled");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag indicating that the user is not permitted to activate this
+     * Flag indicating that the user is not permitted to activate this
      * component, and that the component's value will not be submitted with the
-     * form.</p>
+     * form.
+     *
+     * @param newDisabled disabled flag
      * @see #isDisabled()
      */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-        this.disabled_set = true;
+    public void setDisabled(final boolean newDisabled) {
+        this.disabled = newDisabled;
+        this.disabledSet = true;
     }
-    /**
-     * <p>Specifies the options that the web application user can choose
-     * from. The value must be one of an array, Map or Collection
-     * whose members are all subclasses of<code>com.sun.webui.jsf.model.Option</code>.</p>
-     */
-    @Property(name = "items", displayName = "Items", category = "Data",
-    editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
-    private Object items = null;
 
     /**
-     * <p>Specifies the options that the web application user can choose
-     * from. The value must be one of an array, Map or Collection
-     * whose members are all subclasses of<code>com.sun.webui.jsf.model.Option</code>.</p>
+     * Specifies the options that the web application user can choose from.The
+     * value must be one of an array, Map or Collection whose members are all
+     * subclasses of{@code com.sun.webui.jsf.model.Option}.
+     *
+     * @return Object
      */
     public Object getItems() {
         if (this.items != null) {
             return this.items;
         }
-        ValueExpression _vb = getValueExpression("items");
-        if (_vb != null) {
-            return (Object) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("items");
+        if (vb != null) {
+            return (Object) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies the options that the web application user can choose
-     * from. The value must be one of an array, Map or Collection
-     * whose members are all subclasses of<code>com.sun.webui.jsf.model.Option</code>.</p>
+     * Specifies the options that the web application user can choose from. The
+     * value must be one of an array, Map or Collection whose members are all
+     * subclasses of {@code com.sun.webui.jsf.model.Option}.
+     *
+     * @param newItems new items
      * @see #getItems()
      */
-    public void setItems(Object items) {
-        this.items = items;
+    public void setItems(final Object newItems) {
+        this.items = newItems;
     }
-    /**
-     * <p>If set, a label is rendered adjacent to the component with the
-     * value of this attribute as the label text.</p>
-     */
-    @Property(name = "label", displayName = "Label", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String label = null;
 
     /**
-     * <p>If set, a label is rendered adjacent to the component with the
-     * value of this attribute as the label text.</p>
+     * If set, a label is rendered adjacent to the component with the value of
+     * this attribute as the label text.
+     *
+     * @return String
      */
     public String getLabel() {
         if (this.label != null) {
             return this.label;
         }
-        ValueExpression _vb = getValueExpression("label");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("label");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>If set, a label is rendered adjacent to the component with the
-     * value of this attribute as the label text.</p>
+     * If set, a label is rendered adjacent to the component with the value of
+     * this attribute as the label text.
+     *
+     * @param newLabel label
      * @see #getLabel()
      */
-    public void setLabel(String label) {
-        this.label = label;
+    public void setLabel(final String newLabel) {
+        this.label = newLabel;
     }
-    /**
-     * <p>Sets the style level for the generated label, provided the
-     * label attribute has been set. Valid values are 1 (largest), 2 and
-     * 3 (smallest). The default value is 2.</p>
-     */
-    @Property(name = "labelLevel", displayName = "Label Level", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.LabelLevelsEditor")
-    private int labelLevel = Integer.MIN_VALUE;
-    private boolean labelLevel_set = false;
 
     /**
-     * <p>Sets the style level for the generated label, provided the
-     * label attribute has been set. Valid values are 1 (largest), 2 and
-     * 3 (smallest). The default value is 2.</p>
+     * Sets the style level for the generated label, provided the label
+     * attribute has been set. Valid values are 1 (largest), 2 and 3 (smallest).
+     * The default value is 2.
+     * @return int
      */
-    private int _getLabelLevel() {
-        if (this.labelLevel_set) {
+    private int doGetLabelLevel() {
+        if (this.labelLevelSet) {
             return this.labelLevel;
         }
-        ValueExpression _vb = getValueExpression("labelLevel");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("labelLevel");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 2;
     }
 
     /**
-     * <p>Sets the style level for the generated label, provided the
-     * label attribute has been set. Valid values are 1 (largest), 2 and
-     * 3 (smallest). The default value is 2.</p>
+     * Sets the style level for the generated label, provided the label
+     * attribute has been set.Valid values are 1 (largest), 2 and 3 (smallest).
+     * The default value is 2.
+     *
+     * @param newLabelLevel level
      * @see #getLabelLevel()
      */
-    public void setLabelLevel(int labelLevel) {
-        this.labelLevel = labelLevel;
-        this.labelLevel_set = true;
+    public void setLabelLevel(final int newLabelLevel) {
+        this.labelLevel = newLabelLevel;
+        this.labelLevelSet = true;
     }
-    /**
-     * <p>Scripting code executed when this element loses focus.</p>
-     */
-    @Property(name = "onBlur", displayName = "Blur Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onBlur = null;
 
     /**
-     * <p>Scripting code executed when this element loses focus.</p>
+     * Scripting code executed when this element loses focus.
+     *
+     * @return String
      */
     public String getOnBlur() {
         if (this.onBlur != null) {
             return this.onBlur;
         }
-        ValueExpression _vb = getValueExpression("onBlur");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onBlur");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when this element loses focus.</p>
+     * Scripting code executed when this element loses focus.
+     *
      * @see #getOnBlur()
+     * @param newOnBlur onBlur
      */
-    public void setOnBlur(String onBlur) {
-        this.onBlur = onBlur;
+    public void setOnBlur(final String newOnBlur) {
+        this.onBlur = newOnBlur;
     }
-    /**
-     * <p>Scripting code executed when the element
-     * value of this component is changed.</p>
-     */
-    @Property(name = "onChange", displayName = "Value Change Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onChange = null;
 
     /**
-     * <p>Scripting code executed when the element
-     * value of this component is changed.</p>
+     * This implementation evaluates the {@code "onChange"} expression if not
+     * already done.
+     * @return String
      */
+    @Override
     public String getOnChange() {
         if (this.onChange != null) {
             return this.onChange;
         }
-        ValueExpression _vb = getValueExpression("onChange");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onChange");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the element
-     * value of this component is changed.</p>
+     * Scripting code executed when the element value of this component is
+     * changed.
+     *
+     * @param newOnChange on change value
      * @see #getOnChange()
      */
-    public void setOnChange(String onChange) {
-        this.onChange = onChange;
+    public void setOnChange(final String newOnChange) {
+        this.onChange = newOnChange;
     }
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onClick", displayName = "Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this component.
+     *
+     * @return String
      */
     public String getOnClick() {
         if (this.onClick != null) {
             return this.onClick;
         }
-        ValueExpression _vb = getValueExpression("onClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this component.
+     *
+     * @param newOnClick onClick
      * @see #getOnClick()
      */
-    public void setOnClick(String onClick) {
-        this.onClick = onClick;
+    public void setOnClick(final String newOnClick) {
+        this.onClick = newOnClick;
     }
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onDblClick", displayName = "Double Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onDblClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     *
+     * @return String
      */
     public String getOnDblClick() {
         if (this.onDblClick != null) {
             return this.onDblClick;
         }
-        ValueExpression _vb = getValueExpression("onDblClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onDblClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     *
+     * @param newOnDblClick on double click
      * @see #getOnDblClick()
      */
-    public void setOnDblClick(String onDblClick) {
-        this.onDblClick = onDblClick;
+    public void setOnDblClick(final String newOnDblClick) {
+        this.onDblClick = newOnDblClick;
     }
-    /**
-     * <p>Scripting code executed when this component  receives focus. An
-     * element receives focus when the user selects the element by pressing
-     * the tab key or clicking the mouse.</p>
-     */
-    @Property(name = "onFocus", displayName = "Focus Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onFocus = null;
 
     /**
-     * <p>Scripting code executed when this component  receives focus. An
-     * element receives focus when the user selects the element by pressing
-     * the tab key or clicking the mouse.</p>
+     * Scripting code executed when this component receives focus. An element
+     * receives focus when the user selects the element by pressing the tab key
+     * or clicking the mouse.
+     *
+     * @return String
      */
     public String getOnFocus() {
         if (this.onFocus != null) {
             return this.onFocus;
         }
-        ValueExpression _vb = getValueExpression("onFocus");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onFocus");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when this component  receives focus. An
-     * element receives focus when the user selects the element by pressing
-     * the tab key or clicking the mouse.</p>
+     * Scripting code executed when this component receives focus. An element
+     * receives focus when the user selects the element by pressing the tab key
+     * or clicking the mouse.
+     *
+     * @param newOnFocus onFocus
      * @see #getOnFocus()
      */
-    public void setOnFocus(String onFocus) {
-        this.onFocus = onFocus;
+    public void setOnFocus(final String newOnFocus) {
+        this.onFocus = newOnFocus;
     }
-    /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
-     */
-    @Property(name = "onKeyDown", displayName = "Key Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     *
+     * @return String
      */
     public String getOnKeyDown() {
         if (this.onKeyDown != null) {
             return this.onKeyDown;
         }
-        ValueExpression _vb = getValueExpression("onKeyDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     *
+     * @param newOnKeyDown onKeyDown
      * @see #getOnKeyDown()
      */
-    public void setOnKeyDown(String onKeyDown) {
-        this.onKeyDown = onKeyDown;
+    public void setOnKeyDown(final String newOnKeyDown) {
+        this.onKeyDown = newOnKeyDown;
     }
-    /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
-     */
-    @Property(name = "onKeyPress", displayName = "Key Press Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyPress = null;
 
     /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     *
+     * @return String
      */
     public String getOnKeyPress() {
         if (this.onKeyPress != null) {
             return this.onKeyPress;
         }
-        ValueExpression _vb = getValueExpression("onKeyPress");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyPress");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     *
+     * @param newOnKeyPress onKeyPress
      * @see #getOnKeyPress()
      */
-    public void setOnKeyPress(String onKeyPress) {
-        this.onKeyPress = onKeyPress;
+    public void setOnKeyPress(final String newOnKeyPress) {
+        this.onKeyPress = newOnKeyPress;
     }
-    /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
-     */
-    @Property(name = "onKeyUp", displayName = "Key Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     *
+     * @return String
      */
     public String getOnKeyUp() {
         if (this.onKeyUp != null) {
             return this.onKeyUp;
         }
-        ValueExpression _vb = getValueExpression("onKeyUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     *
+     * @param newOnKeyUp onKeyUp
      * @see #getOnKeyUp()
      */
-    public void setOnKeyUp(String onKeyUp) {
-        this.onKeyUp = onKeyUp;
+    public void setOnKeyUp(final String newOnKeyUp) {
+        this.onKeyUp = newOnKeyUp;
     }
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseDown", displayName = "Mouse Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     *
+     * @return String
      */
     public String getOnMouseDown() {
         if (this.onMouseDown != null) {
             return this.onMouseDown;
         }
-        ValueExpression _vb = getValueExpression("onMouseDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     *
+     * @param newOnMouseDown onMouseDown
      * @see #getOnMouseDown()
      */
-    public void setOnMouseDown(String onMouseDown) {
-        this.onMouseDown = onMouseDown;
+    public void setOnMouseDown(final String newOnMouseDown) {
+        this.onMouseDown = newOnMouseDown;
     }
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
-    @Property(name = "onMouseMove", displayName = "Mouse Move Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseMove = null;
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     *
+     * @return String
      */
     public String getOnMouseMove() {
         if (this.onMouseMove != null) {
             return this.onMouseMove;
         }
-        ValueExpression _vb = getValueExpression("onMouseMove");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseMove");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     *
+     * @param newOnMouseMove onMouseMove
      * @see #getOnMouseMove()
      */
-    public void setOnMouseMove(String onMouseMove) {
-        this.onMouseMove = onMouseMove;
+    public void setOnMouseMove(final String newOnMouseMove) {
+        this.onMouseMove = newOnMouseMove;
     }
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
-    @Property(name = "onMouseOut", displayName = "Mouse Out Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOut = null;
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     *
+     * @return String
      */
     public String getOnMouseOut() {
         if (this.onMouseOut != null) {
             return this.onMouseOut;
         }
-        ValueExpression _vb = getValueExpression("onMouseOut");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOut");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     *
+     * @param newOnMouseOut onMouseOut
      * @see #getOnMouseOut()
      */
-    public void setOnMouseOut(String onMouseOut) {
-        this.onMouseOut = onMouseOut;
+    public void setOnMouseOut(final String newOnMouseOut) {
+        this.onMouseOut = newOnMouseOut;
     }
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
-    @Property(name = "onMouseOver", displayName = "Mouse In Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOver = null;
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     *
+     * @return String
      */
     public String getOnMouseOver() {
         if (this.onMouseOver != null) {
             return this.onMouseOver;
         }
-        ValueExpression _vb = getValueExpression("onMouseOver");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOver");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     *
+     * @param newOnMouseOver onMouseOver
      * @see #getOnMouseOver()
      */
-    public void setOnMouseOver(String onMouseOver) {
-        this.onMouseOver = onMouseOver;
+    public void setOnMouseOver(final String newOnMouseOver) {
+        this.onMouseOver = newOnMouseOver;
     }
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseUp", displayName = "Mouse Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     *
+     * @return String
      */
     public String getOnMouseUp() {
         if (this.onMouseUp != null) {
             return this.onMouseUp;
         }
-        ValueExpression _vb = getValueExpression("onMouseUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     *
+     * @param newOnMouseUp onMouseUp
      * @see #getOnMouseUp()
      */
-    public void setOnMouseUp(String onMouseUp) {
-        this.onMouseUp = onMouseUp;
+    public void setOnMouseUp(final String newOnMouseUp) {
+        this.onMouseUp = newOnMouseUp;
     }
-    /**
-     * <p>Scripting code executed when some text in this
-     * component value is selected.</p>
-     */
-    @Property(name = "onSelect", displayName = "Text Selected Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onSelect = null;
 
     /**
-     * <p>Scripting code executed when some text in this
-     * component value is selected.</p>
+     * Scripting code executed when some text in this component value is
+     * selected.
+     *
+     * @return String
      */
     public String getOnSelect() {
         if (this.onSelect != null) {
             return this.onSelect;
         }
-        ValueExpression _vb = getValueExpression("onSelect");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onSelect");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when some text in this
-     * component value is selected.</p>
+     * Scripting code executed when some text in this component value is
+     * selected.
+     *
+     * @param newOnSelect onSelect
      * @see #getOnSelect()
      */
-    public void setOnSelect(String onSelect) {
-        this.onSelect = onSelect;
+    public void setOnSelect(final String newOnSelect) {
+        this.onSelect = newOnSelect;
     }
-    /**
-     * <p>If this attribute is set to true, the value of the component is
-     * rendered as text, preceded by the label if one was defined.</p>
-     */
-    @Property(name = "readOnly", displayName = "Read-only", category = "Behavior")
-    private boolean readOnly = false;
-    private boolean readOnly_set = false;
 
     /**
-     * <p>If this attribute is set to true, the value of the component is
-     * rendered as text, preceded by the label if one was defined.</p>
+     * This implementation evaluates the {@code "readOnly"} expression if not
+     * already done.
+     * @return {@code boolean}
      */
+    @Override
     public boolean isReadOnly() {
-        if (this.readOnly_set) {
+        if (this.readOnlySet) {
             return this.readOnly;
         }
-        ValueExpression _vb = getValueExpression("readOnly");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("readOnly");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>If this attribute is set to true, the value of the component is
-     * rendered as text, preceded by the label if one was defined.</p>
+     * If this attribute is set to true, the value of the component is rendered
+     * as text, preceded by the label if one was defined.
+     *
+     * @param newReadOnly readOnly
      * @see #isReadOnly()
      */
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-        this.readOnly_set = true;
+    public void setReadOnly(final boolean newReadOnly) {
+        this.readOnly = newReadOnly;
+        this.readOnlySet = true;
     }
 
     /**
-     * <p>The object that represents the selections made from the
-     * available options. If multiple selections are allowed, this
-     * must be bound to an Object array, or an array of
-     * primitives.</p>
+     * The object that represents the selections made from the available
+     * options.If multiple selections are allowed, this must be bound to an
+     * Object array, or an array of primitives.
+     *
+     * @return Object
      */
-    @Property(name = "selected", displayName = "Selected", category = "Data",
-    editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
+    @Property(name = "selected",
+            displayName = "Selected",
+            category = "Data",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
+            //CHECKSTYLE:ON
     public Object getSelected() {
         return getValue();
     }
 
     /**
-     * <p>The object that represents the selections made from the
-     * available options. If multiple selections are allowed, this
-     * must be bound to an Object array, or an array of
-     * primitives.</p>
+     * The object that represents the selections made from the available
+     * options. If multiple selections are allowed, this must be bound to an
+     * Object array, or an array of primitives.
+     *
+     * @param newSelected selected object
      * @see #getSelected()
      */
-    private void _setSelected(Object selected) {
-        setValue(selected);
+    private void doSetSelected(final Object newSelected) {
+        setValue(newSelected);
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * This implementation evaluates the {@code "style"} expression if not
+     * already done.
+     * @return String
      */
+    @Override
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
+     * @param newStyle style
      * @see #getStyle()
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * This implementation evaluates the {@code "styleClass"} expression if not
+     * already done.
+     * @return String
      */
+    @Override
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
+     * @param newStyleClass styleClass
      * @see #getStyleClass()
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Position of this element in the tabbing order of the current document. 
-     * Tabbing order determines the sequence in which elements receive 
-     * focus when the tab key is pressed. The value must be an integer 
-     * between 0 and 32767.</p>
-     */
-    @Property(name = "tabIndex", displayName = "Tab Index", category = "Accessibility",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int tabIndex = Integer.MIN_VALUE;
-    private boolean tabIndex_set = false;
 
     /**
-     * <p>Position of this element in the tabbing order of the current document. 
-     * Tabbing order determines the sequence in which elements receive 
-     * focus when the tab key is pressed. The value must be an integer 
-     * between 0 and 32767.</p>
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     * @return int
      */
+    @Override
     public int getTabIndex() {
-        if (this.tabIndex_set) {
+        if (this.tabIndexSet) {
             return this.tabIndex;
         }
-        ValueExpression _vb = getValueExpression("tabIndex");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("tabIndex");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Position of this element in the tabbing order of the current document. 
-     * Tabbing order determines the sequence in which elements receive 
-     * focus when the tab key is pressed. The value must be an integer 
-     * between 0 and 32767.</p>
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     *
+     * @param newTabIndex tabIndex
      * @see #getTabIndex()
      */
-    public void setTabIndex(int tabIndex) {
-        this.tabIndex = tabIndex;
-        this.tabIndex_set = true;
+    public void setTabIndex(final int newTabIndex) {
+        this.tabIndex = newTabIndex;
+        this.tabIndexSet = true;
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     * @return String
      */
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
+     * @param newToolTip tool-tip
      * @see #getToolTip()
      */
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page.If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
+     * @param newVisible visible
      * @see #isVisible()
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.disabled = ((Boolean) _values[1]).booleanValue();
-        this.disabled_set = ((Boolean) _values[2]).booleanValue();
-        this.items = (Object) _values[3];
-        this.label = (String) _values[4];
-        this.labelLevel = ((Integer) _values[5]).intValue();
-        this.labelLevel_set = ((Boolean) _values[6]).booleanValue();
-        this.onBlur = (String) _values[7];
-        this.onChange = (String) _values[8];
-        this.onClick = (String) _values[9];
-        this.onDblClick = (String) _values[10];
-        this.onFocus = (String) _values[11];
-        this.onKeyDown = (String) _values[12];
-        this.onKeyPress = (String) _values[13];
-        this.onKeyUp = (String) _values[14];
-        this.onMouseDown = (String) _values[15];
-        this.onMouseMove = (String) _values[16];
-        this.onMouseOut = (String) _values[17];
-        this.onMouseOver = (String) _values[18];
-        this.onMouseUp = (String) _values[19];
-        this.onSelect = (String) _values[20];
-        this.readOnly = ((Boolean) _values[21]).booleanValue();
-        this.readOnly_set = ((Boolean) _values[22]).booleanValue();
-        this.style = (String) _values[23];
-        this.styleClass = (String) _values[24];
-        this.tabIndex = ((Integer) _values[25]).intValue();
-        this.tabIndex_set = ((Boolean) _values[26]).booleanValue();
-        this.toolTip = (String) _values[27];
-        this.visible = ((Boolean) _values[28]).booleanValue();
-        this.visible_set = ((Boolean) _values[29]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.disabled = ((Boolean) values[1]);
+        this.disabledSet = ((Boolean) values[2]);
+        this.items = (Object) values[3];
+        this.label = (String) values[4];
+        this.labelLevel = ((Integer) values[5]);
+        this.labelLevelSet = ((Boolean) values[6]);
+        this.onBlur = (String) values[7];
+        this.onChange = (String) values[8];
+        this.onClick = (String) values[9];
+        this.onDblClick = (String) values[10];
+        this.onFocus = (String) values[11];
+        this.onKeyDown = (String) values[12];
+        this.onKeyPress = (String) values[13];
+        this.onKeyUp = (String) values[14];
+        this.onMouseDown = (String) values[15];
+        this.onMouseMove = (String) values[16];
+        this.onMouseOut = (String) values[17];
+        this.onMouseOver = (String) values[18];
+        this.onMouseUp = (String) values[19];
+        this.onSelect = (String) values[20];
+        this.readOnly = ((Boolean) values[21]);
+        this.readOnlySet = ((Boolean) values[22]);
+        this.style = (String) values[23];
+        this.styleClass = (String) values[24];
+        this.tabIndex = ((Integer) values[25]);
+        this.tabIndexSet = ((Boolean) values[26]);
+        this.toolTip = (String) values[27];
+        this.visible = ((Boolean) values[28]);
+        this.visibleSet = ((Boolean) values[29]);
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[30];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.disabled ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.disabled_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.items;
-        _values[4] = this.label;
-        _values[5] = new Integer(this.labelLevel);
-        _values[6] = this.labelLevel_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = this.onBlur;
-        _values[8] = this.onChange;
-        _values[9] = this.onClick;
-        _values[10] = this.onDblClick;
-        _values[11] = this.onFocus;
-        _values[12] = this.onKeyDown;
-        _values[13] = this.onKeyPress;
-        _values[14] = this.onKeyUp;
-        _values[15] = this.onMouseDown;
-        _values[16] = this.onMouseMove;
-        _values[17] = this.onMouseOut;
-        _values[18] = this.onMouseOver;
-        _values[19] = this.onMouseUp;
-        _values[20] = this.onSelect;
-        _values[21] = this.readOnly ? Boolean.TRUE : Boolean.FALSE;
-        _values[22] = this.readOnly_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[23] = this.style;
-        _values[24] = this.styleClass;
-        _values[25] = new Integer(this.tabIndex);
-        _values[26] = this.tabIndex_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[27] = this.toolTip;
-        _values[28] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[29] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[30];
+        values[0] = super.saveState(context);
+        if (this.disabled) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.disabledSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        values[3] = this.items;
+        values[4] = this.label;
+        values[5] = this.labelLevel;
+        if (this.labelLevelSet) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        values[7] = this.onBlur;
+        values[8] = this.onChange;
+        values[9] = this.onClick;
+        values[10] = this.onDblClick;
+        values[11] = this.onFocus;
+        values[12] = this.onKeyDown;
+        values[13] = this.onKeyPress;
+        values[14] = this.onKeyUp;
+        values[15] = this.onMouseDown;
+        values[16] = this.onMouseMove;
+        values[17] = this.onMouseOut;
+        values[18] = this.onMouseOver;
+        values[19] = this.onMouseUp;
+        values[20] = this.onSelect;
+        if (this.readOnly) {
+            values[21] = Boolean.TRUE;
+        } else {
+            values[21] = Boolean.FALSE;
+        }
+        if (this.readOnlySet) {
+            values[22] = Boolean.TRUE;
+        } else {
+            values[22] = Boolean.FALSE;
+        }
+        values[23] = this.style;
+        values[24] = this.styleClass;
+        values[25] = this.tabIndex;
+        if (this.tabIndexSet) {
+            values[26] = Boolean.TRUE;
+        } else {
+            values[26] = Boolean.FALSE;
+        }
+        values[27] = this.toolTip;
+        if (this.visible) {
+            values[28] = Boolean.TRUE;
+        } else {
+            values[28] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[29] = Boolean.TRUE;
+        } else {
+            values[29] = Boolean.FALSE;
+        }
+        return values;
+    }
+
+    /**
+     * Private method for development time error detecting.
+     *
+     * @param msg message to log
+     * @param object object to derive the class of
+     */
+    private static void log(final String msg, final Object object) {
+        System.out.println(object.getClass().getName() + "::" + msg);
     }
 }

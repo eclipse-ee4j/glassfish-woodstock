@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * $Id: PageRenderer.java,v 1.1.20.1 2009-12-29 04:52:43 jyeary Exp $
  */
 package com.sun.webui.jsf.renderkit.html;
@@ -33,19 +33,20 @@ import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
 /**
  * Renderer for a {@link Page} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Page"))
-public class PageRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Page"))
+public final class PageRenderer extends javax.faces.render.Renderer {
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
 
-        if (component == null){
+        if (component == null) {
             return;
         }
         if (!(component instanceof Page)) {
@@ -69,26 +70,26 @@ public class PageRenderer extends javax.faces.render.Renderer {
             if (page.isXhtml()) {
                 if (page.isFrame()) {
                     //xhtml transitional frames
-                    writer.write("<!DOCTYPE html PUBLIC \""
-                            + "-//W3C//DTD XHTML 1.0 Frameset//EN\" "
-                            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
+                    //CHECKSTYLE:OFF
+                    writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
+                    //CHECKSTYLE:ON
                 } else {
                     //html transitional
-                    writer.write("<!DOCTYPE html PUBLIC \""
-                            + "-//W3C//DTD XHTML 1.0 Transitional//EN\" "
-                            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+                    //CHECKSTYLE:OFF
+                    writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+                    //CHECKSTYLE:ON
                 }
             } else {
                 if (page.isFrame()) {
                     //html transitional frames
-                    writer.write("<!DOCTYPE html PUBLIC \""
-                            + "-//W3C//DTD HTML 4.01 Frameset//EN\" "
-                            + "\"http://www.w3.org/TR/html4/frameset.dtd\">");
+                    //CHECKSTYLE:OFF
+                    writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">");
+                    //CHECKSTYLE:ON
                 } else {
                     //html transitional
-                    writer.write("<!DOCTYPE html PUBLIC \""
-                            + "-//W3C//DTD HTML 4.01 Transitional//EN\" "
-                            + "\"http://www.w3.org/TR/html4/loose.dtd\">");
+                    //CHECKSTYLE:OFF
+                    writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+                    //CHECKSTYLE:ON
                 }
             }
             writer.write("\n");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -35,7 +35,7 @@ import javax.faces.context.ResponseWriter;
  * The {@link Anchor} component can be used as an anchor.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Anchor"))
-public class AnchorRenderer extends AbstractRenderer {
+public final class AnchorRenderer extends AbstractRenderer {
 
     /**
      * Id of the transparent image to be rendered for IE browsers.
@@ -49,16 +49,18 @@ public class AnchorRenderer extends AbstractRenderer {
             "/com/sun/webui/jsf/design/resources/AnchorIcon.gif";
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Anchor anchor = (Anchor) component;
         writer.startElement("a", anchor);
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // Set up local variables we will need
         Anchor anchor = (Anchor) component;
@@ -85,7 +87,8 @@ public class AnchorRenderer extends AbstractRenderer {
         String style = anchor.getStyle();
         String styleClass = anchor.getStyleClass();
         if (styleClass != null) {
-            RenderingUtilities.renderStyleClass(context, writer, component, null);
+            RenderingUtilities.renderStyleClass(context, writer, component,
+                    null);
         }
         if (style != null) {
             writer.writeAttribute("style", style, null);
@@ -97,8 +100,9 @@ public class AnchorRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         ClientSniffer sniffer = ClientSniffer.getInstance(context);
         if (sniffer.isIe6up() || sniffer.isIe7() || sniffer.isIe7up()) {
@@ -111,6 +115,5 @@ public class AnchorRenderer extends AbstractRenderer {
         // End the appropriate element
         Anchor anchor = (Anchor) component;
         writer.endElement("a");
-
     }
 }

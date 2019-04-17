@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,11 +23,10 @@ import org.example.base.IntrospectedSuperBean;
 
 @Component
 public class ComponentBean03 extends IntrospectedSuperBean {
-    
+
     @Property(displayName="A different display name")
+    @Override
     public MethodExpression getIntrospectedListener2Expression() {
         return super.getIntrospectedListener2Expression();
     }
-    
-    
 }

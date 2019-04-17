@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -77,14 +77,14 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
  * The ID attributes for HTML elements are constructed as follows, where
  * &lt;cid&gt; is the {@code clientId} of the component being rendered.
  * <p>
- * <lo>
+ * <ul>
  * <li> &lt;cid&gt; for the INPUT element
  * </li>
  * <li> &lt;cid&gt;_image for the image component
  * </li>
  * <li> &lt;cid&gt;_label for the label component
  * </li>
- * </lo>
+ * </ul>
  * <h1>Encoding the INPUT element</h1>
  * <p>
  * If the {@code name} property of the component is {@code null} the name
@@ -123,7 +123,7 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
  * <li>readOnly</li>
  * <li>tabIndex</li>
  * <li>style</li>
- * </lu>
+ * </ul>
  * The component's {@code toolTip} property if not null is rendered as the value
  * of the HTML INPUT element's title attribute.<br/>
  * The HTML INPUT element's class attribute is set to the component's
@@ -151,7 +151,7 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
  * returned, the appropriate disabled or enabled style class returned by
  * {@code getStyle} is appended to the label's {@code styleClass} property.
  * {@code RenderingUtilities.renderComponent} is called to render the
- * component.<br/>
+ * component.
  * </p>
  */
 abstract class RbCbRendererBase extends AbstractRenderer {
@@ -159,71 +159,142 @@ abstract class RbCbRendererBase extends AbstractRenderer {
     /**
      * The define constant indicating the style class for an INPUT element.
      */
-    protected final static int INPUT = 0;
+    protected static final int INPUT = 0;
 
     /**
      * The define constant indicating the style class for a disabled INPUT
      * element.
      */
-    protected final static int INPUT_DIS = 1;
+    protected static final int INPUT_DIS = 1;
 
     /**
      * The define constant indicating the style class for the LABEL element.
      */
-    protected final static int LABEL = 2;
+    protected static final int LABEL = 2;
 
     /**
      * The define constant indicating the style class for a disabled LABEL
      * element.
      */
-    protected final static int LABEL_DIS = 3;
+    protected static final int LABEL_DIS = 3;
 
     /**
      * The define constant indicating the style class for the IMG element.
      */
-    protected final static int IMAGE = 4;
+    protected static final int IMAGE = 4;
 
     /**
      * The define constant indicating the style class for a disabled IMG
      * element.
      */
-    protected final static int IMAGE_DIS = 5;
+    protected static final int IMAGE_DIS = 5;
 
     /**
      * The define constant indicating the style class for for the containing
      * span element.
      */
-    protected final static int SPAN = 6;
+    protected static final int SPAN = 6;
 
     /**
      * The define constant indicating the style class for for the containing
      * span element, when disabled.
      */
-    protected final static int SPAN_DIS = 7;
+    protected static final int SPAN_DIS = 7;
 
+    /**
+     * Input element.
+     */
     private static final String INPUT_ELEM = "input";
+
+    /**
+     * span element.
+     */
     private static final String SPAN_ELEM = "span";
+
+    /**
+     * checked attribute.
+     */
     private static final String CHECKED_ATTR = "checked";
+
+    /**
+     * disabled attribute.
+     */
     private static final String DISABLED_ATTR = "disabled";
+
+    /**
+     * class attribute.
+     */
     private static final String CLASS_ATTR = "class";
+
+    /**
+     * id attribute.
+     */
     private static final String ID_ATTR = "id";
+
+    /**
+     * name attribute.
+     */
     private static final String NAME_ATTR = "name";
+
+    /**
+     * readonly attribute.
+     */
     private static final String READONLY_ATTR = "readonly";
+
+    /**
+     * readonly cc attribute.
+     */
     private static final String READONLY_CC_ATTR = "readOnly";
+
+    /**
+     * style attribute.
+     */
     private static final String STYLE_ATTR = "style";
+
+    /**
+     * style class attribute.
+     */
     private static final String STYLECLASS_ATTR = "styleClass";
+
+    /**
+     * tabindex attribute.
+     */
     private static final String TABINDEX_ATTR = "tabindex";
+
+    /**
+     * tabindex cc attribute.
+     */
     private static final String TABINDEX_CC_ATTR = "tabIndex";
+
+    /**
+     * title attribute.
+     */
     private static final String TITLE_ATTR = "title";
+
+    /**
+     * tooltip attribute.
+     */
     private static final String TOOLTIP_ATTR = "toolTip";
+
+    /**
+     * type attribute.
+     */
     private static final String TYPE_ATTR = "type";
+
+    /**
+     * value attribute.
+     */
     private static final String VALUE_ATTR = "value";
+
+    /**
+     * span suffix.
+     */
     private static final String SPAN_SUFFIX = "_span";
 
     /**
      * The list of attribute names for Rb and Cb.
      */
-    public static final String RBCB_EVENTS_ATTRIBUTES[] = {
+    public static final String[] RBCB_EVENTS_ATTRIBUTES = {
         "onFocus",
         "onBlur",
         "onClick",
@@ -242,17 +313,18 @@ abstract class RbCbRendererBase extends AbstractRenderer {
     /**
      * Creates a new instance of RbCbRendererBase.
      */
-    public RbCbRendererBase() {
+    RbCbRendererBase() {
         super();
     }
 
     /**
-     * The getStlye method is implemented by subclasses to return the actual CSS
+     * The getStyle method is implemented by subclasses to return the actual CSS
      * style class name for the given structural element of the rendered
      * component.
      *
      * @param theme Theme for the request we are processing.
      * @param styleCode one of the previously defined constants.
+     * @return String
      */
     protected abstract String getStyle(Theme theme, int styleCode);
 
@@ -260,14 +332,22 @@ abstract class RbCbRendererBase extends AbstractRenderer {
      * Implemented in the subclass to determine if the {@code item} is the
      * currently selected control.
      *
-     * @param Object selectedValue control value.
-     * @param currentValue the value of the currently selected control.
+     * @param component UI component
+     * @param context faces context
+     * @return {@code boolean}
      */
     protected abstract boolean isSelected(FacesContext context,
             UIComponent component);
 
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component)
             throws IOException {
     }
 
@@ -276,12 +356,15 @@ abstract class RbCbRendererBase extends AbstractRenderer {
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
+     * @param theme the current theme
      * @param writer {@code ResponseWriter} to which the HTML will be output
      * @param type the INPUT element type attribute value.
+     * @throws IOException if an error occurs
      */
-    protected void renderSelection(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            String type) throws IOException {
+    protected void renderSelection(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final String type)
+            throws IOException {
 
         // Contain the radio button components within a span element
         // assigning the style and styleClass attribute to its
@@ -298,8 +381,12 @@ abstract class RbCbRendererBase extends AbstractRenderer {
 
         // Merge the standard style class with the styleClass
         // attribute
-        String styleClass = getStyle(theme,
-                ((RbCbSelector) component).isDisabled() ? SPAN_DIS : SPAN);
+        String styleClass;
+        if (((RbCbSelector) component).isDisabled()) {
+            styleClass = getStyle(theme, SPAN_DIS);
+        } else {
+            styleClass = getStyle(theme, SPAN);
+        }
         styleClass = getStyleClasses(context, component, styleClass);
         if (styleClass != null) {
             writer.writeAttribute(CLASS_ATTR, styleClass, null);
@@ -317,12 +404,15 @@ abstract class RbCbRendererBase extends AbstractRenderer {
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be rendered.
+     * @param theme the current theme
      * @param writer {@code ResponseWriter} to which the HTML will be output
      * @param type the INPUT element type attribute value.
+     * @throws IOException if an error occurs
      */
-    protected void renderInput(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            String type) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void renderInput(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final String type) throws IOException {
 
         RbCbSelector rbcbSelector = (RbCbSelector) component;
         String componentId = component.getClientId(context);
@@ -335,7 +425,6 @@ abstract class RbCbRendererBase extends AbstractRenderer {
         writer.writeAttribute(ID_ATTR, componentId, ID_ATTR);
 
         // If name is not set use the component's clientId
-        //
         boolean inGroup = true;
         String prop = rbcbSelector.getName();
         if (prop == null) {
@@ -353,7 +442,6 @@ abstract class RbCbRendererBase extends AbstractRenderer {
         // Need to check immediate conditions
         // submittedValue will be non null if immediate is true on
         // some action component or a component on the page was invalid
-        //
         String[] subValue = (String[]) rbcbSelector.getSubmittedValue();
         if (subValue == null) {
             Object selected = rbcbSelector.getSelected();
@@ -363,10 +451,10 @@ abstract class RbCbRendererBase extends AbstractRenderer {
             // A component can't be selected if "getSelected" returns null
             // Remember that the rendered value was null.
             setRenderedValue(component, selected);
-        } else //
-        // if the submittedValue is a 0 length array or the
-        // first element is "" then the control is unchecked.
-        if (subValue.length != 0 && subValue[0].length() != 0) {
+        } else if (subValue.length != 0 && subValue[0].length() != 0) {
+            // if the submittedValue is a 0 length array or the
+            // first element is "" then the control is unchecked.
+
             // The submitted value has the String value of the
             // selectedValue property. Just compare the submittedValue
             // to it to determine if it is checked.
@@ -424,11 +512,13 @@ abstract class RbCbRendererBase extends AbstractRenderer {
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
+     * @param theme the current theme
      * @param writer {@code ResponseWriter} to which the HTML will be output
+     * @throws IOException if an error occurs
      */
-    protected void renderImage(FacesContext context,
-            UIComponent component, Theme theme,
-            ResponseWriter writer) throws IOException {
+    protected void renderImage(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent imageComponent = getImageComponent(context, component,
                 theme);
@@ -460,8 +550,8 @@ abstract class RbCbRendererBase extends AbstractRenderer {
      * @return UIComponent
      * @throws IOException if an IO error occurs
      */
-    private UIComponent getImageComponent(FacesContext context,
-            UIComponent component, Theme theme) throws IOException {
+    private UIComponent getImageComponent(final FacesContext context,
+            final UIComponent component, final Theme theme) throws IOException {
 
         RbCbSelector rbcbComponent = (RbCbSelector) component;
         ImageComponent imageComponent
@@ -471,14 +561,16 @@ abstract class RbCbRendererBase extends AbstractRenderer {
         }
 
         // Need to apply disabled class
-        //
-        String styleClass = getStyle(theme,
-                rbcbComponent.isDisabled() ? IMAGE_DIS : IMAGE);
+        String styleClass;
+        if (rbcbComponent.isDisabled()) {
+            styleClass = getStyle(theme, IMAGE_DIS);
+        } else {
+            styleClass = getStyle(theme, IMAGE);
+        }
         styleClass = getStyleClasses(context, imageComponent, styleClass);
         if (styleClass != null) {
             imageComponent.setStyleClass(styleClass);
         }
-
         return imageComponent;
     }
 
@@ -487,10 +579,13 @@ abstract class RbCbRendererBase extends AbstractRenderer {
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
+     * @param theme the current theme
      * @param writer {@code ResponseWriter} to which the HTML will be output
+     * @throws IOException if an IO error occurs
      */
-    protected void renderLabel(FacesContext context, UIComponent component,
-            Theme theme, ResponseWriter writer) throws IOException {
+    protected void renderLabel(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent labelComponent = getLabelComponent(context, component,
                 theme);
@@ -499,8 +594,16 @@ abstract class RbCbRendererBase extends AbstractRenderer {
         }
     }
 
-    private UIComponent getLabelComponent(FacesContext context,
-            UIComponent component, Theme theme) throws IOException {
+    /**
+     * Get the label component.
+     * @param context faces context
+     * @param component UI component
+     * @param theme the current theme
+     * @return UIComponent
+     * @throws IOException if an IO error occurs
+     */
+    private UIComponent getLabelComponent(final FacesContext context,
+            final UIComponent component, final Theme theme) throws IOException {
 
         RbCbSelector rbcbComponent = (RbCbSelector) component;
         Label labelComponent = (Label) rbcbComponent.getLabelComponent();
@@ -509,8 +612,12 @@ abstract class RbCbRendererBase extends AbstractRenderer {
         }
 
         // Need to apply disabled class
-        String styleClass = getStyle(theme,
-                rbcbComponent.isDisabled() ? LABEL_DIS : LABEL);
+        String styleClass;
+        if (rbcbComponent.isDisabled()) {
+            styleClass = getStyle(theme, LABEL_DIS);
+        } else {
+            styleClass = getStyle(theme, LABEL);
+        }
         styleClass = getStyleClasses(context, labelComponent, styleClass);
         if (styleClass != null) {
             labelComponent.setStyleClass(styleClass);
@@ -518,10 +625,17 @@ abstract class RbCbRendererBase extends AbstractRenderer {
         return labelComponent;
     }
 
+    /**
+     * This implementation converts the selected of the rbcb component.
+     * @param context faces context
+     * @param component UI component
+     * @param submittedValue submitted value to convert
+     * @return Object
+     * @throws ConverterException if a conversion error occurs
+     */
     @Override
-    public Object getConvertedValue(FacesContext context,
-            UIComponent component,
-            Object submittedValue)
+    public Object getConvertedValue(final FacesContext context,
+            final UIComponent component, final Object submittedValue)
             throws ConverterException {
 
         // I know this looks odd but it gives an opportunity

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -45,8 +45,9 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 /**
  * This class needs to be rewritten.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CalendarMonth"))
-public class CalendarMonthRenderer extends AbstractRenderer {
+@Renderer(@Renderer.Renders(
+        componentFamily = "com.sun.webui.jsf.CalendarMonth"))
+public final class CalendarMonthRenderer extends AbstractRenderer {
 
     /**
      * Debug flag.
@@ -64,13 +65,13 @@ public class CalendarMonthRenderer extends AbstractRenderer {
     private static final String CLOSE_IMAGE = "_closeImage";
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     @Override
@@ -84,19 +85,22 @@ public class CalendarMonthRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         super.decode(context, component);
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (DEBUG) {
             log("encodeEnd()");
         }
 
-        if (component == null){
+        if (component == null) {
             return;
         }
 
@@ -143,7 +147,6 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.writeText("\n", null);
 
         renderCalendarControls(calendarMonth, styles, context, writer);
-
         renderDateTable(calendarMonth, styles, id, dateFormat, context, writer);
 
         // close the div
@@ -158,20 +161,20 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         }
     }
 
-    /** 
+    /**
      * Render a spacer image.
-     * 
-     * @param context The current FacesContext 
-     * @param calendarMonth The CalendarMonth component instance 
-     * @param theme The current Theme 
-     * @param height The height to use for the spaer image 
-     * @param width The width to use for the spacer image 
-     * 
-     * @exception IOException if an input/output error occurs 
+     *
+     * @param context The current FacesContext
+     * @param calendarMonth The CalendarMonth component instance
+     * @param theme The current Theme
+     * @param height The height to use for the spacer image
+     * @param width The width to use for the spacer image
+     *
+     * @exception IOException if an input/output error occurs
      */
-    protected final void renderSpacerImage(FacesContext context,
-            CalendarMonth calendarMonth, Theme theme, int height, int width)
-            throws IOException {
+    protected void renderSpacerImage(final FacesContext context,
+            final CalendarMonth calendarMonth, final Theme theme,
+            final int height, final int width) throws IOException {
 
         // TODO - this generates a component with no id set! Has to be fixed.
         Icon dot = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
@@ -190,9 +193,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer write to use
      * @throws IOException if an IO error occurs
      */
-    private void renderDateTableStart(CalendarMonth calendarMonth,
-            String[] styles,
-            ResponseWriter writer)
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderDateTableStart(final CalendarMonth calendarMonth,
+            final String[] styles, final ResponseWriter writer)
             throws IOException {
 
         writer.startElement("div", calendarMonth);
@@ -217,9 +220,10 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer writer to use
      * @throws IOException if an IO error occurs
      */
-    private void renderDayHeaderRow(CalendarMonth calendarMonth,
-            String[] styles, FacesContext context, ResponseWriter writer)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderDayHeaderRow(final CalendarMonth calendarMonth,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement("tr", calendarMonth);
         writer.write("\n");
@@ -253,17 +257,17 @@ public class CalendarMonthRenderer extends AbstractRenderer {
 
     /**
      * Render the calendarMonth header containing the weekday table headers.
-     * 
+     *
      * @param calendarMonth The CalendarMonth component instance
      * @param writer The current ResponseWriter
      * @param styleClass The style class to use for the table header cell
      * @param header The contents to write for the table header cell
-     * 
+     *
      * @exception IOException if an input/output error occurs
      */
-    private void renderWeekdayHeader(CalendarMonth calendarMonth,
-            ResponseWriter writer, String styleClass, String header)
-            throws IOException {
+    private void renderWeekdayHeader(final CalendarMonth calendarMonth,
+            final ResponseWriter writer, final String styleClass,
+            final String header) throws IOException {
 
         // render a column header with the given style and header text
         writer.startElement("th", calendarMonth);
@@ -289,9 +293,10 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer writer to use
      * @throws IOException if an IO error occurs
      */
-    private void renderDays(CalendarMonth calendarMonth, String id,
-            String[] styles, DateFormat dateFormat, ResponseWriter writer)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderDays(final CalendarMonth calendarMonth,
+            final String id, final String[] styles, final DateFormat dateFormat,
+            final ResponseWriter writer) throws IOException {
 
         // now render each week in a row with each day in a td
         Calendar monthToShow = calendarMonth.getCalendar();
@@ -420,9 +425,11 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer writer to use
      * @throws IOException if an IO error occurs
      */
-    private void renderDateLink(Calendar startDate,
-            String style, String id, CalendarMonth calendarMonth,
-            DateFormat dateFormat, ResponseWriter writer) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderDateLink(final Calendar startDate, final String style,
+            final String id, final CalendarMonth calendarMonth,
+            final DateFormat dateFormat, final ResponseWriter writer)
+            throws IOException {
 
         writer.startElement("td", calendarMonth);
         writer.writeAttribute("align", "center", null);
@@ -465,7 +472,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer write to use
      * @throws IOException if an IO error occurs
      */
-    private void renderDateTableEnd(ResponseWriter writer)
+    private void renderDateTableEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.endElement("tbody");
@@ -485,9 +492,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param theme theme in-use
      * @throws IOException if an IO error occurs
      */
-    private void renderCalendarHeader(CalendarMonth calendarMonth,
-            String[] styles, FacesContext context, ResponseWriter writer,
-            Theme theme) throws IOException {
+    private void renderCalendarHeader(final CalendarMonth calendarMonth,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer, final Theme theme) throws IOException {
 
         renderHeaderTable(calendarMonth, writer, styles, theme);
         renderTodayDate(calendarMonth, writer, styles, theme, context);
@@ -500,11 +507,12 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer writer to use
      * @param styles CSS styles
      * @param theme theme in-use
-     * @throws IOException 
+     * @throws IOException if an IO error occurs
      */
-    private void renderHeaderTable(CalendarMonth calendarMonth,
-            ResponseWriter writer, String[] styles, Theme theme)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderHeaderTable(final CalendarMonth calendarMonth,
+            final ResponseWriter writer, final String[] styles,
+            final Theme theme) throws IOException {
 
         writer.startElement("table", calendarMonth);
         writer.writeAttribute("border", "0", null);
@@ -513,7 +521,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.writeAttribute("width", "100%", null);
         writer.write("\n");
         writer.startElement("tr", calendarMonth);
-        writer.writeText("\n", null);  // NOI18N
+        writer.writeText("\n", null);
 
         // Render the header's left corner.
         renderHeaderCornerCell(calendarMonth, writer,
@@ -541,7 +549,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.endElement("tr");
         writer.writeText("\n", null);
         writer.endElement("table");
-        writer.writeText("\n", null);	
+        writer.writeText("\n", null);
     }
 
     /**
@@ -551,9 +559,8 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param src image source attribute value
      * @throws IOException if an IO error occurs
      */
-    private void renderHeaderCornerCell(CalendarMonth calendarMonth,
-            ResponseWriter writer, String src)
-            throws IOException {
+    private void renderHeaderCornerCell(final CalendarMonth calendarMonth,
+            final ResponseWriter writer, final String src) throws IOException {
 
         writer.startElement("td", calendarMonth);
         writer.writeAttribute("width", "6", null);
@@ -575,9 +582,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param theme theme in-use
      * @throws IOException if an IO error occurs
      */
-    private void renderTodayDate(CalendarMonth calendarMonth,
-            ResponseWriter writer, String[] styles, Theme theme,
-            FacesContext context) throws IOException {
+    private void renderTodayDate(final CalendarMonth calendarMonth,
+            final ResponseWriter writer, final String[] styles,
+            final Theme theme, final FacesContext context) throws IOException {
 
         renderTodayDateBegin(calendarMonth, writer, styles);
         renderTodayDateText(calendarMonth, writer, context, styles, theme);
@@ -596,8 +603,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param styles CSS styles
      * @throws IOException if an IO error occurs
      */
-    private void renderTodayDateBegin(CalendarMonth calendarMonth,
-            ResponseWriter writer, String[] styles)
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderTodayDateBegin(final CalendarMonth calendarMonth,
+            final ResponseWriter writer, final String[] styles)
             throws IOException {
 
         writer.startElement("div", calendarMonth);
@@ -614,11 +622,10 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param theme theme in-use
      * @throws IOException if an IO error occurs
      */
-    private void renderTodayDateText(CalendarMonth calendarMonth,
-            ResponseWriter writer, FacesContext context,
-            String[] styles,
-            Theme theme)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderTodayDateText(final CalendarMonth calendarMonth,
+            final ResponseWriter writer, final FacesContext context,
+            final String[] styles, final Theme theme) throws IOException {
 
         writer.startElement("div", calendarMonth);
         writer.writeAttribute("class", styles[24], null);
@@ -644,7 +651,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param writer writer to use
      * @throws IOException if an IO error occurs
      */
-    private void renderTodayDateEnd(ResponseWriter writer)
+    private void renderTodayDateEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.endElement("div");
@@ -652,19 +659,20 @@ public class CalendarMonthRenderer extends AbstractRenderer {
     }
 
     /**
-     * Render the calendarMonth controls: the month and year menus as well as the
-     * previous and next month IconHyperlink's.
+     * Render the calendarMonth controls: the month and year menus as well as
+     * the previous and next month IconHyperlink's.
      *
      * @param context The current FacesContext
+     * @param styles CSS styles
      * @param calendarMonth The CalendarMonth component instance
      * @param writer The current ResponseWriter
-     * @param theme The current Theme
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderCalendarControls(CalendarMonth calendarMonth,
-            String[] styles, FacesContext context, ResponseWriter writer)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderCalendarControls(final CalendarMonth calendarMonth,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         if (DEBUG) {
             log("renderCalendarControls");
@@ -679,7 +687,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.writeAttribute("class", styles[26], null);
 
         String pattern = calendarMonth.getDateFormatPattern();
-        if (pattern.indexOf("yyyy") < pattern.indexOf("MM")) { //NOI18N
+        if (pattern.indexOf("yyyy") < pattern.indexOf("MM")) {
             renderYearControl(calendarMonth, styles, context, writer);
             writer.endElement("div");
             writer.writeText("\n", null);
@@ -697,14 +705,22 @@ public class CalendarMonthRenderer extends AbstractRenderer {
 
         writer.endElement("div");
         writer.writeText("\n", null);
-
         writer.endElement("div");
         writer.writeText("\n", null);
     }
 
-    private void renderYearControl(CalendarMonth calendarMonth,
-            String[] styles, FacesContext context, ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render the year control.
+     * @param calendarMonth month
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderYearControl(final CalendarMonth calendarMonth,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         if (DEBUG) {
             log("renderYearControl()");
@@ -715,11 +731,18 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.write("\n");
     }
 
-    private void renderMonthControl(CalendarMonth calendarMonth,
-            String[] styles,
-            FacesContext context,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render the month control.
+     * @param calendarMonth month
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderMonthControl(final CalendarMonth calendarMonth,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         if (DEBUG) {
             log("renderMonthControl()");
@@ -753,9 +776,19 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         }
     }
 
-    private void renderCloseButton(CalendarMonth calendarMonth,
-            String[] styles, FacesContext context, ResponseWriter writer,
-            Theme theme) throws IOException {
+    /**
+     * Render the close button.
+     * @param calendarMonth month
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @param theme theme to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderCloseButton(final CalendarMonth calendarMonth,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer, final Theme theme) throws IOException {
 
         RenderingUtilities.renderAnchor(SKIP_SECTION, calendarMonth, context);
 
@@ -780,11 +813,19 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.write("\n");
     }
 
-    private void renderPopupStart(CalendarMonth calendarMonth,
-            String id, String[] styles,
-            FacesContext context,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render the popup start.
+     * @param calendarMonth month
+     * @param id component id
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderPopupStart(final CalendarMonth calendarMonth,
+            final String id, final String[] styles, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement("div", calendarMonth);
         writer.writeAttribute("id", id, null);
@@ -800,7 +841,12 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.writeText("\n", null);
     }
 
-    private void renderPopupEnd(ResponseWriter writer)
+    /**
+     * Render the popup end.
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderPopupEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.endElement("div");
@@ -811,11 +857,21 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         writer.write("\n");
     }
 
-    private void renderDateTable(CalendarMonth calendarMonth, String[] styles,
-            String id, DateFormat dateFormat,
-            FacesContext context,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render the date table.
+     * @param calendarMonth month
+     * @param styles CSS styles
+     * @param id component id
+     * @param dateFormat date format
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderDateTable(final CalendarMonth calendarMonth,
+            final String[] styles, final String id,
+            final DateFormat dateFormat, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         RenderingUtilities.renderSkipLink(SKIP_SECTION, styles[21], null,
                 null, null, calendarMonth, context);
@@ -830,34 +886,41 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         }
     }
 
-    private void initializeChildren(CalendarMonth cm,
-            SimpleDateFormat dateFormat, FacesContext context) {
+    /**
+     * Initialize the children.
+     * @param cm month
+     * @param dateFormat date format
+     * @param context faces context
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void initializeChildren(final CalendarMonth cm,
+            final SimpleDateFormat dateFormat, final FacesContext context) {
 
         if (DEBUG) {
             log("initializeChildren()");
         }
-        // This variable is used to track whether the calendar 
+        // This variable is used to track whether the calendar
         // controls have to be updated based on the calculations
         // performed in this method.
         boolean updateCalendarControls = false;
 
-        // Get a calendar instance with the correct timezone and locale 
+        // Get a calendar instance with the correct timezone and locale
         // from the CalendarMonth component. This calendar is initialized
         // with today's date.
         Calendar calendar = cm.getCalendar();
 
-        // The displayDate reflects the month that will be displayed 
+        // The displayDate reflects the month that will be displayed
         // (we only use the year and month component of the date).
         // We start by assuming that this will be the today's date
         Date displayDate = calendar.getTime();
 
-        // Find out what the current year and month settings are of the 
-        // CalendarMonth component (this is whatever the user has 
-        // selected using the menus and the buttons on the control row). 
-        // Update the calendar with this data - it will be used when 
+        // Find out what the current year and month settings are of the
+        // CalendarMonth component (this is whatever the user has
+        // selected using the menus and the buttons on the control row).
+        // Update the calendar with this data - it will be used when
         // calculating the dates on the display.
-        // If the user hasn't made any selections yet, the values 
-        // will be updated later, and will be based on today's date. 
+        // If the user hasn't made any selections yet, the values
+        // will be updated later, and will be based on today's date.
         Integer year = cm.getCurrentYear();
         Integer month = cm.getCurrentMonth();
         if (year != null && month != null) {
@@ -871,18 +934,18 @@ public class CalendarMonthRenderer extends AbstractRenderer {
                 log("Year is " + year.toString());
             }
             calendar.set(Calendar.YEAR, year);
-            // Adjust for the fact that we display the months as 1 - 12, but 
-            // java.util.Calendar has them as 0 to 11.  
+            // Adjust for the fact that we display the months as 1 - 12, but
+            // java.util.Calendar has them as 0 to 11.
             calendar.set(Calendar.MONTH, month - 1);
         //calendar.set(Calendar.DAY_OF_MONTH, 1);
         } else {
             updateCalendarControls = true;
         }
 
-        // Calculate which years should be displayed, based on the 
+        // Calculate which years should be displayed, based on the
         // settings of the of the CalendarMonth component
-        // We should probably store these options as an attribute, 
-        // instead of calculating them every time. 
+        // We should probably store these options as an attribute,
+        // instead of calculating them every time.
 
         // Calculate min and max dates
         Date minDate = null;
@@ -896,13 +959,7 @@ public class CalendarMonthRenderer extends AbstractRenderer {
 
         if (DEBUG) {
             log("Min date set to  " + minDate.toString());
-        }
-
-        if (DEBUG) {
             log("Max date set to " + maxDate.toString());
-        }
-
-        if (DEBUG) {
             log("Date to display is " + displayDate.toString());
         }
 
@@ -984,8 +1041,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
      * @param theme theme in-use
      * @return String[]
      */
-    private String[] getStyles(CalendarMonth calendarMonth,
-            FacesContext context, Theme theme) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private String[] getStyles(final CalendarMonth calendarMonth,
+            final FacesContext context, final Theme theme) {
 
         String[] styles = new String[28];
         styles[0] = theme.getStyleClass(ThemeStyles.CALENDAR_DIV_SHOW);
@@ -1011,7 +1069,8 @@ public class CalendarMonthRenderer extends AbstractRenderer {
         styles[20] = theme.getStyleClass(ThemeStyles.DATE_TIME_TODAY_LINK);
         styles[21] = theme.getStyleClass(ThemeStyles.SKIP_MEDIUM_GREY1);
         styles[22] = theme.getStyleClass(ThemeStyles.DATE_TIME_SELECT_CONTENT);
-        styles[23] = theme.getStyleClass(ThemeStyles.DATE_TIME_SELECT_TOP_MIDDLE);
+        styles[23] = theme.getStyleClass(
+                ThemeStyles.DATE_TIME_SELECT_TOP_MIDDLE);
         styles[24] = theme.getStyleClass(ThemeStyles.DATE_TIME_SELECT_DATE);
         styles[25] = theme.getStyleClass(ThemeStyles.CALENDAR_CLOSE_BUTTON);
         styles[26] = theme.getStyleClass(ThemeStyles.DATE_TIME_CALENDAR_LEFT);
@@ -1021,9 +1080,9 @@ public class CalendarMonthRenderer extends AbstractRenderer {
 
     /**
      * Log a message to the standard output.
-     * @param s 
+     * @param msg message to log
      */
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s);
+    private void log(final String msg) {
+        System.out.println(this.getClass().getName() + "::" + msg);
     }
 }

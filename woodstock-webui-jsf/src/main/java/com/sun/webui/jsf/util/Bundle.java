@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,11 +27,22 @@ import java.util.ResourceBundle;
 public class Bundle {
 
     /**
+     * The {@code MessageFormat} instance we will use for messages that require
+     * parameter replacement.
+     */
+    private final MessageFormat format = new MessageFormat("");
+
+    /**
+     * The {@code ResourceBundle} containing our messages.
+     */
+    private final ResourceBundle bundle;
+
+    /**
      * Construct a {@code Bundle} instance for the specified class.
      *
      * @param clazz Class for which to construct a bundle instance
      */
-    public Bundle(Class clazz) {
+    public Bundle(final Class clazz) {
         String name = clazz.getName();
         int period = name.lastIndexOf('.');
         if (period >= 0) {
@@ -45,23 +56,12 @@ public class Bundle {
     }
 
     /**
-     * The {@code MessageFormat} instance we will use for messages that require
-     * parameter replacement.
-     */
-    private final MessageFormat format = new MessageFormat("");
-
-    /**
-     * The {@code ResourceBundle} containing our messages.
-     */
-    private final ResourceBundle bundle;
-
-    /**
      * Return the message for the specified key.
      *
      * @param key Message key to look up
      * @return String
      */
-    public String message(String key) {
+    public String message(final String key) {
         return bundle.getString(key);
     }
 
@@ -73,7 +73,7 @@ public class Bundle {
      * @param params Replacement parameters
      * @return String
      */
-    public String message(String key, Object params[]) {
+    public String message(final String key, final Object[] params) {
         String pattern = message(key);
 
         synchronized (format) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -39,9 +39,17 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * Renderer for the {@link Breadcrumbs} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Breadcrumbs"))
-public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
+public final class BreadcrumbsRenderer extends javax.faces.render.Renderer {
 
-    final static String SEPARATOR_KEY = "Breadcrumbs.separator";
+    /**
+     * Separator key.
+     */
+    private static final String SEPARATOR_KEY = "Breadcrumbs.separator";
+
+    /**
+     * Separator.
+     */
+    private String separator;
 
     @Override
     public boolean getRendersChildren() {
@@ -49,8 +57,8 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // Open the top-most DIV element
         if (!component.isRendered()) {
@@ -91,8 +99,8 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         Breadcrumbs breadcrumbs = (Breadcrumbs) component;
         if (!breadcrumbs.isRendered()) {
@@ -132,14 +140,15 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
                         renderBreadcrumbsLink(context, hyperlink, theme);
                         if (i < childrenList.size() - 2
                                 || childrenList.get(i + 1).isRendered()) {
-                            renderBreadcrumbsSeparator(context, breadcrumbs, theme);
+                            renderBreadcrumbsSeparator(context, breadcrumbs,
+                                    theme);
                         }
                     }
                 }
                 i++;
             }
-            if (childrenList.get(i).isRendered() &&
-                    Hyperlink.class.isAssignableFrom(
+            if (childrenList.get(i).isRendered()
+                    && Hyperlink.class.isAssignableFrom(
                             childrenList.get(i).getClass())) {
                 renderBreadcrumbsText(context,
                         (Hyperlink) childrenList.get(i), theme);
@@ -148,8 +157,8 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // Close the top-most DIV element
         if (!component.isRendered()) {
@@ -159,13 +168,17 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
         writer.endElement(HTMLElements.DIV);
         writer.writeText("\n", null);
     }
-    private String separator;
 
     /**
      * Renders a separator, in between two breadcrumb hyperlinks.
+     * @param context faces context
+     * @param breadcrumbs breadcrumbs component
+     * @param theme theme to use
+     * @throws IOException if an IO error occurs
      */
-    private void renderBreadcrumbsSeparator(FacesContext context,
-            Breadcrumbs breadcrumbs, Theme theme) throws IOException {
+    private void renderBreadcrumbsSeparator(final FacesContext context,
+            final Breadcrumbs breadcrumbs, final Theme theme)
+            throws IOException {
 
         ResponseWriter writer = context.getResponseWriter();
         writer.startElement(HTMLElements.SPAN, breadcrumbs);
@@ -182,9 +195,14 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
 
     /**
      * Renders a breadcrumb hyperlink.
+     * @param context faces context
+     * @param crumb breadcrumb fragment link
+     * @param theme theme to use
+     * @throws IOException if an IO error occurs
      */
-    private static void renderBreadcrumbsLink(FacesContext context,
-            Hyperlink crumb, Theme theme) throws IOException {
+    private static void renderBreadcrumbsLink(final FacesContext context,
+            final Hyperlink crumb, final Theme theme) throws IOException {
+
         String linkStyle = theme.getStyleClass(ThemeStyles.BREADCRUMB_LINK);
         Map<String, Object> attributes = crumb.getAttributes();
         if (attributes != null && attributes.get("styleClass") == null) {
@@ -195,9 +213,13 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
 
     /**
      * Renders the final breadcrumb hyperlink as static text.
+     * @param context faces context
+     * @param hyperlink link
+     * @param theme theme to use
+     * @throws IOException if an IO error occurs
      */
-    private static void renderBreadcrumbsText(FacesContext context,
-            Hyperlink hyperlink, Theme theme) throws IOException {
+    private static void renderBreadcrumbsText(final FacesContext context,
+            final Hyperlink hyperlink, final Theme theme) throws IOException {
 
         ResponseWriter writer = context.getResponseWriter();
         String text = convertValueToString(hyperlink, hyperlink.getText());
@@ -211,7 +233,12 @@ public class BreadcrumbsRenderer extends javax.faces.render.Renderer {
         writer.endElement(HTMLElements.SPAN);
     }
 
-    private static String escapeCharacterEntities(String str) {
+    /**
+     * Encode the characters {@code <}, {@code >} and {@code &}.
+     * @param str input string
+     * @return String
+     */
+    private static String escapeCharacterEntities(final String str) {
         StringBuilder buffer = new StringBuilder();
         for (char c : str.toCharArray()) {
             switch (c) {

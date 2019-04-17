@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,21 +19,45 @@ import com.sun.rave.designtime.CategoryDescriptor;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class CategoryDescriptorsConstants {
+/**
+ * Category descriptors constants.
+ */
+public final class CategoryDescriptorsConstants {
 
-    protected static final ResourceBundle BUNDLE
-            = ResourceBundle.getBundle("javax.faces.component.bundle", Locale.getDefault());
+    /**
+     * Cannot be instanciated.
+     */
+    private CategoryDescriptorsConstants() {
+    }
 
-    public static final CategoryDescriptor ADVANCED
-            = new CategoryDescriptor(BUNDLE.getString("advanced_category"));
+    /**
+     * The resource bundle.
+     */
+    private static final ResourceBundle BUNDLE = ResourceBundle
+            .getBundle("javax.faces.component.bundle", Locale.getDefault());
 
-    public static final CategoryDescriptor APPEARANCE
-            = new CategoryDescriptor(BUNDLE.getString("appearance_category"));
+    /**
+     * Advanced category.
+     */
+    public static final CategoryDescriptor ADVANCED =
+            new CategoryDescriptor(BUNDLE.getString("advanced_category"));
 
-    public static final CategoryDescriptor DATA
-            = new CategoryDescriptor(BUNDLE.getString("data_category"));
+    /**
+     * Appearance category.
+     */
+    public static final CategoryDescriptor APPEARANCE =
+            new CategoryDescriptor(BUNDLE.getString("appearance_category"));
 
-    public static final CategoryDescriptor GENERAL
-            = new CategoryDescriptor(BUNDLE.getString("general_category"));
+    /**
+     * Data category.
+     */
+    public static final CategoryDescriptor DATA =
+            new CategoryDescriptor(BUNDLE.getString("data_category"));
+
+    /**
+     * General category.
+     */
+    public static final CategoryDescriptor GENERAL = new CategoryDescriptor(
+            BUNDLE.getString("general_category"));
 
 }

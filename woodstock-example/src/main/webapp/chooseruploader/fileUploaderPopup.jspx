@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -51,13 +51,6 @@
                                                 toolTip="#{msgs.chooserUploader_title}"  /> 
                             <webuijsf:hyperlink id="uploaderPopup" text="#{msgs.uploaderPopup_title}"/>
                         </webuijsf:breadcrumbs>
-
-                        <!-- Alert for validator exception. -->
-                        <webuijsf:alert id="popupUploaderAlert" rendered="#{ChooserUploaderBean.errorsOnPage}" type="error"
-                                        summary="#{ChooserUploaderBean.summaryMsg}"> 
-                            <webuijsf:message for="uploaderFormPopup:dirPath" showDetail="true"/>
-                            <webuijsf:message for="uploaderFormPopup:upload" showDetail="true"/>
-                        </webuijsf:alert>
 
                         <!-- Page Title -->
                         <webuijsf:contentPageTitle id="uploaderContentPage" title="#{msgs.uploaderPopup_title}" />
@@ -130,8 +123,26 @@
                                         <webuijsf:label id="textLabel2" text="#{msgs.uploader_fileChooserText2}" />
                                     </td>
                                 </tr>
+
+                                <!-- Uploaded File Path -->
+                                <tr>
+                                    <td>
+                                        <webuijsf:label id="folder_label" text="#{msgs.fileUploader_chooseFileText}">
+                                            <webuijsf:staticText
+                                                id="uploaded_file"
+                                                text="#{ChooserUploaderBean.fileName}" />
+                                        </webuijsf:label>
+                                    </td>
+                                </tr>
                             </table>
                         </webuijsf:markup>
+
+                        <!-- Alert for validator exception. -->
+                        <webuijsf:alert id="popupUploaderAlert" rendered="#{ChooserUploaderBean.errorsOnPage}" type="error"
+                                        summary="#{ChooserUploaderBean.summaryMsg}">
+                            <webuijsf:message for="uploaderFormPopup:dirPath" showDetail="true"/>
+                            <webuijsf:message for="uploaderFormPopup:upload" showDetail="true"/>
+                        </webuijsf:alert>
                     </webuijsf:form>
                 </webuijsf:body>
             </webuijsf:html>

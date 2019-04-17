@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -38,7 +38,7 @@ public final class ButtonRenderer extends RendererBase {
     /**
      * The set of pass-through attributes to be rendered.
      */
-    private static final String ATTRIBUTES[] = {
+    private static final String[] ATTRIBUTES = {
         "alt",
         "align",
         "dir",
@@ -60,7 +60,9 @@ public final class ButtonRenderer extends RendererBase {
     };
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         // Enforce NPE requirements in the Javadocs
         if (context == null || component == null) {
             throw new NullPointerException();
@@ -77,23 +79,24 @@ public final class ButtonRenderer extends RendererBase {
         String clientId = button.getClientId(context);
         Map map = context.getExternalContext().getRequestParameterMap();
 
-        if (map.containsKey(clientId) ||
-                (map.containsKey(clientId + ".x")
+        if (map.containsKey(clientId)
+                || (map.containsKey(clientId + ".x")
                 && map.containsKey(clientId + ".y"))) {
             button.queueEvent(new ActionEvent(button));
         }
     }
 
     @Override
-    protected String[] getModuleNames(UIComponent component) {
+    protected String[] getModuleNames(final UIComponent component) {
         return new String[] {
             "button"
         };
     }
 
     @Override
-    protected JsonObjectBuilder getProperties(FacesContext context,
-            UIComponent component) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected JsonObjectBuilder getProperties(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         Button button = (Button) component;
         JsonObjectBuilder jsonBuilder = JSON_BUILDER_FACTORY
@@ -118,8 +121,9 @@ public final class ButtonRenderer extends RendererBase {
 
         // Pad the text, if needed.
         if (text != null && text.trim().length() > 0) {
-            // Note: This code appears in the UI guidelines, but it may have been
-            // for Netscape 4.x. We may be able to do this with styles instead.
+            // Note: This code appears in the UI guidelines, but it may have
+            // been for Netscape 4.x. We may be able to do this with styles
+            // instead.
             if (!button.isNoTextPadding()) {
                 if (text.trim().length() <= 3) {
                     text = "  " + text + "  ";
@@ -137,7 +141,7 @@ public final class ButtonRenderer extends RendererBase {
     }
 
     @Override
-    protected void renderNestedContent(FacesContext context,
-            UIComponent component) throws IOException {
+    protected void renderNestedContent(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 }

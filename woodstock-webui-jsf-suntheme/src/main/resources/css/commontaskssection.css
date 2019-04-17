@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -70,7 +70,7 @@
     border-width:1px;
     position:absolute;
     height: 20em;
-    width: 10em;
+    /*width: 10em;*/
     z-index:2;
 }
 .commonTask_4_sun4 .infoPanel_sun4 .closeButton_sun4 {

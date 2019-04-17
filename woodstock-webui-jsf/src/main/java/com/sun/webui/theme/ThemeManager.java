@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,11 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
- /*
- * ThemeManager.java
- *
- * Created on January 11, 2005, 11:20 AM
- */
 package com.sun.webui.theme;
 
 import java.util.HashMap;
@@ -27,7 +22,6 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 
  * The ThemeManager manages the locale specific versions of each Theme. The
  * ThemeManager is created by the ThemeConfigurationListener and placed in an
  * application parameter of the same name as the theme itself.
@@ -40,24 +34,37 @@ import java.util.Map;
  * {@code com.sun.webui.DefaultTheme}.</p>
  *
  */
-public class ThemeManager {
+public final class ThemeManager {
 
     /**
      * The context attribute name used to place/retrieve the ThemeManager.
      */
-    public final static String THEME_MANAGER = "com.sun.webui.ThemeManager";
+    public static final String THEME_MANAGER = "com.sun.webui.ThemeManager";
+
+    /**
+     * Default theme.
+     */
     private static String defaultTheme = null;
+
+    /**
+     * Default locale.
+     */
     private Locale defaultLocale = null;
-    private HashMap themes;
-    private boolean populated = false;
-    private ThemeManager themeManager = null;
+
+    /**
+     * Loaded themes.
+     */
+    private final HashMap themes;
+
+    /**
+     * Default flag.
+     */
     private static final boolean DEBUG = false;
-    private String messageResource = null;
 
     /**
      * Constructor for the ThemeManager.
      */
-    protected ThemeManager() {
+    ThemeManager() {
         themes = new HashMap();
     }
 
@@ -68,7 +75,7 @@ public class ThemeManager {
      * @param themeMap The mapObject of themes
      */
     @SuppressWarnings("unchecked")
-    protected void addThemeMap(String name, Map themeMap) {
+    void addThemeMap(final String name, final Map themeMap) {
         if (DEBUG) {
             log("\tNow adding theme map for " + name);
         }
@@ -92,28 +99,27 @@ public class ThemeManager {
      * @param locale The locale for which the Theme instance is needed
      * @return The Theme for the locale
      */
-    public JarTheme getTheme(String name, Locale locale) {
+    public JarTheme getTheme(final String name, final Locale locale) {
 
-        // "themes" is a map which manages the individual theme maps. 
-        // First see if there is a value for the name specified in the 
-        // method parameter. (themes is not null, it is created on 
-        // startup). 
+        // "themes" is a map which manages the individual theme maps.
+        // First see if there is a value for the name specified in the
+        // method parameter. (themes is not null, it is created on
+        // startup).
         Object mapObject = themes.get(name);
 
-        // If there is no value, try to find another theme map. 
+        // If there is no value, try to find another theme map.
         if (mapObject == null) {
 
             // Check if there are no themes (we don't want to do perform this
-            // test at the start of this method for performance reasons - it is 
+            // test at the start of this method for performance reasons - it is
             // invoked a lot and this fallback mechanism is only used when there
-            // is a misconfiguration. 
+            // is a misconfiguration.
             if (themes.isEmpty()) {
-                String message
-                        = "CONFIGURATION ERROR: no theme resources library available";
-                throw new ThemeConfigurationException(message);
+                throw new ThemeConfigurationException("CONFIGURATION ERROR:"
+                        + " no theme resources library available");
             }
 
-            log("WARNING: theme " + name + " has not been initialized.");
+            //log("WARNING: theme " + name + " has not been initialized.");
 
             // If a default theme name was specified, try to get the theme map
             // for the default theme.
@@ -123,7 +129,8 @@ public class ThemeManager {
                     log("Using the default theme " + defaultTheme);
                 }
             } else {
-                log("WARNING: no default theme name available either, using any theme!");
+                log("WARNING: no default theme name available either,"
+                        + " using any theme!");
             }
 
             if (mapObject == null) {
@@ -132,11 +139,10 @@ public class ThemeManager {
         }
 
         Map themeMap = (Map) mapObject;
-        JarTheme theme = null;
         Object object = themeMap.get(locale);
-
         if (object == null) {
-            log("No theme instance found for locale " + locale.getDisplayName());
+            log("No theme instance found for locale "
+                    + locale.getDisplayName());
 
             if (defaultLocale != null) {
                 log("Trying to use the default locale "
@@ -148,20 +154,19 @@ public class ThemeManager {
                 object = themeMap.values().iterator().next();
             }
             if (object == null) {
-                String message
-                        = "CONFIGURATION ERROR: no theme resources library available";
-                throw new ThemeConfigurationException(message);
+                throw new ThemeConfigurationException("CONFIGURATION ERROR: "
+                        + "no theme resources library available");
             }
         }
         return (JarTheme) object;
     }
 
     /**
-     * Use this method to specify the default theme for the web application
+     * Use this method to specify the default theme for the web application.
      *
      * @param name The name of the default Theme
      */
-    protected void setDefaultThemeName(String name) {
+    void setDefaultThemeName(final String name) {
         if (name != null && name.length() > 0) {
             defaultTheme = name;
         }
@@ -169,12 +174,12 @@ public class ThemeManager {
     }
 
     /**
-     * Use this method to specify the default locale for the web application
+     * Use this method to specify the default locale for the web application.
      *
-     * @param defaultLocale The defaultLocale
+     * @param newDefaultLocale The defaultLocale
      */
-    protected void setDefaultLocale(Locale defaultLocale) {
-        this.defaultLocale = defaultLocale;
+    private void setDefaultLocale(final Locale newDefaultLocale) {
+        this.defaultLocale = newDefaultLocale;
     }
 
     /**
@@ -187,7 +192,7 @@ public class ThemeManager {
     }
 
     /**
-     * String representation of this class
+     * String representation of this class.
      *
      * @return The string representation of this class
      */
@@ -214,9 +219,6 @@ public class ThemeManager {
 
     /**
      * Use this method to check if name is a valid theme name.
-     *
-     * @param name A name
-     * @return true if the manager has a theme of the name, false otherwise
      */
     private void checkDefaultThemeName() {
         boolean warn = false;
@@ -225,7 +227,8 @@ public class ThemeManager {
                 return;
             } else {
                 warn = true;
-                log("WARNING: default theme name " + defaultTheme + " is invalid");
+                log("WARNING: default theme name " + defaultTheme
+                        + " is invalid");
             }
         }
 
@@ -243,7 +246,7 @@ public class ThemeManager {
      * Log a message to the standard output.
      * @param msg message to log
      */
-    private void log(String msg) {
-        System.out.println(this.getClass().getName() + "::" +msg);
+    private static void log(final String msg) {
+        System.out.println(ThemeManager.class.getName() + "::" + msg);
     }
 }

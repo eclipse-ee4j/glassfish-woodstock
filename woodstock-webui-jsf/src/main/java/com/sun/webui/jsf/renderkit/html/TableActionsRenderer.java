@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -34,72 +33,60 @@ import javax.faces.context.ResponseWriter;
 /**
  * This class renders TableActions components.
  * <p>
- * Note: To see the messages logged by this class, set the following global
- * defaults in your JDK's "jre/lib/logging.properties" file.
- * </p><p><pre>
+ * <pre>
  * java.util.logging.ConsoleHandler.level = FINE
  * com.sun.webui.jsf.renderkit.html.TableActionsRenderer.level = FINE
- * </pre></p>
+ * </pre>
+ * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableActions"))
-public class TableActionsRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableActions"))
+public final class TableActionsRenderer extends javax.faces.render.Renderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      * <p>
      * Note: The WIDTH, HEIGHT, and BGCOLOR attributes are all deprecated (in
-     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and 
-     * LANG attributes are not cuurently supported.
+     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and
+     * LANG attributes are not currently supported.
      * </p>
      */
-    private static final String stringAttributes[] = {
-        "abbr", //NOI18N
-        "align", //NOI18N
-        "axis", //NOI18N
-        "bgColor", //NOI18N
-        "char", //NOI18N
-        "charOff", //NOI18N
-        "dir", //NOI18N
-        "headers", //NOI18N
-        "height", //NOI18N
-        "lang", //NOI18N
-        "onClick", //NOI18N
-        "onDblClick", //NOI18N
-        "onKeyDown", //NOI18N
-        "onKeyPress", //NOI18N
-        "onKeyUp", //NOI18N
-        "onMouseDown", //NOI18N
-        "onMouseUp", //NOI18N
-        "onMouseMove", //NOI18N
-        "onMouseOut", //NOI18N
-        "onMouseOver", //NOI18N
-        "style", //NOI18N
-        "valign", //NOI18N
-        "width"}; //NOI18N
+    private static final String[] STRING_ATTRIBUTES = {
+        "abbr",
+        "align",
+        "axis",
+        "bgColor",
+        "char",
+        "charOff",
+        "dir",
+        "headers",
+        "height",
+        "lang",
+        "onClick",
+        "onDblClick",
+        "onKeyDown",
+        "onKeyPress",
+        "onKeyUp",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver",
+        "style",
+        "valign",
+        "width"};
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Render the beginning of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeBegin", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeBegin",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeBegin", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeBegin", "Component not rendered, nothing to display");
             return;
         }
 
@@ -108,26 +95,17 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         renderEnclosingTagStart(context, action, writer);
     }
 
-    /**
-     * Render the children of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be decoded.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeChildren", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeChildren",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeChildren", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeChildren", "Component not rendered, nothing to display");
             return;
         }
 
@@ -142,26 +120,17 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         }
     }
 
-    /**
-     * Render the ending of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeEnd", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeEnd",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeEnd", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeEnd", "Component not rendered, nothing to display");
             return;
         }
 
@@ -170,19 +139,11 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         renderEnclosingTagEnd(context, action, writer);
     }
 
-    /**
-     * Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns false.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Action methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render the top actions for TableActions components.
      *
@@ -192,11 +153,19 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderActionsTop(FacesContext context,
-            TableActions component, ResponseWriter writer) throws IOException {
-        Table table = (component != null) ? component.getTableAncestor() : null;
+    @SuppressWarnings("checkstyle:methodlength")
+    protected void renderActionsTop(final FacesContext context,
+            final TableActions component, final ResponseWriter writer)
+            throws IOException {
+
+        Table table;
+        if (component != null) {
+            table = component.getTableAncestor();
+        } else {
+            table = null;
+        }
         if (table == null) {
-            log("renderActionsTop", "Cannot render actions bar, Table is null"); //NOI18N
+            log("renderActionsTop", "Cannot render actions bar, Table is null");
             return;
         }
 
@@ -215,44 +184,66 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         UIComponent prefs = table.getFacet(Table.PREFERENCES_PANEL_FACET);
 
         // Flags indicating which facets to render.
-        boolean renderActions = actions != null && actions.isRendered();
-        boolean renderFilter = filter != null && filter.isRendered();
-        boolean renderSort = sort != null && sort.isRendered();
-        boolean renderPrefs = prefs != null && prefs.isRendered();
+        boolean renderActions = actions != null
+                && actions.isRendered();
+        boolean renderFilter = filter != null
+                && filter.isRendered();
+        boolean renderSort = sort != null
+                && sort.isRendered();
+        boolean renderPrefs = prefs != null
+                && prefs.isRendered();
 
         // Hide sorting and pagination controls for an empty table or when there
         // is only a single row.
-        boolean renderSelectMultipleButton = !emptyTable && table.isSelectMultipleButton();
-        boolean renderDeselectMultipleButton = !emptyTable && table.isDeselectMultipleButton();
-        boolean renderDeselectSingleButton = !emptyTable && table.isDeselectSingleButton();
-        boolean renderClearTableSortButton = !emptyTable && !singleRow && table.isClearSortButton();
-        boolean renderTableSortPanelToggleButton = !emptyTable && !singleRow && (table.isSortPanelToggleButton() || renderSort);
-        boolean renderPaginateButton = !emptyTable && !singlePage && table.isPaginateButton();
+        boolean renderSelectMultipleButton = !emptyTable
+                && table.isSelectMultipleButton();
+        boolean renderDeselectMultipleButton = !emptyTable
+                && table.isDeselectMultipleButton();
+        boolean renderDeselectSingleButton = !emptyTable
+                && table.isDeselectSingleButton();
+        boolean renderClearTableSortButton = !emptyTable
+                && !singleRow
+                && table.isClearSortButton();
+        boolean renderTableSortPanelToggleButton = !emptyTable
+                && !singleRow
+                && (table.isSortPanelToggleButton()
+                || renderSort);
+        boolean renderPaginateButton = !emptyTable
+                && !singlePage
+                && table.isPaginateButton();
 
         // Return if nothing is rendered.
-        if (!(renderActions || renderFilter || renderPrefs || renderSelectMultipleButton || renderDeselectMultipleButton || renderDeselectSingleButton || renderClearTableSortButton || renderTableSortPanelToggleButton || renderPaginateButton)) {
-            log("renderActionsTop", //NOI18N
-                    "Actions bar not rendered, nothing to display"); //NOI18N
+        if (!(renderActions
+                || renderFilter
+                || renderPrefs
+                || renderSelectMultipleButton
+                || renderDeselectMultipleButton
+                || renderDeselectSingleButton
+                || renderClearTableSortButton
+                || renderTableSortPanelToggleButton
+                || renderPaginateButton)) {
+            log("renderActionsTop",
+                    "Actions bar not rendered, nothing to display");
             return;
         }
 
         // Render select multiple button.
         if (renderSelectMultipleButton) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getSelectMultipleButton(), context);
         }
 
         // Render deselect multiple button.
         if (renderDeselectMultipleButton) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getDeselectMultipleButton(), context);
         }
 
         // Render deselect single button.
         if (renderDeselectSingleButton) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getDeselectSingleButton(), context);
         }
@@ -260,55 +251,67 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         // Render actions facet.
         if (renderActions) {
             // Render action separator.
-            if (renderSelectMultipleButton || renderDeselectMultipleButton || renderDeselectSingleButton) {
-                writer.writeText("\n", null); //NOI18N
+            if (renderSelectMultipleButton
+                    || renderDeselectMultipleButton
+                    || renderDeselectSingleButton) {
+                writer.writeText("\n", null);
                 RenderingUtilities.renderComponent(
                         component.getActionsSeparatorIcon(), context);
             }
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(actions, context);
         }
 
         // Render filter facet.
         if (renderFilter) {
             // Render filter separator.
-            if (renderActions || renderSelectMultipleButton || renderDeselectMultipleButton || renderDeselectSingleButton) {
-                writer.writeText("\n", null); //NOI18N
+            if (renderActions
+                    || renderSelectMultipleButton
+                    || renderDeselectMultipleButton
+                    || renderDeselectSingleButton) {
+                writer.writeText("\n", null);
                 RenderingUtilities.renderComponent(
                         component.getFilterSeparatorIcon(), context);
             }
 
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(component.getFilterLabel(),
                     context);
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(filter, context);
         }
 
         // Render view action separator.
-        if ((renderActions || renderFilter || renderSelectMultipleButton || renderDeselectMultipleButton || renderDeselectSingleButton) && (renderPrefs || renderClearTableSortButton || renderTableSortPanelToggleButton)) {
-            writer.writeText("\n", null); //NOI18N
+        if ((renderActions
+                || renderFilter
+                || renderSelectMultipleButton
+                || renderDeselectMultipleButton
+                || renderDeselectSingleButton)
+                && (renderPrefs
+                || renderClearTableSortButton
+                || renderTableSortPanelToggleButton)) {
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getViewActionsSeparatorIcon(), context);
         }
 
         // Render table sort panel toggle button.
         if (renderTableSortPanelToggleButton) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             UIComponent child = component.getSortPanelToggleButton();
             RenderingUtilities.renderComponent(child, context);
         }
 
         // Render clear sort button.
         if (renderClearTableSortButton) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getClearSortButton(), context);
         }
 
         // Render table preferences panel toggle button.
         if (renderPrefs) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getPreferencesPanelToggleButton(), context);
         }
@@ -316,12 +319,19 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         // Render paginate button.
         if (renderPaginateButton) {
             // Render separator.
-            if (renderActions || renderFilter || renderPrefs || renderSelectMultipleButton || renderDeselectMultipleButton || renderDeselectSingleButton || renderClearTableSortButton || renderTableSortPanelToggleButton) {
-                writer.writeText("\n", null); //NOI18N
+            if (renderActions
+                    || renderFilter
+                    || renderPrefs
+                    || renderSelectMultipleButton
+                    || renderDeselectMultipleButton
+                    || renderDeselectSingleButton
+                    || renderClearTableSortButton
+                    || renderTableSortPanelToggleButton) {
+                writer.writeText("\n", null);
                 RenderingUtilities.renderComponent(
                         component.getPaginateSeparatorIcon(), context);
             }
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(component.getPaginateButton(),
                     context);
         }
@@ -336,12 +346,19 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderActionsBottom(FacesContext context,
-            TableActions component, ResponseWriter writer) throws IOException {
-        Table table = (component != null) ? component.getTableAncestor() : null;
+    protected void renderActionsBottom(final FacesContext context,
+            final TableActions component, final ResponseWriter writer)
+            throws IOException {
+
+        Table table;
+        if (component != null) {
+            table = component.getTableAncestor();
+        } else {
+            table = null;
+        }
         if (table == null) {
-            log("renderActionsBottom", //NOI18N
-                    "Cannot render actions bar, Table is null"); //NOI18N
+            log("renderActionsBottom",
+                    "Cannot render actions bar, Table is null");
             return;
         }
 
@@ -357,17 +374,24 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         UIComponent actions = table.getFacet(Table.ACTIONS_BOTTOM_FACET);
 
         // Get flag indicating which facets to render.
-        boolean renderActions = !emptyTable && !singleRow && actions != null && actions.isRendered();
+        boolean renderActions = !emptyTable
+                && !singleRow
+                && actions != null
+                && actions.isRendered();
 
         // Hide pagination controls when all rows fit on a page.
-        boolean renderPaginationControls = !emptyTable && !singlePage && table.isPaginationControls();
+        boolean renderPaginationControls = !emptyTable
+                && !singlePage
+                && table.isPaginationControls();
 
         // Hide paginate button for a single row.
-        boolean renderPaginateButton = !emptyTable && !singlePage && table.isPaginateButton();
+        boolean renderPaginateButton = !emptyTable
+                && !singlePage
+                && table.isPaginateButton();
 
         // Render table actions facet.
         if (renderActions) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(actions, context);
         }
 
@@ -375,7 +399,7 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         if (renderPaginationControls || renderPaginateButton) {
             // Render actions separator.
             if (renderActions) {
-                writer.writeText("\n", null); //NOI18N
+                writer.writeText("\n", null);
                 RenderingUtilities.renderComponent(
                         component.getActionsSeparatorIcon(), context);
             }
@@ -385,7 +409,12 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         if (renderPaginationControls) {
             // Get TableRowGroup component.
             TableRowGroup group = table.getTableRowGroupChild();
-            boolean paginated = (group != null) ? group.isPaginated() : false;
+            boolean paginated;
+            if (group != null) {
+                paginated = group.isPaginated();
+            } else {
+                paginated = false;
+            }
 
             // Do not display controls while in scroll mode.
             if (paginated) {
@@ -395,15 +424,12 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
 
         // Render paginate button.
         if (renderPaginateButton) {
-            writer.writeText("\n", null); //NOI18N
+            writer.writeText("\n", null);
             RenderingUtilities.renderComponent(
                     component.getPaginateButton(), context);
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Enclosing tag methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render enclosing tag for TableActions components.
      *
@@ -413,47 +439,53 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagStart(FacesContext context,
-            TableActions component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagStart(final FacesContext context,
+            final TableActions component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagStart", //NOI18N
-                    "Cannot render enclosing tag, TableActions is null"); //NOI18N
+            log("renderEnclosingTagStart",
+                    "Cannot render enclosing tag, TableActions is null");
             return;
         }
 
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
-        writer.writeAttribute("id", component.getClientId(context), null); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
+        writer.writeAttribute("id", component.getClientId(context), null);
 
         // Render style class.
         String extraHtml = RenderingUtilities.renderStyleClass(context, writer,
                 component, getStyleClass(component), component.getExtraHtml());
 
         // Render colspan.
-        if (component.getColSpan() > -1 && (extraHtml == null || extraHtml.indexOf("colspan=") == -1)) { //NOI18N
-            writer.writeAttribute("colspan", //NOI18N
-                    Integer.toString(component.getColSpan()), null); //NOI18N
+        if (component.getColSpan() > -1
+                && (extraHtml == null || !extraHtml.contains("colspan="))) {
+            writer.writeAttribute("colspan",
+                    Integer.toString(component.getColSpan()), null);
         }
 
         // Render rowspan.
-        if (component.getRowSpan() > -1 && (extraHtml == null || extraHtml.indexOf("rowspan=") == -1)) { //NOI18N
-            writer.writeAttribute("rowspan", //NOI18N
-                    Integer.toString(component.getRowSpan()), null); //NOI18N
+        if (component.getRowSpan() > -1
+                && (extraHtml == null || !extraHtml.contains("rowspan="))) {
+            writer.writeAttribute("rowspan",
+                    Integer.toString(component.getRowSpan()), null);
         }
 
         // Render nowrap.
-        if (component.isNoWrap() && (extraHtml == null || extraHtml.indexOf("nowrap=") == -1)) { //NOI18N
-            writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
+        if (component.isNoWrap()
+                && (extraHtml == null || !extraHtml.contains("nowrap="))) {
+            writer.writeAttribute("nowrap", "nowrap", null);
         }
 
         // Render tooltip.
-        if (component.getToolTip() != null && (extraHtml == null || extraHtml.indexOf("title=") == -1)) { //NOI18N
-            writer.writeAttribute("title", component.getToolTip(), "toolTip"); //NOI18N
+        if (component.getToolTip() != null
+                && (extraHtml == null || !extraHtml.contains("title="))) {
+            writer.writeAttribute("title", component.getToolTip(), "toolTip");
         }
 
         // Render pass through attributes.
         RenderingUtilities.writeStringAttributes(component, writer,
-                stringAttributes, extraHtml);
+                STRING_ATTRIBUTES, extraHtml);
     }
 
     /**
@@ -465,30 +497,29 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagEnd(FacesContext context,
-            TableActions component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagEnd(final FacesContext context,
+            final TableActions component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagEnd", //NOI18N
-                    "Cannot render enclosing tag, TableActions is null"); //NOI18N
+            log("renderEnclosingTagEnd",
+                    "Cannot render enclosing tag, TableActions is null");
             return;
         }
-        writer.endElement("td"); //NOI18N
+        writer.endElement("td");
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Helper method to get style class for TableActions components.
      *
      * @param component TableActions to be rendered
      * @return The style class.
      */
-    private String getStyleClass(TableActions component) {
+    private String getStyleClass(final TableActions component) {
         String styleClass = null;
         if (component == null) {
-            log("getStyleClass", //NOI18N
-                    "Cannot obtain style class, TableActions is null"); //NOI18N
+            log("getStyleClass",
+                    "Cannot obtain style class, TableActions is null");
             return styleClass;
         }
 
@@ -501,26 +532,31 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         return getTheme().getStyleClass(styleClass);
     }
 
-    /** Helper method to get Theme objects. */
+    /**
+     * Helper method to get Theme objects.
+     * @return Theme
+     */
     private Theme getTheme() {
         return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
     }
 
     /**
      * Log fine messages.
+     * @param method method to log
+     * @param msg message to log
      */
-    private void log(String method, String message) {
+    private static void log(final String method, final String msg) {
         // Get class.
-        Class clazz = this.getClass();
+        Class clazz = TableActionsRenderer.class;
         if (LogUtil.fineEnabled(clazz)) {
             // Log method name and message.
-            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + message); //NOI18N
+            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + msg);
         }
     }
 
     /**
-     * Render the pagination controls for TableActions components. This does
-     * not include the paginate button.
+     * Render the pagination controls for TableActions components. This does not
+     * include the paginate button.
      *
      * @param context FacesContext for the current request.
      * @param component TableActions to be rendered.
@@ -528,11 +564,13 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderPagination(FacesContext context, TableActions component,
-            ResponseWriter writer) throws IOException {
+    private void renderPagination(final FacesContext context,
+            final TableActions component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderPagination", //NOI18N
-                    "Cannot render pagination controls, TableActions is null"); //NOI18N
+            log("renderPagination",
+                    "Cannot render pagination controls, TableActions is null");
             return;
         }
 
@@ -540,14 +578,13 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
 
         // Used to deal with setting up focus when pagination controls
         // are disabled.
-        //
-        UIComponent paginationControl = null;
+        UIComponent paginationControl;
         UIComponent paginationPageField = component.getPaginationPageField();
 
         // Render span for left-side buttons.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("span", component); //NOI18N
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("span", component);
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PAGINATION_LEFT_BUTTON), null);
 
         // If the focus is on a diasbled pagination control
@@ -560,94 +597,96 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
                 paginationPageField);
 
         // Render first button.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(paginationControl, context);
 
         paginationControl = component.getPaginationPrevButton();
         setPaginationFocus(context, paginationControl, paginationPageField);
 
         // Render prev button.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(paginationControl, context);
-        writer.endElement("span"); //NOI18N
+        writer.endElement("span");
 
         // Render span for label.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("span", component); //NOI18N
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("span", component);
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PAGINATION_TEXT_BOLD), null);
 
         // Render page field.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(paginationPageField, context);
-        writer.endElement("span"); //NOI18N
+        writer.endElement("span");
 
         // Render total pages text.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(component.getPaginationPagesText(),
                 context);
 
         // Render span for submit button.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("span", component); //NOI18N
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
-                ThemeStyles.TABLE_PAGINATION_SUBMIT_BUTTON), null); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("span", component);
+        writer.writeAttribute("class", theme.getStyleClass(
+                ThemeStyles.TABLE_PAGINATION_SUBMIT_BUTTON), null);
 
         // Render submit button.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(
                 component.getPaginationSubmitButton(), context);
-        writer.endElement("span"); //NOI18N
+        writer.endElement("span");
 
         // Render span for right-side buttons.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("span", component); //NOI18N
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("span", component);
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PAGINATION_RIGHT_BUTTON), null);
 
         paginationControl = component.getPaginationNextButton();
         setPaginationFocus(context, paginationControl, paginationPageField);
 
         // Render next button.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(paginationControl, context);
 
         paginationControl = component.getPaginationLastButton();
         setPaginationFocus(context, paginationControl, paginationPageField);
 
         // Render last button.
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(paginationControl, context);
-        writer.endElement("span"); //NOI18N
+        writer.endElement("span");
     }
 
     /**
-     * Set focus when paginaton buttons are disabled.
+     * Set focus when pagination buttons are disabled.
+     * @param context faces context
+     * @param paginationControl pagination control
+     * @param paginationPageField pagination page field
      */
-    private void setPaginationFocus(FacesContext context,
-            UIComponent paginationControl, UIComponent paginationPageField) {
+    private void setPaginationFocus(final FacesContext context,
+            final UIComponent paginationControl,
+            final UIComponent paginationPageField) {
 
         // If there is not current focus, or no pagination control
         // or pagination page field, do nothing.
-        //
         String focusId = FocusManager.getRequestFocusElementId(context);
-        if (focusId == null || paginationControl == null ||
-                paginationPageField == null) {
+        if (focusId == null || paginationControl == null
+                || paginationPageField == null) {
             return;
         }
 
         // If the pagination control does not have a disabled attribute
         // or it does and is not disabled, do nothing.
         //
-        Boolean disabled = (Boolean) paginationControl.getAttributes().get("disabled"); // NOI18N
-        if (disabled == null ||
-                (disabled != null && !disabled.booleanValue())) {
+        Boolean disabled = (Boolean) paginationControl.getAttributes()
+                .get("disabled");
+        if (disabled == null || !disabled) {
             return;
         }
 
         // If the current focus element is not the pagination control
         // do nothing.
-        //
         String id = RenderingUtilities.getFocusElementId(context,
                 paginationControl);
         if (!focusId.equals(id)) {
@@ -659,8 +698,8 @@ public class TableActionsRenderer extends javax.faces.render.Renderer {
         //
         // Get the focus element id for the pagination page field
         // and set it to receive the focus.
-        //
         FocusManager.setRequestFocusElementId(context,
-                RenderingUtilities.getFocusElementId(context, paginationPageField));
+                RenderingUtilities.getFocusElementId(context,
+                        paginationPageField));
     }
 }

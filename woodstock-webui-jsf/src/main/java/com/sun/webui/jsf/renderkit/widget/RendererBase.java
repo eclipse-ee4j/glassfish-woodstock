@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -41,23 +41,24 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
  * base class shall ensure that all properties are obtained and rendered at the
  * appropriate time.
  */
-abstract public class RendererBase extends Renderer {
+public abstract class RendererBase extends Renderer {
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
-        // Children are rendered when obtaining component 
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
+        // Children are rendered when obtaining component
         // properties via the encodeBegin method.
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public final void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (context == null || component == null) {
             throw new NullPointerException();
@@ -106,6 +107,10 @@ abstract public class RendererBase extends Renderer {
                         Arrays.asList(getModuleNames(component))));
     }
 
+    /**
+     * This implementation always return {@code true}.
+     * @return {@code boolean}
+     */
     @Override
     public boolean getRendersChildren() {
         return true;
@@ -116,7 +121,7 @@ abstract public class RendererBase extends Renderer {
      * @param component UI component
      * @return String[]
      */
-    abstract protected String[] getModuleNames(UIComponent component);
+    protected abstract String[] getModuleNames(UIComponent component);
 
     /**
      * Get the widget properties.
@@ -126,16 +131,16 @@ abstract public class RendererBase extends Renderer {
      * @return JsonObjectBuilder
      * @throws java.io.IOException if an IO error occurs
      */
-    abstract protected JsonObjectBuilder getProperties(FacesContext context,
+    protected abstract JsonObjectBuilder getProperties(FacesContext context,
             UIComponent component) throws IOException;
 
     /**
-     * Get the widget nested facets
-     * @param context
-     * @param component
+     * Get the widget nested facets.
+     * @param context faces context
+     * @param component UI component
      * @throws java.io.IOException if an error occurs while rendering
      */
-    abstract protected void renderNestedContent(FacesContext context,
+    protected abstract void renderNestedContent(FacesContext context,
             UIComponent component) throws IOException;
 
     /**
@@ -145,10 +150,9 @@ abstract public class RendererBase extends Renderer {
      * @param names Array of attribute names to be passed through.
      * @param component UIComponent to be rendered.
      * @param properties Map to add name/value pairs to.
-     *
      */
-    protected static void addAttributeProperties(String names[],
-            UIComponent component, JsonObjectBuilder properties) {
+    protected static void addAttributeProperties(final String[] names,
+            final UIComponent component, final JsonObjectBuilder properties) {
 
         if (names == null) {
             return;
@@ -173,7 +177,9 @@ abstract public class RendererBase extends Renderer {
      * @param value property value
      * @return rendered widget property
      */
-    private static StringBuilder renderWidgetProp(String name, String value) {
+    private static StringBuilder renderWidgetProp(final String name,
+            final String value) {
+
         return new StringBuilder()
                 .append("data-dojo-props=\"")
                 .append(name)

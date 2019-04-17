@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -35,15 +35,22 @@ public class FrameRenderer extends AbstractRenderer {
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "name",
         "scrolling"
     };
 
+    /**
+     * This implementation writes the @{code "frame"} element.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an error occurs
+     */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
-        Frame frame = (Frame) component;
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // I don't think this is the correct way to write the XML header
         if (!isPortlet(context)) {
@@ -51,9 +58,17 @@ public class FrameRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * This implementation renders the attributes.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Frame frame = (Frame) component;
 
@@ -72,12 +87,12 @@ public class FrameRenderer extends AbstractRenderer {
                 renderURLAttribute(context, writer, component, "src",
                         url, null);
             }
-            //class
+            // class
             String styleClass = frame.getStyleClass();
             if (styleClass != null) {
                 writer.writeAttribute("class", styleClass, null);
             }
-            //style
+            // style
             String style = frame.getStyle();
             if (style != null) {
                 writer.writeAttribute("style", style, null);
@@ -85,25 +100,25 @@ public class FrameRenderer extends AbstractRenderer {
             //write out the rest of the attributes
             addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
 
-            //frameborder
+            // frameborder
             boolean border = frame.isFrameBorder();
             if (border) {
                 writer.writeAttribute("frameborder", "1", null);
             } else {
                 writer.writeAttribute("frameborder", "0", null);
             }
-            //longdesc
+            // longdesc
             String longdesc = frame.getLongDesc();
             if (longdesc != null) {
                 writer.writeAttribute("longdesc", longdesc, null);
             }
-            //marginWidth
+            // marginWidth
             Integer marginWidth = frame.getMarginWidth();
             if (frame.getMarginWidth() >= 0) {
                 writer.writeAttribute("marginwidth", marginWidth.toString(),
                         null);
             }
-            //marginHeight
+            // marginHeight
             Integer marginHeight = frame.getMarginHeight();
             if (frame.getMarginHeight() >= 0) {
                 writer.writeAttribute("marginheight", marginHeight.toString(),
@@ -112,7 +127,7 @@ public class FrameRenderer extends AbstractRenderer {
 
             renderResizeAttribute(writer, component);
 
-            //tooltip
+            // tooltip
             String toolTip = frame.getToolTip();
             if (toolTip != null) {
                 writer.writeAttribute("title", toolTip, "toolTip");
@@ -121,9 +136,17 @@ public class FrameRenderer extends AbstractRenderer {
 
     }
 
+    /**
+     * This implementation closes the frame element.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO exception occurs
+     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // End the outermost "html" element
         if (!isPortlet(context)) {
@@ -132,8 +155,14 @@ public class FrameRenderer extends AbstractRenderer {
         }
     }
 
-    protected void renderResizeAttribute(ResponseWriter writer,
-            UIComponent comp) throws IOException {
+    /**
+     * Render the resize attribute.
+     * @param writer writer to use
+     * @param comp UI component
+     * @throws IOException if an error occurs
+     */
+    protected void renderResizeAttribute(final ResponseWriter writer,
+            final UIComponent comp) throws IOException {
 
         boolean noresize = ((Frame) comp).isNoResize();
         if (noresize) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,7 +19,6 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeJavascript;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
@@ -58,12 +57,14 @@ public final class JavaScriptUtilities {
      * @param writer writer to use
      * @throws java.io.IOException if an input/output error occurs.
      */
-    public static void renderHeaderScriptTags(boolean debug,
-            boolean parseWidgets, ResponseWriter writer) throws IOException {
+    public static void renderHeaderScriptTags(final boolean debug,
+            final boolean parseWidgets, final ResponseWriter writer)
+            throws IOException {
 
         JsonObject path = JSON_BUILDER_FACTORY
                 .createObjectBuilder()
-                .add("webui/suntheme", "../../com/sun/webui/jsf/suntheme/javascript")
+                .add("webui/suntheme",
+                        "../../com/sun/webui/jsf/suntheme/javascript")
                 .build();
         JsonObject json = JSON_BUILDER_FACTORY
                 .createObjectBuilder()
@@ -87,7 +88,7 @@ public final class JavaScriptUtilities {
         renderInclude(writer, ThemeJavascript.JSFX);
 
         // Render global include.
-        String jsFiles[] = getTheme().getGlobalJSFiles();
+        String[] jsFiles = getTheme().getGlobalJSFiles();
         if (jsFiles == null) {
             return;
         }
@@ -119,12 +120,12 @@ public final class JavaScriptUtilities {
      * @param context The current FacesContext.
      * @param component The current component being rendered.
      * @deprecated removed soon
-     * @return
+     * @return String
      */
-    public static String getDomNode(FacesContext context,
-            UIComponent component) {
+    public static String getDomNode(final FacesContext context,
+            final UIComponent component) {
 
-        return new StringBuilder(128)
+        return new StringBuilder()
                 .append("document.getElementById('")
                 .append(component.getClientId(context))
                 .append("')")
@@ -139,8 +140,8 @@ public final class JavaScriptUtilities {
      * @deprecated removed soon
      * @return fully qualified module name
      */
-    public static String getModuleName(String name) {
-        return new StringBuilder(128)
+    public static String getModuleName(final String name) {
+        return new StringBuilder()
                 .append("webui/suntheme")
                 .append("/")
                 .append(name)
@@ -158,16 +159,16 @@ public final class JavaScriptUtilities {
      *
      * @exception IOException if an input/output error occurs.
      */
-    public static void renderInitScriptTag(ResponseWriter writer,
-            String moduleName, JsonObject properties, String... extraCalls)
-            throws IOException {
+    public static void renderInitScriptTag(final ResponseWriter writer,
+            final String moduleName, final JsonObject properties,
+            final String... extraCalls) throws IOException {
 
         if (properties == null) {
             return;
         }
         StringBuilder sb = new StringBuilder();
         sb.append(renderInitCall(moduleName, properties));
-        if(extraCalls != null){
+        if (extraCalls != null) {
             for (String extraCall : extraCalls) {
                 sb.append(extraCall);
                 sb.append("\n");
@@ -186,8 +187,9 @@ public final class JavaScriptUtilities {
      *
      * @exception IOException if an input/output error occurs.
      */
-    public static void renderInitScriptTag(ResponseWriter writer,
-            String moduleName, JsonObject properties) throws IOException {
+    public static void renderInitScriptTag(final ResponseWriter writer,
+            final String moduleName, final JsonObject properties)
+            throws IOException {
 
         renderInitScriptTag(writer, moduleName, properties, (String[]) null);
     }
@@ -201,10 +203,10 @@ public final class JavaScriptUtilities {
      *
      * @throws IllegalArgumentException if properties is {@code null}
      */
-    public static String renderInitCall(String moduleName, JsonObject properties)
-            throws IllegalArgumentException {
+    public static String renderInitCall(final String moduleName,
+            final JsonObject properties) throws IllegalArgumentException {
 
-        if(properties == null){
+        if (properties == null) {
             throw new IllegalArgumentException("event type is null");
         }
         return renderCall("init_elt", moduleName, properties);
@@ -219,10 +221,10 @@ public final class JavaScriptUtilities {
      * @return String rendered attribute value
      * @throws IllegalArgumentException if event type is {@code null}
      */
-    public static String renderEventCall(String moduleName, String extraCall,
-            String eventType) {
+    public static String renderEventCall(final String moduleName,
+            final String extraCall, final String eventType) {
 
-        if(eventType == null){
+        if (eventType == null) {
             throw new IllegalArgumentException("event type is null");
         }
         return renderCalls(
@@ -237,7 +239,9 @@ public final class JavaScriptUtilities {
      * @param secondCall second call, may be {@code null}
      * @return String rendered calls
      */
-    public static String renderCalls(String firstCall, String secondCall) {
+    public static String renderCalls(final String firstCall,
+            final String secondCall) {
+
         StringBuilder sb = new StringBuilder();
         if (firstCall != null) {
             sb.append(firstCall);
@@ -245,7 +249,7 @@ public final class JavaScriptUtilities {
                 sb.append(";");
             }
         }
-        if(secondCall != null){
+        if (secondCall != null) {
             sb.append(secondCall);
         }
         return sb.toString();
@@ -258,7 +262,8 @@ public final class JavaScriptUtilities {
      * @param arguments method arguments
      * @return String rendered attribute value
      */
-    public static String renderCall(String methodName, Object... arguments) {
+    public static String renderCall(final String methodName,
+            final Object... arguments) {
 
         if (methodName == null) {
             throw new IllegalArgumentException("method name is null");
@@ -272,7 +277,7 @@ public final class JavaScriptUtilities {
                 if (i > 0) {
                     buff.append(",");
                 }
-                if(arguments[i] == null){
+                if (arguments[i] == null) {
                     buff.append("null");
                 } else if (arguments[i] instanceof JsonObject) {
                     StringWriter jsonWriter = new StringWriter();
@@ -294,7 +299,7 @@ public final class JavaScriptUtilities {
                         }
                     }
                     buff.append("]");
-                } else if(arguments[i] instanceof String
+                } else if (arguments[i] instanceof String
                         && "this".equals((String) arguments[i])) {
                     buff.append("this");
                 } else {
@@ -316,8 +321,8 @@ public final class JavaScriptUtilities {
      *
      * @exception IOException if an input/output error occurs.
      */
-    public static void renderScripTag(ResponseWriter writer, String jsCode)
-            throws IOException {
+    public static void renderScripTag(final ResponseWriter writer,
+            final String jsCode) throws IOException {
 
         if (jsCode == null) {
             return;
@@ -346,12 +351,12 @@ public final class JavaScriptUtilities {
      * because the widget has not added the JavaScript include, yet. See CR
      * 6517246.
      *
-     * @param component The current component being rendered.
      * @param writer The current ResponseWriter.
      * @param file The JavaScript file to include.
+     * @throws IOException if an IO error occurs
      */
-    private static void renderInclude(ResponseWriter writer,
-            String file) throws IOException {
+    private static void renderInclude(final ResponseWriter writer,
+            final String file) throws IOException {
 
         if (file == null) {
             return;
@@ -371,6 +376,7 @@ public final class JavaScriptUtilities {
 
     /**
      * Helper method to get Theme objects.
+     * @return Theme
      */
     private static Theme getTheme() {
         return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());

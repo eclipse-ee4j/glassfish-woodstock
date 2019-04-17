@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -37,11 +37,17 @@ import java.util.logging.Logger;
  * <LI>SEVERE -- Serious failure messages</LI>
  * </UL>
  */
-public class LogUtil {
+public final class LogUtil {
 
     /**
-     * This is the bundle name for the {@code ResourceBundle} that contains
-     * all the message strings.
+     * Cannot be instanciated.
+     */
+    private LogUtil() {
+    }
+
+    /**
+     * This is the bundle name for the {@code ResourceBundle} that contains all
+     * the message strings.
      */
     public static final String BUNDLE_NAME
             = "com.sun.webui.jsf.resources.LogMessages";
@@ -89,7 +95,7 @@ public class LogUtil {
      *
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean finestEnabled(Object loggerId) {
+    public static boolean finestEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.FINEST);
     }
 
@@ -97,12 +103,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId	The {@code ResourceBundle} key used to lookup the
-     * message.
-     * @param param	Value to substitute into the message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
+     * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finest(String msgId, Object param) {
+    public static void finest(final String msgId, final Object param) {
         finest(msgId, new Object[]{param});
     }
 
@@ -110,12 +115,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and zero or more
      * substitution parameters. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finest(String msgId, Object params[]) {
+    public static void finest(final String msgId, final Object[] params) {
         getLogger().log(Level.FINEST, getMessage(msgId, params, false));
     }
 
@@ -125,12 +129,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finest(Object loggerId, String msgId, Object param) {
+    public static void finest(final Object loggerId, final String msgId,
+            final Object param) {
+
         finest(loggerId, msgId, new Object[]{param});
     }
 
@@ -140,37 +145,38 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finest(Object loggerId, String msgId, Object params[]) {
+    public static void finest(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.FINEST, getMessage(msgId, params, false));
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given message.
      *
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void finest(String msg) {
+    public static void finest(final String msg) {
         finest(DEFAULT_LOGGER, msg);
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg. The specified Logger will
-     * be used.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given message. The specified Logger will be
+     * used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void finest(Object loggerId, String msg) {
+    public static void finest(final Object loggerId, final String msg) {
         getLogger(loggerId).log(Level.FINEST, getMessage(msg, false));
     }
 
@@ -180,21 +186,23 @@ public class LogUtil {
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void finest(String msg, Throwable ex) {
+    public static void finest(final String msg, final Throwable ex) {
         getLogger().log(Level.FINEST, DEFAULT_LOG_KEY
                 + LOG_KEY_MESSAGE_SEPARATOR + msg, ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a message. The
-     * specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a message. The specified
+     * Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void finest(Object loggerId, String msg, Throwable ex) {
+    public static void finest(final Object loggerId, final String msg,
+            final Throwable ex) {
+
         getLogger(loggerId).
                 log(Level.FINEST, DEFAULT_LOG_KEY
                         + LOG_KEY_MESSAGE_SEPARATOR + msg, ex);
@@ -217,7 +225,7 @@ public class LogUtil {
      *
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean finerEnabled(Object loggerId) {
+    public static boolean finerEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.FINER);
     }
 
@@ -225,13 +233,12 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      *
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finer(String msgId, Object param) {
+    public static void finer(final String msgId, final Object param) {
         finer(msgId, new Object[]{param});
     }
 
@@ -239,12 +246,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and zero or more
      * substitution parameters. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finer(String msgId, Object params[]) {
+    public static void finer(final String msgId, final Object[] params) {
         getLogger().log(Level.FINER, getMessage(msgId, params, false));
     }
 
@@ -254,12 +260,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finer(Object loggerId, String msgId, Object param) {
+    public static void finer(final Object loggerId, final String msgId,
+            final Object param) {
+
         finer(loggerId, msgId, new Object[]{param});
     }
 
@@ -269,37 +276,38 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void finer(Object loggerId, String msgId, Object params[]) {
+    public static void finer(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.FINER, getMessage(msgId, params, false));
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given message.
      *
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void finer(String msg) {
+    public static void finer(final String msg) {
         finer(DEFAULT_LOGGER, msg);
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg. The specified Logger will
-     * be used.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given message. The specified Logger will be
+     * used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void finer(Object loggerId, String msg) {
+    public static void finer(final Object loggerId, final String msg) {
         getLogger(loggerId).log(Level.FINER, getMessage(msg, false));
     }
 
@@ -309,22 +317,24 @@ public class LogUtil {
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void finer(String msg, Throwable ex) {
+    public static void finer(final String msg, final Throwable ex) {
         getLogger().
                 log(Level.FINER, DEFAULT_LOG_KEY
                         + LOG_KEY_MESSAGE_SEPARATOR + msg, ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a message. The
-     * specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a message. The specified
+     * Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void finer(Object loggerId, String msg, Throwable ex) {
+    public static void finer(final Object loggerId, final String msg,
+            final Throwable ex) {
+
         getLogger(loggerId).
                 log(Level.FINER, DEFAULT_LOG_KEY
                         + LOG_KEY_MESSAGE_SEPARATOR + msg, ex);
@@ -347,7 +357,7 @@ public class LogUtil {
      *
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean fineEnabled(Object loggerId) {
+    public static boolean fineEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.FINE);
     }
 
@@ -355,12 +365,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void fine(String msgId, Object param) {
+    public static void fine(final String msgId, final Object param) {
         fine(msgId, new Object[]{param});
     }
 
@@ -368,12 +377,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and zero or more
      * substitution parameters. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void fine(String msgId, Object params[]) {
+    public static void fine(final String msgId, final Object[] params) {
         getLogger().log(Level.FINE, getMessage(msgId, params, false));
     }
 
@@ -383,12 +391,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void fine(Object loggerId, String msgId, Object param) {
+    public static void fine(final Object loggerId, final String msgId,
+            final Object param) {
+
         fine(loggerId, msgId, new Object[]{param});
     }
 
@@ -398,38 +407,39 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void fine(Object loggerId, String msgId, Object params[]) {
+    public static void fine(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.FINE, getMessage(msgId, params, false));
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given message.
      *
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void fine(String msg) {
+    public static void fine(final String msg) {
         fine(DEFAULT_LOGGER, msg);
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg. The specified Logger will
-     * be used.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given message. The specified Logger will be
+     * used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      *
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void fine(Object loggerId, String msg) {
+    public static void fine(final Object loggerId, final String msg) {
         getLogger(loggerId).log(Level.FINE, getMessage(msg, false));
     }
 
@@ -439,20 +449,22 @@ public class LogUtil {
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void fine(String msg, Throwable ex) {
+    public static void fine(final String msg, final Throwable ex) {
         getLogger().log(Level.FINE, getMessage(msg, false), ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a message. The
-     * specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a message. The specified
+     * Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void fine(Object loggerId, String msg, Throwable ex) {
+    public static void fine(final Object loggerId, final String msg,
+            final Throwable ex) {
+
         getLogger(loggerId).log(Level.FINE, getMessage(msg, false), ex);
     }
 
@@ -472,7 +484,7 @@ public class LogUtil {
      * Class Object.
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean configEnabled(Object loggerId) {
+    public static boolean configEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.CONFIG);
     }
 
@@ -480,28 +492,25 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void config(String msgId, Object param) {
+    public static void config(final String msgId, final Object param) {
         config(msgId, new Object[]{param});
     }
 
     /**
-     * <p>
      * Logging method supporting a localized message key and zero or more
-     * substitution parameters. It will use the default Logger.</p>
+     * substitution parameters. It will use the default Logger.
      *
-     * @param	msgId	The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      *
-     * @param	params	Value(s) to substitute into the message.
+     * @param params Value(s) to substitute into the message.
      *
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void config(String msgId, Object params[]) {
+    public static void config(final String msgId, final Object[] params) {
         getLogger().log(Level.CONFIG, getMessage(msgId, params, false));
     }
 
@@ -511,12 +520,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void config(Object loggerId, String msgId, Object param) {
+    public static void config(final Object loggerId, final String msgId,
+            final Object param) {
+
         config(loggerId, msgId, new Object[]{param});
     }
 
@@ -526,37 +536,37 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void config(Object loggerId, String msgId, Object params[]) {
+    public static void config(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.CONFIG, getMessage(msgId, params, false));
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given msg.
      *
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void config(String msg) {
+    public static void config(final String msg) {
         config(DEFAULT_LOGGER, msg);
     }
 
     /**
      * Logging method to log a simple localized or non-localized message. This
-     * method will first attempt to find {@code msg} in the properties
-     * file, if not found it will print the given msg. The specified Logger will
-     * be used.
+     * method will first attempt to find {@code msg} in the properties file, if
+     * not found it will print the given msg. The specified Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message (or {@code ResourceBundle} key).
      */
-    public static void config(Object loggerId, String msg) {
+    public static void config(final Object loggerId, final String msg) {
         getLogger(loggerId).log(Level.CONFIG, getMessage(msg, false));
     }
 
@@ -566,25 +576,28 @@ public class LogUtil {
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void config(String msg, Throwable ex) {
+    public static void config(final String msg, final Throwable ex) {
         getLogger().log(Level.CONFIG, getMessage(msg, false), ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a message. The
-     * specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a message. The specified
+     * Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
      * @param msg The message.
      * @param ex The {@code Throwable} to log.
      */
-    public static void config(Object loggerId, String msg, Throwable ex) {
+    public static void config(final Object loggerId, final String msg,
+            final Throwable ex) {
+
         getLogger(loggerId).log(Level.CONFIG, getMessage(msg, false), ex);
     }
 
     /**
      * Method to check if this log level is enabled for the default logger.
+     *
      * @return true if the log level is enabled, false otherwise.
      */
     public static boolean infoEnabled() {
@@ -598,7 +611,7 @@ public class LogUtil {
      * Class Object.
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean infoEnabled(Object loggerId) {
+    public static boolean infoEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.INFO);
     }
 
@@ -606,11 +619,10 @@ public class LogUtil {
      * Logging method to log a simple localized message. The default Logger will
      * be used.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(String msgId) {
+    public static void info(final String msgId) {
         getLogger().log(Level.INFO, getMessage(msgId, true));
     }
 
@@ -620,11 +632,10 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(Object loggerId, String msgId) {
+    public static void info(final Object loggerId, final String msgId) {
         getLogger(loggerId).log(Level.INFO, getMessage(msgId, true));
     }
 
@@ -632,12 +643,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(String msgId, Object param) {
+    public static void info(final String msgId, final Object param) {
         info(msgId, new Object[]{param});
     }
 
@@ -645,12 +655,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and zero or more
      * substitution parameters. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(String msgId, Object params[]) {
+    public static void info(final String msgId, final Object[] params) {
         getLogger().log(Level.INFO, getMessage(msgId, params, true));
     }
 
@@ -660,12 +669,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(Object loggerId, String msgId, Object param) {
+    public static void info(final Object loggerId, final String msgId,
+            final Object param) {
+
         info(loggerId, msgId, new Object[]{param});
     }
 
@@ -675,40 +685,40 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(Object loggerId, String msgId, Object params[]) {
+    public static void info(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.INFO, getMessage(msgId, params, true));
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a localized
-     * message.
+     * Logging method to log a {@code Throwable} with a localized message.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param ex The {@code Throwable} to log.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(String msgId, Throwable ex) {
+    public static void info(final String msgId, final Throwable ex) {
         getLogger().log(Level.INFO, getMessage(msgId, false), ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a localized message.
-     * The specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a localized message. The
+     * specified Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param ex The {@code Throwable} to log.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void info(Object loggerId, String msgId, Throwable ex) {
+    public static void info(final Object loggerId, final String msgId,
+            final Throwable ex) {
+
         getLogger(loggerId).log(Level.INFO, getMessage(msgId, false), ex);
     }
 
@@ -722,13 +732,13 @@ public class LogUtil {
     }
 
     /**
-     * Method to check if this log level is enabled for the given logger.</p>
+     * Method to check if this log level is enabled for the given logger.
      *
      * @param loggerId The logger to check. This may be specified as a String or
      * Class Object.
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean warningEnabled(Object loggerId) {
+    public static boolean warningEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.WARNING);
     }
 
@@ -736,11 +746,10 @@ public class LogUtil {
      * Logging method to log a simple localized message. The default Logger will
      * be used.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(String msgId) {
+    public static void warning(final String msgId) {
         getLogger().log(Level.WARNING, getMessage(msgId, true));
     }
 
@@ -750,11 +759,10 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(Object loggerId, String msgId) {
+    public static void warning(final Object loggerId, final String msgId) {
         getLogger(loggerId).log(Level.WARNING, getMessage(msgId, true));
     }
 
@@ -762,12 +770,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(String msgId, Object param) {
+    public static void warning(final String msgId, final Object param) {
         warning(msgId, new Object[]{param});
     }
 
@@ -775,12 +782,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and zero or more
      * substitution parameters. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(String msgId, Object params[]) {
+    public static void warning(final String msgId, final Object[] params) {
         getLogger().log(Level.WARNING, getMessage(msgId, params, true));
     }
 
@@ -790,12 +796,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(Object loggerId, String msgId, Object param) {
+    public static void warning(final Object loggerId, final String msgId,
+            final Object param) {
+
         warning(loggerId, msgId, new Object[]{param});
     }
 
@@ -805,40 +812,40 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(Object loggerId, String msgId, Object params[]) {
+    public static void warning(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.WARNING, getMessage(msgId, params, true));
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a localized
-     * message.
+     * Logging method to log a {@code Throwable} with a localized message.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param ex The {@code Throwable} to log.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(String msgId, Throwable ex) {
+    public static void warning(final String msgId, final Throwable ex) {
         getLogger().log(Level.WARNING, getMessage(msgId, false), ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a localized message.
-     * The specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a localized message. The
+     * specified Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param ex The {@code Throwable} to log.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void warning(Object loggerId, String msgId, Throwable ex) {
+    public static void warning(final Object loggerId, final String msgId,
+            final Throwable ex) {
+
         getLogger(loggerId).log(Level.WARNING, getMessage(msgId, false), ex);
     }
 
@@ -858,7 +865,7 @@ public class LogUtil {
      * Class Object.
      * @return true if the log level is enabled, false otherwise.
      */
-    public static boolean severeEnabled(Object loggerId) {
+    public static boolean severeEnabled(final Object loggerId) {
         return getLogger(loggerId).isLoggable(Level.SEVERE);
     }
 
@@ -866,11 +873,10 @@ public class LogUtil {
      * Logging method to log a simple localized message. The default Logger will
      * be used.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(String msgId) {
+    public static void severe(final String msgId) {
         getLogger().log(Level.SEVERE, getMessage(msgId, true));
     }
 
@@ -880,11 +886,10 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(Object loggerId, String msgId) {
+    public static void severe(final Object loggerId, final String msgId) {
         getLogger(loggerId).log(Level.SEVERE, getMessage(msgId, true));
     }
 
@@ -892,12 +897,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and a single
      * substitution parameter. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(String msgId, Object param) {
+    public static void severe(final String msgId, final Object param) {
         severe(msgId, new Object[]{param});
     }
 
@@ -905,12 +909,11 @@ public class LogUtil {
      * Logging method supporting a localized message key and zero or more
      * substitution parameters. It will use the default Logger.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(String msgId, Object params[]) {
+    public static void severe(final String msgId, final Object[] params) {
         getLogger().log(Level.SEVERE, getMessage(msgId, params, true));
     }
 
@@ -920,12 +923,13 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param param Value to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(Object loggerId, String msgId, Object param) {
+    public static void severe(final Object loggerId, final String msgId,
+            final Object param) {
+
         severe(loggerId, msgId, new Object[]{param});
     }
 
@@ -935,40 +939,40 @@ public class LogUtil {
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param params Value(s) to substitute into the message.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(Object loggerId, String msgId, Object params[]) {
+    public static void severe(final Object loggerId, final String msgId,
+            final Object[] params) {
+
         getLogger(loggerId).log(Level.SEVERE, getMessage(msgId, params, true));
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a localized
-     * message.
+     * Logging method to log a {@code Throwable} with a localized message.
      *
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param ex The {@code Throwable} to log.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(String msgId, Throwable ex) {
+    public static void severe(final String msgId, final Throwable ex) {
         getLogger().log(Level.SEVERE, getMessage(msgId, false), ex);
     }
 
     /**
-     * Logging method to log a {@code Throwable} with a localized message.
-     * The specified Logger will be used.
+     * Logging method to log a {@code Throwable} with a localized message. The
+     * specified Logger will be used.
      *
      * @param loggerId The logger to use. This may be specified as a String or
      * Class Object.
-     * @param msgId The {@code ResourceBundle} key used to lookup the
-     * message.
+     * @param msgId The {@code ResourceBundle} key used to lookup the message.
      * @param ex The {@code Throwable} to log.
      * @see LogUtil#BUNDLE_NAME
      */
-    public static void severe(Object loggerId, String msgId, Throwable ex) {
+    public static void severe(final Object loggerId, final String msgId,
+            final Throwable ex) {
+
         getLogger(loggerId).log(Level.SEVERE, getMessage(msgId, false), ex);
     }
 
@@ -976,6 +980,7 @@ public class LogUtil {
      * This method provides direct access to the default Logger. It is private
      * because the internals of what type of logger is being used should not be
      * exposed outside this class.
+     * @return Logger
      */
     private static Logger getLogger() {
         return DEFAULT_LOGGER;
@@ -992,7 +997,7 @@ public class LogUtil {
      * @param key The logger to use as specified by the Object.
      * @return Logger
      */
-    private static Logger getLogger(Object key) {
+    private static Logger getLogger(final Object key) {
         // If null, use default
         if (key == null) {
             return getLogger();
@@ -1025,7 +1030,7 @@ public class LogUtil {
      * @param key The logger to use as specified by the String.
      * @return Logger
      */
-    private static Logger getLogger(String key) {
+    private static Logger getLogger(final String key) {
         if (key.trim().length() == 0) {
             return DEFAULT_LOGGER;
         }
@@ -1040,7 +1045,7 @@ public class LogUtil {
      * @param key The logger to use as specified by the Class.
      * @return Logger
      */
-    private static Logger getLogger(Class key) {
+    private static Logger getLogger(final Class key) {
         if (key == null) {
             return DEFAULT_LOGGER;
         }
@@ -1057,7 +1062,7 @@ public class LogUtil {
      * @param strict True if key not found should be an error
      * @return The message to write to the log file.
      */
-    private static String getMessage(String msgId, boolean strict) {
+    private static String getMessage(final String msgId, final boolean strict) {
         return getMessage(msgId, new Object[0], strict);
     }
 
@@ -1072,8 +1077,9 @@ public class LogUtil {
      * @param strict True if key not found should be an error
      * @return The message to write to the log file.
      */
-    private static String getMessage(
-            String msgId, Object params[], boolean strict) {
+    private static String getMessage(final String msgId, final Object[] params,
+            final boolean strict) {
+
         String result = MessageUtil.getMessage(BUNDLE_NAME, msgId, params);
         if (result.equals(msgId)) {
             // We didn't find the key...

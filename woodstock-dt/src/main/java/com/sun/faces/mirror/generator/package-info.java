@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,7 +18,6 @@
  * Generator classes that write configuration files and source files based on
  * the component and renderer info found during annotation processing.
  *
- * <p>
  * A generator is invoked in three phases. First, the generator's {@code init()}
  * method will be called, and component or renderer info will be passed to the
  * generator. The exact parameters vary from generator to generator. Next, the

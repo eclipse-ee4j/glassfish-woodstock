@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,86 +14,105 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * ClockTime.java
- *
- * Created on July 8, 2005, 1:32 PM
- */
 package com.sun.webui.jsf.model;
 
 import java.io.Serializable;
 
-//TODO add missing hashcode
-public class ClockTime implements Serializable {
+/**
+ * Clock time model.
+ */
+public final class ClockTime implements Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 3125735012249146691L;
 
-    /** Creates a new instance of ClockTime */
-    public ClockTime() {
-    }
     /**
      * Holds value of property hour.
      */
     private Integer hour;
 
     /**
+     * Holds value of property minute.
+     */
+    private Integer minute;
+
+    /**
+     * Creates a new instance of ClockTime.
+     */
+    public ClockTime() {
+    }
+
+    /**
      * Getter for property hour.
      * @return Value of property hour.
      */
     public Integer getHour() {
-
         return this.hour;
     }
 
     /**
      * Setter for property hour.
-     * @param hour New value of property hour.
+     * @param newHour New value of property hour.
      */
-    public void setHour(Integer hour) {
-        if (hour.intValue() > -1 && hour.intValue() < 24) {
-            this.hour = hour;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void setHour(final Integer newHour) {
+        if (newHour > -1 && newHour < 24) {
+            this.hour = newHour;
         } else {
             throw new RuntimeException();
         }
     }
-    /**
-     * Holds value of property minute.
-     */
-    private Integer minute;
 
     /**
      * Getter for property minute.
      * @return Value of property minute.
      */
     public Integer getMinute() {
-
         return this.minute;
     }
 
     /**
      * Setter for property minute.
-     * @param minute New value of property minute.
+     * @param newMinute New value of property minute.
      */
-    public void setMinute(Integer minute) {
-        if (minute.intValue() > -1 && minute.intValue() < 60) {
-            this.minute = minute;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void setMinute(final Integer newMinute) {
+        if (newMinute > -1 && newMinute < 60) {
+            this.minute = newMinute;
         } else {
             throw new RuntimeException();
         }
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof ClockTime) {
-            return (((ClockTime) obj).getHour().equals(hour) &&
-                    ((ClockTime) obj).getMinute().equals(minute));
+            return (((ClockTime) obj).getHour().equals(hour)
+                    && ((ClockTime) obj).getMinute().equals(minute));
         }
         return false;
     }
 
     @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash;
+        if (this.hour != null) {
+            hash = hash + this.hour.hashCode();
+        }
+        hash = 31 * hash;
+        if (this.minute != null) {
+            hash = hash + this.minute.hashCode();
+        }
+        return hash;
+    }
+
+    @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer(128);
+        StringBuilder buffer = new StringBuilder();
         buffer.append(this.getClass().getName());
         buffer.append(": ");
         buffer.append(String.valueOf(hour));

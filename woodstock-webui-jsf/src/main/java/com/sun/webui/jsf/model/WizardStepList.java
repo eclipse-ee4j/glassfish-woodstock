@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,25 +13,28 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 import java.util.Iterator;
 
 /**
- * Defines the interface of the list of steps that appears in the
- * Steps pane of a rendered Wizard component.
+ * Defines the interface of the list of steps that appears in the Steps pane of
+ * a rendered Wizard component.
  */
 public interface WizardStepList {
 
     /**
      * Returns an iterator of WizardStepListItem instances.
+     *
+     * @return Iterator
      */
-    public Iterator iterator();
+    Iterator iterator();
 
     /**
-     * Returns the current step's number for use in the 
-     * Steps pane of a rendered Wizard component.
+     * Returns the current step's number for use in the Steps pane of a rendered
+     * Wizard component.
+     *
+     * @return String
      */
-    public String getCurrentStepNumberString();
+    String getCurrentStepNumberString();
 }

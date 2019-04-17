@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,8 +24,11 @@ import java.io.Writer;
  * {@link StringBuilder} instead.
  * This class is not thread safe.
  */
-public class FastStringWriter extends Writer {
+public final class FastStringWriter extends Writer {
 
+    /**
+     * Underlying string builder.
+     */
     private StringBuilder builder;
 
     /**
@@ -43,7 +46,7 @@ public class FastStringWriter extends Writer {
      * @param initialCapacity specifies the initial capacity of the buffer
      * @throws IllegalArgumentException if initialCapacity is less than zero
      */
-    public FastStringWriter(int initialCapacity)
+    public FastStringWriter(final int initialCapacity)
         throws IllegalArgumentException {
 
         if (initialCapacity < 0) {
@@ -53,9 +56,11 @@ public class FastStringWriter extends Writer {
     }
 
     @Override
-    public void write(char cbuf[], int off, int len) throws IOException {
-        if ((off < 0) || (off > cbuf.length) || (len < 0) ||
-            ((off + len) > cbuf.length) || ((off + len) < 0)) {
+    public void write(final char[] cbuf, final int off, final int len)
+            throws IOException {
+
+        if ((off < 0) || (off > cbuf.length) || (len < 0)
+                || ((off + len) > cbuf.length) || ((off + len) < 0)) {
             throw new IndexOutOfBoundsException();
         } else if (len == 0) {
             return;
@@ -73,12 +78,12 @@ public class FastStringWriter extends Writer {
 
 
     @Override
-    public void write(String str) {
+    public void write(final String str) {
         write(str, 0, str.length());
     }
 
     @Override
-    public void write(String str, int off, int len) {
+    public void write(final String str, final int off, final int len) {
         builder.append(str.substring(off, off + len));
     }
 

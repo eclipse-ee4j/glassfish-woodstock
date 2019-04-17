@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,13 +19,11 @@ package com.sun.faces.mirror;
  * A base class that defines the basic metadata available for a property,
  * whether it belongs to a class declared in the current compilation unit, or to
  * a class in a dependent library.
- *
- * @author gjmurphy
  */
 public abstract class PropertyInfo extends FeatureInfo {
 
     /**
-     * Returns the name of this property as a Java instance name.This will
+     * Returns the name of this property as a Java instance name. This will
      * usually be the value of {@link #<error>}
      *
      * @return String
@@ -67,7 +65,7 @@ public abstract class PropertyInfo extends FeatureInfo {
     public abstract String getEditorClassName();
 
     /**
-     * Get the category info for this property,
+     * Get the category info for this property.
      *
      * @return CategoryInfo or {@code null} if this property is not categorized.
      */
@@ -81,7 +79,7 @@ public abstract class PropertyInfo extends FeatureInfo {
     abstract String getCategoryReferenceName();
 
     /**
-     * Returns the attribute info for this property,
+     * Returns the attribute info for this property.
      *
      * @return AttributeInfo or {@code null} if this property does not
      * correspond to an attribute.

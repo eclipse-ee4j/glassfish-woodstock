@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import javax.el.ValueExpression;
@@ -24,98 +23,213 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
 /**
- * The StaticText component is used to display text that is not interactive in 
+ * The StaticText component is used to display text that is not interactive in
  * the rendered HTML page.
  */
-@Component(type = "com.sun.webui.jsf.StaticText", family = "com.sun.webui.jsf.StaticText",
-displayName = "Static Text", tagName = "staticText",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_static_text",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_static_text_props")
-public class StaticText extends UIOutput {
+@Component(type = "com.sun.webui.jsf.StaticText",
+        family = "com.sun.webui.jsf.StaticText",
+        displayName = "Static Text", tagName = "staticText",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_static_text",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_static_text_props")
+        //CHECKSTYLE:ON
+public final class StaticText extends UIOutput {
 
     /**
-     * <p>Construct a new <code>StaticText</code>.</p>
+     * Escape the html text so it won't be interpreted by the browser as
+     * HTML.
+     */
+    @Property(name = "escape",
+            displayName = "Escape",
+            category = "Data")
+    private boolean escape = false;
+
+    /**
+     * escape set flag.
+     */
+    private boolean escapeSet = false;
+
+    /**
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     */
+    @Property(name = "onClick",
+            displayName = "Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onClick = null;
+
+    /**
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     */
+    @Property(name = "onDblClick",
+            displayName = "Double Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onDblClick = null;
+
+    /**
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseDown",
+            displayName = "Mouse Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseDown = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     */
+    @Property(name = "onMouseMove",
+            displayName = "Mouse Move Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseMove = null;
+
+    /**
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     */
+    @Property(name = "onMouseOut",
+            displayName = "Mouse Out Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOut = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     */
+    @Property(name = "onMouseOver",
+            displayName = "Mouse In Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOver = null;
+
+    /**
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseUp",
+            displayName = "Mouse Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseUp = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Construct a new {@code StaticText}.
      */
     public StaticText() {
         super();
         setRendererType("com.sun.webui.jsf.StaticText");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.StaticText";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * The converter attribute is used to specify a method to translate native
-     * property values to String and back for this component. The converter 
-     * attribute value must be one of the following:
-     * <ul>
-     * <li>A JavaServer Faces EL expression that resolves to a backing bean or
-     * bean property that implements the 
-     * <code>javax.faces.converter.Converter</code> interface; or
-     * </li><li>the ID of a registered converter (a String).</li>
-     * </ul>
-     */
     @Property(name = "converter")
     @Override
-    public void setConverter(Converter converter) {
+    public void setConverter(final Converter converter) {
         super.setConverter(converter);
     }
 
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
-    /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
-     */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
-    /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
-     *
-     * @param name Name of value binding expression to retrieve
-     */
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("text")) {
             return super.getValueExpression("value");
         }
         return super.getValueExpression(name);
     }
 
-    /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
-     *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
-     */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("text")) {
             super.setValueExpression("value", binding);
             return;
@@ -129,467 +243,435 @@ public class StaticText extends UIOutput {
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * <p>Escape the html text so it won't be interpreted by the browser as HTML</p>
-     */
-    @Property(name = "escape", displayName = "Escape", category = "Data")
-    private boolean escape = false;
-    private boolean escape_set = false;
 
     /**
-     * <p>Escape the html text so it won't be interpreted by the browser as HTML</p>
+     * Escape the html text so it won't be interpreted by the browser as
+     * HTML.
+     * @return {@code boolean}
      */
     public boolean isEscape() {
-        if (this.escape_set) {
+        if (this.escapeSet) {
             return this.escape;
         }
-        ValueExpression _vb = getValueExpression("escape");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("escape");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Escape the html text so it won't be interpreted by the browser as HTML</p>
+     * Escape the HTML text so it won't be interpreted by the browser as
+     * HTML.
+     *
      * @see #isEscape()
+     * @param newEscape escape
      */
-    public void setEscape(boolean escape) {
-        this.escape = escape;
-        this.escape_set = true;
+    public void setEscape(final boolean newEscape) {
+        this.escape = newEscape;
+        this.escapeSet = true;
     }
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onClick", displayName = "Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     * @return String
      */
     public String getOnClick() {
         if (this.onClick != null) {
             return this.onClick;
         }
-        ValueExpression _vb = getValueExpression("onClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     *
      * @see #getOnClick()
+     * @param newOnClick onClick
      */
-    public void setOnClick(String onClick) {
-        this.onClick = onClick;
+    public void setOnClick(final String newOnClick) {
+        this.onClick = newOnClick;
     }
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onDblClick", displayName = "Double Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onDblClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     * @return String
      */
     public String getOnDblClick() {
         if (this.onDblClick != null) {
             return this.onDblClick;
         }
-        ValueExpression _vb = getValueExpression("onDblClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onDblClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     *
      * @see #getOnDblClick()
+     * @param newOnDblClick onDblClick
      */
-    public void setOnDblClick(String onDblClick) {
-        this.onDblClick = onDblClick;
+    public void setOnDblClick(final String newOnDblClick) {
+        this.onDblClick = newOnDblClick;
     }
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseDown", displayName = "Mouse Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseDown() {
         if (this.onMouseDown != null) {
             return this.onMouseDown;
         }
-        ValueExpression _vb = getValueExpression("onMouseDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseDown()
+     * @param newOnMouseDown onMouseDown
      */
-    public void setOnMouseDown(String onMouseDown) {
-        this.onMouseDown = onMouseDown;
+    public void setOnMouseDown(final String newOnMouseDown) {
+        this.onMouseDown = newOnMouseDown;
     }
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
-    @Property(name = "onMouseMove", displayName = "Mouse Move Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseMove = null;
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     * @return String
      */
     public String getOnMouseMove() {
         if (this.onMouseMove != null) {
             return this.onMouseMove;
         }
-        ValueExpression _vb = getValueExpression("onMouseMove");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseMove");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     *
      * @see #getOnMouseMove()
+     * @param newOnMouseMove onMouseMove
      */
-    public void setOnMouseMove(String onMouseMove) {
-        this.onMouseMove = onMouseMove;
+    public void setOnMouseMove(final String newOnMouseMove) {
+        this.onMouseMove = newOnMouseMove;
     }
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
-    @Property(name = "onMouseOut", displayName = "Mouse Out Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOut = null;
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     * @return String
      */
     public String getOnMouseOut() {
         if (this.onMouseOut != null) {
             return this.onMouseOut;
         }
-        ValueExpression _vb = getValueExpression("onMouseOut");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOut");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     *
      * @see #getOnMouseOut()
+     * @param newOnMouseOut onMouseOut
      */
-    public void setOnMouseOut(String onMouseOut) {
-        this.onMouseOut = onMouseOut;
+    public void setOnMouseOut(final String newOnMouseOut) {
+        this.onMouseOut = newOnMouseOut;
     }
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
-    @Property(name = "onMouseOver", displayName = "Mouse In Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOver = null;
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     * @return String
      */
     public String getOnMouseOver() {
         if (this.onMouseOver != null) {
             return this.onMouseOver;
         }
-        ValueExpression _vb = getValueExpression("onMouseOver");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOver");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     *
      * @see #getOnMouseOver()
+     * @param newOnMouseOver onMouseOver
      */
-    public void setOnMouseOver(String onMouseOver) {
-        this.onMouseOver = onMouseOver;
+    public void setOnMouseOver(final String newOnMouseOver) {
+        this.onMouseOver = newOnMouseOver;
     }
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseUp", displayName = "Mouse Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseUp() {
         if (this.onMouseUp != null) {
             return this.onMouseUp;
         }
-        ValueExpression _vb = getValueExpression("onMouseUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseUp()
+     * @param newOnMouseUp onMouseUp
      */
-    public void setOnMouseUp(String onMouseUp) {
-        this.onMouseUp = onMouseUp;
+    public void setOnMouseUp(final String newOnMouseUp) {
+        this.onMouseUp = newOnMouseUp;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
 
     /**
-     * <p>The text to be displayed for this component.</p>
+     * The text to be displayed for this component.
+     * @return Object
      */
-    @Property(name = "text", displayName = "Text", category = "Appearance", isDefault = true,
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+    @Property(name = "text",
+            displayName = "Text",
+            category = "Appearance", isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
     public Object getText() {
         return getValue();
     }
 
     /**
-     * <p>The text to be displayed for this component.</p>
+     * The text to be displayed for this component.
+     *
      * @see #getText()
+     * @param newText text
      */
-    public void setText(Object text) {
-        setValue(text);
+    public void setText(final Object newText) {
+        setValue(newText);
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     * @return String
      */
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
      * @see #getToolTip()
+     * @param newToolTip toolTip
      */
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.escape = ((Boolean) _values[1]).booleanValue();
-        this.escape_set = ((Boolean) _values[2]).booleanValue();
-        this.onClick = (String) _values[3];
-        this.onDblClick = (String) _values[4];
-        this.onMouseDown = (String) _values[5];
-        this.onMouseMove = (String) _values[6];
-        this.onMouseOut = (String) _values[7];
-        this.onMouseOver = (String) _values[8];
-        this.onMouseUp = (String) _values[9];
-        this.style = (String) _values[10];
-        this.styleClass = (String) _values[11];
-        this.toolTip = (String) _values[12];
-        this.visible = ((Boolean) _values[13]).booleanValue();
-        this.visible_set = ((Boolean) _values[14]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.escape = ((Boolean) values[1]);
+        this.escapeSet = ((Boolean) values[2]);
+        this.onClick = (String) values[3];
+        this.onDblClick = (String) values[4];
+        this.onMouseDown = (String) values[5];
+        this.onMouseMove = (String) values[6];
+        this.onMouseOut = (String) values[7];
+        this.onMouseOver = (String) values[8];
+        this.onMouseUp = (String) values[9];
+        this.style = (String) values[10];
+        this.styleClass = (String) values[11];
+        this.toolTip = (String) values[12];
+        this.visible = ((Boolean) values[13]);
+        this.visibleSet = ((Boolean) values[14]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[15];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.escape ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.escape_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.onClick;
-        _values[4] = this.onDblClick;
-        _values[5] = this.onMouseDown;
-        _values[6] = this.onMouseMove;
-        _values[7] = this.onMouseOut;
-        _values[8] = this.onMouseOver;
-        _values[9] = this.onMouseUp;
-        _values[10] = this.style;
-        _values[11] = this.styleClass;
-        _values[12] = this.toolTip;
-        _values[13] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[14] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[15];
+        values[0] = super.saveState(context);
+        if (this.escape) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.escapeSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        values[3] = this.onClick;
+        values[4] = this.onDblClick;
+        values[5] = this.onMouseDown;
+        values[6] = this.onMouseMove;
+        values[7] = this.onMouseOut;
+        values[8] = this.onMouseOver;
+        values[9] = this.onMouseUp;
+        values[10] = this.style;
+        values[11] = this.styleClass;
+        values[12] = this.toolTip;
+        if (this.visible) {
+            values[13] = Boolean.TRUE;
+        } else {
+            values[13] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[14] = Boolean.TRUE;
+        } else {
+            values[14] = Boolean.FALSE;
+        }
+        return values;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.faces;
 
 import java.io.IOException;
@@ -29,46 +28,70 @@ import com.sun.data.provider.TableDataProvider;
 import com.sun.data.provider.impl.TableRowDataProvider;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.faces.el.ValueBinding;
 
 /**
- * <p>The ValueBindingSortCriteria class is an implementation of SortCriteria
- * that simply retrieves the sort value from the {@link ValueBinding}.</p>
- *
- * @author Joe Nuxoll, John Yeary
+ * The ValueBindingSortCriteria class is an implementation of SortCriteria that
+ * simply retrieves the sort value from the {@link ValueBinding}.
  */
-
-// TODO: rename the class not to have ValueBinding???
 @Component(isTag = false)
-public class ValueBindingSortCriteria extends SortCriteria {
+public final class ValueBindingSortCriteria extends SortCriteria {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 3213170928687846906L;
 
     /**
-     * Constructs a ValueBindingSortCriteria with no associated {@link ValueExpression}.
+     * Value binding.
+     */
+    @Property(displayName = "Value Binding", isAttribute = false)
+    private transient ValueExpression valueExpression;
+
+    /**
+     * Request map key.
+     */
+    @Property(displayName = "Request Map Key")
+    private String requestMapKey = "currentRow";
+
+    /**
+     * Row provider.
+     */
+    private transient TableRowDataProvider rowProvider;
+
+    /**
+     * Lock.
+     */
+    private String rowProviderLock = "rowProviderLock";
+
+    /**
+     * Constructs a ValueBindingSortCriteria with no associated
+     * {@link ValueExpression}.
      */
     public ValueBindingSortCriteria() {
     }
 
     /**
-     * Constructs a ValueBindingSortCriteria with the specified {@link ValueExpression}.
+     * Constructs a ValueBindingSortCriteria with the specified
+     * {@link ValueExpression}.
      *
-     * @param valueExpression The desired ValueExpression
+     * @param newValueExpression The desired ValueExpression
      */
-    public ValueBindingSortCriteria(ValueExpression valueExpression) {
-        this.valueExpression = valueExpression;
+    public ValueBindingSortCriteria(final ValueExpression newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
-     * Constructs a ValueBindingSortCriteria with the specified {@link ValueExpression} and
-     * ascending state.
+     * Constructs a ValueBindingSortCriteria with the specified
+     * {@link ValueExpression} and ascending state.
      *
-     * @param valueExpression The desired ValueExpression
-     * @param ascending The desired boolean state for the ascending property
+     * @param newValueExpression The desired ValueExpression
+     * @param newAscending The desired boolean state for the ascending property
      */
-    public ValueBindingSortCriteria(ValueExpression valueExpression, boolean ascending) {
-        this.valueExpression = valueExpression;
-        this.setAscending(ascending);
+    public ValueBindingSortCriteria(final ValueExpression newValueExpression,
+            final boolean newAscending) {
+
+        this.valueExpression = newValueExpression;
+        this.setAscending(newAscending);
     }
 
     /**
@@ -83,15 +106,16 @@ public class ValueBindingSortCriteria extends SortCriteria {
     /**
      * Sets the ValueExpression for this sort criteria.
      *
-     * @param valueExpression The desired ValueExpression for this sort criteria
+     * @param newValueExpression The desired ValueExpression for this sort
+     * criteria
      */
-    public void setValueExpression(ValueExpression valueExpression) {
-        this.valueExpression = valueExpression;
+    public void setValueExpression(final ValueExpression newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
      * Returns the request map variable key that will be used to store the
-     * {@link TableRowDataProvider} for the current row being sorted.  This
+     * {@link TableRowDataProvider} for the current row being sorted. This
      * allows value expressions to refer to the "current" row during the sort
      * operation.
      *
@@ -103,19 +127,20 @@ public class ValueBindingSortCriteria extends SortCriteria {
 
     /**
      * Sets the request map variable key that will be used to store the
-     * {@link TableRowDataProvider} for the current row being sorted.  This
+     * {@link TableRowDataProvider} for the current row being sorted. This
      * allows value expressions to refer to the "current" row during the sort
      * operation.
      *
-     * @param requestMapKey String key to use for the {@link TableRowDataProvider}
+     * @param newRequestMapKey String key to use for the
+     * {@link TableRowDataProvider}
      */
-    public void setRequestMapKey(String requestMapKey) {
-        this.requestMapKey = requestMapKey;
+    public void setRequestMapKey(final String newRequestMapKey) {
+        this.requestMapKey = newRequestMapKey;
     }
 
     /**
-     * <p>If no display name is set, this returns the {@link ValueExpression}'s
-     * display name.</p>
+     * If no display name is set, this returns the {@link ValueExpression}'s
+     * display name.
      *
      * {@inheritDoc}
      */
@@ -133,24 +158,33 @@ public class ValueBindingSortCriteria extends SortCriteria {
      *
      * {@inheritDoc}
      */
+    @Override
     public String getCriteriaKey() {
-        return valueExpression != null ? valueExpression.getExpressionString() : ""; // NOI18N
+        if (valueExpression != null) {
+            return valueExpression.getExpressionString();
+        }
+        return "";
     }
 
     /**
-     * <p>Returns the value from the {@link ValueExpression} ignoring the arguments.</p>
+     * Returns the value from the {@link ValueExpression} ignoring the
+     * arguments.
      *
      * {@inheritDoc}
      */
-    public Object getSortValue(TableDataProvider provider, RowKey row) {
+    @Override
+    public Object getSortValue(final TableDataProvider provider,
+            final RowKey row) {
 
         if (valueExpression == null) {
             return null;
         }
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        Map<String, Object> requestMap = facesContext.getExternalContext().getRequestMap();
-        Object value = null;
+        Map<String, Object> requestMap = facesContext
+                .getExternalContext()
+                .getRequestMap();
+        Object value;
         //FIXME synchronization on a non-final field
         synchronized (rowProviderLock) {
 
@@ -166,7 +200,6 @@ public class ValueBindingSortCriteria extends SortCriteria {
             }
 
             value = valueExpression.getValue(facesContext.getELContext());
-
             if (requestMapKey != null && !"".equals(requestMapKey)) {
                 if (rowProvider != null) {
                     rowProvider.setTableDataProvider(null);
@@ -178,14 +211,13 @@ public class ValueBindingSortCriteria extends SortCriteria {
 
         return value;
     }
-    @Property(displayName = "Value Binding", isAttribute = false)
-    private transient ValueExpression valueExpression;
-    @Property(displayName = "Request Map Key")
-    private String requestMapKey = "currentRow";
-    private transient TableRowDataProvider rowProvider;
-    private String rowProviderLock = "rowProviderLock"; // this is a monitor lock for rowProvider
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    /**
+     * Serialize this instance to the given output stream.
+     * @param out output stream
+     * @throws IOException if an IO error occurs
+     */
+    private void writeObject(final ObjectOutputStream out) throws IOException {
 
         // Serialize simple objects first
         out.writeObject(requestMapKey);
@@ -198,12 +230,18 @@ public class ValueBindingSortCriteria extends SortCriteria {
             out.writeObject((String) null);
         }
 
-    // NOTE - rowProvider is reconstituted on demand,
-    // so we don't need to serialize it
-
+        // NOTE - rowProvider is reconstituted on demand,
+        // so we don't need to serialize it
     }
 
-    private void readObject(ObjectInputStream in)
+    /**
+     * De-serialize from input stream.
+     * @param in input stream
+     * @throws IOException if an IO error occurs
+     * @throws ClassNotFoundException if a class is not found during
+     * de-serialization
+     */
+    private void readObject(final ObjectInputStream in)
             throws IOException, ClassNotFoundException {
 
         // Deserialize simple objects first
@@ -214,9 +252,11 @@ public class ValueBindingSortCriteria extends SortCriteria {
         String s = (String) in.readObject();
         if (s != null) {
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            ELContext elContext = FacesContext.getCurrentInstance().getELContext();
-            valueExpression =
-                    facesContext.getApplication().getExpressionFactory().createValueExpression(elContext, s, Object.class);
+            ELContext elContext = FacesContext.getCurrentInstance()
+                    .getELContext();
+            valueExpression = facesContext.getApplication()
+                            .getExpressionFactory()
+                            .createValueExpression(elContext, s, Object.class);
         } else {
             valueExpression = null;
         }

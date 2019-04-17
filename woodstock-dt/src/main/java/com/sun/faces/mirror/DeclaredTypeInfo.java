@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,25 +28,69 @@ import javax.lang.model.util.SimpleElementVisitor6;
 
 /**
  * Represents a class or interface declared in the current compilation unit.
- *
- * @author gjmurphy
  */
 public abstract class DeclaredTypeInfo extends ClassInfo {
 
-    TypeElement decl;
-    Set<String> methodNames;
-    Map<String, PropertyInfo> propertyInfos;
-    Map<String, EventInfo> eventInfos;
-    protected final ProcessingEnvironment env;
+    /**
+     * Annotation processing environment.
+     */
+    private final ProcessingEnvironment env;
+
+    /**
+     * Type element representing the type.
+     */
+    private final TypeElement decl;
+
+    /**
+     * Method names.
+     */
+    private Set<String> methodNames;
+
+    /**
+     * Properties.
+     */
+    private Map<String, PropertyInfo> propertyInfos;
+
+    /**
+     * Events.
+     */
+    private Map<String, EventInfo> eventInfos;
+
+    /**
+     * Class name.
+     */
     private final String className;
+
+    /**
+     * Package name.
+     */
     private final String packageName;
+
+    /**
+     * Super class info.
+     */
     private ClassInfo superClassInfo;
+
+    /**
+     * Default property info.
+     */
     private PropertyInfo defaultPropertyInfo;
+
+    /**
+     * Default event info.
+     */
     private EventInfo defaultEventInfo;
 
-    DeclaredTypeInfo(ProcessingEnvironment env, TypeElement decl) {
-        this.env = env;
-        this.decl = decl;
+    /**
+     * Create a new instance.
+     * @param processingEnv annotation processing environment
+     * @param typeDecl type element representing the class
+     */
+    DeclaredTypeInfo(final ProcessingEnvironment processingEnv,
+            final TypeElement typeDecl) {
+
+        this.env = processingEnv;
+        this.decl = typeDecl;
         String qualifiedName = this.decl.getQualifiedName().toString();
         int index = qualifiedName.lastIndexOf('.');
         if (index >= 0) {
@@ -58,33 +102,49 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
         }
     }
 
-    public TypeElement getDeclaration() {
+    /**
+     * Get the annotation processing environment.
+     * @return ProcessingEnvironment
+     */
+    ProcessingEnvironment getEnv() {
+        return env;
+    }
+
+    /**
+     * Get the type element representing the declared class.
+     * @return TypeElement
+     */
+    public final TypeElement getDeclaration() {
         return this.decl;
     }
 
     @Override
-    public String getClassName() {
+    public final String getClassName() {
         return this.className;
     }
 
     @Override
-    public String getPackageName() {
+    public final String getPackageName() {
         return this.packageName;
     }
 
     @Override
-    public ClassInfo getSuperClassInfo() {
+    public final ClassInfo getSuperClassInfo() {
         return this.superClassInfo;
     }
 
-    void setSuperClassInfo(ClassInfo classInfo) {
-        this.superClassInfo = classInfo;
+    /**
+     * Set the super class info.
+     * @param cInfo new super class info
+     */
+    final void setSuperClassInfo(final ClassInfo cInfo) {
+        this.superClassInfo = cInfo;
     }
 
     @Override
-    public boolean isAssignableTo(String qualifiedName) {
+    public final boolean isAssignableTo(final String qualifiedName) {
         TypeElement t2 = env.getElementUtils().getTypeElement(qualifiedName);
-        return env.getTypeUtils().isAssignable(decl.asType(),t2.asType());
+        return env.getTypeUtils().isAssignable(decl.asType(), t2.asType());
     }
 
     /**
@@ -93,16 +153,23 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
      * @return Map<String, PropertyInfo>
      */
     @Override
-    public Map<String, PropertyInfo> getPropertyInfos() {
+    public final Map<String, PropertyInfo> getPropertyInfos() {
         return this.propertyInfos;
     }
 
-    void setPropertyInfos(Map<String, PropertyInfo> propertyInfos) {
-        this.propertyInfos = propertyInfos;
-        for (PropertyInfo propertyInfo : propertyInfos.values()) {
-            DeclaredPropertyInfo declaredPropertyInfo = (DeclaredPropertyInfo) propertyInfo;
+    /**
+     * Set the properties for this class.
+     * @param propInfos new propertyInfos
+     */
+    final void setPropertyInfos(final Map<String, PropertyInfo> propInfos) {
+        this.propertyInfos = propInfos;
+        for (PropertyInfo propertyInfo : propInfos.values()) {
+            DeclaredPropertyInfo declaredPropertyInfo =
+                    (DeclaredPropertyInfo) propertyInfo;
             declaredPropertyInfo.setDeclaringClassInfo(this);
-            if (Boolean.TRUE.equals(declaredPropertyInfo.annotationValueMap.get("isDefault"))) {
+            if (Boolean.TRUE.equals(declaredPropertyInfo
+                    .getAnnotationValueMap()
+                    .get(DeclaredPropertyInfo.IS_DEFAULT))) {
                 this.setDefaultPropertyInfo(declaredPropertyInfo);
             }
         }
@@ -114,41 +181,63 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
      * @return Map<String, EventInfo>
      */
     @Override
-    public Map<String, EventInfo> getEventInfos() {
+    public final Map<String, EventInfo> getEventInfos() {
         return this.eventInfos;
     }
 
-    void setEventInfos(Map<String, EventInfo> eventInfos) {
-        this.eventInfos = eventInfos;
-        for (EventInfo eventInfo : eventInfos.values()) {
+    /**
+     * Set the events for this class.
+     * @param evtInfos new eventInfos
+     */
+    final void setEventInfos(final Map<String, EventInfo> evtInfos) {
+        this.eventInfos = evtInfos;
+        for (EventInfo eventInfo : evtInfos.values()) {
             DeclaredEventInfo declaredEventInfo = (DeclaredEventInfo) eventInfo;
             declaredEventInfo.setDeclaringClassInfo(this);
-            if (Boolean.TRUE.equals(declaredEventInfo.annotationValueMap.get("isDefault"))) {
+            if (Boolean.TRUE.equals(declaredEventInfo
+                    .getAnnotationValueMap()
+                    .get(DeclaredEventInfo.IS_DEFAULT))) {
                 this.setDefaultEventInfo(declaredEventInfo);
             }
         }
     }
 
+    /**
+     * This implementation returns the current value set on this instance.
+     * @return PropertyInfo
+     */
     @Override
     public PropertyInfo getDefaultPropertyInfo() {
         return this.defaultPropertyInfo;
     }
 
-    void setDefaultPropertyInfo(PropertyInfo defaultPropertyInfo) {
-        this.defaultPropertyInfo = defaultPropertyInfo;
+    /**
+     * Set the default property info.
+     * @param defaultPropInfo new default property info
+     */
+    final void setDefaultPropertyInfo(final PropertyInfo defaultPropInfo) {
+        this.defaultPropertyInfo = defaultPropInfo;
     }
 
+    /**
+     * This implementation returns the current value set on this instance.
+     * @return EventInfo
+     */
     @Override
     public EventInfo getDefaultEventInfo() {
         return this.defaultEventInfo;
     }
 
-    void setDefaultEventInfo(EventInfo defaultEventInfo) {
-        this.defaultEventInfo = defaultEventInfo;
+    /**
+     * Set the default event info.
+     * @param defaultEvtInfo new default event info
+     */
+    final void setDefaultEventInfo(final EventInfo defaultEvtInfo) {
+        this.defaultEventInfo = defaultEvtInfo;
     }
 
     @Override
-    Set<String> getMethodNames() {
+    final Set<String> getMethodNames() {
         if (this.methodNames == null) {
             this.methodNames = new HashSet<String>();
             MethodVistitor visitor = new MethodVistitor();
@@ -162,21 +251,34 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
      * Returns the JavaDoc comments associated with the type declaration.
      * @return String
      */
-    public String getDocComment() {
+    public final String getDocComment() {
         return env.getElementUtils().getDocComment(decl);
     }
 
+    /**
+     * Visitor to get the methods and method names in a class.
+     */
     private final class MethodVistitor
             extends SimpleElementVisitor6<Object, Object> {
 
+        /**
+         * Method names.
+         */
         private final Set<String> methodNames = new HashSet<String>();
-        private final Set<ExecutableElement> methods = new HashSet<ExecutableElement>();
+
+        /**
+         * Methods.
+         */
+        private final Set<ExecutableElement> methods =
+                new HashSet<ExecutableElement>();
 
         @Override
-        public Object visitExecutable(ExecutableElement elt, Object p) {
-            if(elt.getKind().equals(ElementKind.METHOD)
+        public Object visitExecutable(final ExecutableElement elt,
+                final Object p) {
+
+            if (elt.getKind().equals(ElementKind.METHOD)
                     && elt.getModifiers().contains(Modifier.PUBLIC)
-                    && !elt.getModifiers().contains(Modifier.STATIC)){
+                    && !elt.getModifiers().contains(Modifier.STATIC)) {
                 methods.add(elt);
                 methodNames.add(elt.getSimpleName().toString());
             }
@@ -184,23 +286,37 @@ public abstract class DeclaredTypeInfo extends ClassInfo {
         }
 
         @Override
-        public Object visitType(TypeElement elt, Object p) {
-            for(Element e : env.getElementUtils().getAllMembers(elt)){
+        public Object visitType(final TypeElement elt,
+                final Object p) {
+
+            for (Element e : env.getElementUtils().getAllMembers(elt)) {
                 e.accept(this, p);
             }
             return elt;
         }
 
+        /**
+         * Get the visited method names.
+         * @return Set of String
+         */
         public Set<String> getMethodNames() {
             return methodNames;
         }
 
+        /**
+         * Get the visited methods.
+         * @return Set of ExecutableElement
+         */
         public Set<ExecutableElement> getMethods() {
             return methods;
         }
     }
 
-    Set<ExecutableElement> getMethods() {
+    /**
+     * Visit the type for the class and get the visited methods.
+     * @return Set of ExecutableElement
+     */
+    final Set<ExecutableElement> getMethods() {
         MethodVistitor visitor = new MethodVistitor();
         getDeclaration().accept(visitor, null);
         return visitor.getMethods();

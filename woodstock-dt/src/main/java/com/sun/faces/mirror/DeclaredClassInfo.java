@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,15 +31,25 @@ import javax.lang.model.type.TypeMirror;
  * providing a map of all declared properties, it provides a map which contains
  * all inherited properties.
  *
- *
- * @author gjmurphy
  */
 public class DeclaredClassInfo extends DeclaredTypeInfo {
 
+    /**
+     * Inherited property info map.
+     */
     private Map<String, PropertyInfo> inheritedPropertyInfoMap;
+
+    /**
+     * Inherited event info map.
+     */
     private Map<String, EventInfo> inheritedEventInfoMap;
 
-    DeclaredClassInfo(ProcessingEnvironment env, TypeElement decl) {
+    /**
+     * Create a new instance.
+     * @param env annotation processing environment
+     * @param decl type element representing the class
+     */
+    DeclaredClassInfo(final ProcessingEnvironment env, final TypeElement decl) {
         super(env, decl);
     }
 
@@ -53,7 +63,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * @return PropertyInfo
      */
     @Override
-    public PropertyInfo getDefaultPropertyInfo() {
+    public final PropertyInfo getDefaultPropertyInfo() {
         PropertyInfo defaultPropertyInfo = super.getDefaultPropertyInfo();
         if (defaultPropertyInfo == null) {
             if (this.getSuperClassInfo() != null) {
@@ -61,8 +71,10 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
                         .getDefaultPropertyInfo();
             }
             if (defaultPropertyInfo == null) {
-                for (TypeMirror ifaceTypeMirror : this.decl.getInterfaces()) {
-                    TypeElement ifaceType = (TypeElement) env.getTypeUtils()
+                for (TypeMirror ifaceTypeMirror : getDeclaration()
+                        .getInterfaces()) {
+                    TypeElement ifaceType = (TypeElement) getEnv()
+                            .getTypeUtils()
                             .asElement(ifaceTypeMirror);
                     if (ifaceType.getQualifiedName().toString().equals(
                             ValueHolder.class.getName())) {
@@ -88,15 +100,18 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * @return EventInfo
      */
     @Override
-    public EventInfo getDefaultEventInfo() {
+    public final EventInfo getDefaultEventInfo() {
         EventInfo defaultEventInfo = super.getDefaultEventInfo();
         if (defaultEventInfo == null) {
             if (this.getSuperClassInfo() != null) {
-                defaultEventInfo = this.getSuperClassInfo().getDefaultEventInfo();
+                defaultEventInfo = this.getSuperClassInfo()
+                        .getDefaultEventInfo();
             }
             if (defaultEventInfo == null) {
-                for (TypeMirror ifaceTypeMirror : this.decl.getInterfaces()) {
-                    TypeElement ifaceType = (TypeElement) env.getTypeUtils()
+                for (TypeMirror ifaceTypeMirror : getDeclaration()
+                        .getInterfaces()) {
+                    TypeElement ifaceType = (TypeElement) getEnv()
+                            .getTypeUtils()
                             .asElement(ifaceTypeMirror);
                     if (ifaceType.getQualifiedName().toString()
                             .equals(EditableValueHolder.class.getName())) {
@@ -126,15 +141,17 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * overridden by properties in this class.
      * @return Map<String, PropertyInfo>
      */
-    public Map<String, PropertyInfo> getInheritedPropertyInfos() {
+    public final Map<String, PropertyInfo> getInheritedPropertyInfos() {
         if (this.inheritedPropertyInfoMap == null) {
             ClassInfo cInfo = this.getSuperClassInfo();
             this.inheritedPropertyInfoMap = new HashMap<String, PropertyInfo>();
             while (cInfo != null) {
-                for (PropertyInfo propInfo : cInfo.getPropertyInfos().values()) {
+                for (PropertyInfo propInfo
+                        : cInfo.getPropertyInfos().values()) {
                     String name = propInfo.getName();
-                    if (!this.propertyInfos.containsKey(name)
-                            && !this.inheritedPropertyInfoMap.containsKey(name)) {
+                    if (!getPropertyInfos().containsKey(name)
+                            && !this.inheritedPropertyInfoMap
+                                    .containsKey(name)) {
                         this.inheritedPropertyInfoMap.put(name, propInfo);
                     }
                 }
@@ -149,14 +166,14 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * by properties in this class.
      * @return map of inherited events
      */
-    public Map<String, EventInfo> getInheritedEventInfos() {
+    public final Map<String, EventInfo> getInheritedEventInfos() {
         if (this.inheritedEventInfoMap == null) {
             ClassInfo cInfo = this.getSuperClassInfo();
             this.inheritedEventInfoMap = new HashMap<String, EventInfo>();
             while (cInfo != null) {
                 for (EventInfo eventInfo : cInfo.getEventInfos().values()) {
                     String name = eventInfo.getName();
-                    if (!this.eventInfos.containsKey(name)
+                    if (!getEventInfos().containsKey(name)
                             && !this.inheritedEventInfoMap.containsKey(name)) {
                         this.inheritedEventInfoMap.put(name, eventInfo);
                     }

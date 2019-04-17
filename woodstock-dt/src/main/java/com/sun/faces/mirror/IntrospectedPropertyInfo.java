@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,18 +24,31 @@ import java.lang.reflect.Method;
 /**
  * Represents a property of a class from a dependent library, discovered using
  * introspection.
- *
- * @author gjmurphy
  */
-public class IntrospectedPropertyInfo extends PropertyInfo {
+public final class IntrospectedPropertyInfo extends PropertyInfo {
 
-    PropertyDescriptor propertyDescriptor;
+    /**
+     * Property descriptor.
+     */
+    private final PropertyDescriptor propertyDescriptor;
+
+    /**
+     * Category info.
+     */
     private CategoryInfo categoryInfo;
 
-    IntrospectedPropertyInfo(PropertyDescriptor propertyDescriptor) {
-        this.propertyDescriptor = propertyDescriptor;
+    /**
+     * Create a new instance.
+     * @param propDesc property descriptor
+     */
+    IntrospectedPropertyInfo(final PropertyDescriptor propDesc) {
+        this.propertyDescriptor = propDesc;
     }
 
+    /**
+     * Get the property descriptor.
+     * @return PropertyDescriptor
+     */
     public PropertyDescriptor getPropertyDescriptor() {
         return this.propertyDescriptor;
     }
@@ -106,8 +119,12 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
         return this.categoryInfo;
     }
 
-    void setCategoryInfo(CategoryInfo categoryInfo) {
-        this.categoryInfo = categoryInfo;
+    /**
+     * Set the category info.
+     * @param catInfo new category info
+     */
+    void setCategoryInfo(final CategoryInfo catInfo) {
+        this.categoryInfo = catInfo;
     }
 
     @Override
@@ -122,7 +139,7 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof PropertyInfo)) {
             return false;
         }
@@ -146,6 +163,21 @@ public class IntrospectedPropertyInfo extends PropertyInfo {
             return false;
         }
         return !(thatWriteName == null && thatWriteName != null);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash;
+        if (this.propertyDescriptor != null) {
+            hash = hash + this.propertyDescriptor.hashCode();
+        }
+        hash = 41 * hash;
+        if (this.categoryInfo != null) {
+            hash = hash + this.categoryInfo.hashCode();
+        }
+        return hash;
     }
 
     @Override

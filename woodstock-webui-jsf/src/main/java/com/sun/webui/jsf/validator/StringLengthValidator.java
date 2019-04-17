@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,12 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
-/*
- * StringLengthValidator.java
- *
- * Created on February 11, 2005, 9:58 AM
- */
 package com.sun.webui.jsf.validator;
 
 import java.text.MessageFormat;
@@ -26,36 +20,52 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.StateHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * Use this validator to check the number of characters in a string when
- * you need to set the validation messages.
+ * Use this validator to check the number of characters in a string when you
+ * need to set the validation messages.
  */
-public class StringLengthValidator implements Validator, StateHolder {
+public final class StringLengthValidator implements Validator, StateHolder {
 
     /**
      * The converter id for this converter.
      */
     public static final String VALIDATOR_ID = "com.sun.webui.jsf.StringLength";
+
     /**
-     * The message to use in case the value is too short. May include 
-     * {0} for the minimum value.
+     * The message to use in case the value is too short. May include {0} for
+     * the minimum value.
      */
     private String tooShortMessage = null;
 
     /**
-     * The message to use in case the value is too long. May include
-     * {0} for the maximum value.
+     * The message to use in case the value is too long. May include {0} for the
+     * maximum value.
      */
     private String tooLongMessage;
+
+    /**
+     * Minimum length.
+     */
     private int minLength = 0;
+
+    /**
+     * Maximum length.
+     */
     private int maxLength = 0;
+
+    /**
+     * Is the minimum length set.
+     */
     private boolean minimumSet = false;
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
     /**
@@ -66,27 +76,29 @@ public class StringLengthValidator implements Validator, StateHolder {
 
     /**
      * Creates a new instance of StringLengthValidator.
+     *
      * @param max The maximum number of characters allowed in the string
      */
-    public StringLengthValidator(int max) {
+    public StringLengthValidator(final int max) {
         maxLength = max;
     }
 
     /**
      * Creates a new instance of StringLengthValidator.
+     *
      * @param max The maximum number of characters allowed in the string
      * @param min The minimum number of characters allowed in the string
      */
-    public StringLengthValidator(int max, int min) {
+    public StringLengthValidator(final int max, final int min) {
         this(max);
         minLength = min;
         minimumSet = true;
     }
 
     @Override
-    public void validate(FacesContext context,
-            UIComponent component,
-            Object value) throws ValidatorException {
+    public void validate(final FacesContext context,
+            final UIComponent component, final Object value)
+            throws ValidatorException {
 
         if (DEBUG) {
             log("validate(" + String.valueOf(value) + ")");
@@ -121,9 +133,9 @@ public class StringLengthValidator implements Validator, StateHolder {
                 tooLongMessage = theme.getMessage(
                         "StringLengthValidator.itemTooLong");
             }
-            MessageFormat mf =
-                    new MessageFormat(tooLongMessage,
-                    context.getViewRoot().getLocale());
+            MessageFormat mf
+                    = new MessageFormat(tooLongMessage,
+                            context.getViewRoot().getLocale());
             Object[] params = {String.valueOf(maxLength)};
             FacesMessage msg = new FacesMessage(mf.format(params));
             throw new ValidatorException(msg);
@@ -138,42 +150,35 @@ public class StringLengthValidator implements Validator, StateHolder {
                 tooShortMessage = theme.getMessage(
                         "StringLengthValidator.itemTooLong");
             }
-            MessageFormat mf =
-                    new MessageFormat(tooShortMessage,
-                    context.getViewRoot().getLocale());
+            MessageFormat mf
+                    = new MessageFormat(tooShortMessage,
+                            context.getViewRoot().getLocale());
             Object[] params = {String.valueOf(minLength)};
             FacesMessage msg = new FacesMessage(mf.format(params));
             throw new ValidatorException(msg);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private String integerToString(UIComponent component, Integer toConvert) {
-        String result;
-        Converter converter;
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        converter = (Converter) context.getApplication()
-                .createConverter("javax.faces.Number");
-        result = converter.getAsString(context, component, toConvert);
-        return result;
-    }
-
     @Override
-    public Object saveState(FacesContext context) {
-        Object values[] = new Object[5];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[5];
         values[0] = maxLength;
         values[1] = minLength;
-        values[2] = minimumSet ? Boolean.TRUE : Boolean.FALSE;
+        if (minimumSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
         values[3] = tooLongMessage;
         values[4] = tooShortMessage;
         return (values);
     }
 
     @Override
-    public void restoreState(FacesContext context, Object state) {
-
-        Object values[] = (Object[]) state;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
         maxLength = ((Integer) values[0]);
         minLength = ((Integer) values[1]);
         minimumSet = ((Boolean) values[2]);
@@ -191,7 +196,7 @@ public class StringLengthValidator implements Validator, StateHolder {
     }
 
     @Override
-    public void setTransient(boolean transientValue) {
+    public void setTransient(final boolean transientValue) {
     }
 
     /**
@@ -209,11 +214,11 @@ public class StringLengthValidator implements Validator, StateHolder {
      * Set the message to be used if the string is longer than the maximum
      * number of characters.
      *
-     * @param tooLongMessage the message to be used if the string is longer than
-     * the maximum number of characters
+     * @param newTooLongMessage the message to be used if the string is longer
+     * than the maximum number of characters
      */
-    public void setTooLongMessage(String tooLongMessage) {
-        this.tooLongMessage = tooLongMessage;
+    public void setTooLongMessage(final String newTooLongMessage) {
+        this.tooLongMessage = newTooLongMessage;
     }
 
     /**
@@ -231,14 +236,19 @@ public class StringLengthValidator implements Validator, StateHolder {
      * Set the message to be used if the string is shorter than the minimum
      * number of characters.
      *
-     * @param tooShortMessage the message to be used if the string is shorter
+     * @param newTooShortMessage the message to be used if the string is shorter
      * than the minimum number of characters
      */
-    public void setTooShortMessage(String tooShortMessage) {
-        this.tooShortMessage = tooShortMessage;
+    public void setTooShortMessage(final String newTooShortMessage) {
+        this.tooShortMessage = newTooShortMessage;
     }
 
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
+    /**
+     * Log a message to the standard output.
+     *
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(StringLengthValidator.class.getName() + "::" + msg);
     }
 }

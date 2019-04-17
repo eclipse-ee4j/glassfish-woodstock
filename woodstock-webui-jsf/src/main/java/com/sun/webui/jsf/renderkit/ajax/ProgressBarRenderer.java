@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,10 +32,12 @@ import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
  */
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.ajax.ProgressBar",
 componentFamily = "com.sun.webui.jsf.ProgressBar"))
-public class ProgressBarRenderer extends javax.faces.render.Renderer {
+public final class ProgressBarRenderer extends javax.faces.render.Renderer {
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }
@@ -43,7 +45,7 @@ public class ProgressBarRenderer extends javax.faces.render.Renderer {
         String id = component.getClientId(context);
         Map params = context.getExternalContext().getRequestParameterMap();
 
-        String buttonId = id + "_" + "controlType"; //NOI18N
+        String buttonId = id + "_" + "controlType";
 
         Object valueObject = params.get(buttonId);
         String value;
@@ -64,20 +66,23 @@ public class ProgressBarRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         // Do nothing...
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         // Do nothing...
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }

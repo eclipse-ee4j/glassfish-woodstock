@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,24 +22,33 @@ import javax.faces.convert.Converter;
 
 import javax.faces.context.FacesContext;
 
-// Delete the setters once you have reimplemented this not to 
-// use the default Serializable mechanism, but the same as 
-// in the converter.... 
-public class RepeatUnitConverter implements Converter, Serializable {
+// Delete the setters once you have reimplemented this not to
+// use the default Serializable mechanism, but the same as
+// in the converter....
+/**
+ * Repeat unit converter.
+ */
+public final class RepeatUnitConverter implements Converter, Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 8474867258235790714L;
 
-    public String getAsString(FacesContext context, UIComponent component,
-            Object value) {
+    @Override
+    public String getAsString(final FacesContext context,
+            final UIComponent component, final Object value) {
+
         if (value == null) {
             return null;
         }
         return ((RepeatUnit) value).getRepresentation();
     }
 
-    public Object getAsObject(FacesContext context, UIComponent component,
-            String value) {
+    @Override
+    public Object getAsObject(final FacesContext context,
+            final UIComponent component, final String value) {
+
         return RepeatUnit.getInstance(value);
     }
 }
-

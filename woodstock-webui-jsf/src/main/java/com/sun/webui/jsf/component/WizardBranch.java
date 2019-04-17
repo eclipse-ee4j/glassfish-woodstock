@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,7 +26,7 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.event.WizardEventListener;
 
-/*
+/**
  * The WizardBranch represents a step in a Wizard sequence that indicates
  * that the steps following the branch, cannot be determined until the branch is
  * reached. Until that time, place holder text appears in the step list
@@ -34,37 +34,57 @@ import com.sun.webui.jsf.event.WizardEventListener;
  * that determine the steps that follow.
  */
 @Component(type = "com.sun.webui.jsf.WizardBranch",
-family = "com.sun.webui.jsf.WizardBranch", displayName = "WizardBranch",
-tagName = "wizardBranch",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_wizard_branch",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_wizard_branch_props")
-public class WizardBranch extends WizardStep implements NamingContainer {
+        family = "com.sun.webui.jsf.WizardBranch",
+        displayName = "WizardBranch",
+        tagName = "wizardBranch",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_wizard_branch",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_wizard_branch_props")
+        //CHECKSTYLE:ON
+public final class WizardBranch extends WizardStep implements NamingContainer {
 
     /**
-     * Construct a new <code>WizardBranchBase</code>.
+     * Text that describes to users what happens when they make a selection in
+     * the step that sets up the branch. This text is displayed in the Steps
+     * pane when that step is initially displayed, before the user proceeds
+     * through the step.
+     */
+    @Property(name = "placeholderText")
+    private String placeholderText = null;
+
+    /**
+     * The taken attribute is used to evaluate whether the steps of the branch
+     * are displayed. If taken is true, the branch is followed, and the child
+     * {@code webuijsf:wizardBranchSteps} tags are evaluated. The taken
+     * attribute should be a JavaServer Faces EL expression that could use the
+     * user's response in a previous step to determine whether the branch should
+     * be followed.
+     */
+    @Property(name = "taken")
+    private boolean taken = false;
+
+    /**
+     * Taken set flag.
+     */
+    private boolean takenSet = false;
+
+    /**
+     * Construct a new {@code WizardBranchBase}.
      */
     public WizardBranch() {
         super();
-    // No renderertype
-    //setRendererType("com.sun.webui.jsf.WizardBranch");
+        // No renderertype
+        //setRendererType("com.sun.webui.jsf.WizardBranch");
     }
 
-    /**
-     * Return the family for this component, <code>
-     * com.sun.webui.jsf.WizardBranch</code>.
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.WizardBranch";
     }
 
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -173,76 +193,57 @@ public class WizardBranch extends WizardStep implements NamingContainer {
         return super.getTitle();
     }
 
-    // placeholderText
     /**
-     * Text that describes to users what happens when they make a selection in 
-     * the step that sets up the branch.  This text is displayed in the Steps 
-     * pane when that step is initially displayed, before the user proceeds 
+     * Text that describes to users what happens when they make a selection in
+     * the step that sets up the branch.  This text is displayed in the Steps
+     * pane when that step is initially displayed, before the user proceeds
      * through the step.
-     */
-    @Property(name = "placeholderText")
-    private String placeholderText = null;
-
-    /**
-     * Text that describes to users what happens when they make a selection in 
-     * the step that sets up the branch.  This text is displayed in the Steps 
-     * pane when that step is initially displayed, before the user proceeds 
-     * through the step.
+     * @return String
      */
     public String getPlaceholderText() {
         if (this.placeholderText != null) {
             return this.placeholderText;
         }
-        ValueExpression _vb = getValueExpression("placeholderText");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("placeholderText");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * Text that describes to users what happens when they make a selection in 
-     * the step that sets up the branch.  This text is displayed in the Steps 
-     * pane when that step is initially displayed, before the user proceeds 
+     * Text that describes to users what happens when they make a selection in
+     * the step that sets up the branch.  This text is displayed in the Steps
+     * pane when that step is initially displayed, before the user proceeds
      * through the step.
      * @see #getPlaceholderText()
+     * @param newPlaceholderText placeholderText
      */
-    public void setPlaceholderText(String placeholderText) {
-        this.placeholderText = placeholderText;
+    public void setPlaceholderText(final String newPlaceholderText) {
+        this.placeholderText = newPlaceholderText;
     }
 
-    // taken
     /**
-     * The taken attribute is used to evaluate whether the steps of
-     * the branch are displayed. If taken is true, the branch is followed, and 
-     * the child <code>webuijsf:wizardBranchSteps</code> tags are evaluated.
-     * The taken attribute should be a JavaServer Faces EL expression that
-     * could use the user's response in a previous step to determine whether
-     * the branch should be followed.
-     */
-    @Property(name = "taken")
-    private boolean taken = false;
-    private boolean taken_set = false;
-
-    /**
-     * The taken attribute is used to evaluate whether the steps of
-     * the branch are displayed. If taken is true, the branch is followed, and 
-     * the child <code>webuijsf:wizardBranchSteps</code> tags are evaluated.
-     * The taken attribute should be a JavaServer Faces EL expression that
-     * could use the user's response in a previous step to determine whether
-     * the branch should be followed.
+     * The taken attribute is used to evaluate whether the steps of the branch
+     * are displayed.If taken is true, the branch is followed, and the child
+     * {@code webuijsf:wizardBranchSteps} tags are evaluated. The taken
+     * attribute should be a JavaServer Faces EL expression that could use the
+     * user's response in a previous step to determine whether the branch should
+     * be followed.
+     *
+     * @return {@code boolean}
      */
     public boolean isTaken() {
-        if (this.taken_set) {
+        if (this.takenSet) {
             return this.taken;
         }
-        ValueExpression _vb = getValueExpression("taken");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("taken");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
@@ -250,40 +251,45 @@ public class WizardBranch extends WizardStep implements NamingContainer {
 
     /**
      * The taken attribute is used to evaluate whether the steps of
-     * the branch are displayed. If taken is true, the branch is followed, and 
-     * the child <code>webuijsf:wizardBranchSteps</code> tags are evaluated.
-     * The taken attribute should be a JavaServer Faces EL expression that 
-     * could use the user's response in a previous step to determine whether 
+     * the branch are displayed. If taken is true, the branch is followed, and
+     * the child {@code webuijsf:wizardBranchSteps} tags are evaluated.
+     * The taken attribute should be a JavaServer Faces EL expression that
+     * could use the user's response in a previous step to determine whether
      * the branch should be followed.
      * @see #isTaken()
+     * @param newTaken taken
      */
-    public void setTaken(boolean taken) {
-        this.taken = taken;
-        this.taken_set = true;
+    public void setTaken(final boolean newTaken) {
+        this.taken = newTaken;
+        this.takenSet = true;
     }
 
-    /**
-     * Restore the state of this component.
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.placeholderText = (String) _values[1];
-        this.taken = ((Boolean) _values[2]).booleanValue();
-        this.taken_set = ((Boolean) _values[3]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.placeholderText = (String) values[1];
+        this.taken = ((Boolean) values[2]);
+        this.takenSet = ((Boolean) values[3]);
     }
 
-    /**
-     * Save the state of this component.
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[4];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.placeholderText;
-        _values[2] = this.taken ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.taken_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[4];
+        values[0] = super.saveState(context);
+        values[1] = this.placeholderText;
+        if (this.taken) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.takenSet) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        return values;
     }
 }

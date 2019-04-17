@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,37 +21,79 @@ import java.util.Map;
 /**
  * Represents an attribute for a property declared on a class in the current
  * compilation unit.
- *
- * @author gjmurphy
  */
 public final class DeclaredAttributeInfo implements AttributeInfo {
 
-    static final String NAME = "name";
-    static final String IS_REQUIRED = "isRequired";
-    static final String IS_BINDABLE = "isBindable";
+    /**
+     * Attribute name.
+     */
+    private static final String NAME = "name";
 
-    Map<String, Object> annotationValueMap;
-    PropertyInfo parentPropertyInfo;
+    /**
+     * Required flag key.
+     */
+    private static final String IS_REQUIRED = "isRequired";
 
-    DeclaredAttributeInfo(PropertyInfo parentPropertyInfo) {
-        this(null, parentPropertyInfo);
+    /**
+     * Bind-able flag key.
+     */
+    private static final String IS_BINDABLE = "isBindable";
+
+    /**
+     * Annotation value map.
+     */
+    private final Map<String, Object> annotationValueMap;
+
+    /**
+     * Parent property info.
+     */
+    private PropertyInfo parentPropertyInfo;
+
+    /**
+     * Method signature.
+     */
+    private String methodSignature;
+
+    /**
+     * Description.
+     */
+    private String description;
+
+    /**
+     * Create a new instance.
+     * @param parentPropInfo parent property info
+     */
+    DeclaredAttributeInfo(final PropertyInfo parentPropInfo) {
+        this(null, parentPropInfo);
     }
 
-    DeclaredAttributeInfo(AttributeInfo attributeInfo) {
+    /**
+     * Create a new instance.
+     * @param attrInfo attribute info
+     */
+    DeclaredAttributeInfo(final AttributeInfo attrInfo) {
         this.annotationValueMap = new HashMap<String, Object>();
-        this.annotationValueMap.put(NAME, attributeInfo.getName());
-        this.annotationValueMap.put(IS_REQUIRED, attributeInfo.isRequired());
-        this.annotationValueMap.put(IS_BINDABLE, attributeInfo.isBindable());
-        this.setDescription(attributeInfo.getDescription());
-        this.setMethodSignature(attributeInfo.getMethodSignature());
-        if (attributeInfo instanceof DeclaredAttributeInfo) {
-            this.parentPropertyInfo = ((DeclaredAttributeInfo) attributeInfo).parentPropertyInfo;
+        this.annotationValueMap.put(NAME, attrInfo.getName());
+        this.annotationValueMap.put(IS_REQUIRED, attrInfo.isRequired());
+        this.annotationValueMap.put(IS_BINDABLE, attrInfo.isBindable());
+        this.setDescription(attrInfo.getDescription());
+        this.setMethodSignature(attrInfo.getMethodSignature());
+        if (attrInfo instanceof DeclaredAttributeInfo) {
+            this.parentPropertyInfo =
+                    ((DeclaredAttributeInfo) attrInfo).parentPropertyInfo;
         }
     }
 
-    DeclaredAttributeInfo(Map<String, Object> annotationValueMap, PropertyInfo parentPropertyInfo) {
-        this.annotationValueMap = annotationValueMap;
-        this.parentPropertyInfo = parentPropertyInfo;
+    /**
+     * Create a new instance.
+     * @param annotValueMap annotation value map
+     * @param parentPropInfo parent property info
+     */
+    DeclaredAttributeInfo(final Map<String, Object> annotValueMap,
+            final PropertyInfo parentPropInfo) {
+
+        this.annotationValueMap = annotValueMap;
+        this.parentPropertyInfo = parentPropInfo;
     }
 
     @Override
@@ -60,7 +102,10 @@ public final class DeclaredAttributeInfo implements AttributeInfo {
             return this.parentPropertyInfo.getName();
         }
         String name = (String) this.annotationValueMap.get(NAME);
-        return name == null ? this.parentPropertyInfo.getName() : name;
+        if (name == null) {
+            return this.parentPropertyInfo.getName();
+        }
+        return name;
     }
 
     @Override
@@ -79,29 +124,34 @@ public final class DeclaredAttributeInfo implements AttributeInfo {
         return !Boolean.FALSE.equals(this.annotationValueMap.get(IS_BINDABLE));
     }
 
-    private String methodSignature;
-
     @Override
     public String getMethodSignature() {
         return this.methodSignature;
     }
 
-    void setMethodSignature(String methodSignature) {
-        this.methodSignature = methodSignature;
+    /**
+     * Set the method signature.
+     * @param methodSig new method signature
+     */
+    void setMethodSignature(final String methodSig) {
+        this.methodSignature = methodSig;
     }
-
-    private String description;
 
     @Override
     public String getDescription() {
         if (description == null && this.parentPropertyInfo != null) {
-            return ((DeclaredPropertyInfo) this.parentPropertyInfo).getDocComment();
+            return ((DeclaredPropertyInfo) this.parentPropertyInfo)
+                    .getDocComment();
         }
         return this.description;
     }
 
-    void setDescription(String description) {
-        this.description = description;
+    /**
+     * Set the attribute description.
+     * @param desc new description
+     */
+    void setDescription(final String desc) {
+        this.description = desc;
     }
 
     @Override

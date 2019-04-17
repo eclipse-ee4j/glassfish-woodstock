@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -15,7 +15,6 @@
  */
 package javax.faces.component;
 
-import com.sun.rave.designtime.Constants;
 import com.sun.rave.designtime.markup.AttributeDescriptor;
 import java.beans.BeanDescriptor;
 import java.beans.IntrospectionException;
@@ -24,37 +23,73 @@ import java.beans.SimpleBeanInfo;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static com.sun.rave.designtime.Constants.BeanDescriptor.INSTANCE_NAME;
+import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR;
+import static com.sun.rave.designtime.Constants.PropertyDescriptor.CATEGORY;
+import static javax.faces.component.CategoryDescriptorsConstants.ADVANCED;
+
 /**
  * BeanInfo for {@link javax.faces.component.UIComponentBase}.
- *
- * @author gjmurphy
  */
 public class UIComponentBaseBeanInfo extends SimpleBeanInfo {
 
-    protected static ResourceBundle resourceBundle
-            = ResourceBundle.getBundle("javax.faces.component.bundle", Locale.getDefault());
+    /**
+     * Resource bundle.
+     */
+    protected static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle("javax.faces.component.bundle", Locale.getDefault());
 
-    private Class componentClass;
-    private String unqualifiedClassName;
+    /**
+     * Component class.
+     */
+    private final Class componentClass;
 
+    /**
+     * Unqualified class name.
+     */
+    private final String unqualifiedClassName;
+
+    /**
+     * The instance name.
+     */
+    private String instanceName;
+
+    /**
+     * The bean descriptor.
+     */
+    private BeanDescriptor beanDescriptor;
+
+    /**
+     * The property descriptors.
+     */
+    private PropertyDescriptor[] propertyDescriptors;
+
+    /**
+     * Create a new instance.
+     */
     public UIComponentBaseBeanInfo() {
         this.componentClass = UIComponentBase.class;
         String className = componentClass.getName();
-        unqualifiedClassName = className.substring(className.lastIndexOf(".") + 1);
+        unqualifiedClassName = className.substring(className.lastIndexOf(".")
+                + 1);
     }
 
     /**
-     * Constructor for use by extending classes.
-     * @param componentClass
+     * Create a new instance.
+     *
+     * @param compClass component class
      */
-    protected UIComponentBaseBeanInfo(Class componentClass) {
-        this.componentClass = componentClass;
-        String className = componentClass.getName();
-        unqualifiedClassName = className.substring(className.lastIndexOf(".") + 1);
+    protected UIComponentBaseBeanInfo(final Class compClass) {
+        this.componentClass = compClass;
+        String className = compClass.getName();
+        unqualifiedClassName = className.substring(className.lastIndexOf(".")
+                + 1);
     }
 
-    private String instanceName;
-
+    /**
+     * Get the instance name.
+     * @return String
+     */
     protected String getInstanceName() {
         if (instanceName == null) {
             String str = this.componentClass.getName();
@@ -66,25 +101,27 @@ public class UIComponentBaseBeanInfo extends SimpleBeanInfo {
         return instanceName;
     }
 
-    BeanDescriptor beanDescriptor;
-
+    /**
+     * This implementation lazily creates a new bean descriptor instance.
+     * @return BeanDescriptor
+     */
     @Override
     public BeanDescriptor getBeanDescriptor() {
         if (beanDescriptor != null) {
             return beanDescriptor;
         }
         beanDescriptor = new BeanDescriptor(componentClass);
-        String instanceName = getInstanceName();
-        if (instanceName != null) {
-            beanDescriptor.setValue(
-                    com.sun.rave.designtime.Constants.BeanDescriptor.INSTANCE_NAME,
-                    instanceName);
+        String name = getInstanceName();
+        if (name != null) {
+            beanDescriptor.setValue(INSTANCE_NAME, name);
         }
         return beanDescriptor;
     }
 
-    private PropertyDescriptor[] propertyDescriptors;
-
+    /**
+     * This implementation lazily creates the property descriptors.
+     * @return PropertyDescriptor[]
+     */
     @Override
     public PropertyDescriptor[] getPropertyDescriptors() {
 
@@ -93,25 +130,31 @@ public class UIComponentBaseBeanInfo extends SimpleBeanInfo {
         }
 
         try {
-            AttributeDescriptor attrib = null;
-
-            PropertyDescriptor prop_id = new PropertyDescriptor("id", UIComponent.class, "getId", "setId");
-            prop_id.setDisplayName(resourceBundle.getString("UIComponent_id_DisplayName"));
-            prop_id.setShortDescription(resourceBundle.getString("UIComponent_id_Description"));
-            prop_id.setHidden(true);
+            AttributeDescriptor attrib;
+            PropertyDescriptor propId = new PropertyDescriptor("id",
+                    UIComponent.class, "getId", "setId");
+            propId.setDisplayName(RESOURCE_BUNDLE
+                    .getString("UIComponent_id_DisplayName"));
+            propId.setShortDescription(RESOURCE_BUNDLE
+                    .getString("UIComponent_id_Description"));
+            propId.setHidden(true);
             attrib = new AttributeDescriptor("id", false, null, true);
-            prop_id.setValue(Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR, attrib);
+            propId.setValue(ATTRIBUTE_DESCRIPTOR, attrib);
 
-            PropertyDescriptor prop_rendered = new PropertyDescriptor("rendered", UIComponent.class, "isRendered", "setRendered");
-            prop_rendered.setDisplayName(resourceBundle.getString("UIComponent_rendered_DisplayName"));
-            prop_rendered.setShortDescription(resourceBundle.getString("UIComponent_rendered_Description"));
+            PropertyDescriptor propRendered = new PropertyDescriptor(
+                    "rendered", UIComponent.class, "isRendered",
+                    "setRendered");
+            propRendered.setDisplayName(RESOURCE_BUNDLE
+                    .getString("UIComponent_rendered_DisplayName"));
+            propRendered.setShortDescription(RESOURCE_BUNDLE
+                    .getString("UIComponent_rendered_Description"));
             attrib = new AttributeDescriptor("rendered", false, null, true);
-            prop_rendered.setValue(Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR, attrib);
-            prop_rendered.setValue(Constants.PropertyDescriptor.CATEGORY, CategoryDescriptorsConstants.ADVANCED);
+            propRendered.setValue(ATTRIBUTE_DESCRIPTOR, attrib);
+            propRendered.setValue(CATEGORY, ADVANCED);
 
             propertyDescriptors = new PropertyDescriptor[]{
-                prop_id,
-                prop_rendered
+                propId,
+                propRendered
             };
             return propertyDescriptors;
 
@@ -119,20 +162,19 @@ public class UIComponentBaseBeanInfo extends SimpleBeanInfo {
             e.printStackTrace();
             return null;
         }
-
     }
 
     /**
      * Utility method that returns a class loaded by name via the class-loader.
+     *
      * @param name class to load
      * @return Class
      */
-    protected static Class loadClass(String name) {
+    protected static Class loadClass(final String name) {
         try {
             return Class.forName(name);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

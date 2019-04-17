@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,74 +13,90 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 import com.sun.webui.jsf.component.WizardStep;
 
 /**
- * Defines the interface of an object used to represent a WizardStep
- * for use in a WizardStepList, and for rendering a step list in the
- * Steps pane of a rendered Wizard component.
+ * Defines the interface of an object used to represent a WizardStep for use in
+ * a WizardStepList, and for rendering a step list in the Steps pane of a
+ * rendered Wizard component.
  */
 public interface WizardStepListItem {
 
     /**
-     * Returns true if this step is a substep.
+     * Returns {@code true} if this step is a sub-step.
+     *
+     * @return {@code true} if this step is a sub-step, {@code false} otherwise
      */
-    public boolean isSubstep();
+    boolean isSubstep();
 
     /**
-     * Returns true if this step is a branch step.
+     * Returns {@code true} if this step is a branch step.
+     *
+     * @return {@code boolean}
      */
-    public boolean isBranch();
+    boolean isBranch();
 
     /**
      * Returns the text that should be displayed describing this branch step.
+     *
+     * @return String
      */
-    public String getPlaceholderText();
+    String getPlaceholderText();
 
     /**
      * Returns the number of this step in the list of steps.
+     *
+     * @return String
      */
-    public String getStepNumberString();
+    String getStepNumberString();
 
     /**
-     * Returns true if this step is the current step.
+     * Returns {@code true} if this step is the current step.
+     *
+     * @return {@code true} if this step is the current step, {@code false}
+     * otherwise
      */
-    public boolean isCurrentStep();
+    boolean isCurrentStep();
 
     /**
-     * If <code>currentStep</code> is true this WizardStepListItem represents
-     * the current step in the step list. If false, it is not the current
+     * If {@code currentStep} is {@code true} this WizardStepListItem represents
+     * the current step in the step list. If false, it is not the current step.
+     *
+     * @param currentStep {@code true} if this WizardStepListItem is the current
      * step.
-     *
-     * @param currentStep true if this WizardStepListItem is the current step.
      */
-    public void setCurrentStep(boolean currentStep);
+    void setCurrentStep(boolean currentStep);
 
     /**
-     * Returns true if this step can be navigated to out of sequence.
+     * Returns {@code true} if this step can be navigated to out of sequence.
+     *
+     * @return {@code true} if this step can be navigated to out of sequence,
+     * {@code false} otherwise
      */
-    public boolean canGotoStep();
+    boolean canGotoStep();
 
     /**
-     * If <code>canGotoStep</code> is true, this step can be navigated to
-     * out of sequence.
+     * If {@code canGotoStep} is true, this step can be navigated to out of
+     * sequence.
      *
-     * @param canGotoStep If true this step can be reached out of sequence.
+     * @param canGotoStep If {@code true} this step can be reached out of
+     * sequence.
      */
-    public void setCanGotoStep(boolean canGotoStep);
+    void setCanGotoStep(boolean canGotoStep);
 
     /**
      * Return the WizardStep instance that this WizardStepListItem represents.
+     *
+     * @return WizardStep
      */
-    public WizardStep getStep();
+    WizardStep getStep();
 
     /**
      * Set the WizardStep instance this WizardStepListItem represents.
      *
      * @param step The WizardStep instance this WizardStepListItem represents.
      */
-    public void setStep(WizardStep step);
+    void setStep(WizardStep step);
 }

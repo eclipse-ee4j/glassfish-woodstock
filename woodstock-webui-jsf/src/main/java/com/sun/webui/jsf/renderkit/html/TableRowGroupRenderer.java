@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -32,87 +31,78 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.faces.component.NamingContainer;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UINamingContainer;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 /**
  * This class renders TableRowGroup components.
  * <p>
- * The TableRowGroup component provides a layout mechanism for displaying rows 
- * of data. UI guidelines describe specific behavior that can applied to the 
- * rows and columns of data such as sorting, filtering, pagination, selection, 
- * and custom user actions. In addition, UI guidelines also define sections of 
- * the table that can be used for titles, row group headers, and placement of 
+ * The TableRowGroup component provides a layout mechanism for displaying rows
+ * of data. UI guidelines describe specific behavior that can applied to the
+ * rows and columns of data such as sorting, filtering, pagination, selection,
+ * and custom user actions. In addition, UI guidelines also define sections of
+ * the table that can be used for titles, row group headers, and placement of
  * pre-defined and user defined actions.
  * </p><p>
  * Note: Column headers and footers are rendered by TableRowGroupRenderer. Table
  * column footers are rendered by TableRenderer.
- * </p><p>
- * Note: To see the messages logged by this class, set the following global
- * defaults in your JDK's "jre/lib/logging.properties" file.
- * </p><p><pre>
+ * </p>
+ * <p>
+ * <pre>
  * java.util.logging.ConsoleHandler.level = FINE
  * com.sun.webui.jsf.renderkit.html.TableRowGroupRenderer.level = FINE
- * </pre></p><p>
+ * </pre>
+ * </p>
+ * <p>
  * See TLD docs for more information.
  * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableRowGroup"))
-public class TableRowGroupRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableRowGroup"))
+public final class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      * <p>
      * Note: The BGCOLOR attribute is deprecated (in the HTML 4.0 spec) in favor
      * of style sheets. In addition, the DIR and LANG attributes are not
-     * cuurently supported.
+     * currently supported.
      * </p>
      */
-    private static final String stringAttributes[] = {
-        "align", //NOI18N
-        "bgColor", //NOI18N
-        "char", //NOI18N
-        "charOff", //NOI18N
-        "dir", //NOI18N
-        "lang", //NOI18N
-        "onClick", //NOI18N
-        "onDblClick", //NOI18N
-        "onKeyDown", //NOI18N
-        "onKeyPress", //NOI18N
-        "onKeyUp", //NOI18N
-        "onMouseDown", //NOI18N
-        "onMouseUp", //NOI18N
-        "onMouseMove", //NOI18N
-        "onMouseOut", //NOI18N
-        "onMouseOver", //NOI18N
-        "style", //NOI18N
-        "valign"}; //NOI18N
+    private static final String[] STRING_ATTRIBUTES = {
+        "align",
+        "bgColor",
+        "char",
+        "charOff",
+        "dir",
+        "lang",
+        "onClick",
+        "onDblClick",
+        "onKeyDown",
+        "onKeyPress",
+        "onKeyUp",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver",
+        "style",
+        "valign"
+    };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Render the beginning of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeBegin", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeBegin",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeBegin", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeBegin", "Component not rendered, nothing to display");
             return;
         }
 
@@ -127,29 +117,21 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
             renderColumnHeaders(context, group, writer);
             renderGroupHeader(context, group, writer);
         }
-        group.setRowKey(null); // Clean up.
+        // Clean up.
+        group.setRowKey(null);
     }
 
-    /**
-     * Render the children of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be decoded.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeChildren", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeChildren",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeChildren", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeChildren", "Component not rendered, nothing to display");
             return;
         }
 
@@ -158,7 +140,7 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
         // Render empty data message.
         if (group.getRowCount() == 0) {
-            log("encodeChildren", "Cannot render data, row count is zero"); //NOI18N
+            log("encodeChildren", "Cannot render data, row count is zero");
             renderEmptyDataColumn(context, group, writer);
             return;
         }
@@ -166,7 +148,7 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         // Get rendered row keys.
         RowKey[] rowKeys = group.getRenderedRowKeys();
         if (rowKeys == null) {
-            log("encodeChildren", "Cannot render data, RowKey array is null"); //NOI18N
+            log("encodeChildren", "Cannot render data, RowKey array is null");
             return;
         }
 
@@ -174,7 +156,7 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         for (int i = 0; i < rowKeys.length; i++) {
             group.setRowKey(rowKeys[i]);
             if (!group.isRowAvailable()) {
-                log("encodeChildren", "Cannot render data, row not available"); //NOI18N
+                log("encodeChildren", "Cannot render data, row not available");
                 break;
             }
 
@@ -186,8 +168,8 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
             while (kids.hasNext()) {
                 TableColumn col = (TableColumn) kids.next();
                 if (!col.isRendered()) {
-                    log("encodeChildren", //NOI18N
-                            "TableColumn not rendered, nothing to display"); //NOI18N
+                    log("encodeChildren",
+                            "TableColumn not rendered, nothing to display");
                     continue;
                 }
                 // Render column.
@@ -198,26 +180,17 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         group.setRowKey(null); // Clean up.
     }
 
-    /**
-     * Render the ending of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeEnd", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeEnd",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeEnd", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeEnd", "Component not rendered, nothing to display");
             return;
         }
 
@@ -226,8 +199,9 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
         // Do not render footers for an empty table.
         if (group.getRowCount() == 0) {
-            log("encodeEnd", //NOI18N
-                    "Column, group, and table footers not rendered, row count is zero"); //NOI18N
+            log("encodeEnd",
+                    "Column, group, and table footers not rendered, row count"
+                            + " is zero");
             return;
         }
 
@@ -245,26 +219,19 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         if (table.getRowCount() > 0) {
             renderTableColumnFooters(context, group, writer);
         } else {
-            log("encodeEnd", //NOI18N
-                    "Table column footers not rendered, row count is zero"); //NOI18N
+            log("encodeEnd",
+                    "Table column footers not rendered, row count is zero");
         }
 
-        group.setRowKey(null); // Clean up.
+        // Clean up.
+        group.setRowKey(null);
     }
 
-    /**
-     * Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns false.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Empty data methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render empty data message for TableRowGroup components.
      *
@@ -274,26 +241,25 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEmptyDataColumn(FacesContext context,
-            TableRowGroup component, ResponseWriter writer) throws IOException {
+    protected void renderEmptyDataColumn(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEmptyDataColumn", //NOI18N
-                    "Cannot render empty data column, TableRowGroup is null"); //NOI18N
+            log("renderEmptyDataColumn",
+                    "Cannot render empty data column, TableRowGroup is null");
             return;
         }
         // Render row start.
         renderEnclosingTagStart(context, component, writer, -1);
 
         // Render empty data column.
-        writer.writeText("\n", null); //NOI18N       
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(component.getEmptyDataColumn(),
                 context);
         renderEnclosingTagEnd(writer);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Column methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render column footers for TableRowGroup components.
      * <p>
@@ -335,17 +301,20 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      * | A | 1 | 2 | C | 3 | 4 | 5 | 6 | E |
      *
      * </pre>
+     *
      * @param context FacesContext for the current request.
      * @param component TableRowGroup to be rendered.
      * @param writer ResponseWriter to which the component should be rendered.
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderColumnFooters(FacesContext context,
-            TableRowGroup component, ResponseWriter writer) throws IOException {
+    protected void renderColumnFooters(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderColumnFooters", //NOI18N
-                    "Cannot render column footers, TableRowGroup is null"); //NOI18N
+            log("renderColumnFooters",
+                    "Cannot render column footers, TableRowGroup is null");
             return;
         }
 
@@ -358,45 +327,48 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         for (int c = 0; c < map.size(); c++) {
             // The default is to show one level only.
             if (c > 0 && !component.isMultipleColumnFooters()) {
-                log("renderColumnFooters", //NOI18N
-                        "Multiple column footers not rendered, nothing to display"); //NOI18N
+                log("renderColumnFooters",
+                        "Multiple column footers not rendered, nothing to"
+                                + " display");
                 break;
             }
 
-            // Flag to keep from rendering empty tag when no headers are displayed.
+            // Flag to keep from rendering empty tag when no headers are
+            // displayed.
             boolean renderStartElement = true;
 
             // Get List of nested TableColumn children.
-            List list = (List) map.get(new Integer(c));
+            List list = (List) map.get(c);
             for (int i = 0; i < list.size(); i++) {
                 TableColumn col = (TableColumn) list.get(i);
                 if (!col.isRendered()) {
-                    log("renderColumnFooters", //NOI18N
-                            "TableColumn not rendered, nothing to display"); //NOI18N
+                    log("renderColumnFooters",
+                            "TableColumn not rendered, nothing to display");
                     continue;
                 }
 
                 // Get group footer.
                 UIComponent footer = col.getColumnFooter();
                 if (!(footer != null && footer.isRendered())) {
-                    log("renderColumnFooters", //NOI18N
-                            "Column footer not rendered, nothing to display"); //NOI18N
+                    log("renderColumnFooters",
+                            "Column footer not rendered, nothing to display");
                     continue;
                 }
 
                 // Render start element.
                 if (renderStartElement) {
                     renderStartElement = false;
-                    writer.writeText("\n", null); //NOI18N
-                    writer.startElement("tr", component); //NOI18N
-                    writer.writeAttribute("id", getId(component, //NOI18N
-                            TableRowGroup.COLUMN_FOOTER_BAR_ID +
-                            NamingContainer.SEPARATOR_CHAR + c), null);
+                    writer.writeText("\n", null);
+                    writer.startElement("tr", component);
+                    writer.writeAttribute("id", getId(component,
+                            TableRowGroup.COLUMN_FOOTER_BAR_ID
+                            + UINamingContainer.getSeparatorChar(context) + c),
+                            null);
 
                     // Render style class.
                     if (component.isCollapsed()) {
-                        writer.writeAttribute("class", //NOI18N
-                                theme.getStyleClass(ThemeStyles.HIDDEN), null); //NOI18N
+                        writer.writeAttribute("class",
+                                theme.getStyleClass(ThemeStyles.HIDDEN), null);
                     }
                 }
                 // Render footer.
@@ -405,7 +377,7 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
             // If start element was rendered, this value will be false.
             if (!renderStartElement) {
-                writer.endElement("tr"); //NOI18N
+                writer.endElement("tr");
             }
         }
     }
@@ -444,17 +416,20 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      * </table>
      *
      * </pre>
+     *
      * @param context FacesContext for the current request.
      * @param component TableRowGroup to be rendered.
      * @param writer ResponseWriter to which the component should be rendered.
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderColumnHeaders(FacesContext context,
-            TableRowGroup component, ResponseWriter writer) throws IOException {
+    protected void renderColumnHeaders(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderColumnHeaders", //NOI18N
-                    "Cannot render column headers, TableRowGroup is null"); //NOI18N
+            log("renderColumnHeaders",
+                    "Cannot render column headers, TableRowGroup is null");
             return;
         }
 
@@ -465,7 +440,8 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         Theme theme = getTheme();
         Table table = component.getTableAncestor();
         for (int c = 0; c < map.size(); c++) {
-            // Flag to keep from rendering empty tag when no headers are displayed.
+            // Flag to keep from rendering empty tag when no headers are
+            // displayed.
             boolean renderStartElement = true;
 
             // Get List of nested TableColumn children.
@@ -473,38 +449,41 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
             for (int i = 0; i < list.size(); i++) {
                 TableColumn col = (TableColumn) list.get(i);
                 if (!col.isRendered()) {
-                    log("renderColumnHeaders", //NOI18N
-                            "TableColumn not rendered, nothing to display"); //NOI18N
+                    log("renderColumnHeaders",
+                            "TableColumn not rendered, nothing to display");
                     continue;
                 }
 
                 // Get group header.
                 UIComponent header = col.getColumnHeader();
                 if (!(header != null && header.isRendered())) {
-                    log("renderColumnHeaders", //NOI18N
-                            "Column header not rendered, nothing to display"); //NOI18N
+                    log("renderColumnHeaders",
+                            "Column header not rendered, nothing to display");
                     continue;
                 }
 
                 // Render start element.
                 if (renderStartElement) {
                     renderStartElement = false;
-                    writer.writeText("\n", null); //NOI18N
-                    writer.startElement("tr", component); //NOI18N
-                    writer.writeAttribute("id", getId(component, //NOI18N
-                            TableRowGroup.COLUMN_HEADER_BAR_ID +
-                            NamingContainer.SEPARATOR_CHAR + c), null);
+                    writer.writeText("\n", null);
+                    writer.startElement("tr", component);
+                    writer.writeAttribute("id", getId(component,
+                            TableRowGroup.COLUMN_HEADER_BAR_ID
+                            + UINamingContainer.getSeparatorChar(context) + c),
+                            null);
 
                     // Render style class.
                     //
-                    // Note: We must determine if column headers are available for 
-                    // all or individual TableRowGroup components. That is, there
-                    // could be a single column header for all row groups or one for
-                    // each group. Thus, headers may only be hidden when there is
-                    // more than one column header.
-                    if (component.isCollapsed() && table != null && table.getColumnHeadersCount() > 1) {
-                        writer.writeAttribute("class", //NOI18N
-                                theme.getStyleClass(ThemeStyles.HIDDEN), null); //NOI18N
+                    // Note: We must determine if column headers are available
+                    // for all or individual TableRowGroup components. That is,
+                    // there could be a single column header for all row groups
+                    // or one for each group. Thus, headers may only be hidden
+                    // when there is more than one column header.
+                    if (component.isCollapsed()
+                            && table != null
+                            && table.getColumnHeadersCount() > 1) {
+                        writer.writeAttribute("class",
+                                theme.getStyleClass(ThemeStyles.HIDDEN), null);
                     }
                 }
                 // Render header.
@@ -513,7 +492,7 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
             // If start element was rendered, this value will be false.
             if (!renderStartElement) {
-                writer.endElement("tr"); //NOI18N
+                writer.endElement("tr");
             }
         }
     }
@@ -559,17 +538,21 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      * | A | 1 | 2 | C | 3 | 4 | 5 | 6 | E |
      *
      * </pre>
+     *
      * @param context FacesContext for the current request.
      * @param component TableRowGroup to be rendered.
      * @param writer ResponseWriter to which the component should be rendered.
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderTableColumnFooters(FacesContext context,
-            TableRowGroup component, ResponseWriter writer) throws IOException {
+    protected void renderTableColumnFooters(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderTableColumnFooters", //NOI18N
-                    "Cannot render table column footers, TableRowGroup is null"); //NOI18N
+            log("renderTableColumnFooters",
+                    "Cannot render table column footers, TableRowGroup"
+                            + " is null");
             return;
         }
 
@@ -581,52 +564,58 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         Table table = component.getTableAncestor();
         for (int c = 0; c < map.size(); c++) {
             // The default is to show one level only.
-            if (c > 0 && table != null && !component.isMultipleTableColumnFooters()) {
-                log("renderTableColumnFooters", //NOI18N
-                        "Multiple table column footers not rendered, nothing to display"); //NOI18N
+            if (c > 0 && table != null
+                    && !component.isMultipleTableColumnFooters()) {
+                log("renderTableColumnFooters",
+                        "Multiple table column footers not rendered, nothing"
+                                + " to display");
                 break;
             }
 
-            // Flag to keep from rendering empty tag when no headers are displayed.
+            // Flag to keep from rendering empty tag when no headers are
+            // displayed.
             boolean renderStartElement = true;
 
             // Get List of nested TableColumn children.
-            List list = (List) map.get(new Integer(c));
+            List list = (List) map.get(c);
             for (int i = 0; i < list.size(); i++) {
                 TableColumn col = (TableColumn) list.get(i);
                 if (!col.isRendered()) {
-                    log("renderTableColumnFooters", //NOI18N
-                            "TableColumn not rendered, nothing to display"); //NOI18N
+                    log("renderTableColumnFooters",
+                            "TableColumn not rendered, nothing to display");
                     continue;
                 }
 
                 // Get group footer.
                 UIComponent footer = col.getTableColumnFooter();
                 if (!(footer != null && footer.isRendered())) {
-                    log("renderTableColumnFooters", //NOI18N
-                            "Table column footer not rendered, nothing to display"); //NOI18N
+                    log("renderTableColumnFooters",
+                            "Table column footer not rendered, nothing"
+                                    + " to display");
                     continue;
                 }
 
                 // Render start element.
                 if (renderStartElement) {
                     renderStartElement = false;
-                    writer.writeText("\n", null); //NOI18N
-                    writer.startElement("tr", component); //NOI18N
-                    writer.writeAttribute("id", getId(component, //NOI18N
-                            TableRowGroup.TABLE_COLUMN_FOOTER_BAR_ID +
-                            NamingContainer.SEPARATOR_CHAR + c), null);
+                    writer.writeText("\n", null);
+                    writer.startElement("tr", component);
+                    writer.writeAttribute("id", getId(component,
+                            TableRowGroup.TABLE_COLUMN_FOOTER_BAR_ID
+                            + UINamingContainer.getSeparatorChar(context) + c),
+                            null);
 
                     // Render style class.
                     //
-                    // Note: We must determine if column footers are available 
-                    // for all or individual TableRowGroup components. That is, 
-                    // there could be a single column footer for all row groups 
-                    // or one for each group. Thus, footers may only be hidden 
+                    // Note: We must determine if column footers are available
+                    // for all or individual TableRowGroup components. That is,
+                    // there could be a single column footer for all row groups
+                    // or one for each group. Thus, footers may only be hidden
                     // when there is more than one column footer.
-                    if (component.isCollapsed() && table.getColumnHeadersCount() > 1) {
-                        writer.writeAttribute("class", //NOI18N
-                                theme.getStyleClass(ThemeStyles.HIDDEN), null); //NOI18N
+                    if (component.isCollapsed()
+                            && table.getColumnHeadersCount() > 1) {
+                        writer.writeAttribute("class",
+                                theme.getStyleClass(ThemeStyles.HIDDEN), null);
                     }
                 }
                 // Render header.
@@ -635,14 +624,11 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
             // If start element was rendered, this value will be false.
             if (!renderStartElement) {
-                writer.endElement("tr"); //NOI18N
+                writer.endElement("tr");
             }
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Group methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render group footer for TableRowGroup components.
      *
@@ -652,37 +638,39 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderGroupFooter(FacesContext context,
-            TableRowGroup component, ResponseWriter writer) throws IOException {
+    protected void renderGroupFooter(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderGroupFooter", //NOI18N
-                    "Cannot render group footer, TableRowGroup is null"); //NOI18N
+            log("renderGroupFooter",
+                    "Cannot render group footer, TableRowGroup is null");
             return;
         }
 
         // Get group footer.
         UIComponent footer = component.getGroupFooter();
         if (!(footer != null && footer.isRendered())) {
-            log("renderGroupFooter", //NOI18N
-                    "Group footer not rendered, nothing to display"); //NOI18N
+            log("renderGroupFooter",
+                    "Group footer not rendered, nothing to display");
             return;
         }
 
         Theme theme = getTheme();
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", component); //NOI18N
-        writer.writeAttribute("id", getId(component, //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", component);
+        writer.writeAttribute("id", getId(component,
                 TableRowGroup.GROUP_FOOTER_BAR_ID), null);
 
         // Render style class.
         if (component.isCollapsed()) {
-            writer.writeAttribute("class", //NOI18N
-                    theme.getStyleClass(ThemeStyles.HIDDEN), null); //NOI18N
+            writer.writeAttribute("class",
+                    theme.getStyleClass(ThemeStyles.HIDDEN), null);
         }
 
         // Render footer.
         RenderingUtilities.renderComponent(footer, context);
-        writer.endElement("tr"); //NOI18N
+        writer.endElement("tr");
     }
 
     /**
@@ -694,36 +682,35 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderGroupHeader(FacesContext context,
-            TableRowGroup component, ResponseWriter writer) throws IOException {
+    protected void renderGroupHeader(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderGroupHeader", //NOI18N
-                    "Cannot render group header, TableRowGroup is null"); //NOI18N
+            log("renderGroupHeader",
+                    "Cannot render group header, TableRowGroup is null");
             return;
         }
 
         // Get group header.
         UIComponent header = component.getGroupHeader();
         if (!(header != null && header.isRendered())) {
-            log("renderGroupHeader", //NOI18N
-                    "Group header not rendered, nothing to display"); //NOI18N
+            log("renderGroupHeader",
+                    "Group header not rendered, nothing to display");
             return;
         }
 
         Theme theme = getTheme();
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", component); //NOI18N
-        writer.writeAttribute("id", getId(component, //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", component);
+        writer.writeAttribute("id", getId(component,
                 TableRowGroup.GROUP_HEADER_BAR_ID), null);
 
         // Render header.
         RenderingUtilities.renderComponent(header, context);
-        writer.endElement("tr"); //NOI18N
+        writer.endElement("tr");
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Enclosing tag methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render enclosing tag for TableRowGroup components.
      *
@@ -734,35 +721,48 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagStart(FacesContext context,
-            TableRowGroup component, ResponseWriter writer, int index)
-            throws IOException {
+    protected void renderEnclosingTagStart(final FacesContext context,
+            final TableRowGroup component, final ResponseWriter writer,
+            final int index) throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagStart", //NOI18N
-                    "Cannot render enclosing tag, TableRowGroup is null"); //NOI18N
+            log("renderEnclosingTagStart",
+                    "Cannot render enclosing tag, TableRowGroup is null");
             return;
         }
 
         Theme theme = getTheme();
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", component); //NOI18N
-        writer.writeAttribute("id", component.getClientId(context), null); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", component);
+        writer.writeAttribute("id", component.getClientId(context), null);
 
         // Get style class for nonempty table.
-        String styleClasses[] = getRowStyleClasses(component);
-        String styleClass = (index > -1 && styleClasses.length > 0)
-                ? styleClasses[index % styleClasses.length] : null;
+        String[] styleClasses = getRowStyleClasses(component);
+        String styleClass;
+        if (index > -1 && styleClasses.length > 0) {
+            styleClass = styleClasses[index % styleClasses.length];
+        } else {
+            styleClass = null;
+        }
 
         // Get selected style class.
         if (component.isSelected()) {
             String s = theme.getStyleClass(ThemeStyles.TABLE_SELECT_ROW);
-            styleClass = (styleClass != null) ? styleClass + " " + s : s; //NOI18N
+            if (styleClass != null) {
+                styleClass = styleClass + " " + s;
+            } else {
+                styleClass = s;
+            }
         }
 
         // Get collapsed style class.
         if (component.isCollapsed()) {
             String s = theme.getStyleClass(ThemeStyles.HIDDEN);
-            styleClass = (styleClass != null) ? styleClass + " " + s : s; //NOI18N
+            if (styleClass != null) {
+                styleClass = styleClass + " " + s;
+            } else {
+                styleClass = s;
+            }
         }
 
         // Render style class.
@@ -771,12 +771,12 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
 
         // Render tooltip.
         if (component.getToolTip() != null) {
-            writer.writeAttribute("title", component.getToolTip(), "toolTip"); //NOI18N
+            writer.writeAttribute("title", component.getToolTip(), "toolTip");
         }
 
         // Render pass through attributes.
         RenderingUtilities.writeStringAttributes(component, writer,
-                stringAttributes);
+                STRING_ATTRIBUTES);
     }
 
     /**
@@ -786,14 +786,11 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagEnd(ResponseWriter writer)
+    protected void renderEnclosingTagEnd(final ResponseWriter writer)
             throws IOException {
-        writer.endElement("tr"); //NOI18N
+        writer.endElement("tr");
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Helper method to get Map of List objects containing nested TableColumn
      * children.
@@ -809,37 +806,43 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      * In this case, components would be rendered on separate rows. Thus, we
      * need a map that contains List objects like so:
      * </p><pre>
-     * 
+     *
      * Key (row) 0: A, 1, 2, C, 3, 4, 5, 6, E
      * Key (row) 1: B, D
-     * 
+     *
      * </pre><p>
      * Obtaining the List for key 0 tells the renderer that A, 1, 2, C, 3, 4, 5,
      * 6, and E should be rendered for the first row. Obtaining the List for key
      * 1, tells the renderer that B and D should be rendered for the next row.
      * And so on...
      * </p>
+     *
      * @param component TableRowGroup to be rendered.
      * @return A Map of nested TableColumn children.
      */
-    private Map getColumnFooterMap(TableRowGroup component) {
-        Map<Integer, List<TableColumn>> map = getColumnHeaderMap(component); // Start with header map.
+    private Map getColumnFooterMap(final TableRowGroup component) {
+
+        // Start with header map.
+        Map<Integer, List<TableColumn>> map = getColumnHeaderMap(component);
         if (map.isEmpty()) {
-            log("getColumnFooterMap", "Cannot obtain column footer map"); //NOI18N
+            log("getColumnFooterMap", "Cannot obtain column footer map");
             return map;
         }
 
         // Invert map.
-        HashMap<Integer, List<TableColumn>> newMap = new HashMap<Integer, List<TableColumn>>();
+        HashMap<Integer, List<TableColumn>> newMap =
+                new HashMap<Integer, List<TableColumn>>();
         for (int i = 0; i < map.size(); i++) {
             newMap.put(i, map.get(map.size() - i - 1));
         }
 
         // Move all non-nested components to the top row.
         List<TableColumn> newList = newMap.get(0);
-        for (int c = 1; c < newMap.size(); c++) { // Top row is set already.
+        // Top row is set already.
+        for (int c = 1; c < newMap.size(); c++) {
             List list = (List) newMap.get(c);
-            for (int i = list.size() - 1; i >= 0; i--) { // Start with last component.
+            // Start with last component.
+            for (int i = list.size() - 1; i >= 0; i--) {
                 TableColumn col = (TableColumn) list.get(i);
                 if (col.getTableColumnChildren().hasNext()) {
                     // Do not move TableColumn components with nested children.
@@ -880,24 +883,28 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      * In this case, components would be rendered on separate rows. Thus, we
      * need a map that contains List objects like so:
      * </p><pre>
-     * 
+     *
      * Key (row) 0: A, B, C, D, E
-     * Key (row) 1: 1, 2, 3, 4, 5, 6 
-     * 
+     * Key (row) 1: 1, 2, 3, 4, 5, 6
+     *
      * </pre><p>
      * Obtaining the List for key 0 tells the renderer that A, B, C, D, and E
      * should be rendered for the first row. Obtaining the List for key 1, tells
      * the renderer that 1, 2, 3, 4, 5, and 6 should be rendered for the next
      * row. And so on...
      * </p>
+     *
      * @param component TableRowGroup to be rendered.
      * @return A Map of nested TableColumn children.
      */
-    private Map<Integer, List<TableColumn>> getColumnHeaderMap(TableRowGroup component) {
-        HashMap<Integer, List<TableColumn>> map = new HashMap<Integer, List<TableColumn>>();
+    private Map<Integer, List<TableColumn>> getColumnHeaderMap(
+            final TableRowGroup component) {
+
+        HashMap<Integer, List<TableColumn>> map =
+                new HashMap<Integer, List<TableColumn>>();
         if (component == null) {
-            log("getColumnHeaderMap", //NOI18N
-                    "Cannot obtain column header map, TableRowGroup is null"); //NOI18N
+            log("getColumnHeaderMap",
+                    "Cannot obtain column header map, TableRowGroup is null");
             return map;
         }
         Iterator<TableColumn> kids = component.getTableColumnChildren();
@@ -913,37 +920,46 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @param component The parent UIComponent component.
      * @param id The id of the the component to be rendered.
+     * @return String
      */
-    private String getId(UIComponent component, String id) {
-        String clientId = component.getClientId(FacesContext.getCurrentInstance());
-        return clientId + NamingContainer.SEPARATOR_CHAR + id;
+    private String getId(final UIComponent component, final String id) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String clientId = component.getClientId(context);
+        return clientId + UINamingContainer.getSeparatorChar(context) + id;
     }
 
-    /** Helper method to get Theme objects. */
+    /**
+     * Helper method to get Theme objects.
+     * @return Theme
+     */
     private Theme getTheme() {
         return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
     }
 
     /**
-     * Helper method to get an array of stylesheet classes to be applied to each
-     * row, in the order specified.
+     * Helper method to get an array of style-sheet classes to be applied to
+     * each row, in the order specified.
      * <p>
      * Note: This is a comma-delimited list of CSS style classes that will be
-     * applied to the rows of this table. A space separated list of classes may 
-     * also be specified for any individual row. These styles are applied, in 
-     * turn, to each row in the table. For example, if the list has two 
-     * elements, the first style class in the list is applied to the first row, 
-     * the second to the second row, the first to the third row, the second to 
+     * applied to the rows of this table. A space separated list of classes may
+     * also be specified for any individual row. These styles are applied, in
+     * turn, to each row in the table. For example, if the list has two
+     * elements, the first style class in the list is applied to the first row,
+     * the second to the second row, the first to the third row, the second to
      * the fourth row, etc. In other words, we keep iterating through the list
      * until we reach the end, and then we start at the beginning again.
      * </p>
+     *
      * @param component TableRowGroup component being rendered.
-     * @return An array of stylesheet classes.
+     * @return An array of style-sheet classes.
      */
-    private String[] getRowStyleClasses(TableRowGroup component) {
-        String values = (component != null)
-                ? (String) component.getStyleClasses() : null;
-
+    private String[] getRowStyleClasses(final TableRowGroup component) {
+        String values;
+        if (component != null) {
+            values = component.getStyleClasses();
+        } else {
+            values = null;
+        }
         if (values == null) {
             return new String[0];
         }
@@ -952,17 +968,17 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         ArrayList<String> list = new ArrayList<String>();
 
         while (values.length() > 0) {
-            int comma = values.indexOf(","); //NOI18N
+            int comma = values.indexOf(",");
             if (comma >= 0) {
                 list.add(values.substring(0, comma).trim());
                 values = values.substring(comma + 1);
             } else {
                 list.add(values.trim());
-                values = ""; //NOI18N
+                values = "";
             }
         }
 
-        String results[] = new String[list.size()];
+        String[] results = new String[list.size()];
         return ((String[]) list.toArray(results));
     }
 
@@ -974,11 +990,12 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
      * @param map Map to save component List.
      * @param level The current level of the component tree.
      */
-    private void initColumnHeaderMap(TableColumn component, Map<Integer, List<TableColumn>> map,
-            int level) {
+    private void initColumnHeaderMap(final TableColumn component,
+            final Map<Integer, List<TableColumn>> map, final int level) {
+
         if (component == null) {
-            log("initColumnHeaderMap", //NOI18N
-                    "Cannot initialize column header map, TableColumn is null"); //NOI18N
+            log("initColumnHeaderMap",
+                    "Cannot initialize column header map, TableColumn is null");
             return;
         }
 
@@ -999,19 +1016,23 @@ public class TableRowGroupRenderer extends javax.faces.render.Renderer {
         if (list == null) {
             list = new ArrayList<TableColumn>();
         }
-        list.add(component); // Save component in List.
-        map.put(level, list); // Save List in map.
+        // Save component in List.
+        list.add(component);
+        // Save List in map.
+        map.put(level, list);
     }
 
     /**
      * Log fine messages.
+     * @param method method to log
+     * @param msg message to log
      */
-    private void log(String method, String message) {
+    private static void log(final String method, final String msg) {
         // Get class.
-        Class clazz = this.getClass();
+        Class clazz = TableRowGroupRenderer.class;
         if (LogUtil.fineEnabled(clazz)) {
             // Log method name and message.
-            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + message); //NOI18N
+            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + msg);
         }
     }
 }

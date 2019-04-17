@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -49,7 +49,7 @@
                                                     actionExpression="#{MastheadBean.consolePage1Clicked}" immediate="true" />
                             </f:facet>
                             <f:facet name="versionLink" >
-                                <webuijsf:hyperlink  id="hyp2" onClick="javascript: var versionWin = window.open('/example/faces/masthead/Version.jsp', 'VersionWindow','scrollbars,resizable,
+                                <webuijsf:hyperlink  id="hyp2" onClick="javascript: var versionWin = window.open('/woodstock-example/faces/masthead/Version.jspx', 'VersionWindow','scrollbars,resizable,
                                  width=650,height=500,top='+((screen.height - (screen.height/1.618)) - (500/2))+',left='+((screen.width-650)/2) ); versionWin.focus();
                                  if(window.focus){versionWin.focus();} " immediate="true"
                                                     toolTip="#{msgs.masthead_versionLink}" actionExpression="#{MastheadBean.versionPage1Clicked}"/>
@@ -86,7 +86,7 @@
 
                             <!-- Hyperlink to Popup window with Secondary Masthead -->
                             <webuijsf:hyperlink  id="hyperlinkpopup" text="#{msgs.masthead_link}" toolTip="#{msgs.masthead_linkToolTip}" immediate="true"
-                                                onClick="javascript: var popupWin = window.open('/example/faces/masthead/Popup.jspx','PopUpWindow','scrollbars,resizable,width=650,
+                                                onClick="javascript: var popupWin = window.open('/woodstock-example/faces/masthead/Popup.jspx','PopUpWindow','scrollbars,resizable,width=650,
                              height=500,top='+((screen.height - (screen.height/1.618)) - (500/2))+',left='+((screen.width-650)/2) ); popupWin.focus();
                              if(window.focus){popupWin.focus();} return false;" />
                         </webuijsf:markup>

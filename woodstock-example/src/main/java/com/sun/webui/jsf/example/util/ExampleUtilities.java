@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.example.util;
 
 import javax.el.MethodExpression;
@@ -21,9 +20,15 @@ import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.component.UIComponent;
 
-public class ExampleUtilities {
+/**
+ * Common example utilities.
+ */
+public final class ExampleUtilities {
 
-    protected ExampleUtilities() {
+    /**
+     * Cannot be instanciated.
+     */
+    private ExampleUtilities() {
         super();
     }
 
@@ -32,60 +37,83 @@ public class ExampleUtilities {
      *
      * @param component The UIComponent to set a value expression for.
      * @param name The name of the value expression property.
-     * @param expression The expresion for the value expression.
+     * @param expression The expression for the value expression.
      */
-    public static void setValueExpression(UIComponent component, String name, 
-            String expression) {
+    public static void setValueExpression(final UIComponent component,
+            final String name, final String expression) {
+
         if (expression == null) {
             return;
         }
         FacesContext context = FacesContext.getCurrentInstance();
         component.setValueExpression(name, createValueExpression(
-		context, expression, Object.class));
+                context, expression, Object.class));
     }
-    
+
     /**
-     * Helper method to set a method expression property.
-     * Create a method expression that returns String and has no
-     * input paramaters.
-     *   
-     * @param component The UIComponent to set a value binding for.     
+     * Helper method to set a method expression property. Create a method
+     * expression that returns String and has no input parameters.
+     *
+     * @param component The UIComponent to set a value binding for.
      * @param name The name of the method expression property
      * @param expression The expression to create.
      */
-    public static void setMethodExpression(UIComponent component,
-	    String name, String expression) {
-	setMethodExpression(component, name, expression,
-		Object.class, new Class[0]);
+    public static void setMethodExpression(final UIComponent component,
+            final String name, final String expression) {
+
+        setMethodExpression(component, name, expression,
+                Object.class, new Class[0]);
     }
+
     /**
      * Helper method to set a method expression property.
-     *   
-     * @param component The UIComponent to set a value binding for.     
+     *
+     * @param component The UIComponent to set a value binding for.
      * @param name The name of the method expression property
      * @param expression The expression to create.
+     * @param out return type
+     * @param in parameter type
      */
-    public static void setMethodExpression(UIComponent component,
-	    String name, String expression, Class out, Class[] in) {
+    public static void setMethodExpression(final UIComponent component,
+            final String name, final String expression, final Class out,
+            final Class[] in) {
+
         if (expression == null) {
             return;
         }
         FacesContext context = FacesContext.getCurrentInstance();
-        component.getAttributes().put(name, 
-	    createMethodExpression(context, expression, out, in));
+        component.getAttributes().put(name,
+                createMethodExpression(context, expression, out, in));
     }
 
+    /**
+     * Helper method to create a method expression.
+     *
+     * @param context faces context
+     * @param expr expression to create
+     * @param out return type
+     * @param in parameter type
+     * @return MethodExpression
+     */
     public static MethodExpression createMethodExpression(
-	    FacesContext context, String expr, Class out, Class[] in) {
+            final FacesContext context, final String expr, final Class out,
+            final Class[] in) {
 
-	return context.getApplication().getExpressionFactory().
-	    createMethodExpression(context.getELContext(), expr, out, in);
+        return context.getApplication().getExpressionFactory().
+                createMethodExpression(context.getELContext(), expr, out, in);
     }
 
+    /**
+     * Helper method to create a value expression.
+     * @param context faces context
+     * @param expr expression to create
+     * @param value value type
+     * @return ValueExpression
+     */
     public static ValueExpression createValueExpression(
-	    FacesContext context, String expr, Class value) {
+            final FacesContext context, final String expr, final Class value) {
 
-	return context.getApplication().getExpressionFactory().
-	    createValueExpression(context.getELContext(), expr, value);
+        return context.getApplication().getExpressionFactory().
+                createValueExpression(context.getELContext(), expr, value);
     }
 }

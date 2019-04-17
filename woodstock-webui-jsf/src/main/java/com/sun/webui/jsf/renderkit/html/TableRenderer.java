@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -52,9 +51,9 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
  * This class renders Table components.
  * <p>
  * The table component provides a layout mechanism for displaying table actions.
- * UI guidelines describe specific behavior that can applied to the rows and 
- * columns of data such as sorting, filtering, pagination, selection, and custom 
- * user actions. In addition, UI guidelines also define sections of the table 
+ * UI guidelines describe specific behavior that can applied to the rows and
+ * columns of data such as sorting, filtering, pagination, selection, and custom
+ * user actions. In addition, UI guidelines also define sections of the table
  * that can be used for titles, row group headers, and placement of pre-defined
  * and user defined actions.
  * </p>
@@ -63,21 +62,22 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
  * column footers are rendered by TableRenderer.
  * </p>
  * <p>
- * Note: To see the messages logged by this class, set the following global
- * defaults in your JDK's "jre/lib/logging.properties" file.
- * </p>
- * <p><pre>
+ * <pre>
  * java.util.logging.ConsoleHandler.level = FINE
  * com.sun.webui.jsf.renderkit.html.TableRenderer.level = FINE
- * </pre></p>
+ * </pre>
+ * </p>
  * <p>
  * See TLD docs for more information.
  * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Table"))
-public class TableRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Table"))
+public final class TableRenderer extends javax.faces.render.Renderer {
 
-    // Javascript object name.
+    /**
+     * JS object name.
+     */
     private static final String JAVASCRIPT_OBJECT_CLASS = "Table";
 
     /**
@@ -88,7 +88,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
      * currently supported.
      * </p>
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "align",
         "bgColor",
         "dir",
@@ -109,8 +109,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
     };
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (context == null || component == null) {
             log("encodeBegin",
@@ -131,8 +131,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
 
         if (context == null || component == null) {
             log("encodeChildren",
@@ -156,8 +157,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (context == null || component == null) {
             log("encodeEnd",
@@ -191,8 +192,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderActionsBottom(FacesContext context,
-            Table component, ResponseWriter writer) throws IOException {
+    protected void renderActionsBottom(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
 
         if (component == null) {
             log("renderActionsBottom",
@@ -227,8 +229,10 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderActionsTop(FacesContext context,
-            Table component, ResponseWriter writer) throws IOException {
+    protected void renderActionsTop(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
             log("renderActionsTop",
                     "Cannot render actions bar, Table is null");
@@ -262,8 +266,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEmbeddedPanels(FacesContext context,
-            Table component, ResponseWriter writer) throws IOException {
+    protected void renderEmbeddedPanels(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
 
         if (component == null) {
             log("renderEmbeddedPanels",
@@ -298,8 +303,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderTableFooter(FacesContext context, Table component,
-            ResponseWriter writer) throws IOException {
+    protected void renderTableFooter(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
 
         if (component == null) {
             log("renderTableFooter",
@@ -335,8 +341,10 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderTitle(FacesContext context, Table component,
-            ResponseWriter writer) throws IOException {
+    protected void renderTitle(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
             log("renderTitle", "Cannot render title, Table is null");
             return;
@@ -359,14 +367,23 @@ public class TableRenderer extends javax.faces.render.Renderer {
 
         // Get filter augment.
         Theme theme = getTheme();
-        String filter = (component.getFilterText() != null)
-                ? theme.getMessage("table.title.filterApplied",
-                new String[]{component.getFilterText()})
-                : "";
-
+        String filter;
+        if (component.getFilterText() != null) {
+            filter = theme.getMessage("table.title.filterApplied",
+                        new String[]{
+                            component.getFilterText()
+                        });
+        } else {
+            filter = "";
+        }
         // Get TableRowGroup component.
         TableRowGroup group = component.getTableRowGroupChild();
-        boolean paginated = (group != null) ? group.isPaginated() : false;
+        boolean paginated;
+        if (group != null) {
+            paginated = group.isPaginated();
+        } else {
+            paginated = false;
+        }
 
         // Initialize values.
         int totalRows = component.getRowCount();
@@ -425,7 +442,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
             }
         } else {
             log("renderTitle",
-                    "Title not augmented, itemsText & filterText not displayed");
+                    "Title not augmented, itemsText & filterText not"
+                            + " displayed");
         }
 
         renderTitleStart(context, component, writer);
@@ -463,8 +481,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderTitleStart(FacesContext context, Table component,
-            ResponseWriter writer) throws IOException {
+    private void renderTitleStart(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
 
         writer.writeText("\n", null);
         writer.startElement("caption", component);
@@ -487,8 +506,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderTitleEnd(FacesContext context, ResponseWriter writer)
-            throws IOException {
+    private void renderTitleEnd(final FacesContext context,
+            final ResponseWriter writer) throws IOException {
+
         writer.endElement("caption");
     }
 
@@ -501,8 +521,10 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagStart(FacesContext context,
-            Table component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagStart(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
             log("renderEnclosingTagStart",
                     "Cannot render enclosing tag, Table is null");
@@ -511,7 +533,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
 
         Theme theme = getTheme();
 
-        // Render div used to set style and class properties -- bugtraq #6316179.
+        // Render div used to set style and class properties
+        // -- bugtraq #6316179.
         writer.writeText("\n", null);
         writer.startElement("div", component);
         writer.writeAttribute("id", component.getClientId(context), null);
@@ -549,8 +572,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
         // Get style class.
         String styleClass = theme.getStyleClass(ThemeStyles.TABLE);
         if (component.isLite()) {
-            styleClass += " " +
-                    theme.getStyleClass(ThemeStyles.TABLE_LITE);
+            styleClass += " "
+                    + theme.getStyleClass(ThemeStyles.TABLE_LITE);
         }
 
         // Render style class.
@@ -585,8 +608,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      * @param writer ResponseWriter to which the component should be rendered.
      * @throws IOException if an input/output error occurs.
      */
-    protected void renderTableAttributes(FacesContext context, Table component,
-            ResponseWriter writer) throws IOException {
+    protected void renderTableAttributes(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
 
         // Render border.
         int border = component.getBorder();
@@ -630,7 +654,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagEnd(ResponseWriter writer)
+    protected void renderEnclosingTagEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.endElement("table");
@@ -643,15 +667,16 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @param component The parent UIComponent component.
      * @param id The id of the the component to be rendered.
+     * @return String
      */
-    private String getId(UIComponent component, String id) {
+    private String getId(final UIComponent component, final String id) {
         FacesContext context = FacesContext.getCurrentInstance();
         String clientId = component.getClientId(context);
         return clientId + UINamingContainer.getSeparatorChar(context) + id;
     }
 
     /**
-     * Helper method to get the column ID and selectId from nested TableColumn 
+     * Helper method to get the column ID and selectId from nested TableColumn
      * components, used in JS functions (e.g., de/select all button
      * functionality).
      *
@@ -659,7 +684,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
      * @param component TableColumn to be rendered.
      * @return The first selectId property found.
      */
-    private String getSelectId(FacesContext context, TableColumn component) {
+    private String getSelectId(final FacesContext context,
+            final TableColumn component) {
 
         String selectId = null;
         if (component == null) {
@@ -688,8 +714,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
                 if (group != null) {
                     // Get column and group id.
                     String colId = component.getClientId(context);
-                    String groupId = group.getClientId(context) +
-                           UINamingContainer.getSeparatorChar(context);
+                    String groupId = group.getClientId(context)
+                            + UINamingContainer.getSeparatorChar(context);
                     try {
                         selectId = colId.substring(groupId.length(),
                                 colId.length())
@@ -711,7 +737,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @return The select option value.
      */
-    private String getSelectSortMenuOptionValue(Table component) {
+    private String getSelectSortMenuOptionValue(final Table component) {
         TableRowGroup group = component.getTableRowGroupChild();
 
         // Get first select column found.
@@ -730,7 +756,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
         } else {
             log("getSelectSortMenuOptionValue",
                     "Cannot obtain select sort menu option value,"
-                            + " TableRowGroup is null");
+                    + " TableRowGroup is null");
         }
         return null;
     }
@@ -742,7 +768,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @return The select option value.
      */
-    private String getSelectSortMenuOptionValue(TableColumn component) {
+    private String getSelectSortMenuOptionValue(final TableColumn component) {
         Iterator kids = component.getTableColumnChildren();
         if (kids.hasNext()) {
             while (kids.hasNext()) {
@@ -759,24 +785,29 @@ public class TableRenderer extends javax.faces.render.Renderer {
 
         // Return sort criteria key.
         SortCriteria criteria = component.getSortCriteria();
-        return (criteria != null) ? criteria.getCriteriaKey() : null;
+        if (criteria != null) {
+            return criteria.getCriteriaKey();
+        }
+        return null;
     }
 
     /**
-     * Helper method to get JS array containing tool tips used for sort 
-     * order menus.
-     *
+     * Helper method to get JS array containing tool tips used for sort order
+     * menus.
      * @param component Table to be rendered.
-     * @param boolean Flag indicating descending tool tips.
+     * @param descending flag indicating descending tool tips.
      * @return A JS array containing tool tips.
      */
-    private JsonArray getSortToolTipJavascript(Table component,
-            boolean descending) {
+    private JsonArray getSortToolTipJavascript(final Table component,
+            final boolean descending) {
 
         // Get undetermined tooltip.
-        String tooltip = (descending)
-                ? "table.sort.augment.undeterminedDescending"
-                : "table.sort.augment.undeterminedAscending";
+        String tooltip;
+        if (descending) {
+            tooltip = "table.sort.augment.undeterminedDescending";
+        } else {
+            tooltip = "table.sort.augment.undeterminedAscending";
+        }
 
         // Append array of ascending sort order tooltips.
         JsonArrayBuilder jsonBuilder = JSON_BUILDER_FACTORY
@@ -800,21 +831,21 @@ public class TableRenderer extends javax.faces.render.Renderer {
         } else {
             log("getSortToolTipJavascript",
                     "Cannot obtain Javascript array of sort tool tips,"
-                            + " TableRowGroup is null");
+                    + " TableRowGroup is null");
         }
         return jsonBuilder.build();
     }
 
     /**
-     * Helper method to get table column footer style class for TableColumn 
+     * Helper method to get table column footer style class for TableColumn
      * components.
      *
      * @param component TableColumn to be rendered.
      * @param level The current sort level.
      * @return The style class for the table column footer.
      */
-    private String getTableColumnFooterStyleClass(TableColumn component,
-            int level) {
+    private String getTableColumnFooterStyleClass(final TableColumn component,
+            final int level) {
 
         String styleClass;
 
@@ -829,8 +860,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
         return getTheme().getStyleClass(styleClass);
     }
 
-    /** 
+    /**
      * Helper method to get Theme objects.
+     * @return Theme
      */
     private Theme getTheme() {
         return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
@@ -838,14 +870,16 @@ public class TableRenderer extends javax.faces.render.Renderer {
 
     /**
      * Log fine messages.
+     * @param method method to log
+     * @param msg message to log
      */
-    private void log(String method, String message) {
+    private static void log(final String method, final String msg) {
         // Get class.
-        Class clazz = this.getClass();
+        Class clazz = TableRenderer.class;
         if (LogUtil.fineEnabled(clazz)) {
             // Log method name and message.
             LogUtil.fine(clazz, clazz.getName() + "." + method
-                    + ": " + message);
+                    + ": " + msg);
         }
     }
 
@@ -858,8 +892,9 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderJavascript(FacesContext context, Table component,
-            ResponseWriter writer) throws IOException {
+    private void renderJavascript(final FacesContext context,
+            final Table component, final ResponseWriter writer)
+            throws IOException {
 
         if (component == null) {
             log("renderJavascript", "Cannot render Javascript, Table is null");
@@ -886,12 +921,13 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @param context FacesContext for the current request.
      * @param component Table to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
+     * @param jsonBuilder jsonBuilder to add the properties to
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void appendPanelProperties(FacesContext context,
-            Table component, JsonObjectBuilder jsonBuilder) throws IOException {
+    private void appendPanelProperties(final FacesContext context,
+            final Table component, final JsonObjectBuilder jsonBuilder)
+            throws IOException {
 
         if (component == null) {
             log("appendPanelProperties",
@@ -905,13 +941,14 @@ public class TableRenderer extends javax.faces.render.Renderer {
         UIComponent panels = component.getFacet(Table.EMBEDDED_PANELS_ID);
         if (panels == null) {
             log("appendPanelProperties",
-                    "Cannot obtain panel properties, embedded panels facet is null");
+                    "Cannot obtain panel properties, embedded panels"
+                            + " facet is null");
             return;
         }
 
         Theme theme = getTheme();
         String prefix = panels.getClientId(context)
-                +  UINamingContainer.getSeparatorChar(context);
+                + UINamingContainer.getSeparatorChar(context);
 
         // Append array of panel Ids.
         JsonArray ary1 = JSON_BUILDER_FACTORY.createArrayBuilder()
@@ -967,7 +1004,8 @@ public class TableRenderer extends javax.faces.render.Renderer {
         // Append array of toggle icons for open panels.
         JsonArray ary4 = JSON_BUILDER_FACTORY.createArrayBuilder()
                 .add(theme.getImagePath(ThemeImages.TABLE_SORT_PANEL_FLIP))
-                .add(theme.getImagePath(ThemeImages.TABLE_PREFERENCES_PANEL_FLIP))
+                .add(theme.getImagePath(
+                        ThemeImages.TABLE_PREFERENCES_PANEL_FLIP))
                 .add(JsonObject.NULL)
                 .build();
         jsonBuilder.add("panelToggleIconsOpen", ary4);
@@ -982,16 +1020,16 @@ public class TableRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * Helper method to append filter properties
+     * Helper method to append filter properties.
      *
      * @param context FacesContext for the current request.
      * @param component Table to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
+     * @param jsonBuilder jsonBuilder to add the properties to
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void appendFilterProperties(FacesContext context,
-            Table component, JsonObjectBuilder jsonBuilder)
+    private void appendFilterProperties(final FacesContext context,
+            final Table component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         if (component == null) {
@@ -1015,12 +1053,12 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @param context FacesContext for the current request.
      * @param component Table to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
+     * @param jsonBuilder jsonBuilder to add the properties to
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void appendGroupProperties(FacesContext context,
-            Table component, JsonObjectBuilder jsonBuilder)
+    private void appendGroupProperties(final FacesContext context,
+            final Table component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         if (component == null) {
@@ -1119,12 +1157,12 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @param context FacesContext for the current request.
      * @param component Table to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
+     * @param jsonBuilder jsonBuilder to add the properties to
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void appendGroupPanelProperties(FacesContext context,
-            Table component, JsonObjectBuilder jsonBuilder)
+    private void appendGroupPanelProperties(final FacesContext context,
+            final Table component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         if (component == null) {
@@ -1134,13 +1172,14 @@ public class TableRenderer extends javax.faces.render.Renderer {
         }
 
         // Get ID prefix for TableHeader components.
-        String prefix = TableRowGroup.GROUP_HEADER_ID +
-                 UINamingContainer.getSeparatorChar(context);
+        String prefix = TableRowGroup.GROUP_HEADER_ID
+                + UINamingContainer.getSeparatorChar(context);
 
         Theme theme = getTheme();
         jsonBuilder.add("columnFooterId", TableRowGroup.COLUMN_FOOTER_BAR_ID)
                 .add("columnHeaderId", TableRowGroup.COLUMN_HEADER_BAR_ID)
-                .add("tableColumnFooterId", TableRowGroup.TABLE_COLUMN_FOOTER_BAR_ID)
+                .add("tableColumnFooterId",
+                        TableRowGroup.TABLE_COLUMN_FOOTER_BAR_ID)
                 .add("groupFooterId", TableRowGroup.GROUP_FOOTER_BAR_ID)
                 .add("groupPanelToggleButtonId", prefix
                         + TableHeader.GROUP_PANEL_TOGGLE_BUTTON_ID)
@@ -1175,12 +1214,13 @@ public class TableRenderer extends javax.faces.render.Renderer {
      *
      * @param context FacesContext for the current request.
      * @param component Table to be rendered.
-     * @param writer ResponseWriter to which the component should be rendered.
+     * @param jsonBuilder jsonBuilder to add the properties to
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void appendSortPanelProperties(FacesContext context,
-            Table component, JsonObjectBuilder jsonBuilder) throws IOException {
+    private void appendSortPanelProperties(final FacesContext context,
+            final Table component, final JsonObjectBuilder jsonBuilder)
+            throws IOException {
 
         if (component == null) {
             log("appendSortPanelProperties",
@@ -1212,7 +1252,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
 
         // Append array of sort order menu Ids.
         JsonArray ary2 = JSON_BUILDER_FACTORY.createArrayBuilder()
-        .add(prefix + TablePanels.PRIMARY_SORT_ORDER_MENU_ID)
+                .add(prefix + TablePanels.PRIMARY_SORT_ORDER_MENU_ID)
                 .add(prefix + TablePanels.SECONDARY_SORT_ORDER_MENU_ID)
                 .add(prefix + TablePanels.TERTIARY_SORT_ORDER_MENU_ID)
                 .build();
@@ -1220,7 +1260,7 @@ public class TableRenderer extends javax.faces.render.Renderer {
 
         // Append array of sort order tooltips.
         JsonArray ary3 = JSON_BUILDER_FACTORY.createArrayBuilder()
-        .add(theme.getMessage("table.panel.primarySortOrder"))
+                .add(theme.getMessage("table.panel.primarySortOrder"))
                 .add(theme.getMessage("table.panel.secondarySortOrder"))
                 .add(theme.getMessage("table.panel.tertiarySortOrder"))
                 .build();

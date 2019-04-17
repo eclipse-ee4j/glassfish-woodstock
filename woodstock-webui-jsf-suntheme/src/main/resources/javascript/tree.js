@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -15,10 +15,12 @@
  */
 
 define([
-    "webui/suntheme/props"
-], function (props) {
+    "webui/suntheme/props",
+    "webui/suntheme/common"
+], function (props, common) {
 
     return {
+        addOnInitCallback: common.addOnInitCallback,
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.
@@ -38,6 +40,9 @@ define([
             var domNode = document.getElementById(props.id);
             if (domNode === null) {
                 return false;
+            }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
             }
 
             // Set given properties on domNode.
@@ -70,6 +75,7 @@ define([
             domNode.treeNodeIsExpanded = this.treeNodeIsExpanded;
             domNode.unhighlightParent = this.unhighlightParent;
             domNode.updateHighlight = this.updateHighlight;
+            common.setInitialized(domNode);
         },
 
         badCookieChars: ["(", ")", "<", ">", "@", ",", ";", ":", "\\", "\"", "/", "[", "]", "?", "=", "{", "}", " ", "\t"],
@@ -167,7 +173,7 @@ define([
          */
         getTree: function (treeNode) {
             var tree = treeNode.parentNode;
-            var SUFFIX = new String("_children");
+            var SUFFIX = "_children";
 
             while (tree) {
                 // Ignore all div's ending w/ SUFFIX
@@ -303,7 +309,7 @@ define([
 
             // Ignore Tree Handles b/c they should not update highlighting
             if (elt.nodeName === "IMG") {
-                var url = new String(elt.src);
+                var url = new String(elt.src).valueOf();
                 if ((url.indexOf("tree_handle") > 0) && (url.indexOf("theme") > 0)) {
                     // This is a tree handle
                     return true;
@@ -339,7 +345,7 @@ define([
             while (elt !== null) {
                 if (elt.nodeName === "A") {
                     // Creates a String containing the url
-                    var url = new String(elt);
+                    var url = new String(elt).valueOf();
                     if (url.length > 4) {
                         // All URLs are atleast this long
                         return true;

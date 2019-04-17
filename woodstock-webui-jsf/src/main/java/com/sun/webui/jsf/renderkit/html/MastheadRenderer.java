@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,11 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * MastheadRenderer.java
- *
- * Created on December 16, 2004, 3:40 PM
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -43,39 +38,46 @@ import com.sun.webui.html.HTMLAttributes;
 import com.sun.webui.html.HTMLElements;
 
 /**
- * Renders a Masthead component
- *
- * @author seancc@sun.com
+ * Renders a Masthead component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Masthead"))
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Masthead"))
 public class MastheadRenderer extends AbstractRenderer {
 
-    private static final String SKIP_UTILITY = "skipUtility"; //NOI18N
+    /**
+     * skip utility property.
+     */
+    private static final String SKIP_UTILITY = "skipUtility";
 
-    /** Creates a new instance of MastheadRenderer */
+    /**
+     * Creates a new instance of MastheadRenderer.
+     */
     public MastheadRenderer() {
     }
 
     /**
-     * Render the current alarms info for the status area
+     * Render the current alarms info for the status area.
      *
      * @param context The current FacesContext
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
      * @param alarms An int[] containing the number of down, critical, major and
-     *        minor alarms (in that order)
+     * minor alarms (in that order)
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderAlarmsInfo(FacesContext context, Masthead masthead,
-            ResponseWriter writer, int[] alarms, Theme theme)
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void renderAlarmsInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final int[] alarms, final Theme theme)
             throws IOException {
 
         writer.startElement(HTMLElements.TD, masthead);
         writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(
                 ThemeStyles.MASTHEAD_ALARM_DIV), null);
 
-        UIComponent alarmsFacet =
-                masthead.getFacet("currentAlarmsInfo"); //NOI18N
+        UIComponent alarmsFacet
+                = masthead.getFacet("currentAlarmsInfo");
 
         if (alarmsFacet != null) {
             RenderingUtilities.renderComponent(alarmsFacet, context);
@@ -85,29 +87,29 @@ public class MastheadRenderer extends AbstractRenderer {
                     ThemeStyles.MASTHEAD_LABEL), null);
             writer.write(theme.getMessage("masthead.currentAlarms"));
             writer.endElement(HTMLElements.SPAN);
-            writer.write("&nbsp;&nbsp;"); //NOI18N
+            writer.write("&nbsp;&nbsp;");
             // output the down alarm count
             writeAlarmCount(writer, context,
                     ThemeImages.ALARM_MASTHEAD_DOWN_MEDIUM,
-                    "Alarm.downImageAltText", masthead, //NOI18N
+                    "Alarm.downImageAltText", masthead,
                     ThemeStyles.MASTHEAD_ALARM_DOWN_TEXT, alarms[0], theme);
 
             // output the critical alarm count
             writeAlarmCount(writer, context,
                     ThemeImages.ALARM_MASTHEAD_CRITICAL_MEDIUM,
-                    "Alarm.criticalImageAltText", masthead, //NOI18N
+                    "Alarm.criticalImageAltText", masthead,
                     ThemeStyles.MASTHEAD_ALARM_CRITICAL_TEXT, alarms[1], theme);
 
             // output the major alarm count
             writeAlarmCount(writer, context,
                     ThemeImages.ALARM_MASTHEAD_MAJOR_MEDIUM,
-                    "Alarm.majorImageAltText", masthead, //NOI18N
+                    "Alarm.majorImageAltText", masthead,
                     ThemeStyles.MASTHEAD_ALARM_MAJOR_TEXT, alarms[2], theme);
 
             // output the minor alarm count
             writeAlarmCount(writer, context,
                     ThemeImages.ALARM_MASTHEAD_MINOR_MEDIUM,
-                    "Alarm.minorImageAltText", masthead, //NOI18N
+                    "Alarm.minorImageAltText", masthead,
                     ThemeStyles.MASTHEAD_ALARM_MINOR_TEXT, alarms[3], theme);
         }
 
@@ -115,23 +117,25 @@ public class MastheadRenderer extends AbstractRenderer {
     }
 
     /**
-     * Render the current application info in a table divider. This typically 
+     * Render the current application info in a table divider. This typically
      * consists of information about the current user, role (if any) and server.
      *
      * @param context The current FacesContext
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderApplicationInfo(FacesContext context,
-            Masthead masthead, ResponseWriter writer, Theme theme)
+    protected void renderApplicationInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final Theme theme)
             throws IOException {
 
-        // render the the application details in a single table divider 
+        // render the the application details in a single table divider
         writer.startElement(HTMLElements.TD, masthead);
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_TD_TITLE), null);
-        writer.writeAttribute(HTMLAttributes.WIDTH, "99%", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.WIDTH, "99%", null);
 
         renderUserInfo(context, masthead, writer, theme);
 
@@ -140,26 +144,28 @@ public class MastheadRenderer extends AbstractRenderer {
                 theme.getStyleClass(ThemeStyles.MASTHEAD_DIV_TITLE));
 
         // close the app info table divider
-        writer.endElement(HTMLElements.TD); //NOI18N        
+        writer.endElement(HTMLElements.TD);
     }
 
     /**
-     * Render the date time information in the masthead status area
+     * Render the date time information in the masthead status area.
      *
      * @param context The current FacesContext
      * @param masthead The current Masthead instance
      * @param writer The ResponseWriter to use
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderDateTimeInfo(FacesContext context, Masthead masthead,
-            ResponseWriter writer, Theme theme) throws IOException {
+    protected void renderDateTimeInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        writer.startElement(HTMLElements.TD, masthead); //NOI18N  
-        writer.writeAttribute(HTMLAttributes.CLASS, //NOI18N
+        writer.startElement(HTMLElements.TD, masthead);
+        writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_TIME_DIV), null);
 
-        UIComponent timeStampFacet =
-                masthead.getFacet("dateTimeInfo"); //NOI18N
+        UIComponent timeStampFacet
+                = masthead.getFacet("dateTimeInfo");
         if (timeStampFacet != null) {
             RenderingUtilities.renderComponent(timeStampFacet, context);
         } else {
@@ -168,9 +174,9 @@ public class MastheadRenderer extends AbstractRenderer {
             // display the current time and date
             writer.startElement(HTMLElements.SPAN, masthead);
             writer.writeAttribute(HTMLAttributes.CLASS, textStyle, null);
-            writer.write(theme.getMessage("masthead.lastUpdate")); //NOI18N
+            writer.write(theme.getMessage("masthead.lastUpdate"));
             writer.endElement(HTMLElements.SPAN);
-            writer.write("&nbsp;"); //NOI18N
+            writer.write("&nbsp;");
             writer.startElement(HTMLElements.SPAN, masthead);
             writer.writeAttribute(HTMLAttributes.CLASS,
                     theme.getStyleClass(ThemeStyles.MASTHEAD_TEXT), null);
@@ -182,34 +188,34 @@ public class MastheadRenderer extends AbstractRenderer {
 
             writer.write(dateFormat.format(new Date()));
             writer.endElement(HTMLElements.SPAN);
-            writer.write("&nbsp;"); //NOI18N
+            writer.write("&nbsp;");
         }
 
-        writer.endElement(HTMLElements.TD); //NOI18N
+        writer.endElement(HTMLElements.TD);
     }
 
     /**
-     * Render the jobs running info. If the "jobsInfo" facet was specified, 
-     * this should be rendered inside of the appropriate div tag. If not the
-     * standard jobs running image and "Jobs Running: x" label should be
-     * displayed.
+     * Render the jobs running info. If the "jobsInfo" facet was specified, this
+     * should be rendered inside of the appropriate div tag. If not the standard
+     * jobs running image and "Jobs Running: x" label should be displayed.
      *
      * @param context The current FacesContext
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
      * @param divIsOpen If true the div tag to output the jobsInfo in is already
-     *        open. If false we need to open the div before outputting anything
+     * open. If false we need to open the div before outputting anything
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderJobsInfo(FacesContext context, Masthead masthead,
-            ResponseWriter writer, boolean divIsOpen, Theme theme)
-            throws IOException {
+    protected void renderJobsInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final boolean divIsOpen, final Theme theme) throws IOException {
 
         writer.startElement(HTMLElements.TD, masthead);
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_STATUS_DIV), null);
 
-        UIComponent jobsFacet = masthead.getFacet("jobsInfo"); //NOI18N        
+        UIComponent jobsFacet = masthead.getFacet("jobsInfo");
 
         if (jobsFacet != null) {
             RenderingUtilities.renderComponent(jobsFacet, context);
@@ -217,44 +223,43 @@ public class MastheadRenderer extends AbstractRenderer {
 
             Icon icon = ThemeUtilities.getIcon(theme,
                     ThemeImages.MASTHEAD_STATUS_ICON);
-            icon.setId(masthead.getId() + "_jobStatusImage"); //NOI18N
+            icon.setId(masthead.getId() + "_jobStatusImage");
             icon.setAlt(
-                    theme.getMessage("masthead.tasksRunningAltText")); //NOI18N
-            icon.setAlign("top"); //NOI18N
+                    theme.getMessage("masthead.tasksRunningAltText"));
+            icon.setAlign("top");
             icon.setBorder(0);
 
             RenderingUtilities.renderComponent(icon, context);
 
-            writer.write("&nbsp;"); //NOI18N
+            writer.write("&nbsp;");
             Hyperlink hl = (Hyperlink) masthead.getJobCountLink();
             RenderingUtilities.renderComponent(hl, context);
         }
-
         writer.endElement(HTMLElements.TD);
-
     }
 
     /**
-     * Render the notification info for the given masthead component
+     * Render the notification info for the given masthead component.
      *
      * @param context The current FacesContext
      * @param masthead The Masthead component instance
      * @param writer The ResponseWriter to use
      * @param leaveDivOpen If true the div enclosing the notification info
-     *        should not be closed
+     * should not be closed
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderNotificationInfo(FacesContext context,
-            Masthead masthead, ResponseWriter writer, boolean leaveDivOpen,
-            Theme theme) throws IOException {
-        // display the specified notification message or facet
+    protected void renderNotificationInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final boolean leaveDivOpen, final Theme theme) throws IOException {
 
+        // display the specified notification message or facet
         writer.startElement(HTMLElements.TD, masthead);
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_TABLE_END), null);
 
-        UIComponent notificationFacet =
-                masthead.getFacet("notificationInfo"); //NOI18N
+        UIComponent notificationFacet
+                = masthead.getFacet("notificationInfo");
 
         if (notificationFacet != null) {
             RenderingUtilities.renderComponent(notificationFacet, context);
@@ -264,13 +269,13 @@ public class MastheadRenderer extends AbstractRenderer {
             image.setParent(masthead);
             image.setIcon(ThemeImages.MASTHEAD_STATUS_ICON);
 
-            image.setAlign("top"); //NOI18N
+            image.setAlign("top");
             image.setBorder(0);
-            image.setAlt(theme.getMessage("Alert.infoImageAltText")); //NOI18N
+            image.setAlt(theme.getMessage("Alert.infoImageAltText"));
 
             RenderingUtilities.renderComponent(image, context);
 
-            writer.write("&nbsp;"); //NOI18N
+            writer.write("&nbsp;");
             writer.startElement(HTMLElements.SPAN, masthead);
             writer.writeAttribute(HTMLAttributes.CLASS,
                     theme.getStyleClass(ThemeStyles.MASTHEAD_LABEL), null);
@@ -283,13 +288,17 @@ public class MastheadRenderer extends AbstractRenderer {
 
     /**
      * Render the product info as an image in the appropriate div tag.
-     * 
+     *
      * @param context The current FacesContext
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
+     * @param styleClass style class
+     * @throws IOException if an IO error occurs
      */
-    protected void renderProductInfo(FacesContext context, Masthead masthead,
-            ResponseWriter writer, String styleName) throws IOException {
+    protected void renderProductInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final String styleClass) throws IOException {
+
         UIComponent productImage = getProductImage(context, masthead,
                 ThemeUtilities.getTheme(context));
         if (productImage == null) {
@@ -298,26 +307,24 @@ public class MastheadRenderer extends AbstractRenderer {
 
         // render the product name image
         writer.startElement(HTMLElements.DIV, masthead);
-        if (styleName != null && styleName.length() > 0) {
-            writer.writeAttribute(HTMLAttributes.CLASS, styleName, null);
+        if (styleClass != null && styleClass.length() > 0) {
+            writer.writeAttribute(HTMLAttributes.CLASS, styleClass, null);
         }
         RenderingUtilities.renderComponent(productImage, context);
-
-        writer.endElement(HTMLElements.DIV); //NOI18N
+        writer.endElement(HTMLElements.DIV);
     }
 
     /**
-     * All of the necessary Masthead rendering is done here.
-     * 
-     * @param context The current FacesContext
-     * @param component The ImageComponent object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurss
+     * This implementation renders the masthead component.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
      */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Masthead masthead = (Masthead) component;
         Theme theme = ThemeUtilities.getTheme(context);
@@ -332,27 +339,26 @@ public class MastheadRenderer extends AbstractRenderer {
     }
 
     /**
-     * Render the status area in a table divider
+     * Render the status area in a table divider.
      *
      * @param context The current FacesContext
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderStatusArea(FacesContext context, Masthead masthead,
-            ResponseWriter writer, Theme theme) throws IOException {
+    protected void renderStatusArea(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         UIComponent statusArea = masthead.getFacet("statusArea");
         if (statusArea != null) {
-
             // render the start of the bottom table
-            //
             startTable(writer, masthead, theme.getStyleClass(
                     ThemeStyles.MASTHEAD_TABLE_END));
             writer.startElement(HTMLElements.TR, masthead);
             writer.startElement(HTMLElements.TD, masthead);
             // get the text and label styles from the theme
-            //
             String labelStyle = theme.getStyleClass(ThemeStyles.MASTHEAD_LABEL);
             String textStyle = theme.getStyleClass(ThemeStyles.MASTHEAD_TEXT);
 
@@ -364,7 +370,6 @@ public class MastheadRenderer extends AbstractRenderer {
         } else {
             renderStatusAreaComponents(context, masthead, theme, writer);
         }
-
     }
 
     /**
@@ -374,88 +379,91 @@ public class MastheadRenderer extends AbstractRenderer {
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderUserInfo(FacesContext context, Masthead masthead,
-            ResponseWriter writer, Theme theme) throws IOException {
+    protected void renderUserInfo(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         // retrieve the label and text styles for the current theme
-        //
         String labelStyle = theme.getStyleClass(ThemeStyles.MASTHEAD_LABEL);
         String textStyle = theme.getStyleClass(ThemeStyles.MASTHEAD_TEXT);
 
         // render the user, role (if any) and server details in a div
-        //
-        writer.startElement(HTMLElements.DIV, masthead); //NOI18N
-        writer.writeAttribute(HTMLAttributes.CLASS, //NOI18N
+        writer.startElement(HTMLElements.DIV, masthead);
+        writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_DIV_USER), null);
 
         // Create a separator for the following methods.
-        //
         ImageComponent separator = new ImageComponent();
         separator.setParent(masthead);
         separator.setIcon(ThemeImages.MASTHEAD_SEPARATOR);
-        separator.setAlt(theme.getMessage("masthead.statusAreaSepAltText")); // GF-required 508 change
+        // GF-required 508 change
+        separator.setAlt(theme.getMessage("masthead.statusAreaSepAltText"));
 
         renderUserInfo(context, masthead, theme, labelStyle, textStyle,
                 separator, writer);
 
         // Renders the separator if it needs to.
-        //
         renderRoleInfo(context, masthead, theme, labelStyle, textStyle,
                 separator, writer);
 
         renderServerInfo(context, masthead, theme, labelStyle,
                 textStyle, writer);
 
-        writer.endElement(HTMLElements.DIV); //NOI18N
+        writer.endElement(HTMLElements.DIV);
     }
 
     /**
-     * Render the utility bar in a table row.
-     * Note that if there is a <code>utilityBar</code> it is
-     * expected to render an opening and closing <code>tr</code>
-     * element.
+     * Render the utility bar in a table row. Note that if there is a
+     * {@code utilityBar} it is expected to render an opening and closing
+     * {@code tr} element.
      *
      * @param context The current FacesContext
      * @param masthead The Masthead component
      * @param writer The current ResponseWriter
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderUtilityBar(FacesContext context, Masthead masthead,
-            ResponseWriter writer, Theme theme) throws IOException {
+    @SuppressWarnings({
+        "checkstyle:magicnumber",
+        "checkstyle:methodlength"
+    })
+    protected void renderUtilityBar(final FacesContext context,
+            final Masthead masthead, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        UIComponent facet = masthead.getFacet("utilityBar"); //NOI18N
+        UIComponent facet = masthead.getFacet("utilityBar");
         if (facet != null) {
             RenderingUtilities.renderComponent(facet, context);
             return;
         }
 
         // render the the utility bar in a table row
-        writer.startElement(HTMLElements.TR, masthead); //NOI18N
+        writer.startElement(HTMLElements.TR, masthead);
 
         // render the console & version facets (if necessary) in a table divider
-        writer.startElement(HTMLElements.TD, masthead); //NOI18N
-        writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
+        writer.startElement(HTMLElements.TD, masthead);
+        writer.writeAttribute("nowrap", "nowrap", null);
 
-        String styleName = null;
+        String styleName;
         // DO NOT HARD CODE STYLES!!!
-        String buttonClassName =
-                theme.getStyleClass(ThemeStyles.MASTHEAD_BUTTON);
+        String buttonClassName
+                = theme.getStyleClass(ThemeStyles.MASTHEAD_BUTTON);
 
         // render the console facet if specified
-        //
-        facet = masthead.getFacet("consoleLink"); //NOI18N
+        facet = masthead.getFacet("consoleLink");
         boolean consoleLinkDisplayed = facet != null;
         if (consoleLinkDisplayed) {
             writer.startElement(HTMLElements.DIV, masthead);
             writer.writeAttribute(HTMLAttributes.CLASS, buttonClassName, null);
 
             styleName = ThemeStyles.MASTHEAD_LINK;
-            setAttrs(facet, "MastheadConsoleLink", masthead, //NOI18N
-                    theme.getMessage("masthead.consoleLabel"), //NOI18N
+            setAttrs(facet, "MastheadConsoleLink", masthead,
+                    theme.getMessage("masthead.consoleLabel"),
                     theme.getStyleClass(styleName),
-                    theme.getMessage("masthead.consoleTooltip"), //NOI18N
-                    theme.getMessage("masthead.consoleStatus")); //NOI18N
+                    theme.getMessage("masthead.consoleTooltip"),
+                    theme.getMessage("masthead.consoleStatus"));
 
             RenderingUtilities.renderComponent(facet, context);
             writer.endElement(HTMLElements.DIV);
@@ -463,20 +471,24 @@ public class MastheadRenderer extends AbstractRenderer {
         }
 
         // render the version facet if specified
-        facet = masthead.getFacet("versionLink"); //NOI18N
+        facet = masthead.getFacet("versionLink");
         if (facet != null) {
 
             writer.startElement(HTMLElements.DIV, masthead);
             writer.writeAttribute(HTMLAttributes.CLASS, buttonClassName, null);
 
-            styleName = consoleLinkDisplayed ? ThemeStyles.MASTHEAD_LINK_RIGHT : ThemeStyles.MASTHEAD_LINK;
+            if (consoleLinkDisplayed) {
+                styleName = ThemeStyles.MASTHEAD_LINK_RIGHT;
+            } else {
+                styleName = ThemeStyles.MASTHEAD_LINK;
+            }
             String styleClass = theme.getStyleClass(styleName);
 
-            setAttrs(facet, "MastheadVersionLink", masthead, //NOI18N
-                    theme.getMessage("masthead.versionLabel"), //NOI18N
+            setAttrs(facet, "MastheadVersionLink", masthead,
+                    theme.getMessage("masthead.versionLabel"),
                     styleClass,
-                    theme.getMessage("masthead.versionTooltip"), //NOI18N
-                    theme.getMessage("masthead.versionStatus")); //NOI18N
+                    theme.getMessage("masthead.versionTooltip"),
+                    theme.getMessage("masthead.versionStatus"));
 
             RenderingUtilities.renderComponent(facet, context);
             writer.endElement(HTMLElements.DIV);
@@ -488,22 +500,22 @@ public class MastheadRenderer extends AbstractRenderer {
         // if specified, render the search, logout and help facets as well as
         // any other developer specified links
         writer.startElement(HTMLElements.TD, masthead);
-        writer.writeAttribute(HTMLAttributes.ALIGN, "right", null); //NOI18N
-        writer.writeAttribute(HTMLAttributes.VALIGN, "bottom", null); //NOI18N       
+        writer.writeAttribute(HTMLAttributes.ALIGN, "right", null);
+        writer.writeAttribute(HTMLAttributes.VALIGN, "bottom", null);
 
-        String leftLinkStyle =
-                theme.getStyleClass(ThemeStyles.MASTHEAD_LINK_LEFT);
-        String centerLinkStyle =
-                theme.getStyleClass(ThemeStyles.MASTHEAD_LINK_CENTER);
-        String rightLinkStyle =
-                theme.getStyleClass(ThemeStyles.MASTHEAD_LINK_RIGHT);
-        String singleLinkStyle =
-                theme.getStyleClass(ThemeStyles.MASTHEAD_LINK);
+        String leftLinkStyle
+                = theme.getStyleClass(ThemeStyles.MASTHEAD_LINK_LEFT);
+        String centerLinkStyle
+                = theme.getStyleClass(ThemeStyles.MASTHEAD_LINK_CENTER);
+        String rightLinkStyle
+                = theme.getStyleClass(ThemeStyles.MASTHEAD_LINK_RIGHT);
+        String singleLinkStyle
+                = theme.getStyleClass(ThemeStyles.MASTHEAD_LINK);
 
         // determine what optional elements are being displayed
-        UIComponent logoutFacet = masthead.getFacet("logoutLink"); //NOI18N
-        UIComponent helpFacet = masthead.getFacet("helpLink"); //NOI18N
-        UIComponent searchFacet = masthead.getFacet("search"); //NOI18N
+        UIComponent logoutFacet = masthead.getFacet("logoutLink");
+        UIComponent helpFacet = masthead.getFacet("helpLink");
+        UIComponent searchFacet = masthead.getFacet("search");
         Hyperlink[] extraLinks = masthead.getUtilities();
 
         boolean logoutLinkDisplayed = logoutFacet != null;
@@ -517,7 +529,7 @@ public class MastheadRenderer extends AbstractRenderer {
             // now render the separator image if any other elements to the right
             if (logoutLinkDisplayed || helpLinkDisplayed || areExtraLinks) {
                 ImageComponent separator = new ImageComponent();
-                separator.setId("searchSeparator"); //NOI18N           
+                separator.setId("searchSeparator");
                 separator.setIcon(ThemeImages.MASTHEAD_SEPARATOR_BUTTONS);
                 RenderingUtilities.renderComponent(separator, context);
             }
@@ -525,24 +537,21 @@ public class MastheadRenderer extends AbstractRenderer {
 
         // render any developer specified links if necessary
         if (areExtraLinks) {
-            boolean extraLinksOnly =
-                    !(logoutLinkDisplayed || helpLinkDisplayed);
-
+            boolean extraLinksOnly
+                    = !(logoutLinkDisplayed || helpLinkDisplayed);
 
             // Don't use appendDotImage in a loop, we can reuse the
             // same icon component.
-            //
-            StringBuilder sbId = new StringBuilder("_lp"); //NOI18N
+            StringBuilder sbId = new StringBuilder("_lp");
             int len = sbId.length();
             Icon dot = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
             dot.setParent(masthead);
             dot.setWidth(8);
             dot.setHeight(1);
             dot.setBorder(0);
-            dot.setAlt(""); //NOI18N
+            dot.setAlt("");
 
             // render any developer specifed custom links
-            //
             List children = masthead.getChildren();
             for (int i = 0; i < extraLinks.length; i++) {
                 Hyperlink link = extraLinks[i];
@@ -554,10 +563,8 @@ public class MastheadRenderer extends AbstractRenderer {
                         buttonClassName, null);
                 RenderingUtilities.renderComponent(link, context);
                 writer.endElement(HTMLElements.DIV);
-
                 dot.setId(sbId.append(Integer.toString(i)).toString());
                 sbId.setLength(len);
-
                 RenderingUtilities.renderComponent(dot, context);
             }
         }
@@ -579,16 +586,16 @@ public class MastheadRenderer extends AbstractRenderer {
                 style = ThemeStyles.MASTHEAD_LINK_LEFT;
             }
 
-            setAttrs(logoutFacet, "MastheadLogoutLink", masthead, //NOI18N
-                    theme.getMessage("masthead.logoutLabel"), //NOI18N
+            setAttrs(logoutFacet, "MastheadLogoutLink", masthead,
+                    theme.getMessage("masthead.logoutLabel"),
                     theme.getStyleClass(style),
-                    theme.getMessage("masthead.logoutTooltip"), //NOI18N
-                    theme.getMessage("masthead.logoutStatus")); //NOI18N
+                    theme.getMessage("masthead.logoutTooltip"),
+                    theme.getMessage("masthead.logoutStatus"));
 
             RenderingUtilities.renderComponent(logoutFacet, context);
             writer.endElement(HTMLElements.DIV);
             appendDotImage(writer, context, masthead,
-                    "_logoutPad", 1, 8, theme);//NOI18N
+                    "_logoutPad", 1, 8, theme);
         }
 
         if (helpFacet != null) {
@@ -601,11 +608,11 @@ public class MastheadRenderer extends AbstractRenderer {
                 style = ThemeStyles.MASTHEAD_LINK_RIGHT;
             }
 
-            setAttrs(helpFacet, "MastheadHelpLink", masthead, //NOI18N
-                    theme.getMessage("masthead.helpLabel"), //NOI18N
+            setAttrs(helpFacet, "MastheadHelpLink", masthead,
+                    theme.getMessage("masthead.helpLabel"),
                     theme.getStyleClass(style),
-                    theme.getMessage("masthead.helpLabel"), //NOI18N
-                    theme.getMessage("masthead.helpLabel")); //NOI18N
+                    theme.getMessage("masthead.helpLabel"),
+                    theme.getMessage("masthead.helpLabel"));
 
             RenderingUtilities.renderComponent(helpFacet, context);
             writer.endElement(HTMLElements.DIV);
@@ -621,85 +628,109 @@ public class MastheadRenderer extends AbstractRenderer {
 
     /**
      * Helper method to set the given id, parent, label and styleClass for the
-     * given component (if they haven't already been set)
+     * given component (if they haven't already been set).
+     *
+     * @param component UI component
+     * @param id component id
+     * @param parent parent component
+     * @param label label text
+     * @param styleClass CSS class
+     * @param toolTip tool-tip text
+     * @param focusText onFocus text
      */
-    private void setAttrs(UIComponent component, String id, UIComponent parent,
-            String label, String styleClass, String toolTip, String focusText) {
+    private void setAttrs(final UIComponent component, final String id,
+            final UIComponent parent, final String label,
+            final String styleClass, final String toolTip,
+            final String focusText) {
 
         Map<String, Object> attrs = component.getAttributes();
-        StringBuilder focusBuff = new StringBuilder(64);
-        focusBuff.append("window.status='") //NOI18N
-                .append(focusText).append("'; return true; "); //NOI18N
-        focusText = focusBuff.toString();
+        StringBuilder focusBuff = new StringBuilder();
+        focusBuff.append("window.status='")
+                .append(focusText).append("'; return true; ");
+        String focusJs = focusBuff.toString();
 
         if (component.getId() == null) {
             component.setId(id);
         }
 
         // FIXME: it is never good to add children in a renderer.
-        //
         if (component.getParent() == null) {
             parent.getChildren().add(component);
         }
 
-        if (attrs.get("text") == null) { //NOI18N
-            attrs.put("text", label); //NOI18N             
+        if (attrs.get("text") == null) {
+            attrs.put("text", label);
         }
 
-        if (attrs.get("toolTip") == null) { //NOI18N
-            attrs.put("toolTip", toolTip); //NOI18N
+        if (attrs.get("toolTip") == null) {
+            attrs.put("toolTip", toolTip);
         }
 
-        if (attrs.get("onFocus") == null) { //NOI18N
-            attrs.put("onFocus", focusText); //NOI18N
+        if (attrs.get("onFocus") == null) {
+            attrs.put("onFocus", focusJs);
         }
 
-        if (attrs.get("onMouseOver") == null) { //NOI18N
-            attrs.put("onMouseOver", focusText); //NOI18N
+        if (attrs.get("onMouseOver") == null) {
+            attrs.put("onMouseOver", focusJs);
         }
 
-        if (attrs.get("onMouseOut") == null) { //NOI18N
-            attrs.put("onMouseOut", "window.status=''; return true;"); //NOI18N
+        if (attrs.get("onMouseOut") == null) {
+            attrs.put("onMouseOut", "window.status=''; return true;");
         }
 
-        if (attrs.get("onBlur") == null) { //NOI18N
-            attrs.put("onBlur", "window.status=''; return true;"); //NOI18N
+        if (attrs.get("onBlur") == null) {
+            attrs.put("onBlur", "window.status=''; return true;");
         }
     }
 
     /**
-     * Helper method to start a layout table with the given style class name
+     * Helper method to start a layout table with the given style class name.
      *
      * @param writer The current ResponseWriter
      * @param masthead The current Masthead component
      * @param styleName The name of the style class to use for this table
+     * @throws IOException if an IO error occurs
      */
-    private void startTable(ResponseWriter writer, Masthead masthead,
-            String styleName) throws IOException {
+    private void startTable(final ResponseWriter writer,
+            final Masthead masthead, final String styleName)
+            throws IOException {
 
         writer.startElement(HTMLElements.TABLE, masthead);
-        writer.writeAttribute(HTMLAttributes.WIDTH, "100%", null); //NOI18N
-        writer.writeAttribute(HTMLAttributes.BORDER, "0", null); //NOI18N
-        writer.writeAttribute(HTMLAttributes.CELLPADDING, "0", null); //NOI18N
-        writer.writeAttribute(HTMLAttributes.CELLSPACING, "0", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.WIDTH, "100%", null);
+        writer.writeAttribute(HTMLAttributes.BORDER, "0", null);
+        writer.writeAttribute(HTMLAttributes.CELLPADDING, "0", null);
+        writer.writeAttribute(HTMLAttributes.CELLSPACING, "0", null);
         writer.writeAttribute(HTMLAttributes.CLASS, styleName, null);
-        writer.writeAttribute(HTMLAttributes.TITLE, "", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.TITLE, "", null);
     }
 
-    /** output the link count in the given style */
-    private void writeAlarmCount(ResponseWriter writer, FacesContext context,
-            String imageName, String imageAlt, Masthead masthead, String style,
-            int count, Theme theme) throws IOException {
+    /**
+     * Output the link count in the given style.
+     * @param writer writer to use
+     * @param context faces context
+     * @param imageName image name
+     * @param imageAlt image alternate text
+     * @param masthead masthead component
+     * @param style CSS style
+     * @param count alarm count
+     * @param theme the current theme
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    private void writeAlarmCount(final ResponseWriter writer,
+            final FacesContext context, final String imageName,
+            final String imageAlt, final Masthead masthead, final String style,
+            final int count, final Theme theme) throws IOException {
 
         Icon icon = ThemeUtilities.getIcon(theme, imageName);
         icon.setId(imageName);
         icon.setAlt(theme.getMessage(imageAlt));
         RenderingUtilities.renderComponent(icon, context);
-        style = theme.getStyleClass(style);
 
         writer.startElement(HTMLElements.SPAN, masthead);
-        writer.writeAttribute(HTMLAttributes.CLASS, style, null);
-        writer.write("&nbsp;" + count + "&nbsp;&nbsp;&nbsp;"); //NOI18N
+        writer.writeAttribute(HTMLAttributes.CLASS, theme.getStyleClass(style),
+                null);
+        writer.write("&nbsp;" + count + "&nbsp;&nbsp;&nbsp;");
         writer.endElement(HTMLElements.SPAN);
     }
 
@@ -710,21 +741,38 @@ public class MastheadRenderer extends AbstractRenderer {
      * @param masthead The Masthead component
      * @param styleName The style class name to use
      * @param text The text to output inside of the span
+     * @param context faces context
+     * @param id component id
+     * @throws IOException if an IO error occurs
      */
-    private void writeSpan(ResponseWriter writer, Masthead masthead,
-            String styleName, String text, FacesContext context, String id)
-            throws IOException {
+    private void writeSpan(final ResponseWriter writer, final Masthead masthead,
+            final String styleName, final String text,
+            final FacesContext context, final String id) throws IOException {
 
-        writer.startElement(HTMLElements.SPAN, masthead); //NOI18N
+        writer.startElement(HTMLElements.SPAN, masthead);
         writer.writeAttribute(HTMLAttributes.ID,
                 masthead.getClientId(context) + id, HTMLAttributes.ID);
         writer.writeAttribute(HTMLAttributes.CLASS, styleName, null);
-        writer.write(text != null ? text : ""); //NOI18N
+        if (text != null) {
+            writer.write(text);
+        }
         writer.endElement(HTMLElements.SPAN);
     }
 
-    private void appendDotImage(ResponseWriter writer, FacesContext context,
-            Masthead masthead, String id, int ht, int wd, Theme theme)
+    /**
+     * Append the dot image.
+     * @param writer writer to use
+     * @param context faces context
+     * @param masthead masthead component
+     * @param id component id
+     * @param ht height
+     * @param wd width
+     * @param theme the current theme
+     * @throws IOException if an IO error occurs
+     */
+    private void appendDotImage(final ResponseWriter writer,
+            final FacesContext context, final Masthead masthead,
+            final String id, final int ht, final int wd, final Theme theme)
             throws IOException {
 
         Icon dot = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
@@ -734,15 +782,23 @@ public class MastheadRenderer extends AbstractRenderer {
         dot.setWidth(wd);
         dot.setHeight(ht);
         dot.setBorder(0);
-        dot.setAlt(id + " dot image"); // NOI18N  // GF-required 508 change
+        // GF-required 508 change
+        dot.setAlt(id + " dot image");
         RenderingUtilities.renderComponent(dot, context);
     }
 
-    private void appendSeparator(ResponseWriter writer, FacesContext context,
-            String align) throws IOException {
+    /**
+     * Append the separator.
+     * @param writer writer to use
+     * @param context faces context
+     * @param align align value
+     * @throws IOException if an IO error occurs
+     */
+    private void appendSeparator(final ResponseWriter writer,
+            final FacesContext context, final String align) throws IOException {
 
         ImageComponent separator = new ImageComponent();
-        separator.setId("searchSeparator"); //NOI18N           
+        separator.setId("searchSeparator");
         separator.setIcon(ThemeImages.MASTHEAD_SEPARATOR_STATUS);
         if (align != null) {
             separator.setAlign(align);
@@ -751,23 +807,26 @@ public class MastheadRenderer extends AbstractRenderer {
     }
 
     /**
-     * Return a UIComponent suitable to render for the brand image.
-     * If the <code>brandImage</code> facet exists return it, otherwise
-     * if the <code>masthead.getBrandImageURL()</code> exists
-     * create a compoennt initialized with appropriate
-     * values and return it.
-     * <p>In this implementation, if a value for 
-     * <code>getBrandImageUrl</code> is not specified it returns an
-     * <code>Icon</code> component, by calling
-     * <code>ThemeUtilities.getIcon</code> with the
-     * <code>ThemeImages.MASTHEAD_CORPLOGO</code> key. If there is
-     * no image for this key, return <code>null</code>
+     * Return a UIComponent suitable to render for the brand image. If the
+     * {@code brandImage} facet exists return it, otherwise if the
+     * {@code masthead.getBrandImageURL()} exists create a component
+     * initialized with appropriate values and return it.
+     * <p>
+     * In this implementation, if a value for {@code getBrandImageUrl} is
+     * not specified it returns an {@code Icon} component, by calling
+     * {@code ThemeUtilities.getIcon} with the
+     * {@code ThemeImages.MASTHEAD_CORPLOGO} key. If there is no image for
+     * this key, return {@code null}
      * </p>
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current
+     * @return UIComponent
      */
-    protected UIComponent getBrandImage(FacesContext context,
-            Masthead masthead, Theme theme) {
+    protected UIComponent getBrandImage(final FacesContext context,
+            final Masthead masthead, final Theme theme) {
 
-        UIComponent facet = masthead.getFacet("brandImage"); //NOI18N
+        UIComponent facet = masthead.getFacet("brandImage");
         if (facet != null) {
             return facet;
         }
@@ -778,9 +837,7 @@ public class MastheadRenderer extends AbstractRenderer {
             ImageComponent image = new ImageComponent();
 
             // use the brand image properties specified on the component
-            //
             image.setUrl(imageAttr);
-
             imageAttr = masthead.getBrandImageDescription();
             if (imageAttr != null && imageAttr.trim().length() != 0) {
                 image.setAlt(imageAttr);
@@ -802,16 +859,15 @@ public class MastheadRenderer extends AbstractRenderer {
         // First see if there is valid image. If there is no
         // image, return null, else retun the value from
         // ThemeUtilities.getIcon.
-        //
         Icon icon = null;
         try {
-            String imagePath =
-                    theme.getImagePath(ThemeImages.MASTHEAD_CORPLOGO);
+            String imagePath
+                    = theme.getImagePath(ThemeImages.MASTHEAD_CORPLOGO);
             if (imagePath == null) {
                 return null;
             }
             icon = ThemeUtilities.getIcon(theme, ThemeImages.MASTHEAD_CORPLOGO);
-            icon.setId(masthead.getId() + "_brandImage"); //NOI18N
+            icon.setId(masthead.getId() + "_brandImage");
             icon.setParent(masthead);
         } catch (Exception e) {
             // Don't care.
@@ -820,16 +876,20 @@ public class MastheadRenderer extends AbstractRenderer {
     }
 
     /**
-     * Return a UIComponent suitable to render for the product image.
-     * If the <code>productInfo</code> facet exists return it, otherwise
-     * if the <code>masthead.getProductImageURL()</code> exists
-     * create an <code>ImageComponent</code> initialized with appropriate
-     * values and return it, otherwise return <code>null</code>.
+     * Return a UIComponent suitable to render for the product image. If the
+     * {@code productInfo} facet exists return it, otherwise if the
+     * {@code masthead.getProductImageURL()} exists create an
+     * {@code ImageComponent} initialized with appropriate values and
+     * return it, otherwise return {@code null}.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @return UIComponent
      */
-    protected UIComponent getProductImage(FacesContext context,
-            Masthead masthead, Theme theme) {
+    protected UIComponent getProductImage(final FacesContext context,
+            final Masthead masthead, final Theme theme) {
 
-        UIComponent productFacet = masthead.getFacet("productInfo"); //NOI18N
+        UIComponent productFacet = masthead.getFacet("productInfo");
         if (productFacet != null) {
             return productFacet;
         }
@@ -842,21 +902,24 @@ public class MastheadRenderer extends AbstractRenderer {
         ImageComponent image = new ImageComponent();
         image.setId(masthead.getId() + "_productInfo");
         image.setParent(masthead);
-
         image.setUrl(imageUrl);
         image.setHeight(masthead.getProductImageHeight());
         image.setWidth(masthead.getProductImageWidth());
         image.setAlt(masthead.getProductImageDescription());
-
         return image;
     }
 
     /**
      * Render a secondary masthead.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
      */
-    protected void renderSecondaryMasthead(FacesContext context,
-            Masthead masthead, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderSecondaryMasthead(final FacesContext context,
+            final Masthead masthead, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         startTable(writer, masthead,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_SECONDARY_STYLE));
@@ -879,10 +942,15 @@ public class MastheadRenderer extends AbstractRenderer {
 
     /**
      * Render a primary masthead.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
      */
-    protected void renderPrimaryMasthead(FacesContext context,
-            Masthead masthead, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderPrimaryMasthead(final FacesContext context,
+            final Masthead masthead, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         // start the div the entire masthead is wrapped in
         writer.startElement(HTMLElements.DIV, masthead);
@@ -894,11 +962,11 @@ public class MastheadRenderer extends AbstractRenderer {
         if (style != null) {
             writer.writeAttribute(HTMLAttributes.STYLE, style, null);
         }
-        writer.write("\n"); //NOI18N
+        writer.write("\n");
 
         RenderingUtilities.renderSkipLink(SKIP_UTILITY,
                 theme.getStyleClass(ThemeStyles.SKIP_MEDIUM_GREY1), null,
-                theme.getMessage("masthead.statusSkipTagAltText"), //NOI18N
+                theme.getMessage("masthead.statusSkipTagAltText"),
                 null, masthead, context);
 
         // start the table the masthead uses for layout
@@ -909,7 +977,7 @@ public class MastheadRenderer extends AbstractRenderer {
         renderUtilityBar(context, masthead, writer, theme);
 
         // close the utility bay layout table
-        writer.endElement(HTMLElements.TABLE); //NOI18N
+        writer.endElement(HTMLElements.TABLE);
 
         // start the layout table for the app info, status area &
         // brand image
@@ -917,7 +985,7 @@ public class MastheadRenderer extends AbstractRenderer {
                 theme.getStyleClass(ThemeStyles.MASTHEAD_TABLE_BOTTOM));
 
         // all these areas go in a single row
-        writer.startElement(HTMLElements.TR, masthead); //NOI18N
+        writer.startElement(HTMLElements.TR, masthead);
 
         // render the app info - typically user, server and product name details
         // userinfo, role info and serverinfo appear in a single TD
@@ -934,7 +1002,7 @@ public class MastheadRenderer extends AbstractRenderer {
         //
         writer.startElement(HTMLElements.TR, masthead);
         writer.startElement(HTMLElements.TD, masthead);
-        writer.writeAttribute(HTMLAttributes.COLSPAN, "2", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.COLSPAN, "2", null);
 
         writer.startElement(HTMLElements.DIV, masthead);
         writer.writeAttribute(HTMLAttributes.CLASS,
@@ -950,42 +1018,51 @@ public class MastheadRenderer extends AbstractRenderer {
         renderStatusArea(context, masthead, writer, theme);
 
         // close the div that wraps the entire masthead
-        writer.endElement(HTMLElements.DIV); //NOI18N
+        writer.endElement(HTMLElements.DIV);
         RenderingUtilities.renderAnchor(SKIP_UTILITY, masthead, context);
     }
 
     /**
      * Render the status area based on the status area masthead properties.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
      */
-    protected void renderStatusAreaComponents(FacesContext context,
-            Masthead masthead, Theme theme, ResponseWriter writer)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void renderStatusAreaComponents(final FacesContext context,
+            final Masthead masthead, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         boolean isDateTime = masthead.isDateTime();
         String notificationMsg = masthead.getNotificationMsg();
         int[] alarmCounts = masthead.getAlarmCounts();
         int jobCount = masthead.getJobCount();
 
-        UIComponent notificationInfo =
-                masthead.getFacet("notificationInfo"); //NOI18N
-        UIComponent jobsInfo = masthead.getFacet("jobsInfo"); //NOI18N
-        UIComponent dateTimeInfo = masthead.getFacet("dateTimeInfo"); //NOI18N
-        UIComponent currentAlarmsInfo =
-                masthead.getFacet("currentAlarmsInfo"); //NOI18N
+        UIComponent notificationInfo
+                = masthead.getFacet("notificationInfo");
+        UIComponent jobsInfo = masthead.getFacet("jobsInfo");
+        UIComponent dateTimeInfo = masthead.getFacet("dateTimeInfo");
+        UIComponent currentAlarmsInfo
+                = masthead.getFacet("currentAlarmsInfo");
 
         // at least one of the default status area items is displayed
-        //
-        boolean showNotification = notificationInfo != null ||
-                (notificationMsg != null && notificationMsg.length() != 0);
+        boolean showNotification = notificationInfo != null
+                || (notificationMsg != null
+                && notificationMsg.length() != 0);
 
-        boolean showJobs = jobCount != -1 || jobsInfo != null;
+        boolean showJobs = jobCount != -1
+                || jobsInfo != null;
 
-        boolean havestatus = isDateTime || alarmCounts != null ||
-                showJobs || dateTimeInfo != null || currentAlarmsInfo != null ||
-                showNotification;
+        boolean havestatus = isDateTime
+                || alarmCounts != null
+                || showJobs
+                || dateTimeInfo != null
+                || currentAlarmsInfo != null
+                || showNotification;
 
         // No status area artifacts
-        //
         if (!havestatus) {
             return;
         }
@@ -1012,7 +1089,7 @@ public class MastheadRenderer extends AbstractRenderer {
             if (separatorFlag) {
                 writer.startElement(HTMLElements.TD, masthead);
                 writer.writeAttribute(HTMLAttributes.VALIGN, "middle", null);
-                appendSeparator(writer, context, "top"); //NOI18N
+                appendSeparator(writer, context, "top");
                 writer.endElement(HTMLElements.TD);
                 separatorFlag = false;
             }
@@ -1027,7 +1104,7 @@ public class MastheadRenderer extends AbstractRenderer {
                 writer.startElement(HTMLElements.TD, masthead);
                 writer.writeAttribute(HTMLAttributes.VALIGN, "middle",
                         null);
-                appendSeparator(writer, context, "top"); //NOI8N
+                appendSeparator(writer, context, "top");
                 writer.endElement(HTMLElements.TD);
                 separatorFlag = false;
             }
@@ -1036,98 +1113,112 @@ public class MastheadRenderer extends AbstractRenderer {
             separatorFlag = true;
         }
 
-        if ((alarmCounts != null && alarmCounts.length == 4) ||
-                currentAlarmsInfo != null) {
+        if ((alarmCounts != null && alarmCounts.length == 4)
+                || currentAlarmsInfo != null) {
             if (separatorFlag) {
                 writer.startElement(HTMLElements.TD, masthead);
                 writer.writeAttribute(HTMLAttributes.VALIGN, "middle", null);
-                appendSeparator(writer, context, "top"); //NOI18N
+                appendSeparator(writer, context, "top");
                 writer.endElement(HTMLElements.TD);
             }
             // current alarms info needs to be displayed
             renderAlarmsInfo(context, masthead, writer, alarmCounts, theme);
         }
 
-        writer.endElement(HTMLElements.TR); //NOI18N
-        writer.endElement(HTMLElements.TABLE); //NOI18N
+        writer.endElement(HTMLElements.TR);
+        writer.endElement(HTMLElements.TABLE);
     }
 
-    // Its not clear what the policy should be regarding the
-    // rendering of the user info. Before this code was refactored
-    // there was an illogical dependency between the existence
-    // user info and server info. 
-    // Unlink roleInfo user info and server info are rendered whether
-    // or not there is data. This can yield a label without
-    // any data. The roleInfo is only rendered if there is "userInfo"
-    // or facets.
-    private void renderUserInfo(FacesContext context, Masthead masthead,
-            Theme theme, String labelStyle, String textStyle,
-            UIComponent separator, ResponseWriter writer) throws IOException {
+    /**
+     * Its not clear what the policy should be regarding the rendering of the
+     * user info. Before this code was refactored there was an illogical
+     * dependency between the existence user info and server info. Unlink
+     * roleInfo user info and server info are rendered whether or not there is
+     * data. This can yield a label without any data. The roleInfo is only
+     * rendered if there is "userInfo" or facets.
+     *
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param labelStyle label CSS style
+     * @param textStyle text CSS style
+     * @param separator separator component
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderUserInfo(final FacesContext context,
+            final Masthead masthead, final Theme theme, final String labelStyle,
+            final String textStyle, final UIComponent separator,
+            final ResponseWriter writer) throws IOException {
 
-        UIComponent facet = masthead.getFacet("userInfoLabel"); //NOI18N
+        UIComponent facet = masthead.getFacet("userInfoLabel");
         if (facet != null) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
             String label = masthead.getUserInfoLabel();
             if (label == null) {
-                label = theme.getMessage("masthead.userLabel"); //NOI18N
+                label = theme.getMessage("masthead.userLabel");
             }
             writeSpan(writer, masthead, labelStyle, label, context,
-                    "_userLabel"); //NOI18N
+                    "_userLabel");
         }
 
         // This should be some sort of CSS selector on the
         // span or the previous span or the span should contain
         // the facet since the facet may not add any space.
-        //
-        writer.write("&nbsp;"); //NOI18N
+        writer.write("&nbsp;");
 
-        facet = masthead.getFacet("userInfo"); //NOI18N
+        facet = masthead.getFacet("userInfo");
         if (facet != null) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
             writeSpan(writer, masthead, textStyle, masthead.getUserInfo(),
-                    context, "_userInfo"); //NOI18N
+                    context, "_userInfo");
         }
 
         // We know parent has been set.
-        //
-        separator.setId("_userInfoSeparator"); //NOI18N           
+        separator.setId("_userInfoSeparator");
         RenderingUtilities.renderComponent(separator, context);
     }
 
     /**
-     * Unlike user info and server info role info is only rendered
-     * if there are role facets, either one, or if 
-     * <code>masthead.getRoleInfo</code> returns non null and a 
-     * non empty string.
-     * <p>
-     * Note that if there is a <code>roleInfoLabel</code> facet but no
-     * <code>roleInfo</code> facet, the <code>roleInfoLabel</code> facet
-     * will be rendered, whether or not the <code>roleInfo</code>
-     * attribute has data. Likewise if there is a <code>roleInfo</code>
-     * facet and not <code>roleInfoLabel</code> facet and no 
-     * <code>roleInfo</code> attribute data, the <code>roleInfo</code>
-     * facet is still rendered, yielding data without a label.
+     * Unlike user info and server info role info is only rendered if there are
+     * role facets, either one, or if {@code masthead.getRoleInfo} returns
+     * non null and a non empty string.
+     *
+     * Note that if there is a {@code roleInfoLabel} facet but no
+     * {@code roleInfo} facet, the {@code roleInfoLabel} facet will be
+     * rendered, whether or not the {@code roleInfo} attribute has data.
+     * Likewise if there is a {@code roleInfo} facet and not
+     * {@code roleInfoLabel} facet and no {@code roleInfo} attribute
+     * data, the {@code roleInfo} facet is still rendered, yielding data
+     * without a label.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param labelStyle label CSS style
+     * @param textStyle text CSS style
+     * @param separator separator component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
      */
-    private void renderRoleInfo(FacesContext context, Masthead masthead,
-            Theme theme, String labelStyle, String textStyle,
-            UIComponent separator, ResponseWriter writer) throws IOException {
+    private void renderRoleInfo(final FacesContext context,
+            final Masthead masthead, final Theme theme, final String labelStyle,
+            final String textStyle, final UIComponent separator,
+            final ResponseWriter writer) throws IOException {
 
         boolean haveRoleFacet = false;
 
         // If there is no roleInfo nothing is rendered unless there
         // are facets.
-        //
         String roleInfo = masthead.getRoleInfo();
-        boolean haveRoleInfo =
-                roleInfo != null && roleInfo.trim().length() != 0;
+        boolean haveRoleInfo
+                = roleInfo != null && roleInfo.trim().length() != 0;
 
         // We either have a facet or roleinfo
         // So render a label.
-        //
-        UIComponent roleLabelFacet =
-                masthead.getFacet("roleInfoLabel"); //NOI18N
+        UIComponent roleLabelFacet
+                = masthead.getFacet("roleInfoLabel");
         if (roleLabelFacet != null) {
             RenderingUtilities.renderComponent(roleLabelFacet, context);
             haveRoleFacet = true;
@@ -1135,102 +1226,114 @@ public class MastheadRenderer extends AbstractRenderer {
             if (haveRoleInfo) {
                 String label = masthead.getRoleInfoLabel();
                 if (label == null) {
-                    label = theme.getMessage("masthead.roleLabel"); //NOI18N
+                    label = theme.getMessage("masthead.roleLabel");
                 }
                 writeSpan(writer, masthead, labelStyle, label, context,
-                        "_roleLabel"); //NOI18N
+                        "_roleLabel");
             }
         }
 
         // This should be some sort of CSS selector on the
         // span or the previous span or the span should contain
         // the facet since the facet may not add any space.
-        //
-        writer.write("&nbsp;"); //NOI18N
+        writer.write("&nbsp;");
 
-        UIComponent roleInfoFacet = masthead.getFacet("roleInfo"); //NOI18N
+        UIComponent roleInfoFacet = masthead.getFacet("roleInfo");
         if (roleInfoFacet != null) {
             RenderingUtilities.renderComponent(roleInfoFacet, context);
             haveRoleFacet = true;
         } else {
             if (haveRoleInfo) {
                 writeSpan(writer, masthead, textStyle, roleInfo,
-                        context, "_roleInfo"); //NOI18N
+                        context, "_roleInfo");
             }
         }
 
         // Reuse the separator
         // We know the parent was already set.
-        //
         if (haveRoleFacet || haveRoleInfo) {
-            separator.setId("_roleInfoSeparator"); //NOI18N
+            separator.setId("_roleInfoSeparator");
             RenderingUtilities.renderComponent(separator, context);
         }
     }
 
-    private void renderServerInfo(FacesContext context, Masthead masthead,
-            Theme theme, String labelStyle, String textStyle,
-            ResponseWriter writer) throws IOException {
+    /**
+     * Render the server info.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param labelStyle label CSS style
+     * @param textStyle text CSS style
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderServerInfo(final FacesContext context,
+            final Masthead masthead, final Theme theme, final String labelStyle,
+            final String textStyle, final ResponseWriter writer)
+            throws IOException {
 
-        UIComponent facet = masthead.getFacet("serverInfoLabel"); //NOI18N
+        UIComponent facet = masthead.getFacet("serverInfoLabel");
         if (facet != null) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
             String label = masthead.getServerInfoLabel();
             if (label == null) {
-                label = theme.getMessage("masthead.serverLabel"); //NOI18N
+                label = theme.getMessage("masthead.serverLabel");
             }
             writeSpan(writer, masthead, labelStyle, label, context,
-                    "_serverLabel"); //NOI18N
+                    "_serverLabel");
         }
 
         // This should be some sort of CSS selector on the
         // span or the previous span or the span should contain
         // the facet since the facet may not add any space.
-        //
-        writer.write("&nbsp;"); //NOI18N
+        writer.write("&nbsp;");
 
-        facet = masthead.getFacet("serverInfo"); //NOI18N
+        facet = masthead.getFacet("serverInfo");
         if (facet != null) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
             writeSpan(writer, masthead, textStyle, masthead.getServerInfo(),
-                    context, "_serverInfo"); //NOI18N
+                    context, "_serverInfo");
         }
     }
 
     /**
-     * Renders the logo separator and then the logo.
-     * If there is no logo a "transparent" separator is rendered
-     * to maintain the height when there is a logo.
+     * Renders the logo separator and then the logo. If there is no logo a
+     * "transparent" separator is rendered to maintain the height when there is
+     * a logo.
+     * @param context faces context
+     * @param masthead masthead component
+     * @param theme the current theme
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
      */
-    private void renderBrandImage(FacesContext context,
-            Masthead masthead, Theme theme, ResponseWriter writer)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderBrandImage(final FacesContext context,
+            final Masthead masthead, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(HTMLElements.TD, masthead);
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.MASTHEAD_TD_LOGO), null);
-        writer.writeAttribute(HTMLAttributes.WIDTH, "1%", null); //NOI18N
-        writer.writeAttribute(HTMLAttributes.ALIGN, "right", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.WIDTH, "1%", null);
+        writer.writeAttribute(HTMLAttributes.ALIGN, "right", null);
         writer.writeAttribute(HTMLAttributes.NOWRAP, HTMLAttributes.NOWRAP,
                 HTMLAttributes.NOWRAP);
 
         // If we don't have a brand image, just render a transparend
         // spacer to maintain the height of the masthead body.
-        //
         UIComponent brandImage = getBrandImage(context, masthead, theme);
         if (brandImage == null) {
             appendDotImage(writer, context, masthead, "_logoSep", 37, 2, theme);
         } else {
-            UIComponent separatorFacet =
-                    masthead.getFacet("separatorImage"); //NOI18N
+            UIComponent separatorFacet
+                    = masthead.getFacet("separatorImage");
             if (separatorFacet == null) {
                 // Use the default separator
-                //
                 separatorFacet = ThemeUtilities.getIcon(theme,
                         ThemeImages.MASTHEAD_JAVA_LOGO_SEPARATOR);
-                separatorFacet.setId("_logoSep"); //NOI18N
+                separatorFacet.setId("_logoSep");
                 separatorFacet.setParent(masthead);
             }
             RenderingUtilities.renderComponent(separatorFacet, context);

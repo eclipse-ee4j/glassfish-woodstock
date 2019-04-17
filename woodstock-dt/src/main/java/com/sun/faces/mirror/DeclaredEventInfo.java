@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,47 +23,135 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
 /**
- *
- * @author gjmurphy
+ * Declared event information.
  */
-public class DeclaredEventInfo extends EventInfo {
+public final class DeclaredEventInfo extends EventInfo {
 
+    /**
+     * Event name key.
+     */
     static final String NAME = "name";
+
+    /**
+     * Event display name key.
+     */
     static final String DISPLAY_NAME = "displayName";
+
+    /**
+     * Event short description key.
+     */
     static final String SHORT_DESCRIPTION = "shortDescription";
+
+    /**
+     * Event add listener method name key.
+     */
     static final String ADD_LISTENER_METHOD_NAME = "addListenerMethodName";
-    static final String REMOVE_LISTENER_METHOD_NAME = "removeListenerMethodName";
+
+    /**
+     * Event remove listener method name key.
+     */
+    static final String REMOVE_LISTENER_METHOD_NAME =
+            "removeListenerMethodName";
+
+    /**
+     * Event get listeners method name key.
+     */
     static final String GET_LISTENERS_METHOD_NAME = "getListenersMethodName";
+
+    /**
+     * Event isDefault flag key.
+     */
     static final String IS_DEFAULT = "isDefault";
 
-    Element decl;
-    Map<String, Object> annotationValueMap;
+    /**
+     * Declared element representing the event.
+     */
+    private final Element decl;
+
+    /**
+     * Annotation value map.
+     */
+    private final Map<String, Object> annotationValueMap;
+
+    /**
+     * Listener method name.
+     */
     private String listenerMethodName;
+
+    /**
+     * Listener class.
+     */
     private Class listenerClass;
+
+    /**
+     * Listener method parameter class names.
+     */
     private String[] listenerMethodParameterClassNames;
+
+    /**
+     * Listener method.
+     */
     private ExecutableElement listenerDeclaration;
+
+    /**
+     * Add listener method name.
+     */
     private String addListenerMethodName;
+
+    /**
+     * Remove listener method name.
+     */
     private String removeListenerMethodName;
+
+    /**
+     * Get listener method name.
+     */
     private String getListenersMethodName;
 
-    DeclaredEventInfo(Map<String, Object> annotationValueMap, Element decl) {
-        this.annotationValueMap = annotationValueMap;
-        this.decl = decl;
+    /**
+     * Event name.
+     */
+    private String name;
+
+    /**
+     * Create a new instance.
+     * @param annotValueMap annotation value map
+     * @param eltDecl element declaration representing the event
+     */
+    DeclaredEventInfo(final Map<String, Object> annotValueMap,
+            final Element eltDecl) {
+
+        this.annotationValueMap = annotValueMap;
+        this.decl = eltDecl;
     }
 
+    /**
+     * Get the annotation value map.
+     * @return {@code Map<String, Object>}
+     */
+    Map<String, Object> getAnnotationValueMap() {
+        return annotationValueMap;
+    }
+
+    /**
+     * Get the declaration representing this event.
+     * @return Element
+     */
     public Element getDeclaration() {
         return this.decl;
     }
-
-    private String name;
 
     @Override
     public String getName() {
         return this.name;
     }
 
-    void setName(String name) {
-        this.name = name;
+    /**
+     * Set the event name.
+     * @param eventName new event name
+     */
+    void setName(final String eventName) {
+        this.name = eventName;
     }
 
     @Override
@@ -90,7 +178,11 @@ public class DeclaredEventInfo extends EventInfo {
         return this.addListenerMethodName;
     }
 
-    void setAddListenerMethodName(String addMethodName) {
+    /**
+     * Set the add listener method name.
+     * @param addMethodName new add listener method name
+     */
+    void setAddListenerMethodName(final String addMethodName) {
         this.addListenerMethodName = addMethodName;
     }
 
@@ -103,7 +195,11 @@ public class DeclaredEventInfo extends EventInfo {
         return this.removeListenerMethodName;
     }
 
-    void setRemoveListenerMethodName(String removeMethodName) {
+    /**
+     * Set the remove listener method name.
+     * @param removeMethodName new remove listener method name
+     */
+    void setRemoveListenerMethodName(final String removeMethodName) {
         this.removeListenerMethodName = removeMethodName;
     }
 
@@ -116,7 +212,11 @@ public class DeclaredEventInfo extends EventInfo {
         return this.getListenersMethodName;
     }
 
-    void setGetListenersMethodName(String getMethodName) {
+    /**
+     * Set the get listener method name.
+     * @param getMethodName new get listener method name
+     */
+    void setGetListenersMethodName(final String getMethodName) {
         this.getListenersMethodName = getMethodName;
     }
 
@@ -151,20 +251,36 @@ public class DeclaredEventInfo extends EventInfo {
         return buffer.toString();
     }
 
+    /**
+     * Get the listener method declaration.
+     * @return ExecutableElement
+     */
     public ExecutableElement getListenerDeclaration() {
         return this.listenerDeclaration;
     }
 
-    void setListenerDeclaration(ExecutableElement listenerDeclaration) {
-        this.listenerDeclaration = listenerDeclaration;
+    /**
+     * Set the listener method declaration.
+     * @param listenerMethod new listener method declaration
+     */
+    void setListenerDeclaration(final ExecutableElement listenerMethod) {
+        this.listenerDeclaration = listenerMethod;
     }
 
+    /**
+     * Get the listener class.
+     * @return Class
+     */
     public Class getListenerClass() {
         return this.listenerClass;
     }
 
-    void setListenerClass(Class listenerClass) {
-        this.listenerClass = listenerClass;
+    /**
+     * Set the listener class.
+     * @param clazz new listener class
+     */
+    void setListenerClass(final Class clazz) {
+        this.listenerClass = clazz;
     }
 
     @Override
@@ -214,8 +330,9 @@ public class DeclaredEventInfo extends EventInfo {
 
     @Override
     EventInfo copy() {
-        DeclaredEventInfo copy = new DeclaredEventInfo(annotationValueMap, decl);
-        copy.original = this;
+        DeclaredEventInfo copy =
+                new DeclaredEventInfo(annotationValueMap, decl);
+        copy.setOriginal(this);
         copy.setDeclaringClassInfo(getDeclaringClassInfo());
         copy.setPropertyInfo(getPropertyInfo());
         copy.name = this.name;

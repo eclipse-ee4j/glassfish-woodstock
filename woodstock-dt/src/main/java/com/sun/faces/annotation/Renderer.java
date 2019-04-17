@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  *
  * <p>
  * In the simplest case, a renderer is used for just one component family, and
- * the renderer type is defauled to the component family name:
+ * the renderer type is defaulted to the component family name:
  * <pre>
  *    &#64;Renderer(&#64;Renders(componentFamily="org.example.input"))
  * </pre> A renderer annotation may be used to declare more than one rendering
@@ -50,7 +50,6 @@ import java.lang.annotation.Target;
  *    )
  * </pre>
  *
- * @author gjmurphy
  * @see Renderer.Renders
  */
 @Retention(RetentionPolicy.SOURCE)
@@ -63,7 +62,7 @@ public @interface Renderer {
      *
      * @return Renders[]
      */
-    public Renders[] value() default {};
+    Renders[] value() default {};
 
     /**
      * Annotation that identifies a single component-renderer combination. The
@@ -83,7 +82,7 @@ public @interface Renderer {
          *
          * @return String
          */
-        public String rendererType() default "";
+        String rendererType() default "";
 
         /**
          * The component family or families to which this rendering type
@@ -93,7 +92,7 @@ public @interface Renderer {
          *
          * @return String[]
          */
-        public String[] componentFamily();
+        String[] componentFamily();
     }
 
 }

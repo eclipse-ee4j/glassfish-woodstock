@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -35,21 +35,21 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * Renderer for a {@link com.sun.webui.jsf.component.Listbox} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Listbox"))
-public class ListboxRenderer extends ListRendererBase {
+public final class ListboxRenderer extends ListRendererBase {
 
     /**
      * Debug flag.
      */
-    private final static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (DEBUG) {
             log("encodeEnd()");
         }
-        if (component == null){
+        if (component == null) {
             return;
         }
         if (component instanceof ListSelector) {
@@ -63,7 +63,7 @@ public class ListboxRenderer extends ListRendererBase {
             if (selector instanceof Listbox) {
                 useMonospace = ((Listbox) selector).isMonospace();
             }
-            super.renderListComponent(selector, context,
+            renderListComponent(selector, context,
                     getStyles(context, component, useMonospace));
         } else {
             String message = "Component " + component.toString()
@@ -79,11 +79,14 @@ public class ListboxRenderer extends ListRendererBase {
      * {@code type} property.
      *
      * @param context {@code FacesContext} for the current request
-     * @param monospace {@code UIComponent} if true, use the mono space
+     * @param component UI component
+     * @param monospace if true, use the mono space
      * styles to render the list.
+     * @return String[]
      */
-    private String[] getStyles(FacesContext context, UIComponent component,
-            boolean monospace) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private String[] getStyles(final FacesContext context,
+            final UIComponent component, final boolean monospace) {
 
         if (DEBUG) {
             log("getStyles()");
@@ -112,5 +115,13 @@ public class ListboxRenderer extends ListRendererBase {
         styles[8] = theme.getStyleClass(ThemeStyles.HIDDEN);
         styles[9] = theme.getStyleClass(ThemeStyles.LIST_ALIGN);
         return styles;
+    }
+
+    /**
+     * Log an error - only used during development time.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(ListboxRenderer.class.getName() + "::" + msg);
     }
 }

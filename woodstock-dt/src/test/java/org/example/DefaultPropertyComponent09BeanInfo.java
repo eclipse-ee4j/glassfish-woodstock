@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,5 +17,4 @@
 package org.example;
 
 public class DefaultPropertyComponent09BeanInfo extends DefaultPropertyComponent09BeanInfoBase {
-    
 }

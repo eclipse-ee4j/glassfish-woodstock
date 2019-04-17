@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,12 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * MastFooterRenderer.java
- *
- * Created on September 14, 2006, 6:09 PM
- *
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -39,28 +33,22 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 
 /**
- *
- * @author deep
+ * MastFooter renderer.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.MastFooter"))
-public class MastFooterRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.MastFooter"))
+public final class MastFooterRenderer extends AbstractRenderer {
 
-    /** Creates a new instance of MastheadRenderer */
+    /**
+     * Creates a new instance of MastheadRenderer.
+     */
     public MastFooterRenderer() {
     }
 
-    /**
-     * All of the necessary Masthead rendering is done here.
-     * 
-     * @param context The current FacesContext
-     * @param component The ImageComponent object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurss
-     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         MastFooter footer = (MastFooter) component;
         Theme theme = ThemeUtilities.getTheme(context);
@@ -82,9 +70,9 @@ public class MastFooterRenderer extends AbstractRenderer {
 
         writer.writeAttribute(HTMLAttributes.ID, footer.getClientId(context),
                 null);
-        writer.writeAttribute(HTMLAttributes.ALIGN, "right", null); //NOI18N
+        writer.writeAttribute(HTMLAttributes.ALIGN, "right", null);
         renderCorporateImage(context, footer, writer, theme);
-        writer.endElement(HTMLElements.DIV); // NOI18N
+        writer.endElement(HTMLElements.DIV);
 
     }
 
@@ -93,16 +81,17 @@ public class MastFooterRenderer extends AbstractRenderer {
      * masthead.
      *
      * @param context The current FacesContext
-     * @param masthead The Masthead component
+     * @param footer The MastFooter component
      * @param writer The current ResponseWriter
      * @param theme The current Theme
+     * @throws IOException if an IO error occurs
      */
-    protected void renderCorporateImage(FacesContext context,
-            MastFooter footer, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderCorporateImage(final FacesContext context,
+            final MastFooter footer, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        UIComponent corporateFacet =
-                footer.getFacet("corporateImage"); // NOI18N
+        UIComponent corporateFacet
+                = footer.getFacet("corporateImage");
         if (corporateFacet != null) {
             RenderingUtilities.renderComponent(corporateFacet, context);
             return;
@@ -134,18 +123,17 @@ public class MastFooterRenderer extends AbstractRenderer {
         // use default Theme corporate image
         // First see if there is an image path. If there is
         // call ThemeUtilities.getIcon to an Icon.
-        //
         try {
-            String imagePath =
-                    theme.getImagePath(ThemeImages.MASTHEAD_CORPNAME);
+            String imagePath
+                    = theme.getImagePath(ThemeImages.MASTHEAD_CORPNAME);
             if (imagePath == null) {
                 return;
             }
             Icon icon = ThemeUtilities.getIcon(theme,
                     ThemeImages.MASTHEAD_CORPNAME);
-            icon.setId(footer.getId() + "_corporateImage"); // NOI18N
+            icon.setId(footer.getId() + "_corporateImage");
             RenderingUtilities.renderComponent(icon, context);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Don't care.
         }
     }

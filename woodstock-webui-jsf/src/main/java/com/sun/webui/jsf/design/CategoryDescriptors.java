@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,7 +24,13 @@ import java.util.ResourceBundle;
  * Definition for category descriptors processed at build time by the annotation
  * processor.
  */
-public class CategoryDescriptors {
+public final class CategoryDescriptors {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private CategoryDescriptors() {
+    }
 
     /**
      * The resource bundle to use for the category descriptors.
@@ -41,8 +47,8 @@ public class CategoryDescriptors {
      * @param expand expand flag
      * @return CategoryDescriptor
      */
-    private static CategoryDescriptor newCD(String nameKey,
-            String descKey, boolean expand){
+    private static CategoryDescriptor newCD(final String nameKey,
+            final String descKey, final boolean expand) {
 
         return new CategoryDescriptor(BUNDLE.getString(nameKey),
                 BUNDLE.getString(descKey), expand);
@@ -128,7 +134,7 @@ public class CategoryDescriptors {
     /**
      * Default category descriptors.
      */
-    private static final CategoryDescriptor DEFAULT_CATEGORY_DESCRIPTOR[] = {
+    private static final CategoryDescriptor[] DEFAULT_CATEGORY_DESCRIPTOR = {
         GENERAL,
         APPEARANCE,
         LAYOUT,

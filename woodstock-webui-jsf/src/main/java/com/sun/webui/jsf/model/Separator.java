@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,12 +17,14 @@
 package com.sun.webui.jsf.model;
 
 /**
- * <p>Model bean that represents a selectable choice in a selection
- * component such as <code>Menu</code>, <code>RadioButtonGroup</code>,
+ * Model bean that represents a selectable choice in a selection
+ * component such as {@code Menu}, {@code RadioButtonGroup},
  * etc.
- * </p>
  */
-public class Separator extends Option {
+public final class Separator extends Option {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 364005507452241799L;
 }

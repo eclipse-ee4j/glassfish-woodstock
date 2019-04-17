@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,8 +26,11 @@ package com.sun.webui.jsf.util;
  *
  * @see com.sun.webui.jsf.util.ClientSniffer
  */
-public class ClientType {
+public final class ClientType {
 
+    /**
+     * Client type.
+     */
     private final String type;
 
     /**
@@ -65,12 +68,12 @@ public class ClientType {
      *
      * @param clientType client type
      */
-    private ClientType(String clientType) {
+    private ClientType(final String clientType) {
         type = clientType;
     }
 
     /**
-     * Get a String representation of the action
+     * Get a String representation of the action.
      *
      * @return A String representation of the value type.
      */

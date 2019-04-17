@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,8 +20,6 @@ import java.util.regex.Pattern;
 /**
  * A base class that defines the basic metadata available for any component
  * feature, whether a property or event.
- *
- * @author gjmurphy
  */
 public abstract class FeatureInfo {
 
@@ -29,15 +27,22 @@ public abstract class FeatureInfo {
      * Pattern used in property info analysis to determine if a name is a Java
      * keyword or reserved word.
      */
-    static Pattern JAVA_KEYWORD_PATTERN = Pattern.compile(
+    protected static final Pattern JAVA_KEYWORD_PATTERN = Pattern.compile(
             "("
-            + "assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|"
-            + "enum|extends|false|final|finally|float|for|goto|if|implements|import|instanceof|int|"
-            + "interface|long|native|new|null|package|private|protected|public|return|short|static|"
-            + "super|switch|synchronized|this|throw|throws|transient|true|try|void|volatile|while"
+            + "assert|boolean|break|byte|case|catch|char|class|const|continue|"
+            + "default|do|double|else|"
+            + "enum|extends|false|final|finally|float|for|goto|if|implements|"
+            + "import|instanceof|int|"
+            + "interface|long|native|new|null|package|private|protected|public|"
+            + "return|short|static|"
+            + "super|switch|synchronized|this|throw|throws|transient|true|try|"
+            + "void|volatile|while"
             + ")"
     );
 
+    /**
+     * Declaring class information.
+     */
     private ClassInfo declaringClassInfo;
 
     /**
@@ -83,8 +88,12 @@ public abstract class FeatureInfo {
         return this.declaringClassInfo;
     }
 
-    void setDeclaringClassInfo(ClassInfo declaringClassInfo) {
-        this.declaringClassInfo = declaringClassInfo;
+    /**
+     * Set the declaring class info.
+     * @param classInfo new class info
+     */
+    void setDeclaringClassInfo(final ClassInfo classInfo) {
+        this.declaringClassInfo = classInfo;
     }
 
     /**
@@ -101,11 +110,13 @@ public abstract class FeatureInfo {
      * java.lang.NoSuchMethodException}. Only properties of type
      * {@link java.lang.String} are supported.
      *
-     * @param propertyName
+     * @param propertyName property to get the key of
      * @return String
      * @throws java.lang.NoSuchMethodException if the method is not found
      */
-    public final String getKey(String propertyName) throws NoSuchMethodException {
+    public final String getKey(final String propertyName)
+            throws NoSuchMethodException {
+
         String methodName = "get" + propertyName.substring(0, 1).toUpperCase()
                 + propertyName.substring(1);
         this.getClass().getMethod(methodName);
@@ -113,17 +124,35 @@ public abstract class FeatureInfo {
         return baseName + "_" + this.getName() + "_" + propertyName;
     }
 
+    /**
+     * This implementation computes the hash code using the declaring class
+     * information and the feature name.
+     * @return hash code
+     */
     @Override
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + (this.declaringClassInfo != null ? this.declaringClassInfo.hashCode() : 0);
+        hash = 67 * hash;
+        if (this.declaringClassInfo != null) {
+            hash = hash + this.declaringClassInfo.hashCode();
+        }
         String name = this.getName();
-        hash = 67 * hash + (name != null ? name.hashCode() : 0);
+        hash = 67 * hash;
+        if (name != null) {
+            hash = hash + name.hashCode();
+        }
         return hash;
     }
 
+    /**
+     * This implementation compares uses the declaring class information
+     * and the name to determine equality.
+     * @param obj object to test equality with this instance
+     * @return {@code true} if equal, {@code false} otherwise
+     */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

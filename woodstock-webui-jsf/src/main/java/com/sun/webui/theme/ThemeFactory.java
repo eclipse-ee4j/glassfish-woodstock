@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,33 +24,90 @@ import java.util.Locale;
  */
 public interface ThemeFactory {
 
-    // Private attribute names
-    public final static String MANIFEST = "META-INF/MANIFEST.MF";
-    public final static String FILENAME = "manifest-file";
-    public final static String COMPONENTS_SECTION = "com/sun/webui/jsf/";
-    public final static String THEME_SECTION = "com/sun/webui/jsf/theme/";
-    public final static String THEME_VERSION_REQUIRED =
-            "X-SJWUIC-Theme-Version-Required";
-    public final static String THEME_VERSION = "X-SJWUIC-Theme-Version";
-    public final static String NAME = "X-SJWUIC-Theme-Name";
-    public final static String PREFIX = "X-SJWUIC-Theme-Prefix";
-    public final static String DEFAULT = "X-SJWUIC-Theme-Default";
-    public final static String STYLESHEETS = "X-SJWUIC-Theme-Stylesheets";
-    public final static String JSFILES = "X-SJWUIC-Theme-JavaScript";
-    public final static String CLASSMAPPER = "X-SJWUIC-Theme-ClassMapper";
-    public final static String IMAGES = "X-SJWUIC-Theme-Images";
-    public final static String MESSAGES = "X-SJWUIC-Theme-Messages";
-    public final static String TEMPLATES = "X-SJWUIC-Theme-Templates";
+    /**
+     * JAR manifest resource path.
+     */
+    String MANIFEST = "META-INF/MANIFEST.MF";
+
+    /**
+     * JAR manifest filename property key.
+     */
+    String FILENAME = "manifest-file";
+
+    /**
+     * Component resource path prefix.
+     */
+    String COMPONENTS_SECTION = "com/sun/webui/jsf/";
+
+    /**
+     * Theme resource path prefix.
+     */
+    String THEME_SECTION = "com/sun/webui/jsf/theme/";
+
+    /**
+     * Theme version required flag manifest key.
+     */
+    String THEME_VERSION_REQUIRED = "X-SJWUIC-Theme-Version-Required";
+
+    /**
+     * Theme version manifest key.
+     */
+    String THEME_VERSION = "X-SJWUIC-Theme-Version";
+
+    /**
+     * Theme name manifest key.
+     */
+    String NAME = "X-SJWUIC-Theme-Name";
+
+    /**
+     * Theme prefix manifest key.
+     */
+    String PREFIX = "X-SJWUIC-Theme-Prefix";
+
+    /**
+     * Theme default manifest key.
+     */
+    String DEFAULT = "X-SJWUIC-Theme-Default";
+
+    /**
+     * Theme CSS style-sheets manifest key.
+     */
+    String STYLESHEETS = "X-SJWUIC-Theme-Stylesheets";
+
+    /**
+     * Theme JS files manifest key.
+     */
+    String JSFILES = "X-SJWUIC-Theme-JavaScript";
+
+    /**
+     * Theme class mapper manifest key.
+     */
+    String CLASSMAPPER = "X-SJWUIC-Theme-ClassMapper";
+
+    /**
+     * Theme images manifest key.
+     */
+    String IMAGES = "X-SJWUIC-Theme-Images";
+
+    /**
+     * Theme messages manifest key.
+     */
+    String MESSAGES = "X-SJWUIC-Theme-Messages";
+
+    /**
+     * Theme templates manifest key.
+     */
+    String TEMPLATES = "X-SJWUIC-Theme-Templates";
 
     /**
      * Return the default {@code Theme} for {@code locale} within the theme
      * run-time environment of {@code themeContext}.
      *
-     * @param locale
-     * @param themeContext
-     * @return
+     * @param locale the theme locale
+     * @param themeContext the theme context
+     * @return Theme
      */
-    public Theme getTheme(Locale locale, ThemeContext themeContext);
+    Theme getTheme(Locale locale, ThemeContext themeContext);
 
     /**
      * Return the {@code themeName} {@code Theme} for {@code locale} within the
@@ -61,14 +118,13 @@ public interface ThemeFactory {
      * @param themeContext the theme context
      * @return Theme
      */
-    public Theme getTheme(String themeName, Locale locale,
-            ThemeContext themeContext);
+    Theme getTheme(String themeName, Locale locale, ThemeContext themeContext);
 
     /**
-     * Hack - this will go away
+     * Hack - this will go away.
      *
-     * @param themeContext
-     * @return
+     * @param themeContext theme context
+     * @return String
      */
-    public String getDefaultThemeName(ThemeContext themeContext);
+    String getDefaultThemeName(ThemeContext themeContext);
 }

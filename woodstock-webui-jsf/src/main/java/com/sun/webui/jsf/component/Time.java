@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -28,34 +27,136 @@ import java.util.Locale;
 import java.util.TimeZone;
 import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponentBase;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.NamingContainer;
-import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.IntegerConverter;
 import javax.faces.event.ValueChangeEvent;
 
 /**
- * This component is for internal use only
+ * This component is for internal use only.
  */
-@Component(type = "com.sun.webui.jsf.Time", family = "com.sun.webui.jsf.Time", displayName = "Time", isTag = false,
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_time",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_time_props")
-public class Time extends WebuiInput implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.Time",
+        family = "com.sun.webui.jsf.Time",
+        displayName = "Time",
+        isTag = false,
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_time",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_time_props")
+        //CHECKSTYLE:ON
+public final class Time extends WebuiInput implements NamingContainer {
 
     /**
      * The hour menu facet name.
      */
-    public static final String HOUR_FACET = "hour"; //NOI18N
+    public static final String HOUR_FACET = "hour";
+
     /**
      * The minutes menu facet name.
      */
-    public static final String MINUTES_FACET = "minutes"; //NOI18N
-    private static final String TIME_SUBMITTED =
-            "com.sun.webui.jsf.TimeSubmitted"; //NOI18N
+    public static final String MINUTES_FACET = "minutes";
+
+    /**
+     * Time submitted.
+     */
+    private static final String TIME_SUBMITTED
+            = "com.sun.webui.jsf.TimeSubmitted";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
+
+    /**
+     * Standard HTML attribute which determines whether the web application user
+     * can change the the value of this component.
+     */
+    @Property(name = "disabled", displayName = "Disabled")
+    private boolean disabled = false;
+
+    /**
+     * disabled set flag.
+     */
+    private boolean disabledSet = false;
+
+    /**
+     * If this attribute is set to true, the value of the component is rendered
+     * as text, preceded by the label if one was defined.
+     */
+    @Property(name = "readOnly", displayName = "Read-only")
+    private boolean readOnly = false;
+
+    /**
+     * readOnly set flag.
+     */
+    private boolean readOnlySet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style", displayName = "CSS Style(s)")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)")
+    private String styleClass = null;
+
+    /**
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     */
+    @Property(name = "tabIndex", displayName = "Tab Index")
+    private int tabIndex = Integer.MIN_VALUE;
+
+    /**
+     * tabIndex set flag.
+     */
+    private boolean tabIndexSet = false;
+
+    /**
+     * A binding to a Time Zone instance to use for this Scheduler. If none is
+     * specified, the Scheduler uses the default TimeZone from the Schedulers
+     * locale.
+     */
+    @Property(name = "timeZone", displayName = "Time Zone")
+    private java.util.TimeZone timeZone = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     *
+     * @return {@code boolean}
+     */
+    @Property(name = "visible", displayName = "Visible")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Holds value of property hourTooltipKey.
+     */
+    private String hourTooltipKey;
+
+    /**
+     * Holds value of property minutesTooltipKey.
+     */
+    private String minutesTooltipKey;
 
     /**
      * Default constructor.
@@ -65,27 +166,23 @@ public class Time extends WebuiInput implements NamingContainer {
         setRendererType("com.sun.webui.jsf.Time");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Time";
     }
 
     /**
-     * Return a DropDown component that implements an hour menu.
-     * If <code>ComponentUtilities.getPrivateFacet()</code>
-     * returns a facet named <code>hour</code>
-     * that component is initialized every time this
-     * method is called and returned.
+     * Return a DropDown component that implements an hour menu. If
+     * {@code ComponentUtilities.getPrivateFacet()} returns a facet named
+     * {@code hour} that component is initialized every time this method is
+     * called and returned.
      * <p>
      * <em>This is a private facet.</em>
      * </p>
-     * Otherwise a <code>DropDown</code> component
-     * is created and initialized. It is assigned the id</br>
-     * <code>getId() + "_hour"</code> and added to the facets map
-     * as a private facet.</br>
+     * Otherwise a {@code DropDown} component is created and initialized.
+     * It is assigned the id
+     * {@code getId() + "_hour"} and added to the facets map as a private
+     * facet.
      *
      * @return an hour menu DropDown component.
      */
@@ -94,18 +191,17 @@ public class Time extends WebuiInput implements NamingContainer {
     }
 
     /**
-     * Return a DropDown component that implements a minutes menu.
-     * If <code>ComponentUtilities.getPrivateFacet()</code>
-     * returns a facet named <code>minutes</code>
-     * that component is initialized every time this
-     * method is called and returned.
+     * Return a DropDown component that implements a minutes menu. If
+     * {@code ComponentUtilities.getPrivateFacet()} returns a facet named
+     * {@code minutes} that component is initialized every time this method
+     * is called and returned.
      * <p>
      * <em>This is a private facet.</em>
      * </p>
-     * Otherwise a <code>DropDown</code> component
-     * is created and initialized. It is assigned the id</br>
-     * <code>getId() + "_minutes"</code> and added to the facets map
-     * as a private facet.</br>
+     * Otherwise a {@code DropDown} component is created and initialized.
+     * It is assigned the id
+     * {@code getId() + "_minutes"} and added to the facets map as a
+     * private facet.
      *
      * @return a minutes menu DropDown component.
      */
@@ -114,35 +210,35 @@ public class Time extends WebuiInput implements NamingContainer {
     }
 
     /**
-     * Return a DropDown component for a menu.
-     * If <code>ComponentUtilities.getPrivateFacet()</code>
-     * returns a facet named <code>facet</code>
-     * that component is initialized every time this
-     * method is called and returned.
+     * Return a DropDown component for a menu. If
+     * {@code ComponentUtilities.getPrivateFacet()} returns a facet named
+     * {@code facet} that component is initialized every time this method
+     * is called and returned.
      * <p>
      * <em>This method returns a private facet.</em>
      * </p>
-     * Otherwise a <code>DropDown</code> component
-     * is created and initialized. It is assigned the id</br>
-     * <code>getId() + "_" + facet</code> and added to the facets map
-     * as a private facet.</br>
+     * Otherwise a {@code DropDown} component is created and initialized.
+     * It is assigned the id
+     * {@code getId() + "_" + facet} and added to the facets map as a
+     * private facet.
      *
      * @param facet the facet name
      * @param options the menu options
      *
      * @return a DropDown menu component.
      */
-    private DropDown getMenu(String facet, Option[] options) {
+    private DropDown getMenu(final String facet, final Option[] options) {
 
         if (DEBUG) {
-            log("getMenu() for facet " + facet); //NOI18N
+            log("getMenu() for facet " + facet);
         }
         // Support only a private facet.
         //
-        DropDown menu = (DropDown) ComponentUtilities.getPrivateFacet(this, facet, true);
+        DropDown menu = (DropDown) ComponentUtilities.getPrivateFacet(this,
+                facet, true);
         if (menu == null) {
             if (DEBUG) {
-                log("createDropDown() for facet " + facet); //NOI18N
+                log("createDropDown() for facet " + facet);
             }
             menu = new DropDown();
             menu.setId(ComponentUtilities.createPrivateFacetId(this, facet));
@@ -157,35 +253,32 @@ public class Time extends WebuiInput implements NamingContainer {
         // regarding setting tooltips at this time but
         // it should be revisited. See encodeEnd in this file and
         // Scheduler.
-
         int tindex = getTabIndex();
         if (tindex > 0) {
             menu.setTabIndex(tindex);
         }
         menu.setDisabled(isDisabled());
         menu.setRequired(isRequired());
-
         return menu;
     }
 
     /**
-     * <p>Convenience method to return at Option[] with all of the hours
-     * defined in 24 hourObject format.</p>
-     * 
+     * Convenience method to return at Option[] with all of the hours defined in
+     * 24 hourObject format.
+     *
      * @return An Option[] containing all the hours
      */
+    @SuppressWarnings("checkstyle:magicnumber")
     private Option[] getHourItems() {
         Option[] hours = new Option[25];
-
-        hours[0] = new Option(new Integer(-1), " ");//NOI18N
-
+        hours[0] = new Option(-1, " ");
         int counter = 0;
         while (counter < 10) {
-            hours[counter + 1] = new Option(new Integer(counter), "0" + counter);//NOI18N
+            hours[counter + 1] = new Option(counter, "0" + counter);
             ++counter;
         }
         while (counter < 24) {
-            hours[counter + 1] = new Option(new Integer(counter),
+            hours[counter + 1] = new Option(counter,
                     String.valueOf(counter));
             ++counter;
         }
@@ -193,52 +286,51 @@ public class Time extends WebuiInput implements NamingContainer {
     }
 
     /**
-     * <p>Convenience method to return at Option[] with all of the mintes (in
-     * 5 minuteObject increments) for an hourObject.</p>
-     * 
+     * Convenience method to return at Option[] with all of the minutes (in 5
+     * minuteObject increments) for an hourObject.
+     *
      * @return An Option[] containing all the minutes
      */
+    @SuppressWarnings("checkstyle:magicnumber")
     private Option[] getMinuteItems() {
         Option[] minutes = new Option[13];
-
-        minutes[0] = new Option(new Integer(-1), " ");//NOI18N
-        minutes[1] = new Option(new Integer(0), "00");//NOI18N
-        minutes[2] = new Option(new Integer(5), "05");//NOI18N
-
+        minutes[0] = new Option(-1, " ");
+        minutes[1] = new Option(0, "00");
+        minutes[2] = new Option(5, "05");
         for (int i = 2; i < 12; i++) {
-            minutes[i + 1] = new Option(new Integer(5 * i), String.valueOf(5 * i));
+            minutes[i + 1] = new Option(5 * i, String.valueOf(5 * i));
         }
-
         return minutes;
     }
 
     /**
-     * <p>Get the time-zone as a string.</p>
+     * Get the time-zone as a string.
+     * @return String
      */
+    @SuppressWarnings("checkstyle:magicnumber")
     public String getOffset() {
         java.util.Calendar calendar = getCalendar();
-        TimeZone timeZone = calendar.getTimeZone();
+        TimeZone tz = calendar.getTimeZone();
 
-        StringBuffer gmtTimeZone = new StringBuffer(8);
+        StringBuilder gmtTimeZone = new StringBuilder(8);
 
-        int value = calendar.get(java.util.Calendar.ZONE_OFFSET) +
-                calendar.get(java.util.Calendar.DST_OFFSET);
+        int value = calendar.get(java.util.Calendar.ZONE_OFFSET)
+                + calendar.get(java.util.Calendar.DST_OFFSET);
 
         if (value < 0) {
             // GMT - hh:mm
-            gmtTimeZone.append('-');//NOI18N
+            gmtTimeZone.append('-');
             value = -value;
         } else {
             // GMT + hh:mm
-            gmtTimeZone.append('+');//NOI18N
+            gmtTimeZone.append('+');
         }
 
         // determine the offset hours
         int num = value / (1000 * 60 * 60);
-
         if (num < 10) {
             // display offset as GMT + 0h:mm
-            gmtTimeZone.append("0");//NOI18N
+            gmtTimeZone.append("0");
         }
 
         // add the hh: part
@@ -248,99 +340,77 @@ public class Time extends WebuiInput implements NamingContainer {
         num = (value % (1000 * 60 * 60)) / (1000 * 60);
         if (num < 10) {
             // display as hh:0m
-            gmtTimeZone.append("0");//NOI18N
+            gmtTimeZone.append("0");
         }
 
         // append the minutes
         gmtTimeZone.append(num);
-
         return gmtTimeZone.toString();
     }
 
     /**
-     * <p>Returns a new Calendar instance corresponding to the user's current
-     * locale and the developer specified time zone (if any).</p>
+     * Returns a new Calendar instance corresponding to the user's current
+     * locale and the developer specified time zone (if any).
      *
-     * @return java.util.Calendar A new Calendar instance with the correct
-     * locale and time zone.
+     * @return {@code java.util.Calendar} A new Calendar instance with the
+     * correct locale and time zone.
      */
     public java.util.Calendar getCalendar() {
-        java.util.Calendar calendar = null;
-        Locale locale =
-                FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        java.util.Calendar calendar;
+        Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+                .getLocale();
         if (locale == null) {
-            locale = locale.getDefault();
+            locale = Locale.getDefault();
         }
-
-        TimeZone timeZone = getTimeZone();
-
-        if (timeZone == null) {
+        TimeZone tz = getTimeZone();
+        if (tz == null) {
             calendar = java.util.Calendar.getInstance(locale);
         } else {
-            calendar = java.util.Calendar.getInstance(timeZone, locale);
+            calendar = java.util.Calendar.getInstance(tz, locale);
         }
         return calendar;
     }
-    /**
-     * Holds value of property hourTooltipKey.
-     */
-    private String hourTooltipKey;
 
     /**
      * Getter for property hourTooltipKey.
+     *
      * @return Value of property hourTooltipKey.
      */
     public String getHourTooltipKey() {
-
         return this.hourTooltipKey;
     }
 
     /**
      * Setter for property hourTooltipKey.
-     * @param hourTooltipKey New value of property hourTooltipKey.
+     *
+     * @param newHourTooltipKey New value of property hourTooltipKey.
      */
-    public void setHourTooltipKey(String hourTooltipKey) {
-
-        this.hourTooltipKey = hourTooltipKey;
+    public void setHourTooltipKey(final String newHourTooltipKey) {
+        this.hourTooltipKey = newHourTooltipKey;
     }
-    /**
-     * Holds value of property minutesTooltipKey.
-     */
-    private String minutesTooltipKey;
 
     /**
      * Getter for property minutesTooltipKey.
+     *
      * @return Value of property minutesTooltipKey.
      */
     public String getMinutesTooltipKey() {
-
         return this.minutesTooltipKey;
     }
 
     /**
      * Setter for property minutesTooltipKey.
-     * @param minutesTooltipKey New value of property minutesTooltipKey.
+     *
+     * @param newMinutesTooltipKey New value of property minutesTooltipKey.
      */
-    public void setMinutesTooltipKey(String minutesTooltipKey) {
-
-        this.minutesTooltipKey = minutesTooltipKey;
+    public void setMinutesTooltipKey(final String newMinutesTooltipKey) {
+        this.minutesTooltipKey = newMinutesTooltipKey;
     }
 
-    /**
-     * <p>Specialized decode behavior on top of that provided by the
-     * superclass.  In addition to the standard
-     * <code>processDecodes</code> behavior inherited from {@link
-     * UIComponentBase}, calls <code>validate()</code> if the the
-     * <code>immediate</code> property is true; if the component is
-     * invalid afterwards or a <code>RuntimeException</code> is thrown,
-     * calls {@link FacesContext#renderResponse}.  </p>
-     * @exception NullPointerException
-     */
     @Override
-    public void processDecodes(FacesContext context) {
-
+    public void processDecodes(final FacesContext context) {
         if (DEBUG) {
-            log("processDecodes"); //NOI18N
+            log("processDecodes");
         }
 
         if (context == null) {
@@ -361,7 +431,6 @@ public class Time extends WebuiInput implements NamingContainer {
         // The assumption is that the facets will already exist since the
         // component was rendered. And if it wasn't rendered
         // this method should be executed.
-        //
         ComponentUtilities.getPrivateFacet(this, HOUR_FACET, false).
                 processDecodes(context);
         ComponentUtilities.getPrivateFacet(this, MINUTES_FACET, false).
@@ -369,29 +438,20 @@ public class Time extends WebuiInput implements NamingContainer {
         setSubmittedValue(TIME_SUBMITTED);
 
         // There is nothing to decode other than the facets
-
         if (isImmediate()) {
             if (DEBUG) {
-                log("Time is immediate"); //NOI18N
+                log("Time is immediate");
             }
             runValidation(context);
         }
     }
 
-    /**
-     * <p>Perform the following algorithm to validate the local value of
-     * this {@link UIInput}.</p>
-     * 
-     * @param context The {@link FacesContext} for the current request
-     *
-     */
     @Override
-    public void validate(FacesContext context) {
+    public void validate(final FacesContext context) {
 
         if (DEBUG) {
-            log("validate()"); //NOI18N
+            log("validate()");
         }
-
         if (context == null) {
             throw new NullPointerException();
         }
@@ -404,15 +464,16 @@ public class Time extends WebuiInput implements NamingContainer {
         // The assumption is that the facets will already exist since the
         // component was rendered. And if it wasn't rendered
         // this method should be executed.
-        //
-        Object hourValue = ((EditableValueHolder) ComponentUtilities.getPrivateFacet(this, HOUR_FACET, false)).getValue();
+        Object hourValue = ((EditableValueHolder) ComponentUtilities
+                .getPrivateFacet(this, HOUR_FACET, false)).getValue();
 
         if (DEBUG) {
-            log("Hour value is " + String.valueOf(hourValue)); //NOI18N
+            log("Hour value is " + String.valueOf(hourValue));
         }
-        Object minuteValue = ((EditableValueHolder) ComponentUtilities.getPrivateFacet(this, MINUTES_FACET, false)).getValue();
+        Object minuteValue = ((EditableValueHolder) ComponentUtilities
+                .getPrivateFacet(this, MINUTES_FACET, false)).getValue();
         if (DEBUG) {
-            log("Minute value is " + String.valueOf(minuteValue)); //NOI18N
+            log("Minute value is " + String.valueOf(minuteValue));
         }
         ClockTime newValue = null;
 
@@ -440,12 +501,12 @@ public class Time extends WebuiInput implements NamingContainer {
         // "submitted" value, and emit a ValueChangeEvent if appropriate
         if (isValid()) {
             if (DEBUG) {
-                log("\tComponent is valid"); //NOI18N
+                log("\tComponent is valid");
             }
             Object previous = getValue();
             setValue(newValue);
             if (DEBUG) {
-                log("\tNew value: " + String.valueOf(newValue)); //NOI18N
+                log("\tNew value: " + String.valueOf(newValue));
             }
             setSubmittedValue(null);
             if (compareValues(previous, newValue)) {
@@ -454,10 +515,14 @@ public class Time extends WebuiInput implements NamingContainer {
         }
     }
 
-    private void runValidation(FacesContext context) {
+    /**
+     * Run the component validation.
+     * @param context faces context
+     */
+    private void runValidation(final FacesContext context) {
 
         if (DEBUG) {
-            log("runValidation()"); //NOI18N
+            log("runValidation()");
         }
         try {
             validate(context);
@@ -468,63 +533,69 @@ public class Time extends WebuiInput implements NamingContainer {
 
         if (!isValid()) {
             if (DEBUG) {
-                log("\tnot valid"); //NOI18N
+                log("\tnot valid");
             }
             context.renderResponse();
         }
     }
 
-    private ClockTime createClockTime(Object hourObject, Object minuteObject,
-            FacesContext context) {
+    /**
+     * Create clock time.
+     * @param hourObject hour
+     * @param minuteObject minute
+     * @param context faces context
+     * @return ClockTime
+     */
+    private ClockTime createClockTime(final Object hourObject,
+            final Object minuteObject, final FacesContext context) {
 
         if (DEBUG) {
-            log("CreateClockTime()");//NOI18N
+            log("CreateClockTime()");
         }
         String messageKey = null;
         ClockTime time = null;
 
-        if (hourObject instanceof Integer && minuteObject instanceof Integer) {
-
+        if (hourObject instanceof Integer
+                && minuteObject instanceof Integer) {
             if (DEBUG) {
-                log("Found integers");//NOI18N
+                log("Found integers");
             }
-            int hour = ((Integer) hourObject).intValue();
-            int minute = ((Integer) minuteObject).intValue();
-
+            int hour = ((Integer) hourObject);
+            int minute = ((Integer) minuteObject);
             if (hour == -1 && minute == -1) {
                 if (DEBUG) {
-                    log("No selections made");//NOI18N
+                    log("No selections made");
                 }
                 if (isRequired()) {
-                    messageKey = "Time.required";//NOI18N
+                    messageKey = "Time.required";
                 } else {
                     return null;
                 }
             } else if (hour == -1) {
-                messageKey = "Time.enterHour";//NOI18N
+                messageKey = "Time.enterHour";
             } else if (minute == -1) {
-                messageKey = "Time.enterMinute";//NOI18N
+                messageKey = "Time.enterMinute";
             } else {
                 time = new ClockTime();
                 try {
                     if (DEBUG) {
-                        log("Hour is " + hour);//NOI18N
+                        log("Hour is " + hour);
                     }
                     if (DEBUG) {
-                        log("Minute is " + minute);//NOI18N
+                        log("Minute is " + minute);
                     }
-                    time.setHour(new Integer(hour));
-                    time.setMinute(new Integer(minute));
+                    time.setHour(hour);
+                    time.setMinute(minute);
                 } catch (Exception ex) {
                     if (DEBUG) {
                         ex.printStackTrace();
                     }
-                    messageKey = "Time.invalidData";//NOI18N
+                    messageKey = "Time.invalidData";
                 }
             }
         } else {
             if (isRequired()) {
-                messageKey = "Time.required";//NOI18N
+                messageKey = "Time.required";
             } else {
                 return null;
             }
@@ -533,45 +604,31 @@ public class Time extends WebuiInput implements NamingContainer {
 
         if (messageKey != null) {
             if (DEBUG) {
-                log("Invalid input");//NOI18N
+                log("Invalid input");
             }
-            String message =
-                    ThemeUtilities.getTheme(context).getMessage(messageKey);
+            String message = ThemeUtilities
+                    .getTheme(context).getMessage(messageKey);
             throw new ConverterException(new FacesMessage(message));
         }
         return time;
     }
 
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s);//NOI18N
-    }
-
-    /*
-    public void setValue(Object value) {
-    if(DEBUG) log("setValue(" + String.valueOf(value) + ")");//NOI18N
-    Thread.dumpStack();
-    super.setValue(value);
-    }
-
-    public Object getValue() {
-    Object value = super.getValue();
-    if(DEBUG) log("getValue() ->" + String.valueOf(value));//NOI18N
-    return value;
-    }
+    /**
+     * Log a message to the standard out.
+     * @param msg message to log
      */
+    private static void log(final String msg) {
+        System.out.println(Time.class.getName() + "::" + msg);
+    }
 
     // Take this from TimeRenderer. A Renderer shouldn't be
     // initializing or updating a component. Ideally the state should
     // be current before this point is reached thereby giving the
     // application an opportunity to set the state in
     // INVOKE_APPLICATION_PHASE.
-    // 
-    /**
-     * @exception NullPointerException  
-     */
+    //
     @Override
-    public void encodeEnd(FacesContext context) throws IOException {
-
+    public void encodeEnd(final FacesContext context) throws IOException {
         if (context == null) {
             throw new NullPointerException();
         }
@@ -582,44 +639,42 @@ public class Time extends WebuiInput implements NamingContainer {
         DropDown hourMenu = getHourMenu();
         DropDown minuteMenu = getMinutesMenu();
 
-        // If there is no submitted value, set the values of 
-        // the DropDowns to the actual value... If we have 
-        // a submitted value, the DropDown will remember it 
-        // so we do nothing in that case. 
-        // FIXME: have to round this to the nearest five minutes!       
-
+        // If there is no submitted value, set the values of
+        // the DropDowns to the actual value... If we have
+        // a submitted value, the DropDown will remember it
+        // so we do nothing in that case.
+        // FIXME: have to round this to the nearest five minutes!
         if (getSubmittedValue() == null) {
 
             if (DEBUG) {
-                log("No submitted value"); //NOI18N
+                log("No submitted value");
             }
             Object object = getValue();
             if (DEBUG) {
-                log("Got the ClockTime");  //NOI18N
+                log("Got the ClockTime");
             }
             ClockTime value = null;
             if (object != null && object instanceof ClockTime) {
                 value = (ClockTime) object;
                 if (DEBUG) {
-                    log("\tValue is " + String.valueOf(value));//NOI18N
+                    log("\tValue is " + String.valueOf(value));
                 }
             }
             if (value != null) {
                 hourMenu.setValue(value.getHour());
             } else {
-                hourMenu.setValue(new Integer(-1));
+                hourMenu.setValue(-1);
             }
 
             if (value != null) {
                 minuteMenu.setValue(value.getMinute());
             } else {
-                minuteMenu.setValue(new Integer(-1));
+                minuteMenu.setValue(-1);
             }
         } else if (DEBUG) {
-            log("Found submitted value");  //NOI18N
+            log("Found submitted value");
         }
         Theme theme = ThemeUtilities.getTheme(context);
-
 
         String key = getHourTooltipKey();
         if (key != null) {
@@ -637,288 +692,298 @@ public class Time extends WebuiInput implements NamingContainer {
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // disabled
-    @Property(name = "disabled", displayName = "Disabled")
-    private boolean disabled = false;
-    private boolean disabled_set = false;
-
     /**
-     * <p>Standard HTML attribute which determines whether the web
-     * application user can change the the value of this component.</p>
+     * Standard HTML attribute which determines whether the web application user
+     * can change the the value of this component.
+     * @return {@code boolean}
      */
     public boolean isDisabled() {
-        if (this.disabled_set) {
+        if (this.disabledSet) {
             return this.disabled;
         }
-        ValueExpression _vb = getValueExpression("disabled");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("disabled");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Standard HTML attribute which determines whether the web
-     * application user can change the the value of this component.</p>
+     * Standard HTML attribute which determines whether the web application user
+     * can change the the value of this component.
+     *
      * @see #isDisabled()
+     * @param newDisabled disabled
      */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-        this.disabled_set = true;
+    public void setDisabled(final boolean newDisabled) {
+        this.disabled = newDisabled;
+        this.disabledSet = true;
     }
 
-    // readOnly
-    @Property(name = "readOnly", displayName = "Read-only")
-    private boolean readOnly = false;
-    private boolean readOnly_set = false;
-
     /**
-     * <p>If this attribute is set to true, the value of the component is
-     * rendered as text, preceded by the label if one was defined.</p>
+     * If this attribute is set to true, the value of the component is rendered
+     * as text, preceded by the label if one was defined.
+     * @return {@code boolean}
      */
     public boolean isReadOnly() {
-        if (this.readOnly_set) {
+        if (this.readOnlySet) {
             return this.readOnly;
         }
-        ValueExpression _vb = getValueExpression("readOnly");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("readOnly");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>If this attribute is set to true, the value of the component is
-     * rendered as text, preceded by the label if one was defined.</p>
+     * If this attribute is set to true, the value of the component is rendered
+     * as text, preceded by the label if one was defined.
+     *
      * @see #isReadOnly()
+     * @param newReadOnly readOnly
      */
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-        this.readOnly_set = true;
+    public void setReadOnly(final boolean newReadOnly) {
+        this.readOnly = newReadOnly;
+        this.readOnlySet = true;
     }
 
-    // style
-    @Property(name = "style", displayName = "CSS Style(s)")
-    private String style = null;
-
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
 
-    // styleClass
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)")
-    private String styleClass = null;
-
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
 
-    // tabIndex
-    @Property(name = "tabIndex", displayName = "Tab Index")
-    private int tabIndex = Integer.MIN_VALUE;
-    private boolean tabIndex_set = false;
-
     /**
-     * <p>Position of this element in the tabbing order of the current document. 
-     * Tabbing order determines the sequence in which elements receive 
-     * focus when the tab key is pressed. The value must be an integer 
-     * between 0 and 32767.</p>
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     * @return int
      */
     public int getTabIndex() {
-        if (this.tabIndex_set) {
+        if (this.tabIndexSet) {
             return this.tabIndex;
         }
-        ValueExpression _vb = getValueExpression("tabIndex");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("tabIndex");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Position of this element in the tabbing order of the current document. 
-     * Tabbing order determines the sequence in which elements receive 
-     * focus when the tab key is pressed. The value must be an integer 
-     * between 0 and 32767.</p>
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     *
      * @see #getTabIndex()
+     * @param newTabIndex tabIndex
      */
-    public void setTabIndex(int tabIndex) {
-        this.tabIndex = tabIndex;
-        this.tabIndex_set = true;
+    public void setTabIndex(final int newTabIndex) {
+        this.tabIndex = newTabIndex;
+        this.tabIndexSet = true;
     }
 
-    // timeZone
-    @Property(name = "timeZone", displayName = "Time Zone")
-    private java.util.TimeZone timeZone = null;
-
     /**
-     * <p>A binding to a Time Zone instance to use for this Scheduler. If none is
-     * 	specified, the Scheduler uses the default TimeZone from the Schedulers
-     * 	locale.</p>
+     * A binding to a Time Zone instance to use for this Scheduler. If none is
+     * specified, the Scheduler uses the default TimeZone from the Schedulers
+     * locale.
+     * @return {@code java.util.TimeZone}
      */
     public java.util.TimeZone getTimeZone() {
         if (this.timeZone != null) {
             return this.timeZone;
         }
-        ValueExpression _vb = getValueExpression("timeZone");
-        if (_vb != null) {
-            return (java.util.TimeZone) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("timeZone");
+        if (vb != null) {
+            return (java.util.TimeZone) vb.getValue(getFacesContext()
+                    .getELContext());
         }
         return null;
     }
 
     /**
-     * <p>A binding to a Time Zone instance to use for this Scheduler. If none is
-     * 	specified, the Scheduler uses the default TimeZone from the Schedulers
-     * 	locale.</p>
+     * A binding to a Time Zone instance to use for this Scheduler. If none is
+     * specified, the Scheduler uses the default TimeZone from the Schedulers
+     * locale.
+     *
      * @see #getTimeZone()
+     * @param newTimeZone timeZone
      */
-    public void setTimeZone(java.util.TimeZone timeZone) {
-        this.timeZone = timeZone;
+    public void setTimeZone(final java.util.TimeZone newTimeZone) {
+        this.timeZone = newTimeZone;
     }
 
-    // visible
-    @Property(name = "visible", displayName = "Visible")
-    private boolean visible = false;
-    private boolean visible_set = false;
-
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.disabled = ((Boolean) _values[1]).booleanValue();
-        this.disabled_set = ((Boolean) _values[2]).booleanValue();
-        this.readOnly = ((Boolean) _values[3]).booleanValue();
-        this.readOnly_set = ((Boolean) _values[4]).booleanValue();
-        this.style = (String) _values[5];
-        this.styleClass = (String) _values[6];
-        this.tabIndex = ((Integer) _values[7]).intValue();
-        this.tabIndex_set = ((Boolean) _values[8]).booleanValue();
-        this.timeZone = (java.util.TimeZone) _values[9];
-        this.visible = ((Boolean) _values[10]).booleanValue();
-        this.visible_set = ((Boolean) _values[11]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.disabled = ((Boolean) values[1]);
+        this.disabledSet = ((Boolean) values[2]);
+        this.readOnly = ((Boolean) values[3]);
+        this.readOnlySet = ((Boolean) values[4]);
+        this.style = (String) values[5];
+        this.styleClass = (String) values[6];
+        this.tabIndex = ((Integer) values[7]);
+        this.tabIndexSet = ((Boolean) values[8]);
+        this.timeZone = (java.util.TimeZone) values[9];
+        this.visible = ((Boolean) values[10]);
+        this.visibleSet = ((Boolean) values[11]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[12];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.disabled ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.disabled_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.readOnly ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = this.readOnly_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.style;
-        _values[6] = this.styleClass;
-        _values[7] = new Integer(this.tabIndex);
-        _values[8] = this.tabIndex_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = this.timeZone;
-        _values[10] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[11] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[12];
+        values[0] = super.saveState(context);
+        if (this.disabled) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.disabledSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.readOnly) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        if (this.readOnlySet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        values[5] = this.style;
+        values[6] = this.styleClass;
+        values[7] = this.tabIndex;
+        if (this.tabIndexSet) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] = Boolean.FALSE;
+        }
+        values[9] = this.timeZone;
+        if (this.visible) {
+            values[10] = Boolean.TRUE;
+        } else {
+            values[10] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[11] = Boolean.TRUE;
+        } else {
+            values[11] = Boolean.FALSE;
+        }
+        return values;
     }
 }

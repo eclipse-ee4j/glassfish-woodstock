@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -23,34 +23,184 @@ import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 /**
- * The AlarmStatus component is used to display alarm information in the 
+ * The AlarmStatus component is used to display alarm information in the
  * Masthead component.
  */
-@Component(type = "com.sun.webui.jsf.AlarmStatus", family = "com.sun.webui.jsf.AlarmStatus", displayName = "Alarm Status",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_alarm_status",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_alarm_status_props")
-public class AlarmStatus extends ImageHyperlink {
+@Component(type = "com.sun.webui.jsf.AlarmStatus",
+        family = "com.sun.webui.jsf.AlarmStatus",
+        displayName = "Alarm Status",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_alarm_status",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_alarm_status_props")
+        //CHECKSTYLE:ON
+public final class AlarmStatus extends ImageHyperlink {
 
-    /** Creates a new instance of AlarmStatus */
+    /**
+     * Specify if the critical alarm count should be displayed. Set to false to
+     * prevent display of critical alarm count and icon.
+     */
+    @Property(name = "criticalAlarms", displayName = "Critical Alarms")
+    private boolean criticalAlarms = false;
+
+    /**
+     * criticalArlams set flag.
+     */
+    private boolean criticalAlarmsSet = false;
+
+    /**
+     * The key identifier for the theme image to use for the critical alarms
+     * icon.
+     */
+    @Property(name = "criticalIcon", displayName = "Critical Icon")
+    private String criticalIcon = null;
+
+    /**
+     * Specify if the down alarm count should be displayed.
+     * Set to false to prevent display of down alarm count and icon.
+     */
+    @Property(name = "downAlarms", displayName = "Down Alarms")
+    private boolean downAlarms = false;
+
+    /**
+     * downAlarms set flag.
+     */
+    private boolean downAlarmsSet = false;
+
+    /**
+     * The key identifier for the theme image to use for the down alarms icon.
+     */
+    @Property(name = "downIcon", displayName = "Down Icon")
+    private String downIcon = null;
+
+    /**
+     * Specify if the major alarm count should be displayed. Set to false to
+     * prevent display of minor alarm count and icon.
+     */
+    @Property(name = "majorAlarms", displayName = "Major Alarms")
+    private boolean majorAlarms = false;
+
+    /**
+     * majorAlarms set flag.
+     */
+    private boolean majorAlarmsSet = false;
+
+    /**
+     * The key identifier for the theme image to use for the major alarms icon.
+     */
+    @Property(name = "majorIcon", displayName = "Major Icon")
+    private String majorIcon = null;
+
+    /**
+     * Specify if the minor alarm count should be displayed. Set to false to
+     * prevent display of minor alarm count and icon.
+     */
+    @Property(name = "minorAlarms", displayName = "Minor Alarms")
+    private boolean minorAlarms = false;
+
+    /**
+     * minorAlarms set flag.
+     */
+    private boolean minorAlarmsSet = false;
+
+    /**
+     * The key identifier for the theme image to use for the minor alarms icon.
+     */
+    @Property(name = "minorIcon", displayName = "Minor Icon")
+    private String minorIcon = null;
+
+    /**
+     * The number of critical alarms, to display next to the appropriate icon.
+     */
+    @Property(name = "numCriticalAlarms",
+            displayName = "Number of Critical Alarms")
+    private int numCriticalAlarms = Integer.MIN_VALUE;
+
+    /**
+     * numCriticalAlarams set flag.
+     */
+    private boolean numCriticalAlarmsSet = false;
+
+    /**
+     * The number of down alarms, to display next to the appropriate icon.
+     */
+    @Property(name = "numDownAlarms", displayName = "Number of Down Alarms")
+    private int numDownAlarms = Integer.MIN_VALUE;
+
+    /**
+     * numDownAlaramsSet flag.
+     */
+    private boolean numDownAlarmsSet = false;
+
+    /**
+     * The number of major alarms, to display next to the appropriate icon.
+     */
+    @Property(name = "numMajorAlarms", displayName = "Number of Major Alarms")
+    private int numMajorAlarms = Integer.MIN_VALUE;
+
+    /**
+     * numMajorAlarms set flag.
+     */
+    private boolean numMajorAlarmsSet = false;
+
+    /**
+     * The number of minor alarms, to display next to the appropriate icon.
+     */
+    @Property(name = "numMinorAlarms", displayName = "Number of Minor Alarms")
+    private int numMinorAlarms = Integer.MIN_VALUE;
+
+    /**
+     * numMinorAlarms set flag.
+     */
+    private boolean numMinorAlarmsSet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style", displayName = "CSS Style(s)")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass", displayName = "CSS Style Class(es)")
+    private String styleClass = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible", displayName = "Visible")
+    private boolean visible = false;
+
+    /**
+     * visibleSet flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Creates a new instance of AlarmStatus.
+     */
     public AlarmStatus() {
         super();
         setRendererType("com.sun.webui.jsf.AlarmStatus");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.AlarmStatus";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * Scripting code executed when a mouse double click occurs over this 
+     * Scripting code executed when a mouse double click occurs over this
      * component.
+     * @return String
      */
     @Property(name = "onDblClick", isHidden = false, isAttribute = true)
     @Override
@@ -60,6 +210,7 @@ public class AlarmStatus extends ImageHyperlink {
 
     /**
      * The current value of this component.
+     * @return Object
      */
     @Property(name = "value", isHidden = false, isAttribute = true)
     @Override
@@ -67,594 +218,543 @@ public class AlarmStatus extends ImageHyperlink {
         return super.getValue();
     }
 
-    // Hide textPosition 
+    // Hide textPosition
     @Property(name = "textPosition", isHidden = true, isAttribute = false)
     @Override
     public String getTextPosition() {
         return super.getTextPosition();
     }
 
-    // Hide icon 
+    // Hide icon
     @Property(name = "icon", isHidden = true, isAttribute = false)
     @Override
     public String getIcon() {
         return super.getIcon();
     }
-    /**
-     * <p>Specify if the critical alarm count should be displayed. Set to false to 
-     * prevent display of critical alarm count and icon.</p>
-     */
-    @Property(name = "criticalAlarms", displayName = "Critical Alarms")
-    private boolean criticalAlarms = false;
-    private boolean criticalAlarms_set = false;
 
     /**
-     * <p>Specify if the critical alarm count should be displayed. Set to false to 
-     * prevent display of critical alarm count and icon.</p>
+     * Specify if the critical alarm count should be displayed. Set to false to
+     * prevent display of critical alarm count and icon.
+     * @return {@code boolean}
      */
     public boolean isCriticalAlarms() {
-        if (this.criticalAlarms_set) {
+        if (this.criticalAlarmsSet) {
             return this.criticalAlarms;
         }
-        ValueExpression _vb = getValueExpression("criticalAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("criticalAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Specify if the critical alarm count should be displayed. Set to false to 
-     * prevent display of critical alarm count and icon.</p>
+     * Specify if the critical alarm count should be displayed.Set to false to
+     * prevent display of critical alarm count and icon.
+     *
+     * @param newCriticalAlarms criticalAlarms
      * @see #isCriticalAlarms()
      */
-    public void setCriticalAlarms(boolean criticalAlarms) {
-        this.criticalAlarms = criticalAlarms;
-        this.criticalAlarms_set = true;
+    public void setCriticalAlarms(final boolean newCriticalAlarms) {
+        this.criticalAlarms = newCriticalAlarms;
+        this.criticalAlarmsSet = true;
     }
-    /**
-     * <p>The key identifier for the theme image to use for the critical alarms icon.</p>
-     */
-    @Property(name = "criticalIcon", displayName = "Critical Icon")
-    private String criticalIcon = null;
 
     /**
-     * <p>The key identifier for the theme image to use for the critical alarms icon.</p>
+     * The key identifier for the theme image to use for the critical alarms
+     * icon.
+     *
+     * @return String
      */
     public String getCriticalIcon() {
         if (this.criticalIcon != null) {
             return this.criticalIcon;
         }
-        ValueExpression _vb = getValueExpression("criticalIcon");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("criticalIcon");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The key identifier for the theme image to use for the critical alarms icon.</p>
+     * The key identifier for the theme image to use for the critical alarms
+     * icon.
+     *
      * @see #getCriticalIcon()
+     * @param newCriticalIcon criticalIcon
      */
-    public void setCriticalIcon(String criticalIcon) {
-        this.criticalIcon = criticalIcon;
+    public void setCriticalIcon(final String newCriticalIcon) {
+        this.criticalIcon = newCriticalIcon;
     }
-    /**
-     * <p>Specify if the down alarm count should be displayed.  
-     * Set to false to prevent display of down alarm count and icon.</p>
-     */
-    @Property(name = "downAlarms", displayName = "Down Alarms")
-    private boolean downAlarms = false;
-    private boolean downAlarms_set = false;
 
     /**
-     * <p>Specify if the down alarm count should be displayed.  
-     * Set to false to prevent display of down alarm count and icon.</p>
+     * Specify if the down alarm count should be displayed.
+     * Set to false to prevent display of down alarm count and icon.
+     * @return {@code boolean}
      */
     public boolean isDownAlarms() {
-        if (this.downAlarms_set) {
+        if (this.downAlarmsSet) {
             return this.downAlarms;
         }
-        ValueExpression _vb = getValueExpression("downAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("downAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Specify if the down alarm count should be displayed.  
-     * Set to false to prevent display of down alarm count and icon.</p>
+     * Specify if the down alarm count should be displayed.
+     * Set to false to prevent display of down alarm count and icon.
      * @see #isDownAlarms()
+     * @param newDownAlarms downAlarams
      */
-    public void setDownAlarms(boolean downAlarms) {
-        this.downAlarms = downAlarms;
-        this.downAlarms_set = true;
+    public void setDownAlarms(final boolean newDownAlarms) {
+        this.downAlarms = newDownAlarms;
+        this.downAlarmsSet = true;
     }
-    /**
-     * <p>The key identifier for the theme image to use for the down alarms icon.</p>
-     */
-    @Property(name = "downIcon", displayName = "Down Icon")
-    private String downIcon = null;
 
     /**
-     * <p>The key identifier for the theme image to use for the down alarms icon.</p>
+     * The key identifier for the theme image to use for the down alarms icon.
+     * @return String
      */
     public String getDownIcon() {
         if (this.downIcon != null) {
             return this.downIcon;
         }
-        ValueExpression _vb = getValueExpression("downIcon");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("downIcon");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The key identifier for the theme image to use for the down alarms icon.</p>
+     * The key identifier for the theme image to use for the down alarms icon.
      * @see #getDownIcon()
+     * @param newDownIcon downIcon
      */
-    public void setDownIcon(String downIcon) {
-        this.downIcon = downIcon;
+    public void setDownIcon(final String newDownIcon) {
+        this.downIcon = newDownIcon;
     }
-    /**
-     * <p>Specify if the major alarm count should be displayed. Set to false to 
-     * prevent display of minor alarm count and icon.</p>
-     */
-    @Property(name = "majorAlarms", displayName = "Major Alarms")
-    private boolean majorAlarms = false;
-    private boolean majorAlarms_set = false;
 
     /**
-     * <p>Specify if the major alarm count should be displayed. Set to false to 
-     * prevent display of minor alarm count and icon.</p>
+     * Specify if the major alarm count should be displayed. Set to false to
+     * prevent display of minor alarm count and icon.
+     * @return boolean
      */
     public boolean isMajorAlarms() {
-        if (this.majorAlarms_set) {
+        if (this.majorAlarmsSet) {
             return this.majorAlarms;
         }
-        ValueExpression _vb = getValueExpression("majorAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("majorAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Specify if the major alarm count should be displayed. Set to false to 
-     * prevent display of minor alarm count and icon.</p>
+     * Specify if the major alarm count should be displayed. Set to false to
+     * prevent display of minor alarm count and icon.
      * @see #isMajorAlarms()
+     * @param newMajorAlarms majorAlarms
      */
-    public void setMajorAlarms(boolean majorAlarms) {
-        this.majorAlarms = majorAlarms;
-        this.majorAlarms_set = true;
+    public void setMajorAlarms(final boolean newMajorAlarms) {
+        this.majorAlarms = newMajorAlarms;
+        this.majorAlarmsSet = true;
     }
-    /**
-     * <p>The key identifier for the theme image to use for the major alarms icon.</p>
-     */
-    @Property(name = "majorIcon", displayName = "Major Icon")
-    private String majorIcon = null;
 
     /**
-     * <p>The key identifier for the theme image to use for the major alarms icon.</p>
+     * The key identifier for the theme image to use for the major alarms icon.
+     * @return String
      */
     public String getMajorIcon() {
         if (this.majorIcon != null) {
             return this.majorIcon;
         }
-        ValueExpression _vb = getValueExpression("majorIcon");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("majorIcon");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The key identifier for the theme image to use for the major alarms icon.</p>
+     * The key identifier for the theme image to use for the major alarms icon.
      * @see #getMajorIcon()
+     * @param newMajorIcon majorIcon
      */
-    public void setMajorIcon(String majorIcon) {
-        this.majorIcon = majorIcon;
+    public void setMajorIcon(final String newMajorIcon) {
+        this.majorIcon = newMajorIcon;
     }
-    /**
-     * <p>Specify if the minor alarm count should be displayed. Set to false to 
-     * prevent display of minor alarm count and icon.</p>
-     */
-    @Property(name = "minorAlarms", displayName = "Minor Alarms")
-    private boolean minorAlarms = false;
-    private boolean minorAlarms_set = false;
 
     /**
-     * <p>Specify if the minor alarm count should be displayed. Set to false to 
-     * prevent display of minor alarm count and icon.</p>
+     * Specify if the minor alarm count should be displayed. Set to false to
+     * prevent display of minor alarm count and icon.
+     * @return {@code boolean}
      */
     public boolean isMinorAlarms() {
-        if (this.minorAlarms_set) {
+        if (this.minorAlarmsSet) {
             return this.minorAlarms;
         }
-        ValueExpression _vb = getValueExpression("minorAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("minorAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Specify if the minor alarm count should be displayed. Set to false to 
-     * prevent display of minor alarm count and icon.</p>
+     * Specify if the minor alarm count should be displayed.Set to false to
+     * prevent display of minor alarm count and icon.
+     *
+     * @param neWMinorAlarms minorAlarams
      * @see #isMinorAlarms()
      */
-    public void setMinorAlarms(boolean minorAlarms) {
-        this.minorAlarms = minorAlarms;
-        this.minorAlarms_set = true;
+    public void setMinorAlarms(final boolean neWMinorAlarms) {
+        this.minorAlarms = neWMinorAlarms;
+        this.minorAlarmsSet = true;
     }
-    /**
-     * <p>The key identifier for the theme image to use for the minor alarms icon.</p>
-     */
-    @Property(name = "minorIcon", displayName = "Minor Icon")
-    private String minorIcon = null;
 
     /**
-     * <p>The key identifier for the theme image to use for the minor alarms icon.</p>
+     * The key identifier for the theme image to use for the minor alarms icon.
+     * @return String
      */
     public String getMinorIcon() {
         if (this.minorIcon != null) {
             return this.minorIcon;
         }
-        ValueExpression _vb = getValueExpression("minorIcon");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("minorIcon");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The key identifier for the theme image to use for the minor alarms icon.</p>
+     * The key identifier for the theme image to use for the minor alarms icon.
      * @see #getMinorIcon()
+     * @param newMinorIcon minorIcon
      */
-    public void setMinorIcon(String minorIcon) {
-        this.minorIcon = minorIcon;
+    public void setMinorIcon(final String newMinorIcon) {
+        this.minorIcon = newMinorIcon;
     }
-    /**
-     * <p>The number of critical alarms, to display next to the appropriate icon.</p>
-     */
-    @Property(name = "numCriticalAlarms", displayName = "Number of Critical Alarms")
-    private int numCriticalAlarms = Integer.MIN_VALUE;
-    private boolean numCriticalAlarms_set = false;
 
     /**
-     * <p>The number of critical alarms, to display next to the appropriate icon.</p>
+     * The number of critical alarms, to display next to the appropriate icon.
+     * @return int
      */
     public int getNumCriticalAlarms() {
-        if (this.numCriticalAlarms_set) {
+        if (this.numCriticalAlarmsSet) {
             return this.numCriticalAlarms;
         }
-        ValueExpression _vb = getValueExpression("numCriticalAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("numCriticalAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 0;
     }
 
     /**
-     * <p>The number of critical alarms, to display next to the appropriate icon.</p>
+     * The number of critical alarms, to display next to the appropriate icon.
      * @see #getNumCriticalAlarms()
+     * @param newNumCriticalAlarms numCriticalAlarms
      */
-    public void setNumCriticalAlarms(int numCriticalAlarms) {
-        this.numCriticalAlarms = numCriticalAlarms;
-        this.numCriticalAlarms_set = true;
+    public void setNumCriticalAlarms(final int newNumCriticalAlarms) {
+        this.numCriticalAlarms = newNumCriticalAlarms;
+        this.numCriticalAlarmsSet = true;
     }
-    /**
-     * <p>The number of down alarms, to display next to the appropriate icon.</p>
-     */
-    @Property(name = "numDownAlarms", displayName = "Number of Down Alarms")
-    private int numDownAlarms = Integer.MIN_VALUE;
-    private boolean numDownAlarms_set = false;
 
     /**
-     * <p>The number of down alarms, to display next to the appropriate icon.</p>
+     * The number of down alarms, to display next to the appropriate icon.
+     * @return int
      */
     public int getNumDownAlarms() {
-        if (this.numDownAlarms_set) {
+        if (this.numDownAlarmsSet) {
             return this.numDownAlarms;
         }
-        ValueExpression _vb = getValueExpression("numDownAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("numDownAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 0;
     }
 
     /**
-     * <p>The number of down alarms, to display next to the appropriate icon.</p>
+     * The number of down alarms, to display next to the appropriate icon.
      * @see #getNumDownAlarms()
+     * @param newNumDownAlarms numDownAlarams
      */
-    public void setNumDownAlarms(int numDownAlarms) {
-        this.numDownAlarms = numDownAlarms;
-        this.numDownAlarms_set = true;
+    public void setNumDownAlarms(final int newNumDownAlarms) {
+        this.numDownAlarms = newNumDownAlarms;
+        this.numDownAlarmsSet = true;
     }
-    /**
-     * <p>The number of major alarms, to display next to the appropriate icon.</p>
-     */
-    @Property(name = "numMajorAlarms", displayName = "Number of Major Alarms")
-    private int numMajorAlarms = Integer.MIN_VALUE;
-    private boolean numMajorAlarms_set = false;
 
     /**
-     * <p>The number of major alarms, to display next to the appropriate icon.</p>
+     * The number of major alarms, to display next to the appropriate icon.
+     * @return int
      */
     public int getNumMajorAlarms() {
-        if (this.numMajorAlarms_set) {
+        if (this.numMajorAlarmsSet) {
             return this.numMajorAlarms;
         }
-        ValueExpression _vb = getValueExpression("numMajorAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("numMajorAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 0;
     }
 
     /**
-     * <p>The number of major alarms, to display next to the appropriate icon.</p>
+     * The number of major alarms, to display next to the appropriate icon.
      * @see #getNumMajorAlarms()
+     * @param newNumMajorAlarms numMajorAlarms
      */
-    public void setNumMajorAlarms(int numMajorAlarms) {
-        this.numMajorAlarms = numMajorAlarms;
-        this.numMajorAlarms_set = true;
+    public void setNumMajorAlarms(final int newNumMajorAlarms) {
+        this.numMajorAlarms = newNumMajorAlarms;
+        this.numMajorAlarmsSet = true;
     }
-    /**
-     * <p>The number of minor alarms, to display next to the appropriate icon.</p>
-     */
-    @Property(name = "numMinorAlarms", displayName = "Number of Minor Alarms")
-    private int numMinorAlarms = Integer.MIN_VALUE;
-    private boolean numMinorAlarms_set = false;
 
     /**
-     * <p>The number of minor alarms, to display next to the appropriate icon.</p>
+     * The number of minor alarms, to display next to the appropriate icon.
+     * @return int
      */
     public int getNumMinorAlarms() {
-        if (this.numMinorAlarms_set) {
+        if (this.numMinorAlarmsSet) {
             return this.numMinorAlarms;
         }
-        ValueExpression _vb = getValueExpression("numMinorAlarms");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("numMinorAlarms");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 0;
     }
 
     /**
-     * <p>The number of minor alarms, to display next to the appropriate icon.</p>
+     * The number of minor alarms, to display next to the appropriate icon.
      * @see #getNumMinorAlarms()
+     * @param newNumMinorAlarms numMinorAlarms
      */
-    public void setNumMinorAlarms(int numMinorAlarms) {
-        this.numMinorAlarms = numMinorAlarms;
-        this.numMinorAlarms_set = true;
+    public void setNumMinorAlarms(final int newNumMinorAlarms) {
+        this.numMinorAlarms = newNumMinorAlarms;
+        this.numMinorAlarmsSet = true;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)")
-    private String style = null;
 
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
     @Override
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     * @see #getStyle()
-     */
     @Override
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)")
-    private String styleClass = null;
 
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
     @Override
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     * @see #getStyleClass()
-     */
     @Override
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
     @Override
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     * @see #isVisible()
-     */
     @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.criticalAlarms = ((Boolean) _values[1]).booleanValue();
-        this.criticalAlarms_set = ((Boolean) _values[2]).booleanValue();
-        this.criticalIcon = (String) _values[3];
-        this.downAlarms = ((Boolean) _values[4]).booleanValue();
-        this.downAlarms_set = ((Boolean) _values[5]).booleanValue();
-        this.downIcon = (String) _values[6];
-        this.majorAlarms = ((Boolean) _values[7]).booleanValue();
-        this.majorAlarms_set = ((Boolean) _values[8]).booleanValue();
-        this.majorIcon = (String) _values[9];
-        this.minorAlarms = ((Boolean) _values[10]).booleanValue();
-        this.minorAlarms_set = ((Boolean) _values[11]).booleanValue();
-        this.minorIcon = (String) _values[12];
-        this.numCriticalAlarms = ((Integer) _values[13]).intValue();
-        this.numCriticalAlarms_set = ((Boolean) _values[14]).booleanValue();
-        this.numDownAlarms = ((Integer) _values[15]).intValue();
-        this.numDownAlarms_set = ((Boolean) _values[16]).booleanValue();
-        this.numMajorAlarms = ((Integer) _values[17]).intValue();
-        this.numMajorAlarms_set = ((Boolean) _values[18]).booleanValue();
-        this.numMinorAlarms = ((Integer) _values[19]).intValue();
-        this.numMinorAlarms_set = ((Boolean) _values[20]).booleanValue();
-        this.style = (String) _values[21];
-        this.styleClass = (String) _values[22];
-        this.visible = ((Boolean) _values[23]).booleanValue();
-        this.visible_set = ((Boolean) _values[24]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.criticalAlarms = ((Boolean) values[1]);
+        this.criticalAlarmsSet = ((Boolean) values[2]);
+        this.criticalIcon = (String) values[3];
+        this.downAlarms = ((Boolean) values[4]);
+        this.downAlarmsSet = ((Boolean) values[5]);
+        this.downIcon = (String) values[6];
+        this.majorAlarms = ((Boolean) values[7]);
+        this.majorAlarmsSet = ((Boolean) values[8]);
+        this.majorIcon = (String) values[9];
+        this.minorAlarms = ((Boolean) values[10]);
+        this.minorAlarmsSet = ((Boolean) values[11]);
+        this.minorIcon = (String) values[12];
+        this.numCriticalAlarms = ((Integer) values[13]);
+        this.numCriticalAlarmsSet = ((Boolean) values[14]);
+        this.numDownAlarms = ((Integer) values[15]);
+        this.numDownAlarmsSet = ((Boolean) values[16]);
+        this.numMajorAlarms = ((Integer) values[17]);
+        this.numMajorAlarmsSet = ((Boolean) values[18]);
+        this.numMinorAlarms = ((Integer) values[19]);
+        this.numMinorAlarmsSet = ((Boolean) values[20]);
+        this.style = (String) values[21];
+        this.styleClass = (String) values[22];
+        this.visible = ((Boolean) values[23]);
+        this.visibleSet = ((Boolean) values[24]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[25];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.criticalAlarms ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.criticalAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.criticalIcon;
-        _values[4] = this.downAlarms ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.downAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.downIcon;
-        _values[7] = this.majorAlarms ? Boolean.TRUE : Boolean.FALSE;
-        _values[8] = this.majorAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = this.majorIcon;
-        _values[10] = this.minorAlarms ? Boolean.TRUE : Boolean.FALSE;
-        _values[11] = this.minorAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[12] = this.minorIcon;
-        _values[13] = new Integer(this.numCriticalAlarms);
-        _values[14] = this.numCriticalAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[15] = new Integer(this.numDownAlarms);
-        _values[16] = this.numDownAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[17] = new Integer(this.numMajorAlarms);
-        _values[18] = this.numMajorAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[19] = new Integer(this.numMinorAlarms);
-        _values[20] = this.numMinorAlarms_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[21] = this.style;
-        _values[22] = this.styleClass;
-        _values[23] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[24] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[25];
+        values[0] = super.saveState(context);
+        if (this.criticalAlarms) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.criticalAlarmsSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        values[3] = this.criticalIcon;
+        if (this.downAlarms) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.downAlarmsSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        values[6] = this.downIcon;
+        if (this.majorAlarms) {
+            values[7] = Boolean.TRUE;
+        } else {
+            values[7] = Boolean.FALSE;
+        }
+        if (this.majorAlarmsSet) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] = Boolean.FALSE;
+        }
+        values[9] = this.majorIcon;
+        if (this.minorAlarms) {
+            values[10] = Boolean.TRUE;
+        } else {
+            values[10] = Boolean.FALSE;
+        }
+        if (this.minorAlarmsSet) {
+            values[11] = Boolean.TRUE;
+        } else {
+            values[11] = Boolean.FALSE;
+        }
+        values[12] = this.minorIcon;
+        values[13] = this.numCriticalAlarms;
+        if (this.numCriticalAlarmsSet) {
+            values[14] = Boolean.TRUE;
+        } else {
+            values[14] = Boolean.FALSE;
+        }
+        values[15] = this.numDownAlarms;
+        if (this.numDownAlarmsSet) {
+            values[16] = Boolean.TRUE;
+        } else {
+            values[16] = Boolean.FALSE;
+        }
+        values[17] = this.numMajorAlarms;
+        if (this.numMajorAlarmsSet) {
+            values[18] = Boolean.TRUE;
+        } else {
+            values[18] = Boolean.FALSE;
+        }
+        values[19] = this.numMinorAlarms;
+        if (this.numMinorAlarmsSet) {
+            values[20] = Boolean.TRUE;
+        } else {
+            values[20] = Boolean.FALSE;
+        }
+        values[21] = this.style;
+        values[22] = this.styleClass;
+        if (this.visible) {
+            values[23] = Boolean.TRUE;
+        } else {
+            values[23] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[24] = Boolean.TRUE;
+        } else {
+            values[24] = Boolean.FALSE;
+        }
+        return values;
     }
 }

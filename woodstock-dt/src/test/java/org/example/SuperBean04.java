@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,18 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package org.example;
 
 import com.sun.faces.annotation.Property;
 
-/**
- *
- * @author gjmurphy
- */
 public class SuperBean04 {
-    
-    @Property(displayName="This element is not the display name")
+
+    @Property(displayName = "This element is not the display name")
     private String one;
 
     public String getOne() {
@@ -34,8 +29,8 @@ public class SuperBean04 {
     public void setOne(String one) {
         this.one = one;
     }
-    
-    @Property(displayName="This element is not the display name")
+
+    @Property(displayName = "This element is not the display name")
     private String two;
 
     public String getTwo() {
@@ -45,8 +40,8 @@ public class SuperBean04 {
     public void setTwo(String two) {
         this.two = two;
     }
-    
-    @Property(displayName="This element is not the display name")
+
+    @Property(displayName = "This element is not the display name")
     private String three;
 
     public String getThree() {
@@ -56,5 +51,5 @@ public class SuperBean04 {
     public void setThree(String three) {
         this.three = three;
     }
-    
+
 }

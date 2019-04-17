@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -31,17 +30,29 @@ import javax.faces.event.ActionListener;
 import javax.faces.event.FacesEvent;
 
 /**
- * The Tab component represents one tab in a tab set. Tabs must be children of
- * a TabSet, or of another Tab.
+ * The Tab component represents one tab in a tab set. Tabs must be children of a
+ * TabSet, or of another Tab.
  *
- * <p>Tab extends {@link Hyperlink}. Clicking on a tab therefore submits the
+ * <p>
+ * Tab extends {@link Hyperlink}. Clicking on a tab therefore submits the
  * current page.
  */
-@Component(type = "com.sun.webui.jsf.Tab", family = "com.sun.webui.jsf.Tab",
-displayName = "Tab", tagName = "tab",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_tab",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_tab_props")
-public class Tab extends Hyperlink implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.Tab",
+        family = "com.sun.webui.jsf.Tab",
+        displayName = "Tab",
+        tagName = "tab",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_tab",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_tab_props")
+        //CHECKSTYLE:ON
+public final class Tab extends Hyperlink implements NamingContainer {
+
+    /**
+     * The id of this tab's currently selected Tab child or null if one is not
+     * selected.
+     */
+    @Property(isHidden = true)
+    private String selectedChildId = null;
 
     /**
      * Create a new instance of Tab.
@@ -54,8 +65,9 @@ public class Tab extends Hyperlink implements NamingContainer {
     /**
      * Create a new instance of Tab with the text property set to the value
      * specified.
+     * @param text tab text
      */
-    public Tab(String text) {
+    public Tab(final String text) {
         this();
         setText(text);
     }
@@ -68,6 +80,7 @@ public class Tab extends Hyperlink implements NamingContainer {
     /**
      * Scripting code executed when a mouse double click occurs over this
      * component.
+     * @return String
      */
     @Property(isHidden = true, isAttribute = true)
     @Override
@@ -86,37 +99,35 @@ public class Tab extends Hyperlink implements NamingContainer {
     public Object getText() {
         return super.getText();
     }
-    /**
-     * The id of this tab's currently selected Tab child or null if one is not
-     * selected.
-     */
-    @Property(isHidden = true)
-    private String selectedChildId = null;
 
     /**
-     * Returns the id of this tab's currently selected Tab child, or null if one is not
-     * selected.
+     * Returns the id of this tab's currently selected Tab child, or null if one
+     * is not selected.
+     * @return String
      */
     public String getSelectedChildId() {
         if (this.selectedChildId != null) {
             return this.selectedChildId;
         }
-        ValueExpression _vb = getValueExpression("selectedChildId");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("selectedChildId");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * Set the id of this tab's currently selected Tab child to the value specified.
+     * Set the id of this tab's currently selected Tab child to the value
+     * specified.
+     * @param newSelectedChildId selectedChildId
      */
-    public void setSelectedChildId(String selectedChildId) {
-        this.selectedChildId = selectedChildId;
+    public void setSelectedChildId(final String newSelectedChildId) {
+        this.selectedChildId = newSelectedChildId;
     }
 
     /**
      * Returns the number of children of this tab that are themselves tabs.
+     * @return int
      */
     public int getTabChildCount() {
         if (this.getChildCount() == 0) {
@@ -133,6 +144,7 @@ public class Tab extends Hyperlink implements NamingContainer {
 
     /**
      * Returns a list of all children of this tab that are themselves tabs.
+     * @return {@code List<Tab>}
      */
     public List<Tab> getTabChildren() {
         List<Tab> tabChildren = new ArrayList<Tab>();
@@ -147,13 +159,13 @@ public class Tab extends Hyperlink implements NamingContainer {
     /**
      * Customized implementation that allows child components to decode possible
      * submitted input only if the component is part of the currently selected
-     * tab. Some input components cannot distinguish between a null submitted value
-     * that is the result of the user unselecting the value (e.g. in the case of
-     * a checkbox or listbox) from the case that is the result of the component
-     * being hidden in an unselected tab.
+     * tab. Some input components cannot distinguish between a null submitted
+     * value that is the result of the user unselecting the value (e.g. in the
+     * case of a checkbox or list box) from the case that is the result of the
+     * component being hidden in an unselected tab.
      */
     @Override
-    public void processDecodes(FacesContext context) {
+    public void processDecodes(final FacesContext context) {
         if (!this.isRendered()) {
             return;
         }
@@ -162,7 +174,8 @@ public class Tab extends Hyperlink implements NamingContainer {
             return;
         }
         if (this.getId() != null && this.getId().equals(tabSet.getSelected())) {
-            // If this tab was the selected tab in the submitted page, invoke process
+            // If this tab was the selected tab in the submitted page, invoke
+            // process
             // decodes on all children components
             for (UIComponent child : this.getChildren()) {
                 child.processDecodes(context);
@@ -189,42 +202,44 @@ public class Tab extends Hyperlink implements NamingContainer {
      * action listener expression on this tab's parent tabSet, if there is one.
      */
     @Override
-    public void broadcast(FacesEvent event) throws AbortProcessingException {
+    public void broadcast(final FacesEvent event)
+            throws AbortProcessingException {
+
         super.broadcast(event);
         if (event instanceof ActionEvent) {
             TabSet tabSet = Tab.getTabSet(this);
-            if (tabSet != null && tabSet.getActionListenerExpression() != null) {
-                ActionListener listener = new MethodExprActionListener(tabSet.getActionListenerExpression());
+            if (tabSet != null
+                    && tabSet.getActionListenerExpression() != null) {
+                ActionListener listener =
+                        new MethodExprActionListener(tabSet
+                                .getActionListenerExpression());
                 listener.processAction((ActionEvent) event);
             }
         }
     }
 
-    /**
-     * Restore the state of this component.
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.selectedChildId = (String) _values[1];
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.selectedChildId = (String) values[1];
+    }
+
+    @Override
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[2];
+        values[0] = super.saveState(context);
+        values[1] = this.selectedChildId;
+        return values;
     }
 
     /**
-     * Save the state of this component.
+     * Utility method that returns the tabSet instance that contains the tab
+     * specified.
+     * @param tab tab
+     * @return TabSet
      */
-    @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[2];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.selectedChildId;
-        return _values;
-    }
-
-    /**
-     * Utility method that returns the tabSet instance that contains the tab specified.
-     */
-    public static TabSet getTabSet(Tab tab) {
+    public static TabSet getTabSet(final Tab tab) {
         TabSet tabSet = null;
         UIComponent parent = tab.getParent();
         while (tabSet == null && parent != null) {

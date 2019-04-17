@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,7 +24,13 @@ import javax.faces.context.FacesContext;
  * component can be used explicitly set the component that will receive the
  * focus in the rendered page.
  */
-public class FocusManager {
+public final class FocusManager {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private FocusManager() {
+    }
 
     /**
      * Request parameter element id that maintains the last element that
@@ -46,7 +52,7 @@ public class FocusManager {
      * @param context faces context
      * @return String, may be {@code null}
      */
-    public static String getRequestFocusElementId(FacesContext context) {
+    public static String getRequestFocusElementId(final FacesContext context) {
         return (String) context.getExternalContext().getRequestMap()
                 .get(FOCUS_FIELD_ID);
     }
@@ -70,8 +76,8 @@ public class FocusManager {
      * @param clientId client id
      * @return the focus element id set
      */
-    public static String setRequestFocusElementId(FacesContext context,
-            String clientId) {
+    public static String setRequestFocusElementId(final FacesContext context,
+            final String clientId) {
 
         String result = getRequestFocusElementId(context);
         context.getExternalContext().getRequestMap().put(FOCUS_FIELD_ID,

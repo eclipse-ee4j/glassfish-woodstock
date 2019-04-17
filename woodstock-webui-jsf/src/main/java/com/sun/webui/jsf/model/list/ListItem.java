@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,91 +14,181 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * ListItem.java
- *
- * Created on December 23, 2004, 3:01 PM
- */
 package com.sun.webui.jsf.model.list;
 
 /**
- *
- * @author avk
+ * List item.
  */
-public class ListItem {
+public final class ListItem {
 
-    Object valueObject;
-    String label;
-    String value;
-    String description = null;
-    boolean selected = false;
-    boolean disabled = false;
-    boolean title = false;
+    /**
+     * Item value.
+     */
+    private Object valueObject;
 
-    public ListItem(String label) {
-        this.label = label;
-        this.valueObject = label;
+    /**
+     * Label.
+     */
+    private String label;
+
+    /**
+     * Value string.
+     */
+    private String value;
+
+    /**
+     * Description.
+     */
+    private String description = null;
+
+    /**
+     * Selected flag.
+     */
+    private boolean selected = false;
+
+    /**
+     * Disabled flag.
+     */
+    private boolean disabled = false;
+
+    /**
+     * Is title flag.
+     */
+    private boolean title = false;
+
+    /**
+     * Create a new instance.
+     * @param newLabel label
+     */
+    public ListItem(final String newLabel) {
+        this.label = newLabel;
+        this.valueObject = newLabel;
     }
 
-    public ListItem(Object realValue, String label) {
-        this.label = label;
-        this.valueObject = realValue;
+    /**
+     * Create a new instance.
+     * @param newValueObject value
+     * @param newLabel label
+     */
+    public ListItem(final Object newValueObject, final String newLabel) {
+        this.label = newLabel;
+        this.valueObject = newValueObject;
     }
 
-    public ListItem(Object realValue, String label, boolean disabled) {
-        this.label = label;
-        this.valueObject = realValue;
-        this.disabled = disabled;
+    /**
+     * Create a new instance.
+     * @param newValueObject value
+     * @param newLabel label
+     * @param newDisabled disabled flag
+     */
+    public ListItem(final Object newValueObject, final String newLabel,
+            final boolean newDisabled) {
+
+        this.label = newLabel;
+        this.valueObject = newValueObject;
+        this.disabled = newDisabled;
     }
 
-    public ListItem(Object realValue, String label, String description,
-            boolean disabled) {
-        this.label = label;
-        this.valueObject = realValue;
-        this.description = description;
-        this.disabled = disabled;
+    /**
+     * Create a new instance.
+     * @param newValueObject value
+     * @param newLabel label
+     * @param newDescription description
+     * @param newDisabled disabled flag
+     */
+    public ListItem(final Object newValueObject, final String newLabel,
+            final String newDescription, final boolean newDisabled) {
+
+        this.label = newLabel;
+        this.valueObject = newValueObject;
+        this.description = newDescription;
+        this.disabled = newDisabled;
     }
 
+    /**
+     * Get the label.
+     * @return String
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Get the value as {@code String}.
+     * @return String
+     */
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    /**
+     * Set the value as {@code String}.
+     * @param newValue new value
+     */
+    public void setValue(final String newValue) {
+        this.value = newValue;
     }
 
+    /**
+     * Get the description.
+     * @return String
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Get the selected flag.
+     * @return {@code boolean}
+     */
     public boolean isSelected() {
         return selected;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    /**
+     * Set the selected flag.
+     * @param newSelected selected
+     */
+    public void setSelected(final boolean newSelected) {
+        this.selected = newSelected;
     }
 
+    /**
+     * Get the value object.
+     * @return Object
+     */
     public Object getValueObject() {
         return valueObject;
     }
 
+    /**
+     * Get the disabled flag.
+     * @return {@code boolean}
+     */
     public boolean isDisabled() {
         return disabled;
     }
 
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+    /**
+     * Set the disabled flag.
+     * @param newDisabled disabled
+     */
+    public void setDisabled(final boolean newDisabled) {
+        this.disabled = newDisabled;
     }
 
-    public void setTitle(boolean title) {
-        this.title = title;
+    /**
+     * Set the title flag.
+     * @param newTitle title flag
+     */
+    public void setTitle(final boolean newTitle) {
+        this.title = newTitle;
     }
 
+    /**
+     * Get the title flag.
+     * @return {@code boolean}
+     */
     public boolean isTitle() {
         return title;
     }

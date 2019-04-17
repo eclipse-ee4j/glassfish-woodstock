@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,33 +14,32 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * NoRepeatOption.java
- *
- * Created on July 14, 2005, 2:19 PM
- *
- */
 package com.sun.webui.jsf.model.scheduler;
 
 import javax.faces.context.FacesContext;
 import com.sun.webui.jsf.model.Option;
 
 /**
- *
- * @author avk, John Yeary
+ * RepeatUnitOption option.
  */
-public class RepeatUnitOption extends Option {
+public final class RepeatUnitOption extends Option {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -2361907202066625777L;
 
-    /** Creates a new instance of RepeatMonthly */
-    public RepeatUnitOption(RepeatUnit repeatUnit) {
+    /**
+     * Creates a new instance of RepeatMonthly.
+     * @param repeatUnit repeat unit
+     */
+    public RepeatUnitOption(final RepeatUnit repeatUnit) {
         this.setValue(repeatUnit);
     }
 
     @Override
     public String getLabel() {
-        return ((RepeatUnit) getValue()).getLabel(FacesContext.getCurrentInstance());
+        return ((RepeatUnit) getValue())
+                .getLabel(FacesContext.getCurrentInstance());
     }
 }
-  

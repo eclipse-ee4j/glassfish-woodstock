@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -35,52 +34,48 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>This class is responsible for rendering the Message component.</p>
+ * This class is responsible for rendering the Message component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.MessageGroup"))
-public class MessageGroupRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.MessageGroup"))
+public final class MessageGroupRenderer extends AbstractRenderer {
 
-    /**
-     * Renders the Message component.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * end should be rendered
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // End the appropriate element
         MessageGroup msgGrp = (MessageGroup) component;
-        Iterator msgIt = null;
+        Iterator msgIt;
         String forComponentId = null;
 
-        if (Beans.isDesignTime() && (msgGrp.isShowDetail() || msgGrp.isShowSummary())) {
-            StringBuffer resourceNameBuffer = new StringBuffer();
-            resourceNameBuffer.append("MessageGroup."); //NOI18N
+        if (Beans.isDesignTime()
+                && (msgGrp.isShowDetail() || msgGrp.isShowSummary())) {
+            StringBuilder resourceNameBuffer = new StringBuilder();
+            resourceNameBuffer.append("MessageGroup.");
             if (msgGrp.isShowGlobalOnly()) {
-                resourceNameBuffer.append("global."); //NOI18N
+                resourceNameBuffer.append("global.");
             } else {
-                resourceNameBuffer.append("default."); //NOI18N
+                resourceNameBuffer.append("default.");
             }
             if (msgGrp.isShowDetail() && msgGrp.isShowSummary()) {
-                resourceNameBuffer.append("both"); //NOI18N
+                resourceNameBuffer.append("both");
             } else if (msgGrp.isShowDetail()) {
-                resourceNameBuffer.append("detail"); //NOI18N
+                resourceNameBuffer.append("detail");
             } else if (msgGrp.isShowSummary()) {
-                resourceNameBuffer.append("summary"); //NOI18N
+                resourceNameBuffer.append("summary");
             }
             String summary = MessageUtil.getMessage(context,
-                    "com.sun.webui.jsf.renderkit.html.Bundle", //NOI18N
+                    "com.sun.webui.jsf.renderkit.html.Bundle",
                     resourceNameBuffer.toString());
             FacesMessage defaultMessage = new FacesMessage();
             defaultMessage.setSummary(summary);
             msgIt = Collections.singletonList(defaultMessage).iterator();
         } else {
             if (msgGrp.isShowGlobalOnly()) {
-                forComponentId = ""; // for only global messages
+                // for only global messages
+                forComponentId = "";
             }
             msgIt = FacesMessageUtils.getMessageIterator(context,
                     forComponentId, msgGrp);
@@ -91,7 +86,7 @@ public class MessageGroupRenderer extends AbstractRenderer {
     }
 
     /**
-     * Renders the Message text
+     * Renders the Message text.
      *
      * @param context The current FacesContext
      * @param component The VersionPage object to use
@@ -100,9 +95,9 @@ public class MessageGroupRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    public void renderMessageGroup(FacesContext context,
-            UIComponent component, ResponseWriter writer,
-            Iterator msgIt) throws IOException {
+    public void renderMessageGroup(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final Iterator msgIt) throws IOException {
 
         MessageGroup msgGrp = (MessageGroup) component;
 
@@ -115,7 +110,7 @@ public class MessageGroupRenderer extends AbstractRenderer {
         // Render the opening table
         renderOpeningTable(msgGrp, writer, theme);
 
-        FacesMessage fMsg = null;
+        FacesMessage fMsg;
         boolean showSummary = msgGrp.isShowSummary();
         boolean showDetail = msgGrp.isShowDetail();
         String summaryStyle = theme.getStyleClass(
@@ -128,8 +123,7 @@ public class MessageGroupRenderer extends AbstractRenderer {
 
         // Optimization to reduce compiler construction of StringBuffer
         // for constant text within the loop.
-        //
-        StringBuffer detailBuf = new StringBuffer(64).append(" ");
+        StringBuilder detailBuf = new StringBuilder().append(" ");
 
         while (msgIt.hasNext()) {
 
@@ -154,7 +148,6 @@ public class MessageGroupRenderer extends AbstractRenderer {
 
             // Null these variables when a severity style is found.
             // Severity styles override the default styles.
-            //
             String summaryStyleTmp = summaryStyle;
             String detailStyleTmp = detailStyle;
 
@@ -162,12 +155,12 @@ public class MessageGroupRenderer extends AbstractRenderer {
             // bullet for each message ? Why not a bullet for each
             // messages and one list and one div ?
             //
-            writer.startElement("div", msgGrp); //NOI18N
-            writer.writeAttribute("class", //NOI18N
+            writer.startElement("div", msgGrp);
+            writer.writeAttribute("class",
                     theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_DIV),
-                    null); //NOI18N
-            writer.startElement("ul", msgGrp); //NOI18N
-            writer.startElement("li", msgGrp); //NOI18N
+                    null);
+            writer.startElement("ul", msgGrp);
+            writer.startElement("li", msgGrp);
 
             // render theme based style based on severity.
             String severityStyleClass = getSeverityStyleClass(fMsg, theme);
@@ -175,10 +168,9 @@ public class MessageGroupRenderer extends AbstractRenderer {
             // This renders the selector on the "li" element.
             // The default styles appear on the text's "span" element.
             // Severity styles override default styles
-            //
             if (severityStyleClass != null) {
-                writer.writeAttribute("class", severityStyleClass, //NOI18N
-                        "styleClass"); //NOI18N
+                writer.writeAttribute("class", severityStyleClass,
+                        "styleClass");
                 summaryStyleTmp = null;
                 detailStyleTmp = null;
             }
@@ -196,26 +188,23 @@ public class MessageGroupRenderer extends AbstractRenderer {
                 // the detail message. This should be part of the theme.
                 // A style for the detail message when preceded by the
                 // summary message.
-                //
                 if (summary != null) {
                     detail = detailBuf.append(detail).toString();
                 }
                 renderMessageText(msgGrp, writer, detail, detailStyleTmp);
 
                 // Rewind the buffer so only the " " exists.
-                //
                 detailBuf.setLength(1);
             }
-
-            writer.endElement("li"); //NOI18N
-            writer.endElement("ul"); //NOI18N
-            writer.endElement("div"); //NOI18N
+            writer.endElement("li");
+            writer.endElement("ul");
+            writer.endElement("div");
         }
 
         // Close tags
         renderClosingTable(writer);
         // Close the surrounding div
-        writer.endElement("div"); // NOI18N
+        writer.endElement("div");
     }
 
     /**
@@ -227,29 +216,30 @@ public class MessageGroupRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    public void renderOpeningTable(MessageGroup msgGrp, ResponseWriter writer,
-            Theme theme) throws IOException {
+    public void renderOpeningTable(final MessageGroup msgGrp,
+            final ResponseWriter writer, final Theme theme) throws IOException {
+
         // Render the layout table
-        writer.startElement("table", msgGrp); //NOI18N
-        writer.writeAttribute("class", //NOI18N
+        writer.startElement("table", msgGrp);
+        writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_TABLE), null);
-        writer.writeAttribute("border", "0", null); //NOI18N
-        writer.writeAttribute("cellpadding", "0", null); //NTOI18N
-        writer.writeAttribute("cellspacing", "0", null); //NOI18N
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
         if (msgGrp.getToolTip() != null) {
-            writer.writeAttribute("title", msgGrp.getToolTip(), null); //NOI18N
+            writer.writeAttribute("title", msgGrp.getToolTip(), null);
         } else {
             // Required for A11Y
-            //
-            writer.writeAttribute("title", "", null); //NOI18N
+            writer.writeAttribute("title", "", null);
         }
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         // Add the heading
-        writer.startElement("tr", msgGrp); //NOI18N
-        writer.startElement("th", msgGrp); //NOI18N
+        writer.startElement("tr", msgGrp);
+        writer.startElement("th", msgGrp);
         writer.writeAttribute("class",
-                theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_TABLE_TITLE), null);
+                theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_TABLE_TITLE),
+                null);
         String title = msgGrp.getTitle();
         if (title != null) {
             writer.writeText(title, null);
@@ -257,12 +247,12 @@ public class MessageGroupRenderer extends AbstractRenderer {
             writer.writeText(theme.getMessage("messageGroup.heading"), null);
         }
         writer.endElement("th");
-        writer.endElement("tr"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("tr");
+        writer.writeText("\n", null);
 
         // We know there is at least one message
-        writer.startElement("tr", msgGrp); //NOI18N
-        writer.startElement("td", msgGrp); //NOI18N
+        writer.startElement("tr", msgGrp);
+        writer.startElement("td", msgGrp);
     }
 
     /**
@@ -272,11 +262,13 @@ public class MessageGroupRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    public void renderClosingTable(ResponseWriter writer) throws IOException {
-        writer.endElement("td"); //NOI18N
-        writer.endElement("tr"); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+    public void renderClosingTable(final ResponseWriter writer)
+            throws IOException {
+
+        writer.endElement("td");
+        writer.endElement("tr");
+        writer.endElement("table");
+        writer.writeText("\n", null);
     }
 
     /**
@@ -289,20 +281,21 @@ public class MessageGroupRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    public void renderMessageText(MessageGroup msgGrp, ResponseWriter writer,
-            String msgText, String textStyle) throws IOException {
+    public void renderMessageText(final MessageGroup msgGrp,
+            final ResponseWriter writer, final String msgText,
+            final String textStyle) throws IOException {
 
-        writer.startElement("span", msgGrp); //NOI18N
+        writer.startElement("span", msgGrp);
         if (textStyle != null && textStyle.length() > 0) {
-            writer.writeAttribute("class", textStyle, "class"); //NOI18N
+            writer.writeAttribute("class", textStyle, "class");
         }
         writer.writeText(msgText, null);
-        writer.endElement("span"); // NOI18N
+        writer.endElement("span");
     }
 
     /**
-     * Render the enclosing element for the MesssageGroup messages that
-     * is associated with the component's id.
+     * Render the enclosing element for the MesssageGroup messages that is
+     * associated with the component's id.
      *
      * @param context The current FacesContext
      * @param msgGrp The MessageGroup object to use
@@ -310,49 +303,52 @@ public class MessageGroupRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderMessageGroupIdElement(FacesContext context,
-            MessageGroup msgGrp, ResponseWriter writer) throws IOException {
+    private void renderMessageGroupIdElement(final FacesContext context,
+            final MessageGroup msgGrp, final ResponseWriter writer)
+            throws IOException {
 
         String userStyle = msgGrp.getStyle();
         String userStyleClass = msgGrp.getStyleClass();
         String id = msgGrp.getClientId(context);
 
-        writer.startElement("div", msgGrp); //NO18N
-        writer.writeAttribute("id", id, "id"); //NOI18N
-
+        writer.startElement("div", msgGrp);
+        writer.writeAttribute("id", id, "id");
         if (userStyle != null && userStyle.length() > 0) {
-            writer.writeAttribute("style", userStyle, "style"); //NOI18N
+            writer.writeAttribute("style", userStyle, "style");
         }
         RenderingUtilities.renderStyleClass(context, writer, msgGrp, null);
     }
 
     /**
-     * Return a style class based on the FacesMesssage severity.
-     * If there is no style for a given severity return null.
+     * Return a style class based on the FacesMesssage severity. If there is no
+     * style for a given severity return null.
      *
      * @param facesMessage The FacesMessage
      * @param theme The current theme
+     * @return String
      */
-    protected String getSeverityStyleClass(FacesMessage facesMessage,
-            Theme theme) {
+    protected String getSeverityStyleClass(final FacesMessage facesMessage,
+            final Theme theme) {
 
         // Obtain a style based on message severity
-        //
         String severityStyleClass = null;
         Severity severity = facesMessage.getSeverity();
         if (severity == FacesMessage.SEVERITY_INFO) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_INFO);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_INFO);
         } else if (severity == FacesMessage.SEVERITY_WARN) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_WARN);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_WARN);
         } else if (severity == FacesMessage.SEVERITY_ERROR) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_ERROR);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_ERROR);
         } else if (severity == FacesMessage.SEVERITY_FATAL) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_FATAL);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_GROUP_FATAL);
         }
-        return severityStyleClass == null || severityStyleClass.length() == 0 ? null : severityStyleClass;
+        if (severityStyleClass == null || severityStyleClass.length() == 0) {
+            return null;
+        }
+        return severityStyleClass;
     }
 }

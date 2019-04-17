@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,12 +31,12 @@ import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
  * The link component can be used as an Link.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Link"))
-public class LinkRenderer extends AbstractRenderer {
+public final class LinkRenderer extends AbstractRenderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "charset",
         "media",
         "rel",
@@ -44,18 +44,21 @@ public class LinkRenderer extends AbstractRenderer {
     };
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // End the appropriate element
         Link link = (Link) component;
@@ -70,7 +73,6 @@ public class LinkRenderer extends AbstractRenderer {
             }
             // the URL is the tough thing because it needs to be encoded:
             String url = link.getUrl();
-
             if (url != null) {
                 writer.writeAttribute("href",
                         context.getApplication().getViewHandler()

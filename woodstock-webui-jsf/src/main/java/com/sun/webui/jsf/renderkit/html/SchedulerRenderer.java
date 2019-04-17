@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,11 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * SchedulerRenderer.java
- *
- * Created on February 9, 2005, 3:44 PM
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -44,21 +39,28 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
 import static com.sun.webui.jsf.util.ThemeUtilities.getIcon;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
-import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
  * Renders a guidelines compliant Scheduler component.
  *
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Scheduler"))
-public class SchedulerRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Scheduler"))
+public final class SchedulerRenderer extends javax.faces.render.Renderer {
 
-    // where is this used?
+    /**
+     * HTML encoded space.
+     */
     private static final String SPACE = "&nbsp;";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) {
     }
 
     @Override
@@ -67,15 +69,15 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws java.io.IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws java.io.IOException {
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
-        if(component == null){
+        if (component == null) {
             return;
         }
         if (DEBUG) {
@@ -103,7 +105,7 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         renderEnclosingDiv(scheduler, theme, context, writer);
         writer.writeText("\n", null);
 
-        // open the table	
+        // open the table
         renderOpenTable(scheduler, writer, null);
         writer.writeText("\n", null);
         writer.startElement("tr", scheduler);
@@ -129,9 +131,17 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         renderJavaScript(context, scheduler, writer, theme);
     }
 
-    private void renderEnclosingDiv(Scheduler scheduler, Theme theme,
-            FacesContext context, ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render enclosing div.
+     * @param scheduler scheduler component
+     * @param theme the current theme
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderEnclosingDiv(final Scheduler scheduler,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement("div", scheduler);
         writer.writeAttribute("id", scheduler.getClientId(context), null);
@@ -159,8 +169,9 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderOpenTable(UIComponent comp, ResponseWriter writer,
-            String styleClass) throws IOException {
+    private void renderOpenTable(final UIComponent comp,
+            final ResponseWriter writer, final String styleClass)
+            throws IOException {
 
         writer.startElement("table", comp);
         if (styleClass != null) {
@@ -172,12 +183,21 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeAttribute("title", "", null);
     }
 
-    // Helper method to render the legend row. 
-    private void renderLegendRow(Scheduler scheduler, Theme theme,
-            ResponseWriter writer, FacesContext context, String spacerPath)
-            throws IOException {
+    /**
+     * Helper method to render the legend row.
+     * @param scheduler scheduler component
+     * @param theme the current theme
+     * @param writer writer to use
+     * @param context faces context
+     * @param spacerPath spacer path character
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderLegendRow(final Scheduler scheduler, final Theme theme,
+            final ResponseWriter writer, final FacesContext context,
+            final String spacerPath) throws IOException {
 
-        // This row consists of the legend and nothing else. 
+        // This row consists of the legend and nothing else.
         writer.writeText("\n", null);
         writer.startElement("tr", scheduler);
         writer.writeText("\n", null);
@@ -205,7 +225,7 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             icon.setParent(scheduler);
             renderComponent(icon, context);
             writer.writeText("\n", null);
-            writer.write(SPACE);//N0I18N
+            writer.write(SPACE);
             writer.writeText(theme.getMessage("Scheduler.requiredLegend"),
                     null);
             writer.writeText("\n", null);
@@ -219,11 +239,19 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    // It must be possible to do this using a style on the row instead! 
-    private void renderSpacerRow(UIComponent component, String path,
-            int height, int width, int colspan,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * It must be possible to do this using a style on the row instead!
+     * @param component UI component
+     * @param path path
+     * @param height height
+     * @param width width
+     * @param colspan colspan
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderSpacerRow(final UIComponent component, final String path,
+            final int height, final int width, final int colspan,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement("tr", component);
         writer.writeText("\n", null);
@@ -237,9 +265,18 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    // Helper method to render a spacer image.
-    private void renderSpacerImage(UIComponent component, String path,
-            int height, int width, ResponseWriter writer) throws IOException {
+    /**
+     * Helper method to render a spacer image.
+     * @param component UI component
+     * @param path path
+     * @param height height
+     * @param width width
+     * @param writer writer
+     * @throws IOException if an IO error occurs
+     */
+    private void renderSpacerImage(final UIComponent component,
+            final String path, final int height, final int width,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement("img", component);
         writer.writeAttribute("src", path, null);
@@ -249,10 +286,18 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.endElement("img");
     }
 
-    // Render date picker.
-    private void renderDatePicker(Scheduler scheduler, Theme theme,
-            String spacerPath, ResponseWriter writer, FacesContext context)
-            throws IOException {
+    /**
+     * Render date picker.
+     * @param scheduler scheduler component
+     * @param theme the current theme
+     * @param spacerPath spacer path
+     * @param writer writer to use
+     * @param context faces context
+     * @throws IOException if an IO error occurs
+     */
+    private void renderDatePicker(final Scheduler scheduler, final Theme theme,
+            final String spacerPath, final ResponseWriter writer,
+            final FacesContext context) throws IOException {
 
         writer.startElement("td", scheduler);
         writer.writeAttribute("valign", "top", null);
@@ -263,18 +308,21 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * <p>Render the Scheduler component input controls such as the start date
-     * field, start and end hour / minutes, etc.</p>
+     * Render the Scheduler component input controls such as the start date
+     * field, start and end hour / minutes, etc.
      *
      * @param context The current FacesContext
      * @param scheduler The Scheduler component instance
      * @param writer The current ResponseWriter
-     * @param sourcePath Path to spacer image
+     * @param theme the current theme
+     * @param spacerPath Path to spacer image
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderInputControls(FacesContext context, Scheduler scheduler,
-            ResponseWriter writer, Theme theme, String spacerPath)
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderInputControls(final FacesContext context,
+            final Scheduler scheduler, final ResponseWriter writer,
+            final Theme theme, final String spacerPath)
             throws IOException {
 
         writer.startElement("td", scheduler);
@@ -294,10 +342,9 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
 
         if (scheduler.isStartTime()) {
             // render start time row
-            // TODO - this is one of the cases where we have to check for 
+            // TODO - this is one of the cases where we have to check for
             // private vs public facets!
             UIComponent label = scheduler.getStartTimeLabelComponent(theme);
-
             renderTimeRow(scheduler, label,
                     scheduler.getStartTimeComponent(),
                     theme,
@@ -308,10 +355,9 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
 
         if (scheduler.isEndTime()) {
             // render end time row
-            // TODO - this is one of the cases where we have to check for 
+            // TODO - this is one of the cases where we have to check for
             // private vs public facets!
             UIComponent label = scheduler.getEndTimeLabelComponent(theme);
-
             renderTimeRow(scheduler, label,
                     scheduler.getEndTimeComponent(),
                     theme,
@@ -327,9 +373,10 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
             renderRepeatIntervalRow(scheduler, theme, context, writer);
 
             if (scheduler.isLimitRepeating()) {
-                // render the repeat limit inputs 
+                // render the repeat limit inputs
                 renderSpacerRow(scheduler, spacerPath, 5, 1, 4, writer);
-                renderRepeatLimitRow(context, scheduler, writer, theme, spacerPath);
+                renderRepeatLimitRow(context, scheduler, writer, theme,
+                        spacerPath);
                 renderRepeatLegend(scheduler, theme, context, writer);
             }
         }
@@ -346,13 +393,22 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    private void renderTimeRow(Scheduler scheduler, UIComponent label,
-            Time time,
-            Theme theme,
-            String spacerPath,
-            FacesContext context,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render time row.
+     * @param scheduler scheduler component
+     * @param label label component
+     * @param time time
+     * @param theme the current theme
+     * @param spacerPath spacer path
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderTimeRow(final Scheduler scheduler,
+            final UIComponent label, final Time time, final Theme theme,
+            final String spacerPath, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         renderSpacerRow(scheduler, spacerPath, 5, 1, 4, writer);
         writer.writeText("\n", null);
@@ -378,14 +434,23 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    // Helper method to render the start date row. 
-    private void renderStartDateRow(Scheduler scheduler, String spacerPath,
-            Theme theme, FacesContext context,
-            ResponseWriter writer)
+    /**
+     * Helper method to render the start date row.
+     * @param scheduler scheduler component
+     * @param spacerPath spacer path
+     * @param theme the current theme
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderStartDateRow(final Scheduler scheduler,
+            final String spacerPath, final Theme theme,
+            final FacesContext context, final ResponseWriter writer)
             throws IOException {
 
         UIComponent date = scheduler.getDateComponent();
-        // TODO - this is one of the cases where we have to check for 
+        // FIXME - this is one of the cases where we have to check for
         // private vs public facets!
         UIComponent label = scheduler.getDateLabelComponent(theme);
 
@@ -420,7 +485,7 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
         renderComponent(date, context);
         writer.writeText("\n", null);
-        writer.startElement("span", scheduler);//NOI18N
+        writer.startElement("span", scheduler);
         String styleClass = theme.getStyleClass(ThemeStyles.HELP_FIELD_TEXT);
         writer.writeAttribute("class", styleClass, null);
         writer.write(SPACE);
@@ -434,12 +499,18 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    private String getPattern(Scheduler scheduler, Theme theme) {
-
+    /**
+     * Get the date format pattern.
+     * @param scheduler scheduler component
+     * @param theme the current theme
+     * @return String
+     */
+    private String getPattern(final Scheduler scheduler, final Theme theme) {
         String hint = scheduler.getDateFormatPatternHelp();
         if (hint == null) {
             try {
-                String pattern = scheduler.getDatePicker().getDateFormatPattern();
+                String pattern = scheduler.getDatePicker()
+                        .getDateFormatPattern();
                 hint = theme.getMessage("calendar.".concat(pattern));
             } catch (MissingResourceException mre) {
                 hint = ((SimpleDateFormat) (scheduler.getDateFormat()))
@@ -459,8 +530,9 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderPreviewRow(FacesContext context, Scheduler scheduler,
-            ResponseWriter writer, Theme theme) throws IOException {
+    private void renderPreviewRow(final FacesContext context,
+            final Scheduler scheduler, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         writer.startElement("tr", scheduler);
         writer.writeText("\n", null);
@@ -478,14 +550,22 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    private void renderRepeatIntervalRow(Scheduler scheduler, Theme theme,
-            FacesContext context, ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render the repeat interval row.
+     * @param scheduler scheduler component
+     * @param theme the current theme
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderRepeatIntervalRow(final Scheduler scheduler,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent label = scheduler.getRepeatIntervalLabelComponent();
         DropDown menu = scheduler.getRepeatIntervalComponent();
 
-        // Spacer and label cells 
+        // Spacer and label cells
         renderInputRowStart(scheduler, writer, theme);
         renderComponent(label, context);
         writer.writeText("\n", null);
@@ -519,8 +599,8 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderInputRowStart(Scheduler scheduler,
-            ResponseWriter writer, Theme theme) throws IOException {
+    private void renderInputRowStart(final Scheduler scheduler,
+            final ResponseWriter writer, final Theme theme) throws IOException {
 
         writer.startElement("tr", scheduler);
         writer.writeText("\n", null);
@@ -533,8 +613,8 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeAttribute("nowrap", "nowrap", null);
         writer.writeText("\n", null);
         writer.startElement("span", scheduler);
-        String styleClass =
-                theme.getStyleClass(ThemeStyles.DATE_TIME_LABEL_TEXT);
+        String styleClass
+                = theme.getStyleClass(ThemeStyles.DATE_TIME_LABEL_TEXT);
         writer.writeAttribute("class", styleClass, null);
         writer.writeText("\n", null);
     }
@@ -546,18 +626,20 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
      * @param scheduler The Scheduler component instance
      * @param writer The current ResponseWriter
      * @param theme The current Theme
+     * @param spacerPath spacer path
      *
      * @exception IOException if an input/output error occurs
      */
-    private void renderRepeatLimitRow(FacesContext context, Scheduler scheduler,
-            ResponseWriter writer, Theme theme, String spacerPath)
+    private void renderRepeatLimitRow(final FacesContext context,
+            final Scheduler scheduler, final ResponseWriter writer,
+            final Theme theme, final String spacerPath)
             throws IOException {
 
         UIComponent label = scheduler.getRepeatLimitLabelComponent();
         UIComponent field = scheduler.getRepeatingFieldComponent();
         DropDown menu = scheduler.getRepeatUnitComponent();
 
-        // Spacer and label cells 
+        // Spacer and label cells
         renderInputRowStart(scheduler, writer, theme);
         renderComponent(label, context);
         writer.endElement("span");
@@ -579,11 +661,17 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.writeText("\n", null);
     }
 
-    private void renderRepeatLegend(Scheduler scheduler,
-            Theme theme,
-            FacesContext context,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * render the repeat legend.
+     * @param scheduler scheduler component
+     * @param theme the current theme
+     * @param context faces context
+     * @param writer the writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderRepeatLegend(final Scheduler scheduler,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         renderInputRowStart(scheduler, writer, theme);
         writer.write(SPACE);
@@ -612,8 +700,17 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         writer.write("\n");
     }
 
-    private void renderJavaScript(FacesContext context, Scheduler scheduler,
-            ResponseWriter writer, Theme theme) throws IOException {
+    /**
+     * Render the JS code.
+     * @param context faces context
+     * @param scheduler scheduler component
+     * @param writer the writer to use
+     * @param theme the current theme
+     * @throws IOException if an IO error occurs
+     */
+    private void renderJavaScript(final FacesContext context,
+            final Scheduler scheduler, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         // Append properties.
         JsonObject initProps = JSON_BUILDER_FACTORY.createObjectBuilder()
@@ -644,7 +741,11 @@ public class SchedulerRenderer extends javax.faces.render.Renderer {
         return this.getClass().getName();
     }
 
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s);
+    /**
+     * Log a message to the standard out.
+     * @param msg message to log
+     */
+    private void log(final String msg) {
+        System.out.println(SchedulerRenderer.class.getName() + "::" + msg);
     }
 }

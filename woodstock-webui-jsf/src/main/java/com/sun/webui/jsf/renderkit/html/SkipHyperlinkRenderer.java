@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -28,13 +27,16 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>This class is responsible for rendering the {@link SkipHyperlink}
- * component.</p>
+ * This class is responsible for rendering the {@link SkipHyperlink} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.SkipHyperlink"))
-public class SkipHyperlinkRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(
+                componentFamily = "com.sun.webui.jsf.SkipHyperlink"))
+public final class SkipHyperlinkRenderer extends javax.faces.render.Renderer {
 
-    /** Creates a new instance of AlertRenderer */
+    /**
+     * Creates a new instance of AlertRenderer.
+     */
     public SkipHyperlinkRenderer() {
         // default constructor
     }
@@ -47,8 +49,8 @@ public class SkipHyperlinkRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         SkipHyperlink link = (SkipHyperlink) component;
         if (!link.isRendered()) {
@@ -63,21 +65,24 @@ public class SkipHyperlinkRenderer extends javax.faces.render.Renderer {
         Integer index = null;
         int tabIndex = link.getTabIndex();
         if (tabIndex != Integer.MIN_VALUE) {
-            index = new Integer(tabIndex);
+            index = tabIndex;
         }
 
-        String styleClass = (link.getStyleClass() != null)
-                ? link.getStyleClass()
-                : theme.getStyleClass(ThemeStyles.SKIP_WHITE);
+        String styleClass;
+        if (link.getStyleClass() != null) {
+            styleClass = link.getStyleClass();
+        } else {
+            styleClass = theme.getStyleClass(ThemeStyles.SKIP_WHITE);
+        }
 
         RenderingUtilities.renderSkipLink("", styleClass, link.getStyle(),
                 link.getDescription(), index, link, context);
-        writer.write("\n"); //NOI18N        
+        writer.write("\n");
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         SkipHyperlink link = (SkipHyperlink) component;
         if (!link.isRendered()) {

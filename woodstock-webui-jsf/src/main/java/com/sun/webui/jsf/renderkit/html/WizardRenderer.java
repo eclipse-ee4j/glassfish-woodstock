@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -30,15 +30,11 @@ import com.sun.webui.jsf.model.WizardStepListItem;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.theme.ThemeImages;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
-import java.io.StringWriter;
 import javax.faces.render.ResponseStateManager;
 import javax.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.getModuleName;
-import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
-import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.RenderingUtilities.getStyleClasses;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
@@ -91,7 +87,7 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getIcon;
  *          renderTitleText(...)
  *          renderTitleEnd(...)
  *        renderStepsBar(..)
- *          renderTabsBar(...) 
+ *          renderTabsBar(...)
  *           or
  *          renderEmptyBar(..)
  *        renderStepsPane(...)
@@ -158,7 +154,83 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getIcon;
  * <em>refer to HCI wizard guidelines for details.</em>
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Wizard"))
-public class WizardRenderer extends AbstractRenderer {
+public final class WizardRenderer extends AbstractRenderer {
+
+    //CHECKSTYLE:OFF
+    private static final String ANCHOR = "a";
+    private static final String DIV = "div";
+    private static final String IMG = "img";
+    private static final String INPUT = "input";
+    private static final String PARA = "p";
+    private static final String SCRIPT = "script";
+    private static final String SPAN = "span";
+    private static final String TABLE = "table";
+    private static final String TD = "td";
+    private static final String TR = "tr";
+
+    // Attributes
+    private static final String ALIGN = "align";
+    private static final String ALT = "alt";
+    private static final String BORDER = "border";
+    private static final String CELLPADDING = "cellpadding";
+    private static final String CELLSPACING = "cellspacing";
+    private static final String CLASS = "class";
+    private static final String STYLE_CLASS = "styleClass";
+    private static final String DISABLED = "disabled";
+    private static final String HEIGHT = "height";
+    private static final String HREF = "href";
+    private static final String HSPACE = "hspace";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String NOWRAP = "nowrap";
+    private static final String ONBLUR = "onblur";
+    private static final String ONCLICK = "onclick";
+    private static final String ONFOCUS = "onfocus";
+    private static final String ONMOUSEOVER = "onmouseover";
+    private static final String ONMOUSEOUT = "onmouseout";
+    private static final String SRC = "src";
+    private static final String STYLE = "style";
+    private static final String TITLE = "title";
+    private static final String TYPE = "type";
+    private static final String VALIGN = "valign";
+    private static final String VALUE = "valign";
+    private static final String WIDTH = "width";
+
+    // Values
+    private static final String _1_PERCENT = "1%";
+    private static final String _90_PERCENT = "90%";
+    private static final String _99_PERCENT = "99%";
+    private static final String _100_PERCENT = "100%";
+    private static final String BOTTOM = "bottom";
+    private static final String LEFT = "left";
+    private static final String RIGHT = "right";
+    private static final String SUBMIT = "submit";
+    private static final String TOP = "top";
+    private static final String TEXT_JAVASCRIPT = "text/javascript";
+    private static final String NBSP = "&nbsp;";
+    // Constants
+    private static final String STEPS_PANE_SUFFIX = "_stepspane";
+    private static final String SPACE = " ";
+    private static final String EMPTY_STRING = "";
+    private static final String USCORE = "_";
+    private static final String WIZARD_JSOBJECT_CLASS = "Wizard";
+    private static final String SQUOTE = "'";
+    private static final String CLOSEPOPUPJS = "{0}.closePopup();";
+    // Wizard attributes
+    private static final String TOOLTIP = "toolTip";
+    private static final String SHOWCONTROLS = "showControls";
+    private static final String SHOWSTEPSPANE = "showStepsPane";
+    private static final String SHOWSTEPHELP = "showStepHelp";
+    private static final String SHOWTITLE = "showTitle";
+    private static final String ONPOPUPDISMISS = "onPopupDismiss";
+    private static final String WIZARD_SKIP_LINK_ALT = "Wizard.skipLinkAlt";
+    //CHECKSTYLE:OFF
+
+    /**
+     * Error message when not rendering a component of the right type.
+     */
+    private static final String MSG_COMPONENT_NOT_WIZARD =
+            "WizardLayoutRenderer only renders Wizard components.";
 
     /**
      * Construct a {@code WizardRenderer}.
@@ -181,8 +253,8 @@ public class WizardRenderer extends AbstractRenderer {
      * @return String
      * @throws java.io.IOException if an IO error occurs
      */
-    protected String getWizardCloseJavaScript(FacesContext context,
-            UIComponent component) throws IOException {
+    protected String getWizardCloseJavaScript(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         String onPopupDismiss = (String) component.getAttributes().get(
                 ONPOPUPDISMISS);
@@ -195,19 +267,20 @@ public class WizardRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // Is component "isa" Wizard ?
         if (!(component instanceof Wizard)) {
-            throw new IllegalArgumentException(
-                    getMessage(MSG_COMPONENT_NOT_WIZARD));
+            throw new IllegalArgumentException(MSG_COMPONENT_NOT_WIZARD);
         }
 
         Theme theme = getTheme(context);
 
         // Always render outer div tags for HTML element functions to be valid.
-        // User may need to inokve document.getElementById(id).closeAndForward(...)
+        // User may need to invoke
+        // document.getElementById(id).closeAndForward(...)
         renderWizardBegin(context, component, theme, writer);
     }
 
@@ -218,12 +291,14 @@ public class WizardRenderer extends AbstractRenderer {
     // We could consider this the Wizard Body and treat Step's as
     // children here.
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component) {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Theme theme = getTheme(context);
         if (!((Wizard) component).isComplete()) {
@@ -234,7 +309,7 @@ public class WizardRenderer extends AbstractRenderer {
 
     /**
      * Render the beginning of the layout container for the entire Wizard.
-     * 
+     *
      * @param context {@code FacesContext} for the current request.
      * @param component {@code UIComponent} a Wizard or Wizard subclass.
      * @param theme {@code Theme} to use for style, images, and text.
@@ -242,9 +317,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderWizardBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderWizardBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         String wizId = component.getClientId(context);
 
@@ -292,9 +367,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderWizard(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderWizard(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         renderTitle(context, component, theme, writer);
         renderStepsBar(context, component, theme, writer);
@@ -313,9 +388,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderWizardEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderWizardEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         // Enclose the whole wizard in a div
         writer.endElement(DIV);
@@ -340,9 +415,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTitle(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTitle(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         // Don't output anything if there is no title
         if (!show(component, SHOWTITLE)) {
@@ -364,9 +439,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTitleBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTitleBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
@@ -381,8 +456,8 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTitleText(FacesContext context,
-            UIComponent component, ResponseWriter writer)
+    protected void renderTitleText(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         Wizard wizard = (Wizard) component;
@@ -402,15 +477,15 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTitleEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTitleEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.endElement(DIV);
     }
 
     /**
-     * Render the content of the steps bar. 
+     * Render the content of the steps bar.
      *
      * @param context {@code FacesContext} for the current request.
      * @param component {@code UIComponent} a Wizard or Wizard subclass.
@@ -419,9 +494,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepsBar(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepsBar(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
 
@@ -456,9 +531,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepsPane(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepsPane(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         if (!show(component, SHOWSTEPSPANE)) {
             return;
@@ -467,7 +542,6 @@ public class WizardRenderer extends AbstractRenderer {
         Wizard wizard = (Wizard) component;
 
         // See if the steps pane is owned by the application
-        //
         UIComponent stepsPane = wizard.getStepsPaneComponent();
         if (stepsPane != null) {
             renderComponent(stepsPane, context);
@@ -501,15 +575,16 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepListBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepListBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         String paneId =
                 component.getClientId(context).concat(STEPS_PANE_SUFFIX);
 
-        writer.startElement(DIV, component); // Steps Pane DIV
+        // Steps Pane DIV
+        writer.startElement(DIV, component);
 
         writer.writeAttribute(ID, paneId, null);
         writer.writeAttribute(CLASS,
@@ -526,9 +601,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTabsBar(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTabsBar(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent tabs = wizard.getTabsComponent();
@@ -536,7 +611,8 @@ public class WizardRenderer extends AbstractRenderer {
             return;
         }
 
-        writer.startElement(DIV, component); // Tabs DIV
+        // Tabs DIV
+        writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
                 theme.getStyleClass(ThemeStyles.WIZARD_STEP_TAB), null);
 
@@ -554,8 +630,8 @@ public class WizardRenderer extends AbstractRenderer {
      * @param writer {@code ResponseWriter} write the response using this
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderEmptyBar(UIComponent component, Theme theme,
-            ResponseWriter writer) throws IOException {
+    protected void renderEmptyBar(final UIComponent component,
+            final Theme theme, final ResponseWriter writer) throws IOException {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
@@ -573,9 +649,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepsPaneTitle(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepsPaneTitle(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent stepsPaneTitle = wizard.getStepsPaneTitleComponent();
@@ -596,7 +672,7 @@ public class WizardRenderer extends AbstractRenderer {
      * render it. Other wise obtain a {@code Wizard.StepList}
      * iterator from the wizard. The iterator returns instances of
      * {@code WizardStepListItem}. It can be determined from
-     * this object whether the step is the current step, a substep
+     * this object whether the step is the current step, a sub-step
      * or a branch. A component to render for each step can be
      * obtained from the wizard component.
      *
@@ -607,9 +683,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepList(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepList(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
 
@@ -657,9 +733,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderCurrentStepIndicator(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderCurrentStepIndicator(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent stepIndicator = wizard.getStepIndicatorComponent();
@@ -683,22 +759,26 @@ public class WizardRenderer extends AbstractRenderer {
      * sub step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderSubstep(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step) throws IOException {
+    protected void renderSubstep(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
+            throws IOException {
 
         boolean isCurrentStep = step.isCurrentStep();
 
-        String stepTextStyle = isCurrentStep
-                ? theme.getStyleClass(ThemeStyles.WIZARD_STEP_CURRENT_TEXT)
-                : theme.getStyleClass(ThemeStyles.WIZARD_STEP_LINK);
+        String stepTextStyle;
+        if (isCurrentStep) {
+            stepTextStyle = theme.getStyleClass(
+                    ThemeStyles.WIZARD_STEP_CURRENT_TEXT);
+        } else {
+            stepTextStyle = theme.getStyleClass(ThemeStyles.WIZARD_STEP_LINK);
+        }
 
         writer.startElement(TR, component);
 
         // The first cell may have the current step indicator.
         // It is different from a normal step in that the
         // step number is not part of the same cell.
-        //
         if (isCurrentStep) {
             writer.startElement(TD, component);
             writer.writeAttribute(VALIGN, TOP, null);
@@ -707,7 +787,8 @@ public class WizardRenderer extends AbstractRenderer {
 
             writer.startElement(DIV, component);
             writer.writeAttribute(CLASS,
-                    theme.getStyleClass(ThemeStyles.WIZARD_STEP_ARROW_DIV), null);
+                    theme.getStyleClass(ThemeStyles.WIZARD_STEP_ARROW_DIV),
+                    null);
 
             renderCurrentStepIndicator(context, component, theme, writer);
 
@@ -778,9 +859,10 @@ public class WizardRenderer extends AbstractRenderer {
      * branch step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderBranchStep(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step) throws IOException {
+    protected void renderBranchStep(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
+            throws IOException {
 
         // Start a branch with an emtpy cell
         writer.startElement(TR, component);
@@ -817,13 +899,14 @@ public class WizardRenderer extends AbstractRenderer {
      * @param theme {@code Theme} to use for style, images, and text.
      * @param writer {@code ResponseWriter} write the response using this
      * writer.
-     * @param step {@code WizardStepListItem} information about this 
+     * @param step {@code WizardStepListItem} information about this
      * branch step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderCurrentStep(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step) throws IOException {
+    protected void renderCurrentStep(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
+            throws IOException {
 
         // Begin step row
         writer.startElement(TR, component);
@@ -881,9 +964,10 @@ public class WizardRenderer extends AbstractRenderer {
      * @param styleClass The styleClass for this component
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepNumber(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step, String styleClass) throws IOException {
+    protected void renderStepNumber(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step,
+            final String styleClass) throws IOException {
 
         UIComponent number = ((Wizard) component).getStepNumberComponent(
                 step.getStep(), step.getStepNumberString());
@@ -908,10 +992,10 @@ public class WizardRenderer extends AbstractRenderer {
      * @param styleClass CSS class
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepSummary(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step, String styleClass)
-            throws IOException {
+    protected void renderStepSummary(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step,
+            final String styleClass) throws IOException {
 
         UIComponent text = ((Wizard) component).getStepSummaryComponent(
                 step.getStep());
@@ -934,9 +1018,9 @@ public class WizardRenderer extends AbstractRenderer {
      * step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepPlaceholderText(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step)
+    protected void renderStepPlaceholderText(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
             throws IOException {
 
         UIComponent text = ((Wizard) component).getStepPlaceholderTextComponent(
@@ -961,9 +1045,9 @@ public class WizardRenderer extends AbstractRenderer {
      * step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStep(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step)
+    protected void renderStep(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
             throws IOException {
 
         writer.startElement(TR, component);
@@ -1008,9 +1092,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepHelp(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepHelp(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent stepHelp = ((Wizard) component).getStepHelpComponent();
         if (stepHelp != null) {
@@ -1018,7 +1102,6 @@ public class WizardRenderer extends AbstractRenderer {
         }
 
         WizardStep step = ((Wizard) component).getCurrentStep();
-
         renderStepHelpBegin(context, component, theme, writer, step);
         renderStepHelpText(context, component, theme, writer, step);
         renderStepHelpEnd(context, component, theme, writer, step);
@@ -1035,9 +1118,10 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} the current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepHelpBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step) throws IOException {
+    protected void renderStepHelpBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
+            throws IOException {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
@@ -1060,9 +1144,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} the current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepHelpText(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepHelpText(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         // Assumes current step.
@@ -1083,9 +1167,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} the current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepHelpEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepHelpEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.endElement(PARA);
@@ -1103,11 +1187,12 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepListEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderStepListEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
-        writer.endElement(DIV); // Steps Pane DIV
+        // Steps Pane DIV
+        writer.endElement(DIV);
     }
 
     /**
@@ -1122,9 +1207,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTask(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTask(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent task = ((Wizard) component).getTaskComponent();
         if (task != null) {
@@ -1154,15 +1239,17 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTaskBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTaskBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         String idandclass = theme.getStyleClass(ThemeStyles.WIZARD_BODY);
 
-        writer.startElement(DIV, component); // WizBdy DIV
+        // WizBdy DIV
+        writer.startElement(DIV, component);
         writer.writeAttribute(ID,
-                component.getClientId(context).concat(USCORE).concat(idandclass),
+                component.getClientId(context).concat(USCORE)
+                        .concat(idandclass),
                 null);
         writer.writeAttribute(CLASS, idandclass, null);
 
@@ -1181,11 +1268,12 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTaskEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderTaskEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
-        writer.endElement(DIV); // WizBdy DIV
+        // WizBdy DIV
+        writer.endElement(DIV);
     }
 
     /**
@@ -1199,9 +1287,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTaskHeader(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderTaskHeader(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         UIComponent taskHeader = ((Wizard) component).getTaskHeaderComponent();
@@ -1224,9 +1312,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTitleLabelText(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTitleLabelText(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         UIComponent titleLabel =
@@ -1249,9 +1337,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTitle(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTitle(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         UIComponent stepTitle = ((Wizard) component).getStepTitleComponent();
@@ -1277,9 +1365,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTitleBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTitleBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.startElement(DIV, component);
@@ -1298,12 +1386,13 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTitleText(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTitleText(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
-        UIComponent stepTitle = ((Wizard) component).getStepTitleTextComponent();
+        UIComponent stepTitle = ((Wizard) component)
+                .getStepTitleTextComponent();
         if (stepTitle != null) {
             stepTitle.getAttributes().put(STYLE_CLASS,
                     theme.getStyleClass(ThemeStyles.WIZARD_SUB_TITLE_TEXT));
@@ -1322,9 +1411,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTitleEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTitleEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.endElement(DIV);
@@ -1343,9 +1432,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepDetail(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepDetail(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         UIComponent stepDetail = ((Wizard) component).getStepDetailComponent();
@@ -1369,9 +1458,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepDetailBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepDetailBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.startElement(DIV, component);
@@ -1391,9 +1480,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepDetailText(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepDetailText(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         UIComponent stepDetail =
@@ -1414,9 +1503,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepDetailEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepDetailEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.endElement(DIV);
@@ -1433,9 +1522,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTaskBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTaskBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.startElement(DIV, component);
@@ -1454,9 +1543,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTask(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTask(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         // This probably over kill ?
@@ -1483,9 +1572,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTaskEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step)
+    protected void renderStepTaskEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
             throws IOException {
 
         writer.endElement(DIV);
@@ -1503,9 +1592,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderControlBar(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderControlBar(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         if (!show(component, SHOWCONTROLS)) {
             return;
@@ -1542,8 +1631,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderControlBarBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
+    protected void renderControlBarBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer)
             throws IOException {
 
         writer.startElement(DIV, component);
@@ -1561,8 +1651,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderControlBarEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
+    protected void renderControlBarEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer)
             throws IOException {
 
         writer.endElement(DIV);
@@ -1578,9 +1669,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderControlBarSpacer(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderControlBarSpacer(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
@@ -1604,9 +1695,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderLeftControlBar(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderLeftControlBar(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
 
@@ -1640,9 +1731,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderLeftControlBarBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderLeftControlBarBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
@@ -1659,9 +1750,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderPreviousControl(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderPreviousControl(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent control = wizard.getPreviousComponent();
@@ -1682,9 +1773,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderNextControl(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderNextControl(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent nextControl = wizard.getNextComponent();
@@ -1705,9 +1796,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderFinishControl(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderFinishControl(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent control = wizard.getFinishComponent();
@@ -1719,7 +1810,7 @@ public class WizardRenderer extends AbstractRenderer {
     }
 
     /**
-     * Render the end of the layout container for the 
+     * Render the end of the layout container for the
      * left side of the control area.
      *
      * @param context {@code FacesContext} for the current request.
@@ -1729,9 +1820,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderLeftControlBarEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderLeftControlBarEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.endElement(DIV);
     }
@@ -1747,9 +1838,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderRightControlBar(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderRightControlBar(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
 
@@ -1781,9 +1872,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderRightControlBarBegin(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderRightControlBarBegin(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(DIV, component);
         writer.writeAttribute(CLASS,
@@ -1800,9 +1891,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderCancelControl(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderCancelControl(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent control = wizard.getCancelComponent();
@@ -1824,9 +1915,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderCloseControl(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderCloseControl(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         Wizard wizard = (Wizard) component;
         UIComponent control = wizard.getCloseComponent();
@@ -1848,9 +1939,9 @@ public class WizardRenderer extends AbstractRenderer {
      * writer.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderRightControlBarEnd(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer)
-            throws IOException {
+    protected void renderRightControlBarEnd(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         writer.endElement(DIV);
     }
@@ -1866,9 +1957,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param theme {@code Theme} to use for style, images, and text.
      * @param alt the text that will appear to screen readers.
      */
-    private void renderSkipLink(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            String link, String alt)
+    private void renderSkipLink(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final String link, final String alt)
             throws IOException {
 
         writer.startElement(DIV, component);
@@ -1879,7 +1970,6 @@ public class WizardRenderer extends AbstractRenderer {
 
         // Can this be done with a style selector ?
         // This is an invisible rule, used mainly for the alt
-        //
         renderRule(context, component, theme, writer, 1, 1, alt);
 
         writer.endElement(ANCHOR);
@@ -1897,9 +1987,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param anchor the text that will appear to screen readers, specified as
      * {@code link} in a previous {@code renderSkipLink} call.
      */
-    private void renderSkipAnchor(FacesContext context,
-            UIComponent component, Theme theme,
-            ResponseWriter writer, String anchor)
+    private void renderSkipAnchor(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final String anchor)
             throws IOException {
 
         writer.startElement(DIV, component);
@@ -1914,7 +2004,7 @@ public class WizardRenderer extends AbstractRenderer {
 
     /**
      * Render a rule as separator line.
-     * 
+     *
      * NOTE: Need to determine if CSS can be used for this purpose.
      *
      * @param context {@code FacesContext} for the current request.
@@ -1927,16 +2017,15 @@ public class WizardRenderer extends AbstractRenderer {
      * @param alt the text that will appear if the dot image cannot be
      * displayed.
      */
-    private void renderRule(FacesContext context, UIComponent component,
-            Theme theme, ResponseWriter writer,
-            int width, int height, String alt)
-            throws IOException {
+    private void renderRule(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final int width, final int height,
+            final String alt) throws IOException {
 
         Icon icon = getIcon(theme, ThemeImages.DOT);
 
         // Originally alt was written out if it was "", does this
         // still make sense ?
-        //
         if (alt != null) {
             icon.setAlt(alt);
         }
@@ -1948,11 +2037,11 @@ public class WizardRenderer extends AbstractRenderer {
     /**
      * Return true if the feature has been configured to be displayed,
      * false otherwise.
-     * 
+     *
      * @param component the {@code UIComponent} being rendered.
      * @param feature the attribute that controls a feature.
      */
-    private boolean show(UIComponent component, String feature) {
+    private boolean show(final UIComponent component, final String feature) {
 
         // Don't show controls if turned off
         // Default is true
@@ -1970,9 +2059,10 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStep} current step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepTaskComponents(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStep step) throws IOException {
+    protected void renderStepTaskComponents(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStep step)
+            throws IOException {
 
         // This could be a component tree
         // Children of the step, an iterator, a jsp page, ...
@@ -1980,7 +2070,14 @@ public class WizardRenderer extends AbstractRenderer {
     }
 
     // This isn't perfect
-    private String mergeStyle(String styles, String newStyle) {
+    /**
+     * Merge the specified styles.
+     * @param styles styles to be merged
+     * @param newStyle styles to be merged
+     * @return String
+     */
+    private static String mergeStyle(final String styles,
+            final String newStyle) {
 
         if (newStyle == null) {
             return styles;
@@ -1999,94 +2096,27 @@ public class WizardRenderer extends AbstractRenderer {
         return sb.toString();
     }
 
-    private void renderControl(FacesContext context, Theme theme,
-            UIComponent control) throws IOException {
+    /**
+     * Render the control.
+     * @param context faces context
+     * @param theme the current theme
+     * @param control control component
+     * @throws IOException if an IO error occurs
+     */
+    private void renderControl(final FacesContext context, final Theme theme,
+            final UIComponent control) throws IOException {
 
         renderComponent(control, context);
     }
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         // Enforce NPE requirements in the Javadocs
         if (context == null || component == null) {
             throw new NullPointerException();
         }
-    }
-
-    // Helpful constants.
-    // Elements
-    private static final String ANCHOR = "a";
-    private static final String DIV = "div";
-    private static final String IMG = "img";
-    private static final String INPUT = "input";
-    private static final String PARA = "p";
-    private static final String SCRIPT = "script";
-    private static final String SPAN = "span";
-    private static final String TABLE = "table";
-    private static final String TD = "td";
-    private static final String TR = "tr";
-
-    // Attributes
-    private static final String ALIGN = "align";
-    private static final String ALT = "alt";
-    private static final String BORDER = "border";
-    private static final String CELLPADDING = "cellpadding";
-    private static final String CELLSPACING = "cellspacing";
-    private static final String CLASS = "class";
-    private static final String STYLE_CLASS = "styleClass";
-    private static final String DISABLED = "disabled";
-    private static final String HEIGHT = "height";
-    private static final String HREF = "href";
-    private static final String HSPACE = "hspace";
-    private static final String ID = "id";
-    private static final String NAME = "name";
-    private static final String NOWRAP = "nowrap";
-    private static final String ONBLUR = "onblur";
-    private static final String ONCLICK = "onclick";
-    private static final String ONFOCUS = "onfocus";
-    private static final String ONMOUSEOVER = "onmouseover";
-    private static final String ONMOUSEOUT = "onmouseout";
-    private static final String SRC = "src";
-    private static final String STYLE = "style";
-    private static final String TITLE = "title";
-    private static final String TYPE = "type";
-    private static final String VALIGN = "valign";
-    private static final String VALUE = "valign";
-    private static final String WIDTH = "width";
-
-    // Values
-    private static final String _1_PERCENT = "1%";
-    private static final String _90_PERCENT = "90%";
-    private static final String _99_PERCENT = "99%";
-    private static final String _100_PERCENT = "100%";
-    private static final String BOTTOM = "bottom";
-    private static final String LEFT = "left";
-    private static final String RIGHT = "right";
-    private static final String SUBMIT = "submit";
-    private static final String TOP = "top";
-    private static final String TEXT_JAVASCRIPT = "text/javascript";
-    private static final String NBSP = "&nbsp;";
-    // Constants
-    private static final String STEPS_PANE_SUFFIX = "_stepspane";
-    private static final String SPACE = " ";
-    private static final String EMPTY_STRING = "";
-    private static final String USCORE = "_";
-    private static final String WIZARD_JSOBJECT_CLASS = "Wizard";
-    private static final String SQUOTE = "'";
-    private static final String CLOSEPOPUPJS = "{0}.closePopup();";
-    // Wizard attributes
-    private static final String TOOLTIP = "toolTip";
-    private static final String SHOWCONTROLS = "showControls";
-    private static final String SHOWSTEPSPANE = "showStepsPane";
-    private static final String SHOWSTEPHELP = "showStepHelp";
-    private static final String SHOWTITLE = "showTitle";
-    private static final String ONPOPUPDISMISS = "onPopupDismiss";
-    private static final String WIZARD_SKIP_LINK_ALT = "Wizard.skipLinkAlt";
-    private static final String MSG_COMPONENT_NOT_WIZARD =
-            "WizardLayoutRenderer only renders Wizard components.";
-
-    private String getMessage(String key) {
-        return key;
     }
 
     // Deprecations, which we may decide can just be removed.
@@ -2110,9 +2140,10 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStepListItem} the information about this step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepNumber(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step) throws IOException {
+    protected void renderStepNumber(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
+            throws IOException {
 
         UIComponent number = ((Wizard) component).getStepNumberComponent(
                 step.getStep(), step.getStepNumberString());
@@ -2136,9 +2167,9 @@ public class WizardRenderer extends AbstractRenderer {
      * @param step {@code WizardStepListItem} information about this step.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderStepSummary(FacesContext context,
-            UIComponent component, Theme theme, ResponseWriter writer,
-            WizardStepListItem step)
+    protected void renderStepSummary(final FacesContext context,
+            final UIComponent component, final Theme theme,
+            final ResponseWriter writer, final WizardStepListItem step)
             throws IOException {
 
         UIComponent text = ((Wizard) component).getStepSummaryComponent(

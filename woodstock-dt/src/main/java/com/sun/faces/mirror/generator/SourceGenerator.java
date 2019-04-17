@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,11 +21,12 @@ import com.sun.faces.mirror.PropertyBundleMap;
  * Base generator for Java source files. A source generator must provide the
  * class name and package name of the class for which a source file will be
  * generated.
- *
- * @author gjmurphy
  */
-abstract public class SourceGenerator extends Generator {
+public abstract class SourceGenerator extends Generator {
 
+    /**
+     * Property bundle map.
+     */
     private PropertyBundleMap propertyBundleMap;
 
     /**
@@ -71,7 +72,7 @@ abstract public class SourceGenerator extends Generator {
      *
      * @param newPropertyBundle new property bundle
      */
-    public void setPropertyBundle(PropertyBundleMap newPropertyBundle) {
+    public void setPropertyBundle(final PropertyBundleMap newPropertyBundle) {
         this.propertyBundleMap = newPropertyBundle;
     }
 

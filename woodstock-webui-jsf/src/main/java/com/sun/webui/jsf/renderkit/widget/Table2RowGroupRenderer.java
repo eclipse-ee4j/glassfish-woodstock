@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,19 +32,18 @@ import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 /**
  * This class renders Table2RowGroup components.
  */
-@Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.Table2RowGroup",
-componentFamily = "com.sun.webui.jsf.Table2RowGroup"))
-public class Table2RowGroupRenderer extends RendererBase {
+@Renderer(@Renderer.Renders(
+        rendererType = "com.sun.webui.jsf.widget.Table2RowGroup",
+        componentFamily = "com.sun.webui.jsf.Table2RowGroup"))
+public final class Table2RowGroupRenderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
-     * <p>
      * Note: The BGCOLOR attribute is deprecated (in the HTML 4.0 spec) in favor
      * of style sheets. In addition, the DIR and LANG attributes are not
      * currently supported.
-     * </p>
      */
-    private static final String ATTRIBUTES[] = {
+    private static final String[] ATTRIBUTES = {
         "align",
         "bgColor",
         "char",
@@ -66,7 +65,7 @@ public class Table2RowGroupRenderer extends RendererBase {
     };
 
     @Override
-    protected String[] getModuleNames(UIComponent component) {
+    protected String[] getModuleNames(final UIComponent component) {
         Table2RowGroup group = (Table2RowGroup) component;
         if (group.isAjaxify()) {
             return new String[]{
@@ -80,10 +79,9 @@ public class Table2RowGroupRenderer extends RendererBase {
         }
     }
 
-
     @Override
-    protected JsonObjectBuilder getProperties(FacesContext context,
-            UIComponent component) throws IOException {
+    protected JsonObjectBuilder getProperties(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         Table2RowGroup group = (Table2RowGroup) component;
 
@@ -102,8 +100,8 @@ public class Table2RowGroupRenderer extends RendererBase {
     }
 
     @Override
-    protected void renderNestedContent(FacesContext context,
-            UIComponent component) throws IOException {
+    protected void renderNestedContent(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     /**
@@ -114,8 +112,8 @@ public class Table2RowGroupRenderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setColumnProperties(FacesContext context,
-            Table2RowGroup component, JsonObjectBuilder jsonBuilder)
+    private static void setColumnProperties(final FacesContext context,
+            final Table2RowGroup component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         JsonArrayBuilder jsonArrayBuilder = JSON_BUILDER_FACTORY
@@ -132,7 +130,7 @@ public class Table2RowGroupRenderer extends RendererBase {
         jsonBuilder.add("columns", jsonArrayBuilder);
     }
 
-    /** 
+    /**
      * Helper method to obtain footer properties.
      *
      * @param context FacesContext for the current request.
@@ -140,8 +138,8 @@ public class Table2RowGroupRenderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setFooterProperties(FacesContext context,
-            Table2RowGroup component, JsonObjectBuilder jsonBuilder)
+    private static void setFooterProperties(final FacesContext context,
+            final Table2RowGroup component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         // Get footer facet.
@@ -154,7 +152,7 @@ public class Table2RowGroupRenderer extends RendererBase {
         }
     }
 
-    /** 
+    /**
      * Helper method to obtain header properties.
      *
      * @param context FacesContext for the current request.
@@ -162,8 +160,8 @@ public class Table2RowGroupRenderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setHeaderProperties(FacesContext context,
-            Table2RowGroup component, JsonObjectBuilder jsonBuilder)
+    private static void setHeaderProperties(final FacesContext context,
+            final Table2RowGroup component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         // Get header facet.

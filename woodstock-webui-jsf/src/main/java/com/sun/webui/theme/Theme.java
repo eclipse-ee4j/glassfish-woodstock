@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -42,7 +42,7 @@ package com.sun.webui.theme;
  * <p>
  * The Theme class is used to access the resources associated with a particular
  * Theme. The manifest of the Theme jar must contain a section named
- * <code>com/sun/webui/theme</code> which contains attributes whose values are
+ * {@code com/sun/webui/theme} which contains attributes whose values are
  * used to locale the Theme resources. When the SJWUIC application is loaded on
  * the server, the @see ThemeFactory class looks for manifest containing such
  * sections and creates instances of the Theme class based on the information.
@@ -61,40 +61,39 @@ public interface Theme {
     /**
      * Attribute name used to store the user's theme name in the Session.
      */
-    public static final String THEME_ATTR = "com.sun.webui.jsf.Theme";
+    String THEME_ATTR = "com.sun.webui.jsf.Theme";
 
     /**
      * The context parameter name used to specify a console path, if one is
      * used.
      */
-    public static final String RESOURCE_PATH_ATTR
-            = "com.sun.web.console.resource_path";
+    String RESOURCE_PATH_ATTR  = "com.sun.web.console.resource_path";
 
     /**
      * Use this method to retrieve a String array of URIs to the JS files that
-     * should be included with all pages of this application
+     * should be included with all pages of this application.
      *
      * @return String array of URIs to the JS files
      */
-    public String[] getGlobalJSFiles();
+    String[] getGlobalJSFiles();
 
     /**
      * Use this method to retrieve a String array of URIs to the CSS style
-     * sheets files that should be included with all pages of this application
+     * sheets files that should be included with all pages of this application.
      *
      * @return String array of URIs to the style sheets
      */
-    public String[] getGlobalStylesheets();
+    String[] getGlobalStylesheets();
 
     /**
      * Returns a String that represents a valid path to the JS file
-     * corresponding to the key
+     * corresponding to the key.
      *
      * @return Returns a String that represents a valid path to the JS file
      * corresponding to the key
      * @param key Key to retrieve the JS file
      */
-    public String getPathToJSFile(String key);
+    String getPathToJSFile(String key);
 
     /**
      * Retrieves a String from the JS ResourceBundle without the theme path
@@ -103,21 +102,30 @@ public interface Theme {
      * @param key The key used to retrieve the message
      * @return A localized message string
      */
-    public String getJSString(String key);
+    String getJSString(String key);
 
-    public String[] getMasterStylesheets();
+    /**
+     * Get master style-sheets.
+     * @return String[]
+     */
+    String[] getMasterStylesheets();
 
-    public String[] getStylesheets(String key);
+    /**
+     * Get style-sheets.
+     * @param key key
+     * @return String[]
+     */
+    String[] getStylesheets(String key);
 
     /**
      * Returns a String that represents a valid path to the HTML template
-     * corresponding to the key
+     * corresponding to the key.
      *
-     * @param clientName
+     * @param clientName resource bundle key
      * @return A String that represents a valid path to the HTML template
      * corresponding to the key
      */
-    public String getPathToTemplate(String clientName);
+    String getPathToTemplate(String clientName);
 
     /**
      * Returns the name of a CSS style. If the Theme includes a class mapper,
@@ -131,7 +139,7 @@ public interface Theme {
      * @param name The style class name to be used
      * @return the name of a CSS style.
      */
-    public String getStyleClass(String name);
+    String getStyleClass(String name);
 
     /**
      * Retrieves a message from the appropriate ResourceBundle. If the web
@@ -143,7 +151,7 @@ public interface Theme {
      * @param key The key used to retrieve the message
      * @return A localized message string
      */
-    public String getMessage(String key);
+    String getMessage(String key);
 
     /**
      * Retrieves a message from the appropriate ResourceBundle. If the web
@@ -156,7 +164,7 @@ public interface Theme {
      * @param params An object array specifying the parameters of the message
      * @return A localized message string
      */
-    public String getMessage(String key, Object[] params);
+    String getMessage(String key, Object[] params);
 
     /**
      * Return a translated image path, containing the theme servlet context.
@@ -166,19 +174,16 @@ public interface Theme {
      * resolves to {@code null} or the empty string.
      * @throws RuntimeException if {@code key} cannot be found.
      */
-    public String getImagePath(String key);
+    String getImagePath(String key);
 
-    /*
-     * Return a <code>ThemeImage</code> instance for an image identified
-     * by <code>key</code> from the
-     * <code>ThemeResourceBundle.ThemeBundle.IMAGES></code>
-     * resource bundle.
-     * The <code>key</code> property defines the path of the image resource.
-     * If <code>key</code> is not defined <code>null</code> is returned.<br/>
-     * The bundle should define additional properties
-     * where the each property is defined as <code>key</code> with the 
-     * following suffixes: (i.e. key == "SMALL_ALERT", SMALL_ALERT_ALT)
-     * <p>
+    /**
+     * Return a {@code ThemeImage} instance for an image identified by
+     * {@code key} from the {@code ThemeResourceBundle.ThemeBundle.IMAGES>}
+     * resource bundle.The {@code key} property defines the path of the image
+     * resource.If {@code key} is not defined {@code null} is returned.<br>
+     * The bundle should define additional properties where the each property is
+     * defined as {@code key} with the following suffixes: (i.e. key ==
+     * "SMALL_ALERT", SMALL_ALERT_ALT)
      * <ul>
      * <li>{@link com.sun.webui.jsf.theme.ThemeImage.ALT_SUFFIX}</li>
      * <li>{@link com.sun.webui.jsf.theme.ThemeImage.TITLE_SUFFIX}</li>
@@ -186,9 +191,12 @@ public interface Theme {
      * <li>{@link com.sun.webui.jsf.theme.ThemeImage.WIDTH_SUFFIX}</li>
      * <li>{@link com.sun.webui.jsf.theme.ThemeImage.UNITS_SUFFIX}</li>
      * </ul>
-     * If <code>key</code> is not defined <code>key</code> is returned.
+     * If {@code key} is not defined {@code key} is returned.
+     *
+     * @param key image key
+     * @return ThemeImage
      */
-    public ThemeImage getImage(String key);
+    ThemeImage getImage(String key);
 
     /**
      * Retrieves a String from the images ResourceBundle without the theme path
@@ -197,5 +205,5 @@ public interface Theme {
      * @param key The key used to retrieve the message
      * @return A localized message string
      */
-    public String getImageString(String key);
+    String getImageString(String key);
 }

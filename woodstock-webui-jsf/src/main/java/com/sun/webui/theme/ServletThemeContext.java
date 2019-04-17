@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/* $Id: ServletThemeContext.java,v 1.1.6.1 2009-12-29 05:05:17 jyeary Exp $ */
 package com.sun.webui.theme;
 
 import java.util.Locale;
@@ -29,7 +28,7 @@ import javax.servlet.ServletContext;
  * instance of a {@code ThemeContext/code> as a {@code ServletContext}
  * attribute.
  * <p>
- * A {@code ServletThemeContext} instance is created based on the 
+ * A {@code ServletThemeContext} instance is created based on the
  * context-param values, defined as {@code ThemeContext} constants.
  * </p>
  * <p>
@@ -66,7 +65,7 @@ public class ServletThemeContext extends ThemeContext {
      *
      * @param initParamMap init map
      */
-    protected ServletThemeContext(Map initParamMap) {
+    protected ServletThemeContext(final Map initParamMap) {
         super();
         // deprecated
         String value = (String) initParamMap.get(THEME_MESSAGES);
@@ -110,7 +109,7 @@ public class ServletThemeContext extends ThemeContext {
      * Constructor controlled in {@code getInstance}.
      * @param context theme servlet
      */
-    protected ServletThemeContext(ServletContext context) {
+    protected ServletThemeContext(final ServletContext context) {
         super();
         // deprecated
         String value = (String) context.getInitParameter(THEME_MESSAGES);
@@ -152,10 +151,10 @@ public class ServletThemeContext extends ThemeContext {
 
     /**
      * Return an instance of {@code ThemeContext}.
-     * @param context servelt context
+     * @param context servlet context
      * @return ThemeContext
      */
-    public static ThemeContext getInstance(ServletContext context) {
+    public static ThemeContext getInstance(final ServletContext context) {
 
         // The JSF ApplicationMap is the ServletContext and therefore
         // objects set in the JSF ApplicationMap use "getAttribute" and
@@ -175,11 +174,12 @@ public class ServletThemeContext extends ThemeContext {
         return themeContext;
     }
 
-    /** 
+    /**
      * Determines the set of supported locales.
+     * @param locales locale names separated by commas
      * @return set containing the support locales.
      */
-    private Set getLocales(String locales) {
+    private static Set getLocales(final String locales) {
 
         String[] localeArray = locales.split(LOCALE_SEPARATOR);
         Set<Locale> localeSet = new HashSet<Locale>();
@@ -194,7 +194,7 @@ public class ServletThemeContext extends ThemeContext {
             Locale locale = null;
 
             // The basename cannot have underscore in it.
-            String[] strings = localeString.split("_"); //NOI18N
+            String[] strings = localeString.split("_");
             if (strings.length > 2) {
                 locale = new Locale(strings[0], strings[1], strings[2]);
             } else if (strings.length > 1) {

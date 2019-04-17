@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,13 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-require(["webui/suntheme/field"],function () {
+require([
+    "webui/suntheme/field",
+    "webui/suntheme/common"
+],function (field, common) {
 
     return {
+        addOnInitCallback: common.addOnInitCallback,
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.
@@ -45,6 +49,9 @@ require(["webui/suntheme/field"],function () {
             if (domNode === null) {
                 return false;
             }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
+            }
 
             // Set given properties on domNode.
             Object.extend(domNode, props);
@@ -54,6 +61,7 @@ require(["webui/suntheme/field"],function () {
             domNode.setSelected = this.setSelected;
             domNode.setDateValue = this.setDateValue;
             domNode.isToday = this.isToday;
+            common.setInitialized(domNode);
         },
 
         setDateValue: function (value, link) {

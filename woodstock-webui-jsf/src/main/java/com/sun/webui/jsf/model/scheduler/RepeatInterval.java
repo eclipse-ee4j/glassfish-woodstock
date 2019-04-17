@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,91 +21,165 @@ import java.util.Calendar;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import javax.faces.context.FacesContext;
 
-// Delete the setters once you have reimplemented this not to 
-// use the default Serializable mechanism, but the same as 
+// Delete the setters once you have reimplemented this not to
+// use the default Serializable mechanism, but the same as
 // in the converter....
-//TODO add hashcoded
-public class RepeatInterval implements Serializable {
+/**
+ * Repeat interval.
+ */
+public final class RepeatInterval implements Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 6773122235537978959L;
-    public final static String ONETIME = "ONETIME";
-    public final static String HOURLY = "HOURLY";
-    public final static String DAILY = "DAILY";
-    public final static String WEEKLY = "WEEKLY";
-    public final static String MONTHLY = "MONTHLY";
+
+    /**
+     * Constant for one time.
+     */
+    public static final String ONETIME = "ONETIME";
+
+    /**
+     * Constant for hourly.
+     */
+    public static final String HOURLY = "HOURLY";
+
+    /**
+     * Constant for daily.
+     */
+    public static final String DAILY = "DAILY";
+
+    /**
+     * Constant for weekly.
+     */
+    public static final String WEEKLY = "WEEKLY";
+
+    /**
+     * Constant for monthly.
+     */
+    public static final String MONTHLY = "MONTHLY";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
-    private static RepeatInterval ONETIME_RI = null;
-    private static RepeatInterval HOURLY_RI = null;
-    private static RepeatInterval DAILY_RI = null;
-    private static RepeatInterval WEEKLY_RI = null;
-    private static RepeatInterval MONTHLY_RI = null;
+
+    /**
+     * One time repeat interval.
+     */
+    private static RepeatInterval onetimeRi = null;
+
+    /**
+     * Hourly repeat interval.
+     */
+    private static RepeatInterval hourlyRi = null;
+
+    /**
+     * Daily repeat interval.
+     */
+    private static RepeatInterval dailyRi = null;
+
+    /**
+     * Weekly repeat interval.
+     */
+    private static RepeatInterval weeklyRi = null;
+
+    /**
+     * Monthly repeat interval.
+     */
+    private static RepeatInterval monthlyRi = null;
+
+    /**
+     * Calendar field.
+     */
     private Integer calField = null;
+
+    /**
+     * The key.
+     */
     private String key = null;
+
+    /**
+     * The representation.
+     */
     private String representation = null;
+
+    /**
+     * The default repeat unit string.
+     */
     private String defaultRepeatUnitString = null;
 
-    public RepeatInterval() {
+    /**
+     * Create a new instance.
+     */
+    private RepeatInterval() {
     }
 
-    public RepeatInterval(int calFieldInt, String key, String rep, String repUnit) {
+    /**
+     * Create a new instance.
+     * @param newCalFieldInt calendar
+     * @param newKey key
+     * @param newRepresentation representation
+     * @param newRepeatUnit repeat unit
+     */
+    private RepeatInterval(final int newCalFieldInt, final String newKey,
+            final String newRepresentation, final String newRepeatUnit) {
+
         if (DEBUG) {
             log("Create new RI");
         }
-        this.calField = new Integer(calFieldInt);
-        this.key = key;
-        this.representation = rep;
-        this.defaultRepeatUnitString = repUnit;
+        this.calField = newCalFieldInt;
+        this.key = newKey;
+        this.representation = newRepresentation;
+        this.defaultRepeatUnitString = newRepeatUnit;
         if (DEBUG) {
             log("Representation is " + this.representation);
         }
     }
 
-    public static RepeatInterval getInstance(String representation) {
-
+    /**
+     * Get instance.
+     * @param repr representation
+     * @return RepeatInterval
+     */
+    public static RepeatInterval getInstance(final String repr) {
         if (DEBUG) {
-            log("getInstance(" + representation + ")");
+            log("getInstance(" + repr + ")");
         }
 
-        if (representation.equals(ONETIME)) {
-            if (ONETIME_RI == null) {
-                ONETIME_RI = new RepeatInterval(-1, "Scheduler.oneTime", ONETIME, null);
+        if (repr.equals(ONETIME)) {
+            if (onetimeRi == null) {
+                onetimeRi = new RepeatInterval(-1, "Scheduler.oneTime",
+                        ONETIME, null);
             }
-            return ONETIME_RI;
-        } else if (representation.equals(HOURLY)) {
-            if (HOURLY_RI == null) {
-                HOURLY_RI = new RepeatInterval(Calendar.HOUR_OF_DAY,
-                        "Scheduler.hourly",
-                        HOURLY,
-                        RepeatUnit.HOURS);
+            return onetimeRi;
+        } else if (repr.equals(HOURLY)) {
+            if (hourlyRi == null) {
+                hourlyRi = new RepeatInterval(Calendar.HOUR_OF_DAY,
+                        "Scheduler.hourly", HOURLY, RepeatUnit.HOURS);
             }
-            return HOURLY_RI;
+            return hourlyRi;
         }
-        if (representation.equals(DAILY)) {
-            if (DAILY_RI == null) {
-                DAILY_RI = new RepeatInterval(Calendar.DATE,
-                        "Scheduler.daily",
-                        DAILY,
-                        RepeatUnit.DAYS);
+        if (repr.equals(DAILY)) {
+            if (dailyRi == null) {
+                dailyRi = new RepeatInterval(Calendar.DATE,
+                        "Scheduler.daily", DAILY, RepeatUnit.DAYS);
             }
-            return DAILY_RI;
+            return dailyRi;
         }
-        if (representation.equals(WEEKLY)) {
-            if (WEEKLY_RI == null) {
-                WEEKLY_RI = new RepeatInterval(Calendar.WEEK_OF_YEAR,
-                        "Scheduler.weekly",
-                        WEEKLY,
-                        RepeatUnit.WEEKS);
+        if (repr.equals(WEEKLY)) {
+            if (weeklyRi == null) {
+                weeklyRi = new RepeatInterval(Calendar.WEEK_OF_YEAR,
+                        "Scheduler.weekly", WEEKLY, RepeatUnit.WEEKS);
             }
-            return WEEKLY_RI;
+            return weeklyRi;
         }
-        if (representation.equals(MONTHLY)) {
-            if (MONTHLY_RI == null) {
-                MONTHLY_RI = new RepeatInterval(Calendar.MONTH,
-                        "Scheduler.monthly",
-                        MONTHLY,
-                        RepeatUnit.MONTHS);
+        if (repr.equals(MONTHLY)) {
+            if (monthlyRi == null) {
+                monthlyRi = new RepeatInterval(Calendar.MONTH,
+                        "Scheduler.monthly", MONTHLY, RepeatUnit.MONTHS);
             }
-            return MONTHLY_RI;
+            return monthlyRi;
         }
         return null;
     }
@@ -120,37 +194,55 @@ public class RepeatInterval implements Serializable {
 
     /**
      * Setter for property calendarField.
+     * @param newCalField new value
      */
-    public void setCalendarField(Integer calField) {
-        this.calField = calField;
+    public void setCalendarField(final Integer newCalField) {
+        this.calField = newCalField;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    /**
+     * Set the key.
+     * @param newKey new value
+     */
+    public void setKey(final String newKey) {
+        this.key = newKey;
     }
 
+    /**
+     * Get the key.
+     * @return String
+     */
     public String getKey() {
         return key;
     }
 
-    public void setRepresentation(String representation) {
-        this.representation = representation;
+    /**
+     * Set the representation.
+     * @param newRepresentation new value
+     */
+    public void setRepresentation(final String newRepresentation) {
+        this.representation = newRepresentation;
     }
 
+    /**
+     * Get the representation.
+     * @return String
+     */
     public String getRepresentation() {
         return representation;
     }
 
     /**
      * Getter for property labelKey.
+     * @param context faces context
      * @return Value of property labelKey.
      */
-    public String getLabel(FacesContext context) {
+    public String getLabel(final FacesContext context) {
         return ThemeUtilities.getTheme(context).getMessage(key);
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == null) {
             return false;
         }
@@ -158,7 +250,6 @@ public class RepeatInterval implements Serializable {
             return false;
         }
         RepeatInterval ri = (RepeatInterval) object;
-
         if (getCalendarField() == null) {
             if (ri.getCalendarField() != null) {
                 return false;
@@ -166,8 +257,6 @@ public class RepeatInterval implements Serializable {
         } else if (!getCalendarField().equals(ri.getCalendarField())) {
             return false;
         }
-
-
         if (getRepresentation() == null) {
             if (ri.getRepresentation() != null) {
                 return false;
@@ -175,8 +264,6 @@ public class RepeatInterval implements Serializable {
         } else if (!getRepresentation().equals(ri.getRepresentation())) {
             return false;
         }
-
-
         if (getKey() == null) {
             if (ri.getKey() != null) {
                 return false;
@@ -184,10 +271,36 @@ public class RepeatInterval implements Serializable {
         } else if (!getKey().equals(ri.getKey())) {
             return false;
         }
-
         return true;
     }
 
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash;
+        if (this.calField != null) {
+            hash = hash + this.calField.hashCode();
+        }
+        hash = 71 * hash;
+        if (this.key != null) {
+            hash = hash + this.key.hashCode();
+        }
+        hash = 71 * hash;
+        if (this.representation != null) {
+            hash = hash + this.representation.hashCode();
+        }
+        hash = 71 * hash;
+        if (this.defaultRepeatUnitString != null) {
+            hash = hash + this.defaultRepeatUnitString.hashCode();
+        }
+        return hash;
+    }
+
+    /**
+     * Get the default repeat unit.
+     * @return RepeatUnit
+     */
     public RepeatUnit getDefaultRepeatUnit() {
         if (defaultRepeatUnitString == null) {
             return null;
@@ -195,7 +308,11 @@ public class RepeatInterval implements Serializable {
         return RepeatUnit.getInstance(defaultRepeatUnitString);
     }
 
-    private static void log(String s) {
-        System.out.println("RepeatInterval::" + s);
+    /**
+     * Log a message to the standard output.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(RepeatInterval.class.getName() + "::" + msg);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -30,7 +30,13 @@ import javax.servlet.ServletRequest;
 /**
  * This class provides common methods for widget renderers.
  */
-public class WidgetUtilities {
+public final class WidgetUtilities {
+
+    /**
+     * Cannot be instanciated.
+     */
+    private WidgetUtilities() {
+    }
 
     /**
      * Helper method to capture rendered component properties for client-side
@@ -39,11 +45,11 @@ public class WidgetUtilities {
      *
      * @param context FacesContext for the current request.
      * @param component UIComponent to be rendered.
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an IO error occurs
      * @return An HTML string.
      */
-    public static String renderComponent(FacesContext context,
-            UIComponent component) throws IOException {
+    public static String renderComponent(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (component == null || !component.isRendered()) {
             return null;
@@ -67,11 +73,10 @@ public class WidgetUtilities {
      * The writer in the given context is replaced with a new writer.
      *
      * @param context FacesContext for the current request.
-     * @return
      *
-     * @returns The Writer used to buffer rendered output.
+     * @return The Writer used to buffer rendered output.
      */
-    protected static Writer initStringWriter(FacesContext context) {
+    private static Writer initStringWriter(final FacesContext context) {
         if (context == null) {
             return null;
         }
@@ -84,7 +89,9 @@ public class WidgetUtilities {
 
         // Get writers.
         ResponseWriter oldWriter = context.getResponseWriter();
+        //CHECKSTYLE:OFF
         Writer strWriter = new FastStringWriter(1024);
+        //CHECKSTYLE:ON
         ResponseWriter newWriter;
 
         // Initialize new writer.

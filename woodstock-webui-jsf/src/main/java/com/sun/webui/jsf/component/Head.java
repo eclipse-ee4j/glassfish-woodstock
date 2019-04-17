@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import javax.el.ValueExpression;
@@ -23,40 +22,130 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
 /**
- * The Head component is used to provide information to be used in the head 
+ * The Head component is used to provide information to be used in the head
  * element.
  */
-@Component(type = "com.sun.webui.jsf.Head", family = "com.sun.webui.jsf.Head",
-displayName = "Head", tagName = "head",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_head",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_head_props")
-public class Head extends UIComponentBase {
+@Component(type = "com.sun.webui.jsf.Head",
+        family = "com.sun.webui.jsf.Head",
+        displayName = "Head",
+        tagName = "head",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_head",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_head_props")
+        //CHECKSTYLE:ON
+public final class Head extends UIComponentBase {
 
     /**
-     * <p>Construct a new <code>Head</code>.</p>
+     * Flag (true or false) indicating that DOJO debugging is enabled. The
+     * default value is false.
+     */
+    @Property(name = "debug",
+            displayName = "Enable Dojo Debugging",
+            category = "Advanced")
+    private boolean debug = false;
+
+    /**
+     * debug set flag.
+     */
+    private boolean debugSet = false;
+
+    /**
+     * Flag (true or false) indicating that component JavaScript should be
+     * output in page. The default value is true.
+     */
+    @Property(name = "javaScript",
+            displayName = "Include Component JavaScript",
+            category = "Advanced")
+    private boolean javaScript = true;
+
+    /**
+     * javaScript set flag.
+     */
+    private boolean javaScriptSet = false;
+
+    /**
+     * Flag (true or false) indicating that DODO should search for dojoType
+     * widget tags. Page load time is proportional to the number of nodes on the
+     * page. The default value is false.
+     */
+    @Property(name = "parseWidgets",
+            displayName = "Parse Dojo Widgets",
+            category = "Advanced")
+    private boolean parseWidgets = false;
+
+    /**
+     * parseWidgets set flag.
+     */
+    private boolean parseWidgetsSet = false;
+
+    /**
+     * Flag (true or false) indicating if meta data should be rendered. The
+     * default value is true.
+     */
+    @Property(name = "meta",
+            displayName = "Render Meta Data",
+            category = "Advanced")
+    private boolean meta = false;
+
+    /**
+     * meta set flag.
+     */
+    private boolean metaSet = false;
+
+    /**
+     * Flag (true or false) indicating that a default HTML base tag should be
+     * shown or not. Changing this attribute could cause {@code webuijsf:anchor}
+     * to not work properly. The default value is false.
+     */
+    @Property(name = "defaultBase",
+            displayName = "Default Base",
+            category = "Appearance")
+    private boolean defaultBase = false;
+
+    /**
+     * defaultBase set flag.
+     */
+    private boolean defaultBaseSet = false;
+
+    /**
+     * A space separated list of URL's that contains meta data information about
+     * the page.
+     */
+    @Property(name = "profile",
+            displayName = "Profile",
+            category = "Advanced")
+    private String profile = null;
+
+    /**
+     * Title of the document to be displayed in the browser title bar.
+     */
+    @Property(name = "title",
+            displayName = "title",
+            category = "Appearance",
+            isDefault = true)
+    private String title = null;
+
+    /**
+     * Construct a new {@code Head}.
      */
     public Head() {
         super();
         setRendererType("com.sun.webui.jsf.Head");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Head";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -66,68 +155,58 @@ public class Head extends UIComponentBase {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * Flag (true or false) indicating that Dojo debugging is enabled. The 
-     * default value is false.
-     */
-    @Property(name = "debug", displayName = "Enable Dojo Debugging", category = "Advanced")
-    private boolean debug = false;
-    private boolean debug_set = false;
 
     /**
-     * Test flag indicating that Dojo debugging is enabled.
+     * Test flag indicating that DOJO debugging is enabled.
+     * @return {@code boolean}
      */
     public boolean isDebug() {
-        if (this.debug_set) {
+        if (this.debugSet) {
             return this.debug;
         }
-        ValueExpression _vb = getValueExpression("debug");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("debug");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * Set flag indicating that Dojo debugging is enabled.
+     * Set flag indicating that DOJO debugging is enabled.
+     * @param newDebug debug
      */
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-        this.debug_set = true;
+    public void setDebug(final boolean newDebug) {
+        this.debug = newDebug;
+        this.debugSet = true;
     }
-    /**
-     * Flag (true or false) indicating that component JavaScript should be 
-     * output in page. The default value is true.
-     */
-    @Property(name = "javaScript", displayName = "Include Component JavaScript", category = "Advanced")
-    private boolean javaScript = true;
-    private boolean javaScript_set = false;
 
     /**
      * Test flag indicating that component JavaScript should be output in page.
+     * @return {@code boolean}
      */
     public boolean isJavaScript() {
-        if (this.javaScript_set) {
+        if (this.javaScriptSet) {
             return this.javaScript;
         }
-        ValueExpression _vb = getValueExpression("javaScript");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("javaScript");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
@@ -135,68 +214,57 @@ public class Head extends UIComponentBase {
 
     /**
      * Set flag indicating that component JavaScript should be output in page.
+     * @param newJavaScript javaScript
      */
-    public void setJavaScript(boolean javaScript) {
-        this.javaScript = javaScript;
-        this.javaScript_set = true;
+    public void setJavaScript(final boolean newJavaScript) {
+        this.javaScript = newJavaScript;
+        this.javaScriptSet = true;
     }
-    /**
-     * Flag (true or false) indicating that Dojo should search for dojoType 
-     * widget tags. Page load time is proportional to the number of nodes on the
-     * page. The default value is false.
-     */
-    @Property(name = "parseWidgets", displayName = "Parse Dojo Widgets", category = "Advanced")
-    private boolean parseWidgets = false;
-    private boolean parseWidgets_set = false;
 
     /**
-     * Test flag indicating that Dojo should search for dojoType widget tags.
+     * Test flag indicating that DOJO should search for dojoType widget tags.
+     * @return {@code boolean}
      */
     public boolean isParseWidgets() {
-        if (this.parseWidgets_set) {
+        if (this.parseWidgetsSet) {
             return this.parseWidgets;
         }
-        ValueExpression _vb = getValueExpression("parseWidgets");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("parseWidgets");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * Set flag indicating that Dojo should search for dojoType widget tags.
+     * Set flag indicating that DOJO should search for dojoType widget tags.
+     * @param newParseWidgets parseWidgets
      */
-    public void setParseWidgets(boolean parseWidgets) {
-        this.parseWidgets = parseWidgets;
-        this.parseWidgets_set = true;
+    public void setParseWidgets(final boolean newParseWidgets) {
+        this.parseWidgets = newParseWidgets;
+        this.parseWidgetsSet = true;
     }
-    /**
-     * Flag (true or false) indicating if meta data should be rendered. The 
-     * default value is true.
-     */
-    @Property(name = "meta", displayName = "Render Meta Data", category = "Advanced")
-    private boolean meta = false;
-    private boolean meta_set = false;
 
     /**
      * Test flag indicating if the default meta data should be rendered.
+     * @return {@code boolean}
      */
     public boolean isMeta() {
-        if (this.meta_set) {
+        if (this.metaSet) {
             return this.meta;
         }
-        ValueExpression _vb = getValueExpression("meta");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("meta");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
@@ -204,133 +272,129 @@ public class Head extends UIComponentBase {
 
     /**
      * Set flag indicating if the default meta data should be rendered.
+     * @param newMeta meta
      */
-    public void setMeta(boolean meta) {
-        this.meta = meta;
-        this.meta_set = true;
+    public void setMeta(final boolean newMeta) {
+        this.meta = newMeta;
+        this.metaSet = true;
     }
-    /**
-     * <p>Flag (true or false) indicating that a default html base tag should be
-     * shown or not.  Changing this attribute could cause webuijsf:anchor to not work
-     * properly.  The default value is false.</p>
-     */
-    @Property(name = "defaultBase", displayName = "Default Base", category = "Appearance")
-    private boolean defaultBase = false;
-    private boolean defaultBase_set = false;
 
     /**
-     * <p>Flag (true or false) indicating that a default html base tag should be
-     * shown or not.  Changing this attribute could cause webuijsf:anchor to not work
-     * properly.  The default value is false.</p>
+     * Flag (true or false) indicating that a default HTML base tag should be
+     * shown or not. Changing this attribute could cause {@code webuijsf:anchor}
+     * to not work properly. The default value is false.
+     *
+     * @return {@code boolean}
      */
     public boolean isDefaultBase() {
-        if (this.defaultBase_set) {
+        if (this.defaultBaseSet) {
             return this.defaultBase;
         }
-        ValueExpression _vb = getValueExpression("defaultBase");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("defaultBase");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag (true or false) indicating that a default html base tag should be
-     * shown or not.  Changing this attribute could cause webuijsf:anchor to not work
-     * properly.  The default value is false.</p>
+     * Flag (true or false) indicating that a default HTML base tag should be
+     * shown or not. Changing this attribute could cause {@code webuijsf:anchor}
+     * to not work properly. The default value is false.
+     *
      * @see #isDefaultBase()
+     * @param newDefaultBase defaultBase
      */
-    public void setDefaultBase(boolean defaultBase) {
-        this.defaultBase = defaultBase;
-        this.defaultBase_set = true;
+    public void setDefaultBase(final boolean newDefaultBase) {
+        this.defaultBase = newDefaultBase;
+        this.defaultBaseSet = true;
     }
-    /**
-     * <p>A space separated list of URL's that contains meta data information 
-     * about the page</p>
-     */
-    @Property(name = "profile", displayName = "Profile", category = "Advanced")
-    private String profile = null;
 
     /**
-     * <p>A space separated list of URL's that contains meta data information 
-     * about the page</p>
+     * A space separated list of URL's that contains meta data information about
+     * the page.
+     * @return String
      */
     public String getProfile() {
         if (this.profile != null) {
             return this.profile;
         }
-        ValueExpression _vb = getValueExpression("profile");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("profile");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>A space separated list of URL's that contains meta data information 
-     * about the page</p>
+     * A space separated list of URL's that contains meta data information about
+     * the page.
+     *
      * @see #getProfile()
+     * @param newProfile profile
      */
-    public void setProfile(String profile) {
-        this.profile = profile;
+    public void setProfile(final String newProfile) {
+        this.profile = newProfile;
     }
-    /**
-     * <p>Title of the document to be displayed in the browser title bar.</p>
-     */
-    @Property(name = "title", displayName = "title", category = "Appearance", isDefault = true)
-    private String title = null;
 
     /**
-     * <p>Title of the document to be displayed in the browser title bar.</p>
+     * Title of the document to be displayed in the browser title bar.
+     * @return String
      */
     public String getTitle() {
         if (this.title != null) {
             return this.title;
         }
-        ValueExpression _vb = getValueExpression("title");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("title");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Title of the document to be displayed in the browser title bar.</p>
+     * Title of the document to be displayed in the browser title bar.
+     *
      * @see #getTitle()
+     * @param newTitle title
      */
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle(final String newTitle) {
+        this.title = newTitle;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.defaultBase = ((Boolean) _values[1]).booleanValue();
-        this.defaultBase_set = ((Boolean) _values[2]).booleanValue();
-        this.profile = (String) _values[3];
-        this.title = (String) _values[4];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.defaultBase = ((Boolean) values[1]);
+        this.defaultBaseSet = ((Boolean) values[2]);
+        this.profile = (String) values[3];
+        this.title = (String) values[4];
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[5];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.defaultBase ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.defaultBase_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.profile;
-        _values[4] = this.title;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[5];
+        values[0] = super.saveState(context);
+        if (this.defaultBase) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.defaultBaseSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        values[3] = this.profile;
+        values[4] = this.title;
+        return values;
     }
 }

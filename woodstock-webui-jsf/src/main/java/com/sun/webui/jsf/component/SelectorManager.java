@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,43 +24,51 @@ import javax.faces.context.FacesContext;
 public interface SelectorManager {
 
     /**
-     * JSF standard method from UIComponent
+     * JSF standard method from UIComponent.
      * @param context The FacesContext for the request
      * @return The client id, also the JavaScript element id
      */
-    public String getClientId(FacesContext context);
+    String getClientId(FacesContext context);
 
     /**
-     * JSF standard method from UIComponent
+     * JSF standard method from UIComponent.
      * @return true if the component is disabled
      */
-    public boolean isDisabled();
+    boolean isDisabled();
 
     /**
-     * Get the JS onchange event handler
+     * Get the JS {@code onchange} event handler.
      * @return A string representing the JS event handler
      */
-    public String getOnChange();
+    String getOnChange();
 
     /**
-     * Get the tab index for the component
-     * @return the tabindex
+     * Get the tab index for the component.
+     * @return the tab index
      */
-    public int getTabIndex();
+    int getTabIndex();
 
     /**
-     * Returns true if the component allows multiple selections
+     * Returns true if the component allows multiple selections.
      * @return true if the component allows multiple selections
      */
-    public boolean isMultiple();
+    boolean isMultiple();
 
     /**
-     * Returns true if the component is readonly
-     * @return true if the component is readonly
+     * Returns true if the component is read-only.
+     * @return true if the component is read-only
      */
-    public boolean isReadOnly();
+    boolean isReadOnly();
 
-    public String getStyle();
+    /**
+     * Get the style.
+     * @return String
+     */
+    String getStyle();
 
-    public String getStyleClass();
+    /**
+     * Get the style class.
+     * @return String
+     */
+    String getStyleClass();
 }

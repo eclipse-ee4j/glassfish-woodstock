@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: FileChooserSelectValidator.java,v 1.1.20.1 2009-12-29 05:00:38 jyeary Exp $
- */
 package com.sun.webui.jsf.validator;
 
 import javax.faces.component.UIComponent;
@@ -42,11 +39,12 @@ import com.sun.webui.jsf.component.FileChooser;
  */
 // Note that typing this by referencing FileChooser
 // prevents using this in a general Chooser paradigm.
-public class FileChooserSelectValidator implements Validator {
+public final class FileChooserSelectValidator implements Validator {
 
     @Override
-    public void validate(FacesContext context, UIComponent component,
-            Object value) throws ValidatorException {
+    public void validate(final FacesContext context,
+            final UIComponent component, final Object value)
+            throws ValidatorException {
 
         FileChooser chooser = (FileChooser) component.getParent();
         chooser.validateSelectComponent(context, component, value);

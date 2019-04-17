@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -38,7 +38,7 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
 import static com.sun.webui.jsf.util.RenderingUtilities.writeStringAttributes;
 
 /**
- * The ListRendererBase is the base class for the list box renderers
+ * The ListRendererBase is the base class for the list box renderer
  * (Drop-down Menu and Selectable List). These are both rendered using
  * the same HTML tag (select) so a lot of the rendering functionality
  * is shared.
@@ -48,7 +48,7 @@ public abstract class ListRendererBase extends Renderer {
     /**
      * Debug flag.
      */
-    private final static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     /**
      * The list of attribute names in the HTML 4.01 Specification that
@@ -103,8 +103,10 @@ public abstract class ListRendererBase extends Renderer {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderListComponent(ListSelector component, FacesContext context,
-            String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected static void renderListComponent(final ListSelector component,
+            final FacesContext context, final String[] styles)
+            throws IOException {
 
         if (DEBUG) {
             log("renderListComponent()");
@@ -175,9 +177,15 @@ public abstract class ListRendererBase extends Renderer {
         }
     }
 
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @throws java.io.IOException if an IO error occurs
+     */
     @Override
-    public void encodeChildren(javax.faces.context.FacesContext context,
-            javax.faces.component.UIComponent component)
+    public void encodeChildren(final javax.faces.context.FacesContext context,
+            final javax.faces.component.UIComponent component)
             throws java.io.IOException {
     }
 
@@ -191,9 +199,9 @@ public abstract class ListRendererBase extends Renderer {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    protected void renderOpenEncloser(ListManager component,
-            FacesContext context, String element, String hiddenStyle)
-            throws IOException {
+    protected static void renderOpenEncloser(final ListManager component,
+            final FacesContext context, final String element,
+            final String hiddenStyle) throws IOException {
 
         String id = component.getClientId(context);
         ResponseWriter writer = context.getResponseWriter();
@@ -221,9 +229,17 @@ public abstract class ListRendererBase extends Renderer {
         writer.writeText("\n", null);
     }
 
-    protected void renderHiddenValue(UIComponent component,
-            FacesContext context, ResponseWriter writer, String hiddenStyle)
-            throws IOException {
+    /**
+     * Renders a hidden value.
+     * @param component UI component
+     * @param context faces context
+     * @param writer writer to use
+     * @param hiddenStyle CSS style
+     * @throws IOException if an IO error occurs
+     */
+    protected static void renderHiddenValue(final UIComponent component,
+            final FacesContext context, final ResponseWriter writer,
+            final String hiddenStyle) throws IOException {
 
         ListManager listManager = (ListManager) component;
         recordRenderedValue(component);
@@ -247,7 +263,7 @@ public abstract class ListRendererBase extends Renderer {
         writer.writeAttribute("for", hiddenID, "for");
         writer.writeAttribute("class", hiddenStyle, null);
         writer.endElement("label");
-        // Write the hidden <select> 
+        // Write the hidden <select>
 
         writer.startElement("select", component);
         writer.writeAttribute("id", hiddenID, null);
@@ -289,9 +305,9 @@ public abstract class ListRendererBase extends Renderer {
      * @throws java.io.IOException if the renderer fails to write to the
      * response
      */
-    protected void renderList(ListManager component, String id,
-            FacesContext context, String[] styles)
-            throws IOException {
+    protected static void renderList(final ListManager component,
+            final String id, final FacesContext context,
+            final String[] styles) throws IOException {
 
         renderList(component, id, context, styles, false);
     }
@@ -305,9 +321,10 @@ public abstract class ListRendererBase extends Renderer {
      * @param renderUserStyles flag for rendering user styles
      * @throws IOException if an IO error occurs
      */
-    private void renderList(ListManager listManager, String id,
-            FacesContext context, String[] styles, boolean renderUserStyles)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderList(final ListManager listManager,
+            final String id, final FacesContext context, final String[] styles,
+            final boolean renderUserStyles) throws IOException {
 
         // Set the style class
         String styleClass = styles[1];
@@ -381,27 +398,30 @@ public abstract class ListRendererBase extends Renderer {
     }
 
     /**
-     * This is the method responsible for rendering the options of a
-     * HTML select element. This method is based on the corresponding
-     * method from the JSF RI, so the options to be specified using
-     * the JSF SelectItem construct. This will have to be replaced -
-     * see the renderList method for details.
-     * <p/><i>Note - option groups are not yet implemented w.r.t. any
-     * styles  specified by the HCI guidelines.</i>
+     * This is the method responsible for rendering the options of a HTML select
+     * element.This method is based on the corresponding method from the JSF RI,
+     * so the options to be specified using the JSF SelectItem construct.This
+     * will have to be replaced - see the renderList method for details.<i>Note
+     * - option groups are not yet implemented w.r.t. any styles specified by
+     * the HCI guidelines.</i>
+     *
      * @param component The UI Component associated with the renderer
-     * @param styles A String array of styles used to render the
-     * component. The first item of the array is the name of the
-     * JavaScript method that handles change event. The second item is
-     * the style used when the list is enabled. The third style is the
-     * one to use when the list is disabled. The fourth item is the
-     * style to use for an item that is enabled, the fifth to use for
-     * an item that is disabled, and the sixth to use when the item is
+     * @param optionsIterator options iterator
+     * @param styles A String array of styles used to render the component. The
+     * first item of the array is the name of the JavaScript method that handles
+     * change event. The second item is the style used when the list is enabled.
+     * The third style is the one to use when the list is disabled. The fourth
+     * item is the style to use for an item that is enabled, the fifth to use
+     * for an item that is disabled, and the sixth to use when the item is
      * selected.
-     * @throws java.io.IOException if the renderer fails to write to
-     * the response
+     * @param writer writer to use
+     * @throws java.io.IOException if the renderer fails to write to the
+     * response
      */
-    void renderListOptions(UIComponent component, Iterator optionsIterator,
-            ResponseWriter writer, String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected static void renderListOptions(final UIComponent component,
+            final Iterator optionsIterator, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
         if (DEBUG) {
             log("renderListOptions() START");
@@ -460,7 +480,8 @@ public abstract class ListRendererBase extends Renderer {
      * This is the method responsible for rendering an individual
      * option for a HTML select element.
      *
-     * @param option The ListItem to render
+     * @param list UI component
+     * @param listItem The ListItem to render
      * @param writer The ResponseWriter used to render the option
      * @param styles A String array of styles used to render the
      * component. The first item of the array is the name of the
@@ -473,8 +494,10 @@ public abstract class ListRendererBase extends Renderer {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderListOption(UIComponent list, ListItem listItem,
-            ResponseWriter writer, String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected static void renderListOption(final UIComponent list,
+            final ListItem listItem, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
         if (DEBUG) {
             log("renderListOption() - START");
@@ -516,10 +539,9 @@ public abstract class ListRendererBase extends Renderer {
         // itemValue that is null or an empty string.
         // This is important since the results may be indistinguishable
         // on the client and therefore indistinguishable in the response.
-        // 
+        //
         // However Option which inherits from SelectItem does not
         // allow null item values.
-        //
         if (itemValue != null) {
             if (DEBUG) {
                 log("Item value is not null");
@@ -556,14 +578,15 @@ public abstract class ListRendererBase extends Renderer {
      * This method is responsible for rendering a separator for an
      * option group.
      *
-     * @param option The component for which we render the separator
+     * @param component The component for which we render the separator
      * @param writer The ResponseWriter used to render the separator
      * @param style The style to use when rendering the option.
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderSeparator(UIComponent component, ResponseWriter writer,
-            String style) throws IOException {
+    protected static void renderSeparator(final UIComponent component,
+            final ResponseWriter writer, final String style)
+            throws IOException {
 
         if (!(component instanceof ListSelector)) {
             return;
@@ -590,16 +613,21 @@ public abstract class ListRendererBase extends Renderer {
         writer.writeText("\n", null);
     }
 
-    /** This method is used by some of the renderers that extend
-    ListRenderBase (not ListBox and DropDown). I should
-    probably refactor things so that we always know what
-    the hidden style is instead - then renderListComponent
-    would do.
-    TODO.
+    /**
+     * * This method is used by some of the renderers that extend ListRenderBase
+     * (not ListBox and DropDown).I should probably refactor things so that we
+     * always know what the hidden style is instead - then renderListComponent
+     * would do.
+     *
+     * @param component UI component
+     * @param label label component
+     * @param context faces context
+     * @param hiddenStyle hidden style
+     * @throws java.io.IOException if an IO error occurs
      */
-    void renderReadOnlyList(ListManager component, UIComponent label,
-            FacesContext context, String hiddenStyle)
-            throws IOException {
+    protected static void renderReadOnlyList(final ListManager component,
+            final UIComponent label, final FacesContext context,
+            final String hiddenStyle) throws IOException {
 
         UIComponent value = component.getReadOnlyValueComponent();
         renderOpenEncloser(component, context, "span", hiddenStyle);
@@ -616,7 +644,8 @@ public abstract class ListRendererBase extends Renderer {
      * @param hiddenStyle hidden style
      * @return String
      */
-    private String getStyleClass(ListManager component, String hiddenStyle) {
+    private static String getStyleClass(final ListManager component,
+            final String hiddenStyle) {
 
         String style = component.getStyleClass();
         if (style != null && style.length() == 0) {
@@ -633,8 +662,14 @@ public abstract class ListRendererBase extends Renderer {
         return style;
     }
 
+    /**
+     * This implementation decodes the user input.
+     * @param context faces context
+     * @param component UI component
+     */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         if (DEBUG) {
             log("decode()");
@@ -642,13 +677,13 @@ public abstract class ListRendererBase extends Renderer {
         String id = component.getClientId(context);
 
         // We used to depend on getLabelComponent() returning non-null
-        // to calculate the ID to be used to retrieve parameters for the 
-        // component. But after the changes made to the facet management, 
-        // that mechanism doesn't work anymore. 
-        // We can simply see if we have any input for any of the 
-        // possible parameter names instead, similar to what field 
-        // does. It works, though we can technically end up looking 
-        // at the wrong parameter, if there was no input. 
+        // to calculate the ID to be used to retrieve parameters for the
+        // component. But after the changes made to the facet management,
+        // that mechanism doesn't work anymore.
+        // We can simply see if we have any input for any of the
+        // possible parameter names instead, similar to what field
+        // does. It works, though we can technically end up looking
+        // at the wrong parameter, if there was no input.
         Map params = context.getExternalContext().getRequestParameterMap();
         Object valueObject = params.get(id);
 
@@ -667,11 +702,11 @@ public abstract class ListRendererBase extends Renderer {
      * If there is no value there is a single separator.
      * @param context The FacesContext of this request
      * @param component The component associated with the renderer
-     * @param id The DOM id of the select element which represents the 
+     * @param id The DOM id of the select element which represents the
      * value of the list
      */
-    protected void decode(FacesContext context, UIComponent component,
-            String id) {
+    protected static void decode(final FacesContext context,
+            final UIComponent component, final String id) {
 
         if (DEBUG) {
             log("decode(context, component, id)");
@@ -719,8 +754,8 @@ public abstract class ListRendererBase extends Renderer {
                 newParams.add(values[i]);
             }
             values = (String[]) newParams.toArray(new String[newParams.size()]);
-        } else if (values.length == 1 &&
-                OptionTitle.NONESELECTED.equals(values[0])) {
+        } else if (values.length == 1
+                && OptionTitle.NONESELECTED.equals(values[0])) {
             return;
         }
 
@@ -757,9 +792,10 @@ public abstract class ListRendererBase extends Renderer {
      * Retrieves the selected values as Strings.
      * @param context The FacesContext of this request
      * @param component The component associated with the renderer
+     * @return String[]
      */
-    String[] getUserInput(FacesContext context,
-            UIComponent component) {
+    protected static String[] getUserInput(final FacesContext context,
+            final UIComponent component) {
 
         if (DEBUG) {
             log("::getUserSelectedValues()");
@@ -787,24 +823,26 @@ public abstract class ListRendererBase extends Renderer {
     }
 
     /**
-     * Log an error - only used during development time.
-     * @param msg message to log
-     */
-    void log(String msg) {
-        System.out.println(this.getClass().getName() + "::" + msg);
-    }
-
-    /**
      * This must be called where the value is about to be rendered
      * for DB Null value support.
      * @param component UI component
      */
-    private void recordRenderedValue(UIComponent component) {
+    private static void recordRenderedValue(final UIComponent component) {
 
-        if (component instanceof EditableValueHolder &&
-                ((EditableValueHolder) component).getSubmittedValue() == null) {
+        if (component instanceof EditableValueHolder
+                && ((EditableValueHolder) component)
+                        .getSubmittedValue() == null) {
             setRenderedValue(component, ((EditableValueHolder) component)
                     .getValue());
         }
+    }
+
+    /**
+     * Log an error - only used during development time.
+     *
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(ListRendererBase.class.getName() + "::" + msg);
     }
 }

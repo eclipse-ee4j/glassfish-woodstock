@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.event;
 
 import javax.faces.event.FacesListener;
@@ -23,14 +22,13 @@ import javax.faces.component.StateHolder;
 /**
  * The WizardEventListener is an event listener defined on
  * {@link com.sun.webui.jsf.component.WizardStep WizardStep} and
- * {@link com.sun.webui.jsf.component.Wizard Wizard}
- * components to receive {@link WizardEvent WizardEvent} notifications.
+ * {@link com.sun.webui.jsf.component.Wizard Wizard} components to receive
+ * {@link WizardEvent WizardEvent} notifications.
  * <p>
- * Typically the {@link WizardEventListener WizardEventListener} instance
- * is defined on a {@link com.sun.webui.jsf.component.Wizard Wizard} using the 
- * eventListener attribute on the &lt;ui:wizard&gt; or the 
- * &lt;wizardStep&gt; tags.
- *<p/>
+ * Typically the {@link WizardEventListener WizardEventListener} instance is
+ * defined on a {@link com.sun.webui.jsf.component.Wizard Wizard} using the
+ * eventListener attribute on the &lt;ui:wizard&gt; or the &lt;wizardStep&gt;
+ * tags.
  * <p>
  * The listener can expect to receive the following events.
  * </p>
@@ -50,10 +48,11 @@ import javax.faces.component.StateHolder;
 public interface WizardEventListener extends FacesListener, StateHolder {
 
     /**
-     * Perform functionality suitable for the specified <code>event</code>.
+     * Perform functionality suitable for the specified {@code event}.
      *
      * @param event The WizardEvent being broadcast
+     * @return boolean
+     * @throws AbortProcessingException if an error occurs
      */
-    public boolean handleEvent(WizardEvent event)
-            throws AbortProcessingException;
+    boolean handleEvent(WizardEvent event) throws AbortProcessingException;
 }

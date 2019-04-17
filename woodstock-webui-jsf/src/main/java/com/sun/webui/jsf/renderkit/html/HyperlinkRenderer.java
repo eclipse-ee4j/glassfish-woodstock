@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,14 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Hyperlink;
-import com.sun.webui.jsf.component.util.Util;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.LogUtil;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
@@ -38,14 +37,16 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderURLAttribute;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * This class is responsible for rendering the {@link Hyperlink} component for the
- * HTML Render Kit.
- * <p> The {@link Hyperlink} component can be used as an anchor, a
- * plain hyperlink or a hyperlink that submits the form depending on how the
- * properties are filled out for the component
+ * This class is responsible for rendering the {@link Hyperlink} component for
+ * the HTML Render Kit.
+ * <p>
+ * The {@link Hyperlink} component can be used as an anchor, a plain hyperlink
+ * or a hyperlink that submits the form depending on how the properties are
+ * filled out for the component
  * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Hyperlink"))
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Hyperlink"))
 public class HyperlinkRenderer extends AbstractRenderer {
 
     /**
@@ -53,21 +54,21 @@ public class HyperlinkRenderer extends AbstractRenderer {
      * if you add a {@code boolean} here and you want it rendered if the
      * hyperlink is disabled then you must fix the renderer to work properly!
      */
-    private static final String BOOLEAN_ATTRIBUTES[] = {
+    private static final String[] BOOLEAN_ATTRIBUTES = {
         "disabled"
     };
 
     /**
      * The set of integer pass-through attributes to be rendered.
      */
-    private static final String INT_ATTRIBUTES[] = {
+    private static final String[] INT_ATTRIBUTES = {
         "tabIndex"
     };
 
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "onBlur",
         "onFocus",
         "onDblClick",
@@ -84,16 +85,28 @@ public class HyperlinkRenderer extends AbstractRenderer {
     /**
      * The log message to be displayed if name and/or value attribute is null.
      */
-    private static final String PARAM_ERROR =
-            "Hyperlink UIParameter child attribute name and/or value not set, id = ";
+    private static final String PARAM_ERROR
+            = "Hyperlink UIParameter child attribute name and/or value not set,"
+            + " id = ";
 
+    /**
+     * This implementation returns {@code true}.
+     * @return {@code boolean}
+     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
+    /**
+     * This implementation decodes the link from the user input.
+     * @param context faces context
+     * @param component UI component
+     */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         // Enforce NPE requirements in the Javadocs
         if ((context == null) || (component == null)) {
             throw new NullPointerException();
@@ -105,12 +118,14 @@ public class HyperlinkRenderer extends AbstractRenderer {
             String value = (String) context.getExternalContext()
                     .getRequestParameterMap().get(paramId);
 
-            if ((value == null) || !value.equals(component.getClientId(context))) {
+            if ((value == null)
+                    || !value.equals(component.getClientId(context))) {
                 return;
             }
 
-            //add the event to the queue so we know that a command happened.
-            //this should automatically take care of actionlisteners and actions
+            // add the event to the queue so we know that a command happened.
+            // this should automatically take care of actionlisteners and
+            // actions
             link.queueEvent(new ActionEvent(link));
         }
     }
@@ -123,35 +138,74 @@ public class HyperlinkRenderer extends AbstractRenderer {
      * @param component UI component
      * @return String
      */
-    protected String getSubmittedParameterId(FacesContext context,
-            UIComponent component) {
+    protected String getSubmittedParameterId(final FacesContext context,
+            final UIComponent component) {
 
         return component.getClientId(context) + "_submittedField";
     }
 
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
-    }
-
-    @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
-    }
-
-    @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
     }
 
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+    }
+
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @throws IOException if an IO error occurs
+     */
+    @Override
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+    }
+
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    @Override
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         renderLink(context, component, writer);
     }
 
-    protected void finishRenderAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer) throws IOException {
+    /**
+     * Finish render attributes.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    protected void finishRenderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Hyperlink link = (Hyperlink) component;
 
@@ -162,8 +216,16 @@ public class HyperlinkRenderer extends AbstractRenderer {
         }
     }
 
-    protected void renderLink(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    /**
+     * Render the link.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    protected void renderLink(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Hyperlink link = (Hyperlink) component;
         if (!link.isDisabled()) {
@@ -191,7 +253,8 @@ public class HyperlinkRenderer extends AbstractRenderer {
 
         if (!link.isDisabled()) {
             // no such thing as disabling a span so we must do this here.
-            addBooleanAttributes(context, component, writer, BOOLEAN_ATTRIBUTES);
+            addBooleanAttributes(context, component, writer,
+                    BOOLEAN_ATTRIBUTES);
 
             // writeout href for the a tag:
             if (url != null) {
@@ -204,7 +267,7 @@ public class HyperlinkRenderer extends AbstractRenderer {
                 } else {
                     // Append context path to relative URLs -- bugtraq #6306727.
                     // Invoke the getCorrectURL method so that subclassed
-                    // components may implement their own solution for 
+                    // components may implement their own solution for
                     // prepending the right context
                     url = getCorrectURL(context, link, url);
                     renderURLAttribute(context, writer, component, "href", url,
@@ -214,7 +277,8 @@ public class HyperlinkRenderer extends AbstractRenderer {
                     writer.writeAttribute("onclick", onclick, "onclick");
                 }
             } else {
-                UIComponent form = Util.getForm(context, component);
+                UIComponent form
+                        = ComponentUtilities.getForm(context, component);
                 if (form != null) {
                     List<String> params = new ArrayList<String>();
                     for (UIComponent kid : component.getChildren()) {
@@ -222,7 +286,8 @@ public class HyperlinkRenderer extends AbstractRenderer {
                             continue;
                         }
                         String name = (String) kid.getAttributes().get("name");
-                        String value = (String) kid.getAttributes().get("value");
+                        String value = (String) kid.getAttributes()
+                                .get("value");
                         if (name == null || value == null) {
                             log(PARAM_ERROR + kid.getId());
                             continue;
@@ -231,7 +296,7 @@ public class HyperlinkRenderer extends AbstractRenderer {
                         params.add(value);
                     }
                     String formClientId = form.getClientId(context);
-                    StringBuilder buff = new StringBuilder(200);
+                    StringBuilder buff = new StringBuilder();
                     buff.append(renderCalls(onclick,
                             // ws_hyperlink_submit
                             renderCall("hyperlink_submit", "this", formClientId,
@@ -244,11 +309,9 @@ public class HyperlinkRenderer extends AbstractRenderer {
             if (null != target) {
                 writer.writeAttribute("target", target, null);
             }
-
             if (null != tooltip) {
                 writer.writeAttribute("title", tooltip, null);
             }
-
             if (null != urlLang) {
                 writer.writeAttribute("hreflang", urlLang, "urlLang");
             }
@@ -265,12 +328,12 @@ public class HyperlinkRenderer extends AbstractRenderer {
             writer.endElement("a");
         } else {
             // no need to render params for disabled link
-            writer.endElement("span"); 
+            writer.endElement("span");
         }
     }
 
     /**
-     * This method is called by renderEnd.It is provided so renderers that
+     * This method is called by renderEnd.It is provided so renderer that
      * extend HyperlinkRenderer (such as TabRenderer) may override it in order
      * to prevent children from always being rendered.
      *
@@ -278,30 +341,35 @@ public class HyperlinkRenderer extends AbstractRenderer {
      * @param component The current component.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    protected void renderChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         super.encodeChildren(context, component);
     }
 
     /**
      * This function returns the style classes necessary to display the
-     * {@link Hyperlink} component as it's state indicates
+     * {@link Hyperlink} component as it's state indicates.
      *
      * @param context The current FacesContext.
      * @param component The current component.
      * @return the style classes needed to display the current state of the
      * component
      */
-    protected String getStyles(FacesContext context, UIComponent component) {
-        Hyperlink link = (Hyperlink) component;
+    protected String getStyles(final FacesContext context,
+            final UIComponent component) {
 
+        Hyperlink link = (Hyperlink) component;
         StringBuilder sb = new StringBuilder();
         Theme theme = getTheme(context);
         if (link.isDisabled()) {
             sb.append(" ");
             sb.append(theme.getStyleClass(ThemeStyles.LINK_DISABLED));
         }
-        return (sb.length() > 0) ? sb.toString() : null;
+        if (sb.length() > 0) {
+            return sb.toString();
+        }
+        return null;
     }
 
     /**
@@ -317,8 +385,8 @@ public class HyperlinkRenderer extends AbstractRenderer {
      * @param url input URL
      * @return String
      */
-    protected String getCorrectURL(FacesContext context, UIComponent component,
-            String url) {
+    protected String getCorrectURL(final FacesContext context,
+            final UIComponent component, final String url) {
 
         if (url == null) {
             return null;
@@ -330,18 +398,20 @@ public class HyperlinkRenderer extends AbstractRenderer {
 
     /**
      * Test if the given link is a submit link.
+     *
      * @param h link to test
      * @return {@code true} if a submit link, {@code false} otherwise
      */
-    private static boolean isSubmitLink(Hyperlink h) {
+    private static boolean isSubmitLink(final Hyperlink h) {
         return (h.getUrl() == null);
     }
 
     /**
      * Log an error.
+     *
      * @param msg error message to log
      */
-    private static void log(String msg) {
+    private static void log(final String msg) {
         if (LogUtil.fineEnabled(HyperlinkRenderer.class)) {
             LogUtil.fine(HyperlinkRenderer.class, msg);
         }

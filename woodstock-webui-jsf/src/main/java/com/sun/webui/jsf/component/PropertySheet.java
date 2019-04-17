@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -29,51 +28,139 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 
 /**
- * The <code>PropertySheet</code> component is a <code>NamingContainer</code>  
- * used to layout <code>PropertySheetSection</code> components on a page.
- * Each <code>PropertySheetSection</code> may in turn have any number of
- * <code>Property</code> components within it.  This allows you to easily
- * format a page with a number of input or read-only fields.
- * <code>PropertySheetSection</code>s allow you to group <code>Property</code>
- * components together and provide a <code>label</code> for the set of
- * enclosed <code>Property</code>s.</p><p> The <code>PropertySheet</code> allows 
- * each<code>PropertySheetSection</code> to have an optional "jump link" from 
- * the top of the <code>PropertySheet</code> to each
- * <code>PropertySheetSection</code> within the <code>PropertySheet</code>.
- * This is accomplished by supplying the attribute <code>jumpLinks</code> with
- * a value of true.  If not specified, this attribute defaults to false. <p>For
- * an example, please see the documentation for the <code>propertySheet</code> 
- * Tag.</p>
+ * The {@code PropertySheet} component is a {@code NamingContainer}
+ * used to layout {@code PropertySheetSection} components on a page. Each
+ * {@code PropertySheetSection} may in turn have any number of
+ * {@code Property} components within it. This allows you to easily format
+ * a page with a number of input or read-only fields.
+ * {@code PropertySheetSection}s allow you to group {@code Property}
+ * components together and provide a {@code label} for the set of enclosed
+ * {@code Property}s.
+ * <p>
+ * The {@code PropertySheet} allows each{@code PropertySheetSection}
+ * to have an optional "jump link" from the top of the
+ * {@code PropertySheet} to each {@code PropertySheetSection} within
+ * the {@code PropertySheet}. This is accomplished by supplying the
+ * attribute {@code jumpLinks} with a value of true. If not specified, this
+ * attribute defaults to false.
+ * </p>
+ * <p>
+ * For an example, please see the documentation for the
+ * {@code propertySheet} Tag.
+ * </p>
  */
-@Component(type = "com.sun.webui.jsf.PropertySheet", family = "com.sun.webui.jsf.PropertySheet",
-displayName = "Property Sheet", tagName = "propertySheet",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_property_sheet",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_property_sheet_props")
-public class PropertySheet extends UIComponentBase implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.PropertySheet",
+        family = "com.sun.webui.jsf.PropertySheet",
+        displayName = "Property Sheet",
+        tagName = "propertySheet",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_property_sheet",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_property_sheet_props")
+        //CHECKSTYLE:ON
+public final class PropertySheet extends UIComponentBase
+        implements NamingContainer {
 
     /**
-     *	Constructor.
+     * Used to cache the visible sections.
+     */
+    private transient List visibleSections = null;
+
+    /**
+     * child count.
+     */
+    private transient int childCount = -1;
+
+    /**
+     * This boolean attribute allows you to control whether jump links will be
+     * created at the top of this {@code PropertySheet} or not. The default
+     * is NOT to create the links -- setting this attribute to "true" turns this
+     * feature on.
+     */
+    @Property(name = "jumpLinks",
+            displayName = "Show Jump Links",
+            category = "Appearance")
+    private boolean jumpLinks = false;
+
+    /**
+     * jumpLinks set flag.
+     */
+    private boolean jumpLinksSet = false;
+
+    /**
+     * Specifies whether to display a required field legend in the upper right
+     * area of the property sheet. This attribute should be set to true if one
+     * or more properties in the property sheet sections are marked required.
+     */
+    @Property(name = "requiredFields",
+            displayName = "Required Field Legend",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.RequiredFieldsPropertyEditor")
+            //CHECKSTYLE:ON
+    private String requiredFields = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Constructor.
      */
     public PropertySheet() {
         super();
         setRendererType("com.sun.webui.jsf.PropertySheet");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.PropertySheet";
     }
 
     /**
-     *	<p> This method calculates the number of visible
-     *	    {@link PropertySheetSection}s.  A {@link PropertySheetSection} can
-     *	    be made not visible by setting its rendered propety to false.  It
-     *	    is also considered not visible if it contains no children
-     *	    (sub-sections or properties).</p>
+     * This method calculates the number of visible
+     * {@link PropertySheetSection}s. A {@link PropertySheetSection} can be made
+     * not visible by setting its rendered property to false. It is also
+     * considered not visible if it contains no children (sub-sections or
+     * properties).
      *
-     *	@return	The number of visible sections.
+     * @return The number of visible sections.
      */
     public int getSectionCount() {
         // Return the answer
@@ -81,61 +168,55 @@ public class PropertySheet extends UIComponentBase implements NamingContainer {
     }
 
     /**
-     *	<p> This method creates a <code>List</code> of visible (rendered=true)
-     *	    {@link PropertySheetSection} components.
-     *	    {@link PropertySheetSection}s must also contain some content to be
-     *	    considered visible.</p>
+     * This method creates a {@code List} of visible (rendered=true)
+     * {@link PropertySheetSection} components. {@link PropertySheetSection}s
+     * must also contain some content to be considered visible.
      *
-     *	@return	A <code>List</code> of visible {@link PropertySheetSection}
-     *		objects.
+     * @return A {@code List} of visible {@link PropertySheetSection}
+     * objects.
      */
     public List getVisibleSections() {
         int numChildren = getChildCount();
 
         // See if we've already figured this out
-        if ((_visibleSections != null) && (_childCount == numChildren)) {
-            return _visibleSections;
+        if ((visibleSections != null) && (childCount == numChildren)) {
+            return visibleSections;
         }
-        _childCount = numChildren;
+        childCount = numChildren;
 
         // Make sure we have children
         if (numChildren == 0) {
-            _visibleSections = new ArrayList(0);
-            return _visibleSections;
+            visibleSections = new ArrayList(0);
+            return visibleSections;
         }
 
         // Add the visible sections to the result List
-        UIComponent child = null;
-        List<PropertySheetSection> visibleSections = new ArrayList<PropertySheetSection>();
+        UIComponent child;
+        List<PropertySheetSection> sections =
+                new ArrayList<PropertySheetSection>();
         Iterator it = getChildren().iterator();
         while (it.hasNext()) {
             child = (UIComponent) it.next();
-            if ((child instanceof PropertySheetSection) && child.isRendered()) {
-                if (((PropertySheetSection) child).getVisibleSectionChildren().size() > 0) {
-                    visibleSections.add((PropertySheetSection)child);
+            if ((child instanceof PropertySheetSection)
+                    && child.isRendered()) {
+                if (((PropertySheetSection) child)
+                        .getVisibleSectionChildren().size() > 0) {
+                    sections.add((PropertySheetSection) child);
                 }
             }
         }
 
         // Return the visible PropertySheetSections
-        _visibleSections = visibleSections;
-        return _visibleSections;
+        this.visibleSections = sections;
+        return this.visibleSections;
     }
-    /**
-     *	<p> Used to cache the visible sections.</p>
-     */
-    private transient List _visibleSections = null;
-    private transient int _childCount = -1;
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // UIComponent methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * If the rendered property is true, render the begining of the current
      * state of this UIComponent to the response contained in the specified
      * FacesContext.
      *
-     * If a Renderer is associated with this UIComponent, the actual encoding 
+     * If a Renderer is associated with this UIComponent, the actual encoding
      * will be delegated to Renderer.encodeBegin(FacesContext, UIComponent).
      *
      * @param context FacesContext for the current request.
@@ -144,23 +225,21 @@ public class PropertySheet extends UIComponentBase implements NamingContainer {
      * @exception NullPointerException if FacesContext is null.
      */
     @Override
-    public void encodeBegin(FacesContext context) throws IOException {
+    public void encodeBegin(final FacesContext context) throws IOException {
         // Clear cached variables -- bugtraq #6270214.
-        _visibleSections = null;
-        _childCount = -1;
+        visibleSections = null;
+        childCount = -1;
         super.encodeBegin(context);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -170,234 +249,219 @@ public class PropertySheet extends UIComponentBase implements NamingContainer {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * <p>This boolean attribute allows you to control whether jump links
-     * will be created at the top of this <code>PropertySheet</code>
-     * or not.  The default is NOT to create the links -- setting this
-     * attribute to "true" turns this feature on.</p>
-     */
-    @Property(name = "jumpLinks", displayName = "Show Jump Links", category = "Appearance")
-    private boolean jumpLinks = false;
-    private boolean jumpLinks_set = false;
 
     /**
-     * <p>This boolean attribute allows you to control whether jump links
-     * will be created at the top of this <code>PropertySheet</code>
-     * or not.  The default is NOT to create the links -- setting this
-     * attribute to "true" turns this feature on.</p>
+     * This {@code boolean} attribute allows you to control whether jump links
+     * will be created at the top of this {@code PropertySheet} or not. The
+     * default is NOT to create the links -- setting this attribute to "true"
+     * turns this feature on.
+     * @return {@code boolean}
      */
     public boolean isJumpLinks() {
-        if (this.jumpLinks_set) {
+        if (this.jumpLinksSet) {
             return this.jumpLinks;
         }
-        ValueExpression _vb = getValueExpression("jumpLinks");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("jumpLinks");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>This boolean attribute allows you to control whether jump links
-     * will be created at the top of this <code>PropertySheet</code>
-     * or not.  The default is NOT to create the links -- setting this
-     * attribute to "true" turns this feature on.</p>
+     * This {@code boolean} attribute allows you to control whether jump links
+     * will be created at the top of this {@code PropertySheet} or not. The
+     * default is NOT to create the links -- setting this attribute to "true"
+     * turns this feature on.
+     *
      * @see #isJumpLinks()
+     * @param newJumpLinks jumpLinks
      */
-    public void setJumpLinks(boolean jumpLinks) {
-        this.jumpLinks = jumpLinks;
-        this.jumpLinks_set = true;
+    public void setJumpLinks(final boolean newJumpLinks) {
+        this.jumpLinks = newJumpLinks;
+        this.jumpLinksSet = true;
     }
-    /**
-     * <p>Specifies whether to display a required field legend in the 
-     * upper right area of the property sheet. This attribute should be set
-     * to true if one or more properties in the property sheet sections are 
-     * marked required. </p>
-     */
-    @Property(name = "requiredFields", displayName = "Required Field Legend", category = "Appearance", editorClassName = "com.sun.webui.jsf.component.propertyeditors.RequiredFieldsPropertyEditor")
-    private String requiredFields = null;
 
     /**
-     * <p>Specifies whether to display a required field legend in the 
-     * upper right area of the property sheet. This attribute should be set
-     * to true if one or more properties in the property sheet sections are 
-     * marked required. </p>
+     * Specifies whether to display a required field legend in the upper right
+     * area of the property sheet. This attribute should be set to true if one
+     * or more properties in the property sheet sections are marked required.
+     * @return String
      */
     public String getRequiredFields() {
         if (this.requiredFields != null) {
             return this.requiredFields;
         }
-        ValueExpression _vb = getValueExpression("requiredFields");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("requiredFields");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies whether to display a required field legend in the 
-     * upper right area of the property sheet. This attribute should be set
-     * to true if one or more properties in the property sheet sections are 
-     * marked required. </p>
+     * Specifies whether to display a required field legend in the upper right
+     * area of the property sheet. This attribute should be set to true if one
+     * or more properties in the property sheet sections are marked required.
+     *
      * @see #getRequiredFields()
+     * @param newRequiredFields requiredFields
      */
-    public void setRequiredFields(String requiredFields) {
-        this.requiredFields = requiredFields;
+    public void setRequiredFields(final String newRequiredFields) {
+        this.requiredFields = newRequiredFields;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance", editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.jumpLinks = ((Boolean) _values[1]).booleanValue();
-        this.jumpLinks_set = ((Boolean) _values[2]).booleanValue();
-        this.requiredFields = (String) _values[3];
-        this.style = (String) _values[4];
-        this.styleClass = (String) _values[5];
-        this.visible = ((Boolean) _values[6]).booleanValue();
-        this.visible_set = ((Boolean) _values[7]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.jumpLinks = ((Boolean) values[1]);
+        this.jumpLinksSet = ((Boolean) values[2]);
+        this.requiredFields = (String) values[3];
+        this.style = (String) values[4];
+        this.styleClass = (String) values[5];
+        this.visible = ((Boolean) values[6]);
+        this.visibleSet = ((Boolean) values[7]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[8];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.jumpLinks ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.jumpLinks_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.requiredFields;
-        _values[4] = this.style;
-        _values[5] = this.styleClass;
-        _values[6] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[8];
+        values[0] = super.saveState(context);
+        if (this.jumpLinks) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.jumpLinksSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        values[3] = this.requiredFields;
+        values[4] = this.style;
+        values[5] = this.styleClass;
+        if (this.visible) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[7] = Boolean.TRUE;
+        } else {
+            values[7] = Boolean.FALSE;
+        }
+        return values;
     }
 }

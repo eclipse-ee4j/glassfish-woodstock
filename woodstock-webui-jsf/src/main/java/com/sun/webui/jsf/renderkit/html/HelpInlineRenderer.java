@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -29,36 +28,38 @@ import com.sun.webui.jsf.util.ConversionUtilities;
 
 /**
  * Renders an instance of the {@link HelpInline} component.
- *
- * @author Sean Comerford
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.HelpInline"))
-public class HelpInlineRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.HelpInline"))
+public final class HelpInlineRenderer extends AbstractRenderer {
 
-    /** Creates a new instance of HelpInlineRenderer */
+    /**
+     * Creates a new instance of HelpInlineRenderer.
+     */
     public HelpInlineRenderer() {
     }
 
     /**
      * Render the start of the HelpInline component.
-     * 
+     *
      * @param context The current FacesContext
      * @param component The ImageComponent object to use
      * @param writer The current ResponseWriter
      *
-     * @exception IOException if an input/output error occurss
+     * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // render start of HelpInline
         HelpInline help = (HelpInline) component;
         Theme theme = ThemeUtilities.getTheme(context);
 
         writer.startElement("div", help);
 
-        String style = null;
-
+        String style;
         if (help.getType().equals("page")) {
             style = theme.getStyleClass(ThemeStyles.HELP_PAGE_TEXT);
         } else {
@@ -77,16 +78,18 @@ public class HelpInlineRenderer extends AbstractRenderer {
 
     /**
      * Render the end of the HelpInline component.
-     * 
+     *
      * @param context The current FacesContext
      * @param component The ImageComponent object to use
      * @param writer The current ResponseWriter
      *
-     * @exception IOException if an input/output error occurss
+     * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         writer.endElement("div");
     }
 }

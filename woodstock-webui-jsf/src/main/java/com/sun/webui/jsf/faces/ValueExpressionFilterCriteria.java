@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,7 +22,6 @@ import javax.faces.context.FacesContext;
 import javax.el.ValueExpression;
 import com.sun.data.provider.FilterCriteria;
 import com.sun.data.provider.RowKey;
-import com.sun.data.provider.TableDataFilter;
 import com.sun.data.provider.TableDataProvider;
 import com.sun.data.provider.impl.CompareFilterCriteria;
 import com.sun.data.provider.impl.TableRowDataProvider;
@@ -39,67 +38,120 @@ import com.sun.faces.annotation.Property;
  *
  * @see TableDataProvider
  * @see TableDataFilter
- *
- * @author Joe Nuxoll, John Yeary
  */
 @Component(isTag = false)
-public class ValueExpressionFilterCriteria extends FilterCriteria {
+public final class ValueExpressionFilterCriteria extends FilterCriteria {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 8984072154367845774L;
 
     /**
-     *
+     * Storage for the compare locale.
+     */
+    private Locale compareLocale;
+
+    /**
+     * Is the value less than.
+     */
+    private boolean matchLessThan = false;
+
+    /**
+     * Is the value greater than.
+     */
+    private boolean matchGreaterThan = false;
+
+    /**
+     * Is the value equal to.
+     */
+    private boolean matchEqualTo = true;
+
+    /**
+     * Value expression.
+     */
+    @Property(displayName = "Value Expression")
+    private String valueExpression;
+
+    /**
+     * Compare value.
+     */
+    @Property(displayName = "Compare Value")
+    private Object compareValue;
+
+    /**
+     * Request map key.
+     */
+    @Property(displayName = "Request Map Key")
+    private String requestMapKey = "currentRow";
+
+    /**
+     * Row provider.
+     */
+    private transient TableRowDataProvider rowProvider;
+
+    /**
+     * This is a monitor lock for rowProvider.
+     */
+    private final String rowProviderLock = "rowProviderLock";
+
+    /**
+     * Create a new instance with no value expression.
      */
     public ValueExpressionFilterCriteria() {
     }
 
     /**
-     *
-     * @param valueExpression String
+     * Create a new instance with the specified value expression.
+     * @param newValueExpression String
      */
-    public ValueExpressionFilterCriteria(String valueExpression) {
-        this.valueExpression = valueExpression;
+    public ValueExpressionFilterCriteria(final String newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
-     *
-     * @param compareValue The desired compare value
+     * Create a new instance with no value expression and the given compare
+     * value.
+     * @param newCompareValue The desired compare value
      */
-    public ValueExpressionFilterCriteria(Object compareValue) {
-        this.compareValue = compareValue;
+    public ValueExpressionFilterCriteria(final Object newCompareValue) {
+        this.compareValue = newCompareValue;
     }
 
     /**
-     *
-     * @param valueExpression String
-     * @param compareValue The desired compare value
+     * Create a new instance with the specified value expression and compare
+     * value.
+     * @param newValueExpression String
+     * @param newCompareValue The desired compare value
      */
-    public ValueExpressionFilterCriteria(String valueExpression, Object compareValue) {
-        this.valueExpression = valueExpression;
-        this.compareValue = compareValue;
+    public ValueExpressionFilterCriteria(final String newValueExpression,
+            final Object newCompareValue) {
+
+        this.valueExpression = newValueExpression;
+        this.compareValue = newCompareValue;
     }
 
     /**
-     *
-     * @param valueExpression String
-     * @param compareValue Object
-     * @param matchLessThan boolean
-     * @param matchEqualTo boolean
-     * @param matchGreaterThan boolean
+     * Create a new instance with the specified value expression and compare
+     * value and matching rules.
+     * @param newValueExpression String
+     * @param newCompareValue Object
+     * @param newMatchLessThan boolean
+     * @param newMatchEqualTo boolean
+     * @param newMatchGreaterThan boolean
      */
-    public ValueExpressionFilterCriteria(String valueExpression, Object compareValue,
-            boolean matchLessThan, boolean matchEqualTo, boolean matchGreaterThan) {
+    public ValueExpressionFilterCriteria(final String newValueExpression,
+            final Object newCompareValue, final boolean newMatchLessThan,
+            final boolean newMatchEqualTo, final boolean newMatchGreaterThan) {
 
-        this.valueExpression = valueExpression;
-        this.compareValue = compareValue;
-        this.matchLessThan = matchLessThan;
-        this.matchEqualTo = matchEqualTo;
-        this.matchGreaterThan = matchGreaterThan;
+        this.valueExpression = newValueExpression;
+        this.compareValue = newCompareValue;
+        this.matchLessThan = newMatchLessThan;
+        this.matchEqualTo = newMatchEqualTo;
+        this.matchGreaterThan = newMatchGreaterThan;
     }
 
-    /**
-     *
-     */
+    @Override
     public String getDisplayName() {
         String name = super.getDisplayName();
         if (name != null && !"".equals(name)) {
@@ -108,9 +160,17 @@ public class ValueExpressionFilterCriteria extends FilterCriteria {
 
         // if there's no display name, make one...
         Object val = getCompareValue();
-        StringBuffer sb = new StringBuffer();
-        sb.append(isInclude() ? "Include [" : "Exclude [");
-        sb.append(valueExpression != null ? valueExpression : "<no value expression>");
+        StringBuilder sb = new StringBuilder();
+        if (isInclude()) {
+            sb.append("Include [");
+        } else {
+            sb.append("Exclude [");
+        }
+        if (valueExpression != null) {
+            sb.append(valueExpression);
+        } else {
+            sb.append("<no value expression>");
+        }
         sb.append("] ");
         boolean anyMatches = false;
         if (matchLessThan) {
@@ -130,20 +190,22 @@ public class ValueExpressionFilterCriteria extends FilterCriteria {
             }
             sb.append("is greater than ");
         }
-        sb.append("[" + val + "]");
+        sb.append("[")
+                .append(val)
+                .append("]");
         return sb.toString();
     }
 
     /**
-     *
-     * @param valueExpression String
+     * Set the value expression.
+     * @param newValueExpression String
      */
-    public void setValueExpression(String valueExpression) {
-        this.valueExpression = valueExpression;
+    public void setValueExpression(final String newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
-     *
+     * Get the value expression.
      * @return String
      */
     public String getValueExpression() {
@@ -164,106 +226,91 @@ public class ValueExpressionFilterCriteria extends FilterCriteria {
 
     /**
      * Sets the request map variable key that will be used to store the
-     * {@link TableRowDataProvider} for the current row being match tested.
-     * This allows value expressions to refer to the "current" row during the
-     * filter operation.
+     * {@link TableRowDataProvider} for the current row being match tested. This
+     * allows value expressions to refer to the "current" row during the filter
+     * operation.
      *
-     * @param requestMapKey String key to use for the {@link TableRowDataProvider}
+     * @param newRequestMapKey String key to use for the
+     * {@link TableRowDataProvider}
      */
-    public void setRequestMapKey(String requestMapKey) {
-        this.requestMapKey = requestMapKey;
+    public void setRequestMapKey(final String newRequestMapKey) {
+        this.requestMapKey = newRequestMapKey;
     }
 
     /**
-     *
-     * @param value Object
+     * Set the compare value.
+     * @param newCompareValue Object
      */
-    public void setCompareValue(Object value) {
-        this.compareValue = value;
+    public void setCompareValue(final Object newCompareValue) {
+        this.compareValue = newCompareValue;
     }
 
     /**
-     *
+     * Get the compare value.
      * @return Object
      */
     public Object getCompareValue() {
         return compareValue;
     }
-    /**
-     * Storage for the compare locale
-     */
-    protected Locale compareLocale;
 
     /**
-     *
-     * @param compareLocale Locale
+     * Set the compare locale.
+     * @param newCompareLocale Locale
      */
-    public void setCompareLocale(Locale compareLocale) {
-        this.compareLocale = compareLocale;
+    public void setCompareLocale(final Locale newCompareLocale) {
+        this.compareLocale = newCompareLocale;
     }
 
     /**
-     *
+     * Get the compare locale.
      * @return Locale
      */
     public Locale getCompareLocale() {
         return compareLocale;
     }
-    /**
-     *
-     */
-    protected boolean matchEqualTo = true;
 
     /**
-     *
-     * @param matchEqualTo boolean
+     * Set the match equal to flag value.
+     * @param newMatchEqualTo boolean
      */
-    public void setMatchEqualTo(boolean matchEqualTo) {
-        this.matchEqualTo = matchEqualTo;
+    public void setMatchEqualTo(final boolean newMatchEqualTo) {
+        this.matchEqualTo = newMatchEqualTo;
     }
 
     /**
-     *
+     * Test if is match equal to is {@code true}.
      * @return boolean
      */
     public boolean isMatchEqualTo() {
         return matchEqualTo;
     }
-    /**
-     *
-     */
-    protected boolean matchLessThan = false;
 
     /**
-     *
-     * @param matchLessThan boolean
+     * Set the match less than flag value.
+     * @param newMatchLessThan boolean
      */
-    public void setMatchLessThan(boolean matchLessThan) {
-        this.matchLessThan = matchLessThan;
+    public void setMatchLessThan(final boolean newMatchLessThan) {
+        this.matchLessThan = newMatchLessThan;
     }
 
     /**
-     *
+     * Test the match less than flag.
      * @return boolean
      */
     public boolean isMatchLessThan() {
         return matchLessThan;
     }
-    /**
-     *
-     */
-    protected boolean matchGreaterThan = false;
 
     /**
-     *
-     * @param matchGreaterThan boolean
+     * Set the match greater than flag value.
+     * @param newMatchGreaterThan boolean
      */
-    public void setMatchGreaterThan(boolean matchGreaterThan) {
-        this.matchGreaterThan = matchGreaterThan;
+    public void setMatchGreaterThan(final boolean newMatchGreaterThan) {
+        this.matchGreaterThan = newMatchGreaterThan;
     }
 
     /**
-     *
+     * Test the match greater than value.
      * @return boolean
      */
     public boolean isMatchGreaterThan() {
@@ -281,21 +328,27 @@ public class ValueExpressionFilterCriteria extends FilterCriteria {
      *
      * {@inheritDoc}
      */
-    public boolean match(TableDataProvider provider, RowKey row) {
+    @Override
+    public boolean match(final TableDataProvider provider, final RowKey row) {
         if (valueExpression == null || "".equals(valueExpression)) {
             return true;
         }
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        ValueExpression valueBinding = facesContext.getApplication().getExpressionFactory().createValueExpression(
+        ValueExpression valueBinding = facesContext
+                .getApplication()
+                .getExpressionFactory()
+                .createValueExpression(
                 facesContext.getELContext(), valueExpression, Object.class);
 
         if (valueBinding == null) {
             return true;
         }
 
-        Map<String, Object> requestMap = facesContext.getExternalContext().getRequestMap();
-        Object value = null;
+        Map<String, Object> requestMap = facesContext
+                .getExternalContext()
+                .getRequestMap();
+        Object value;
 
         //FIXME synchronization on a non-final field
         synchronized (rowProviderLock) {
@@ -322,7 +375,8 @@ public class ValueExpressionFilterCriteria extends FilterCriteria {
             }
         }
 
-        int compare = CompareFilterCriteria.compare(value, compareValue, compareLocale);
+        int compare = CompareFilterCriteria.compare(value, compareValue,
+                compareLocale);
         switch (compare) {
             case -1: // Less Than
                 return matchLessThan;
@@ -330,15 +384,8 @@ public class ValueExpressionFilterCriteria extends FilterCriteria {
                 return matchEqualTo;
             case 1: // Greater Than
                 return matchGreaterThan;
+            default:
+                return false;
         }
-        return false; // This should never be reached
     }
-    @Property(displayName = "Value Expression")
-    private String valueExpression;
-    @Property(displayName = "Compare Value")
-    private Object compareValue;
-    @Property(displayName = "Request Map Key")
-    private String requestMapKey = "currentRow";
-    private transient TableRowDataProvider rowProvider;
-    private String rowProviderLock = "rowProviderLock"; // this is a monitor lock for rowProvider
 }

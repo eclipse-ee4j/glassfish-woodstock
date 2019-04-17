@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,7 +17,6 @@
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
-import com.sun.webui.jsf.component.Html;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -29,19 +28,20 @@ import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
  * Renderer for a {@link Html} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Html"))
-public class HtmlRenderer extends AbstractRenderer {
+public final class HtmlRenderer extends AbstractRenderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "xmlns",
         "lang"
     };
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // Start the appropriate element
         if (!isPortlet(context)) {
@@ -50,8 +50,9 @@ public class HtmlRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (!isPortlet(context)) {
             addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
@@ -66,12 +67,13 @@ public class HtmlRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (!isPortlet(context)) {
-            writer.endElement("html"); //NOI18N
-            writer.write("\n"); //NOI18N
+            writer.endElement("html");
+            writer.write("\n");
         }
     }
 }

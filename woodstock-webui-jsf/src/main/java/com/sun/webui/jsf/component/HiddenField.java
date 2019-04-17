@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -25,22 +24,46 @@ import javax.faces.context.FacesContext;
 /**
  * The HiddenField component is used to create a hidden input field.
  */
-@Component(type = "com.sun.webui.jsf.HiddenField", family = "com.sun.webui.jsf.HiddenField",
-displayName = "Hidden Field", tagName = "hiddenField",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_hidden_field",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_hidden_field_props")
+@Component(type = "com.sun.webui.jsf.HiddenField",
+        family = "com.sun.webui.jsf.HiddenField",
+        displayName = "Hidden Field",
+        tagName = "hiddenField",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_hidden_field",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_hidden_field_props")
+        //CHECKSTYLE:ON
 public class HiddenField extends WebuiInput {
 
-    private final static boolean DEBUG = false;
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
 
-    /** Creates a new instance of HiddenField */
+    /**
+     * Flag indicating that the hidden field should not send its value to the
+     * server.
+     */
+    @Property(name = "disabled",
+            displayName = "Disabled",
+            category = "Behavior")
+    private boolean disabled = false;
+
+    /**
+     * disabled set flag.
+     */
+    private boolean disabledSet = false;
+
+    /**
+     * Creates a new instance of HiddenField.
+     */
     public HiddenField() {
         super();
         setRendererType("com.sun.webui.jsf.HiddenField");
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * This implementation returns {@code "com.sun.webui.jsf.HiddenField}.
+     * @return String
      */
     @Override
     public String getFamily() {
@@ -48,25 +71,25 @@ public class HiddenField extends WebuiInput {
     }
 
     /**
-     * <p>Return the value to be rendered as a string when the
-     * component is readOnly. The default behaviour is to
-     * invoke getValueAsString(). Override this method in case
-     * a component needs specialized behaviour.</p>
+     * Return the value to be rendered as a string when the component is
+     * readOnly. The default behavior is to invoke getValueAsString(). Override
+     * this method in case a component needs specialized behavior.
+     *
      * @param context FacesContext for the current request
      * @return A String value of the component
      */
-    public String getReadOnlyValueString(FacesContext context) {
+    public String getReadOnlyValueString(final FacesContext context) {
         return getValueAsString(context);
     }
 
     /**
-     * <p>Return the value to be rendered, as a String (converted
-     * if necessary), or <code>null</code> if the value is null.</p>
+     * Return the value to be rendered, as a String (converted if necessary), or
+     * {@code null} if the value is null.
+     *
      * @param context FacesContext for the current request
      * @return A String value of the component
      */
-    public String getValueAsString(FacesContext context) {
-
+    public String getValueAsString(final FacesContext context) {
         if (DEBUG) {
             log("getValueAsString()");
         }
@@ -78,18 +101,15 @@ public class HiddenField extends WebuiInput {
         // If the component has not passed through the PROCESS_VALIDATORS
         // phase then submittedValue will be non null if a value
         // was submitted for this component.
-        //
         Object submittedValue = getSubmittedValue();
         if (submittedValue != null) {
-
             if (DEBUG) {
-                log("Submitted value is not null " + submittedValue.toString()); //NOI18N
+                log("Submitted value is not null " + submittedValue.toString());
             }
-
             return (String) submittedValue;
         }
-
-        String value = ConversionUtilities.convertValueToString(this, getText());
+        String value = ConversionUtilities
+                .convertValueToString(this, getText());
 
         if (value == null) {
             value = new String();
@@ -98,20 +118,21 @@ public class HiddenField extends WebuiInput {
         if (DEBUG) {
             log("Component value is " + value);
         }
-
         return value;
     }
 
     /**
-     * Return the converted value of newValue.
-     * If newValue is null, return null.
-     * If newValue is "", check the rendered value. If the
-     * the value that was rendered was null, return null
-     * else continue to convert.
+     * This implementation uses
+     * {@link ConversionUtilities#convertRenderedValue}.
+     * @param context faces context
+     * @param newValue value to convert
+     * @return Object
+     * @throws javax.faces.convert.ConverterException if a conversion error
+     * occurs
      */
     @Override
-    protected Object getConvertedValue(FacesContext context,
-            Object newValue)
+    protected Object getConvertedValue(final FacesContext context,
+            final Object newValue)
             throws javax.faces.convert.ConverterException {
 
         if (DEBUG) {
@@ -128,25 +149,26 @@ public class HiddenField extends WebuiInput {
         if (DEBUG) {
             log("\tValue is " + String.valueOf(value));
         }
-
         return value;
     }
 
-    protected void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s);
+    /**
+     * Log a message to the standard out.
+     * @param msg message to log
+     */
+    protected void log(final String msg) {
+        System.out.println(this.getClass().getName() + "::" + msg);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
+     * This implementation aliases {@code "text"} with {@code "value"} and
+     * invokes {@code super.getValueExpression}.
      *
-     * @param name Name of value binding expression to retrieve
+     * @param name value expression name
+     * @return ValueExpression
      */
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("text")) {
             return super.getValueExpression("value");
         }
@@ -154,15 +176,16 @@ public class HiddenField extends WebuiInput {
     }
 
     /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
+     * This implementation aliases {@code "text"} with {@code "value"} and
+     * invokes {@code super.setValueExpression}.
      *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
+     * @param name value expression name
+     * @param binding value expression
      */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("text")) {
             super.setValueExpression("value", binding);
             return;
@@ -171,6 +194,10 @@ public class HiddenField extends WebuiInput {
     }
 
     // Hide required
+    /**
+     * This implementation invokes {@code super.isRequired}.
+     * @return {@code boolean}
+     */
     @Property(name = "required", isHidden = true, isAttribute = false)
     @Override
     public boolean isRequired() {
@@ -178,88 +205,110 @@ public class HiddenField extends WebuiInput {
     }
 
     // Hide value as property
+    /**
+     * This implementation invokes {@code super.getValue}.
+     * @return Object
+     */
     @Property(name = "value", isHidden = true, isAttribute = false)
     @Override
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * <p>Flag indicating that the hidden field should not send its value to the
-     * server.</p>
-     */
-    @Property(name = "disabled", displayName = "Disabled", category = "Behavior")
-    private boolean disabled = false;
-    private boolean disabled_set = false;
 
+    /**
+     * Get the disabled flag value.
+     * @return {@code boolean}
+     */
     public boolean isDisabled() {
-        if (this.disabled_set) {
+        if (this.disabledSet) {
             return this.disabled;
         }
-        ValueExpression _vb = getValueExpression("disabled");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("disabled");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag indicating that the hidden field should not send its value to the
-     * server.</p>
+     * Flag indicating that the hidden field should not send its value to the
+     * server.
+     *
      * @see #isDisabled()
+     * @param newDisabled disabled
      */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-        this.disabled_set = true;
+    public void setDisabled(final boolean newDisabled) {
+        this.disabled = newDisabled;
+        this.disabledSet = true;
     }
 
     /**
-     * <p>Literal value to be rendered in this hidden field.
-     * If this property is specified by a value binding
-     * expression, the corresponding value will be updated
-     * if validation succeeds.</p>
+     * Literal value to be rendered in this hidden field. If this property is
+     * specified by a value binding expression, the corresponding value will be
+     * updated if validation succeeds.
+     * @return Object
      */
-    @Property(name = "text", displayName = "Text", category = "Data", isDefault = true,
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+    @Property(name = "text",
+            displayName = "Text",
+            category = "Data",
+            isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
     public Object getText() {
         return getValue();
     }
 
     /**
-     * <p>Literal value to be rendered in this hidden field.
-     * If this property is specified by a value binding
-     * expression, the corresponding value will be updated
-     * if validation succeeds.</p>
+     * Literal value to be rendered in this hidden field. If this property is
+     * specified by a value binding expression, the corresponding value will be
+     * updated if validation succeeds.
+     *
      * @see #getText()
+     * @param text text
      */
-    public void setText(Object text) {
+    public void setText(final Object text) {
         setValue(text);
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.disabled = ((Boolean) _values[1]).booleanValue();
-        this.disabled_set = ((Boolean) _values[2]).booleanValue();
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.disabled = ((Boolean) values[1]);
+        this.disabledSet = ((Boolean) values[2]);
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[3];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.disabled ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.disabled_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[3];
+        values[0] = super.saveState(context);
+        if (this.disabled) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.disabledSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        return values;
     }
 }

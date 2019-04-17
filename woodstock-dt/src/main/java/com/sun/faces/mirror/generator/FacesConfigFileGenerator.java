@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,15 +21,32 @@ import java.util.Set;
 
 /**
  * Base generator for the faces configuration file.
- *
- * @author gjmurphy
  */
-abstract public class FacesConfigFileGenerator extends Generator {
+public abstract class FacesConfigFileGenerator extends Generator {
 
+    /**
+     * Declared components.
+     */
     private Set<DeclaredComponentInfo> declaredComponentInfos;
+
+    /**
+     * Declared renderers.
+     */
     private Set<DeclaredRendererInfo> declaredRendererInfos;
+
+    /**
+     * Declared property resolver names.
+     */
     private Set<String> declaredPropertyResolverNames;
+
+    /**
+     * Declared variable resolver names.
+     */
     private Set<String> declaredVariableResolverNames;
+
+    /**
+     * Declared JavaEE resolver name.
+     */
     private Set<String> declaredJavaEEResolverName;
 
     /**
@@ -47,7 +64,7 @@ abstract public class FacesConfigFileGenerator extends Generator {
      * @param newCompInfos new set of component info
      */
     public void setDeclaredComponentInfos(
-            Set<DeclaredComponentInfo> newCompInfos) {
+            final Set<DeclaredComponentInfo> newCompInfos) {
 
         this.declaredComponentInfos = newCompInfos;
     }
@@ -64,10 +81,10 @@ abstract public class FacesConfigFileGenerator extends Generator {
     /**
      * Setter for property declaredRendererInfoSet.
      *
-     * @param newRendererInfos
+     * @param newRendererInfos new renderers
      */
     public void setDeclaredRendererInfos(
-            Set<DeclaredRendererInfo> newRendererInfos) {
+            final Set<DeclaredRendererInfo> newRendererInfos) {
 
         this.declaredRendererInfos = newRendererInfos;
     }
@@ -88,7 +105,7 @@ abstract public class FacesConfigFileGenerator extends Generator {
      * declaredPropertyResolverNameSet.
      */
     public void setDeclaredPropertyResolverNames(
-            Set<String> newPropertyResolverNames) {
+            final Set<String> newPropertyResolverNames) {
 
         this.declaredPropertyResolverNames = newPropertyResolverNames;
     }
@@ -109,7 +126,7 @@ abstract public class FacesConfigFileGenerator extends Generator {
      * declaredVariableResolverNameSet.
      */
     public void setDeclaredVariableResolverNames(
-            Set<String> newVariableResolverNames) {
+            final Set<String> newVariableResolverNames) {
 
         this.declaredVariableResolverNames = newVariableResolverNames;
     }
@@ -130,7 +147,7 @@ abstract public class FacesConfigFileGenerator extends Generator {
      * declaredJavaEEResolverNameSet.
      */
     public void setDeclaredJavaEEResolverNames(
-            Set<String> newJavaEEResolverNames) {
+            final Set<String> newJavaEEResolverNames) {
 
         this.declaredJavaEEResolverName = newJavaEEResolverNames;
     }

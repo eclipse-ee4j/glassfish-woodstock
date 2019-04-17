@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,10 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO remove
- * Provides an efficient and robust mechanism for converting an object to a
- * different type. For example, one can convert a <code>String</code> to an
- * <code>Integer</code> using the <code>TypeConverter</code> like this:
+ * TODO remove Provides an efficient and robust mechanism for converting an
+ * object to a different type. For example, one can convert a {@code String} to
+ * an {@code Integer} using the {@code TypeConverter} like this:
  *
  * <pre>
  *  Integer i = (Integer) TypeConverter.asType(Integer.class, "123");
@@ -35,16 +34,15 @@ import java.util.Map;
  *  int i = TypeConverter.asInt("123");
  * </pre>
  *
- * The <code>TypeConverter</code> comes ready to convert all the primitive
- * types, plus a few more like <code>java.sql.Date</code> and <code>
- * java.math.BigDecimal</code>.<p>
+ * The {@code TypeConverter} comes ready to convert all the primitive types,
+ * plus a few more like {@code java.sql.Date} and {@code java.math.BigDecimal}.
  *
  * The conversion process has been optimized so that it is now a constant time
  * operation (aside from the conversion itself, which may vary). Because of this
  * optimization, it is possible to register classes that implement the new
- * <code>TypeConversion</code> interface for conversion to a custom type. For
+ * {@code TypeConversion} interface for conversion to a custom type. For
  * example, this means that you can define a class to convert arbitrary objects
- * to type <code>Foo</code>, and register it for use throughout the VM:
+ * to type {@code Foo}, and register it for use throughout the VM:
  *
  * <pre>
  *  TypeConversion fooConversion = new FooTypeConversion();
@@ -58,17 +56,14 @@ import java.util.Map;
  * </pre>
  *
  * The TypeConverter allows specification of an arbitrary <i>type key</i> in the
- * <code>registerTypeConversion()</code> and <code>asType()</code> methods, so
- * one can simultaneously register a conversion object under a <code>
- * Class</code> object, a class name, and a logical type name. For example, the
- * following are valid ways of converting a string to an <code>int</code> using
- * <code>TypeConverter</code>:
+ * {@code registerTypeConversion()} and {@code asType()} methods, so one can
+ * simultaneously register a conversion object under a {@code Class} object, a
+ * class name, and a logical type name. For example, the following are valid
+ * ways of converting a string to an {@code int} using {@code TypeConverter}:
  *
  * <pre>
  *  Integer i = (Integer) TypeConverter.asType(Integer.class, "123");
  *  Integer i = (Integer) TypeConverter.asType("java.lang.Integer", "123");
- *  Integer i = (Integer) TypeConverter.asType(TypeConverter.TYPE_INT, "123");
- *  Integer i = (Integer) TypeConverter.asType(TypeConverter.TYPE_INTEGER, "123");
  *  Integer i = (Integer) TypeConverter.asType("int", "123");
  *  Integer i = (Integer) TypeConverter.asType("integer", "123");
  *  int i = TypeConverter.asInt("123");
@@ -137,741 +132,31 @@ import java.util.Map;
  *      TypeConverter.TYPE_SQL_TIMESTAMP ("sqltimestamp")
  * </pre>
  *
- * The <code>TypeConverter</code> treats type keys of type <code>Class</code>
- * slightly differently than other keys. If the provided value is already of the
- * type specified by the type key class, it is returned without a conversion
- * taking place. For example, a value of type <code>MySub</code> that extends
- * the class <code>MySuper</code> would not be converted in the following
- * situation because it is already of the necessary type:
+ * The {@code TypeConverter} treats type keys of type {@code Class} slightly
+ * differently than other keys. If the provided value is already of the type
+ * specified by the type key class, it is returned without a conversion taking
+ * place. For example, a value of type {@code MySub} that extends the class
+ * {@code MySuper} would not be converted in the following situation because it
+ * is already of the necessary type:
  *
  * <pre>
  *  MySub o = (MySub) TypeConverter.asType(MySuper.class, mySub);
  * </pre>
  *
  * Be warned that although the type conversion infrastructure in this class is
- * designed to add only minimal overhead to the conversion process, conversion of
- * an object to another type is a potentially expensive operation and should be
- * used with discretion.
+ * designed to add only minimal overhead to the conversion process, conversion
+ * of an object to another type is a potentially expensive operation and should
+ * be used with discretion.
  *
  * @see TypeConversion
- * @author Todd Fast, todd.fast@sun.com
- * @author Mike Frisino, michael.frisino@sun.com
- * @author Ken Paulsen, ken.paulsen@sun.com (stripped down)
  */
-public class TypeConverter extends Object {
+public final class TypeConverter extends Object {
 
     /**
-     * Cannot instantiate
+     * Type conversions map.
      */
-    private TypeConverter() {
-        super();
-    }
-
-    /**
-     * Return the map of type conversion objects. The keys for the values in
-     * this map may be arbitrary objects, but the values are of type
-     * <code>TypeConversion</code>.
-     */
-    public static Map getTypeConversions() {
-        return TYPE_CONVERSIONS;
-    }
-
-    /**
-     * Register a type conversion object under the specified key. This method
-     * can be used by developers to register custom type conversion objects.
-     */
-    public static void registerTypeConversion(Object key, TypeConversion conversion) {
-        TYPE_CONVERSIONS.put(key, conversion);
-    }
-
-    /**
-     * <p>
-     * Convert an object to the type specified by the provided type key. A type
-     * conversion object must have been previously registered under the provided
-     * key in order for the conversion to succeed (with one exception, see
-     * below).</p>
-     *
-     * <p>
-     * Note, this method treats type keys of type <code>Class</code> differently
-     * than other type keys. That is, this method will check if the provided
-     * value is the same as or a subclass of the specified class. If it is, this
-     * method returns the value object immediately without attempting to convert
-     * its type. One exception to this rule is if the provided type key is
-     * <code>Object.class</code>, in which case the conversion is attempted
-     * anyway. The reason for this deviation is that this key may have special
-     * meaning based on the type of the provided value. For example, if the
-     * provided value is a byte array, the <code>ObjectTypeConversion</code>
-     * class assumes it is a serialized object and attempts to deserialize it.
-     * Because all objects, including arrays, are of type <code>Object</code>,
-     * this conversion would never be attempted without this special handling.
-     * (Note that the default conversion for type key <code>
-     *      Object.class</code> is to simply return the original object.)</p>
-     *
-     * @param typeKey The key under which the desired type conversion object has
-     * been previously registered. Most commonly, this key should be a
-     * <code>Class</code> object, a class name string, or a logical type string
-     * represented by the various <code>TYPE_*</code> constants defined in this
-     * class.
-     *
-     * @param value The value to convert to the specified target type
-     *
-     * @return The converted value object, or <code>null</code> if the original
-     * value is <code>null</code>
-     */
-    public static Object asType(Object typeKey, Object value) {
-        if (value == null) {
-            return null;
-        }
-
-        /*
-        System.out.println("COERCE_TYPE: Coercing ("+value+
-        ")\n\tfrom "+value.getClass().getName()+
-        "\n\tto   "+typeKey+"\n");
-         */
-        if (typeKey == null) {
-            return value;
-        }
-
-        // Check if the provided value is already of the target type
-        if (typeKey instanceof Class && ((Class) typeKey) != Object.class) {
-            if (((Class) typeKey).isInstance(value)) {
-                return value;
-            }
-        }
-
-        // Find the type conversion object
-        TypeConversion conversion = (TypeConversion) TYPE_CONVERSIONS.get(typeKey);
-
-        // Convert the value
-        if (conversion != null) {
-            return conversion.convertValue(value);
-        } else {
-            throw new IllegalArgumentException("Could not find type conversion for "
-                    + "type \"" + typeKey + "\" (value = \"" + value + "\"");
-        }
-    }
-
-    /**
-     *
-     */
-    public static byte asByte(Object value) {
-        return asByte(value, (byte) 0);
-    }
-
-    /**
-     *
-     */
-    public static byte asByte(Object value, byte defaultValue) {
-        value = asType(Byte.class, value);
-        if (value != null) {
-            return ((Byte) value).byteValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static short asShort(Object value) {
-        return asShort(value, (short) 0);
-    }
-
-    /**
-     *
-     */
-    public static short asShort(Object value, short defaultValue) {
-        value = asType(Short.class, value);
-        if (value != null) {
-            return ((Short) value).shortValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static int asInt(Object value) {
-        return asInt(value, 0);
-    }
-
-    /**
-     *
-     */
-    public static int asInt(Object value, int defaultValue) {
-        value = asType(Integer.class, value);
-        if (value != null) {
-            return ((Integer) value).intValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static long asLong(Object value) {
-        return asLong(value, 0L);
-    }
-
-    /**
-     *
-     */
-    public static long asLong(Object value, long defaultValue) {
-        value = asType(Long.class, value);
-        if (value != null) {
-            return ((Long) value).longValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static float asFloat(Object value) {
-        return asFloat(value, 0F);
-    }
-
-    /**
-     *
-     */
-    public static float asFloat(Object value, float defaultValue) {
-        value = asType(Float.class, value);
-        if (value != null) {
-            return ((Float) value).floatValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static double asDouble(Object value) {
-        return asDouble(value, 0D);
-    }
-
-    /**
-     *
-     */
-    public static double asDouble(Object value, double defaultValue) {
-        value = asType(Double.class, value);
-        if (value != null) {
-            return ((Double) value).doubleValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static char asChar(Object value) {
-        return asChar(value, (char) 0);
-    }
-
-    /**
-     *
-     */
-    public static char asChar(Object value, char defaultValue) {
-        value = asType(Character.class, value);
-        if (value != null) {
-            return ((Character) value).charValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static boolean asBoolean(Object value) {
-        return asBoolean(value, false);
-    }
-
-    /**
-     *
-     */
-    public static boolean asBoolean(Object value, boolean defaultValue) {
-        value = asType(Boolean.class, value);
-        if (value != null) {
-            return ((Boolean) value).booleanValue();
-        }
-        return defaultValue;
-    }
-
-    /**
-     *
-     */
-    public static String asString(Object value) {
-        return (String) asType(String.class, value);
-    }
-
-    /**
-     *
-     */
-    public static String asString(Object value, String defaultValue) {
-        value = asType(String.class, value);
-        if (value != null) {
-            return (String) value;
-        }
-        return defaultValue;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // Inner classes
-    ////////////////////////////////////////////////////////////////////////////////
-    /**
-     *
-     */
-    public static class UnknownTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class StringTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (value.getClass().isArray()) {
-                // This is a byte array; we can convert it to a string
-                if (value.getClass().getComponentType() == Byte.TYPE) {
-                    value = new String((byte[]) value);
-                } else if (value.getClass().getComponentType() == Character.TYPE) {
-                    value = new String((char[]) value);
-                }
-            } else if (!(value instanceof String)) {
-                value = value.toString();
-            }
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class IntegerTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Integer)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Integer(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     *
-     */
-    public static class DoubleTypeConversion implements TypeConversion {
-
-        /**
-         *
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Double)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Double(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class BooleanTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Boolean)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = Boolean.valueOf(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class LongTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Long)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Long(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class FloatTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Float)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Float(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class ShortTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Short)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Short(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class BigDecimalTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof BigDecimal)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new BigDecimal(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class ByteTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Byte)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Byte(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class CharacterTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof Character)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    value = new Character(v.charAt(0));
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class SqlDateTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof java.sql.Date)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    // Value must be in the "yyyy-mm-dd" format
-                    value = java.sql.Date.valueOf(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class SqlTimeTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof java.sql.Time)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    // Value must be in the "hh:mm:ss" format
-                    value = java.sql.Time.valueOf(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class SqlTimestampTypeConversion implements TypeConversion {
-
-        /**
-         *
-         */
-        public Object convertValue(Object value) {
-            if (value == null) {
-                return null;
-            }
-
-            if (!(value instanceof java.sql.Timestamp)) {
-                String v = value.toString();
-                if (v.trim().length() == 0) {
-                    value = null;
-                } else {
-                    // Value must be in the "yyyy-mm-dd hh:mm:ss.fffffffff"
-                    // format
-                    value = java.sql.Timestamp.valueOf(v);
-                }
-            }
-
-            return value;
-        }
-    }
-
-    /**
-     *
-     */
-    public static class ObjectTypeConversion implements TypeConversion {
-
-        public Object convertValue(Object value) {
-            /*
-        if (value==null) {
-        return null;
-        }
-
-// TODO: Decide if this is important functionality.  For now just return the Object that is passed in.
-        if (value.getClass().isArray()) {
-        // This is a byte array; we can convert it to an object
-        if (value.getClass().getComponentType()==Byte.TYPE) {
-            ByteArrayInputStream bis=
-                new ByteArrayInputStream((byte[])value);
-            ApplicationObjectInputStream ois=null;
-            try {
-            ois=new ApplicationObjectInputStream(bis);
-            value=ois.readObject();
-            } catch (Exception e) {
-            throw new WrapperRuntimeException(
-                "Could not deserialize object",e);
-            } finally {
-            try {
-                if (ois!=null) {
-                ois.close();
-                }
-                if (bis!=null) {
-                bis.close();
-                }
-            } catch (IOException e) {
-                // Ignore
-            }
-            }
-        } else {
-            // value is OK as is
-        }
-        }
-             */
-
-            return value;
-        }
-    }
-
-    private static class TestSuperclass extends Object {
-    }
-
-    private static class Test extends TestSuperclass {
-
-        public static void main(String[] args) {
-            if (!(TypeConverter.asString(12) instanceof String)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Integer.class, "12") instanceof Integer)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Long.class, "12") instanceof Long)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Float.class, "12.0") instanceof Float)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Double.class, "12.0") instanceof Double)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Short.class, "12") instanceof Short)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(BigDecimal.class, "12") instanceof BigDecimal)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Boolean.class, "true") instanceof Boolean)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Byte.class, "12") instanceof Byte)) {
-                throw new Error();
-            }
-
-            if (!(TypeConverter.asType(Character.class, "1") instanceof Character)) {
-                throw new Error();
-            }
-
-            System.out.println("Test passed.");
-        }
-    }
-
-    private static final Map<Object, TypeConversion> TYPE_CONVERSIONS =
-            new HashMap<Object, TypeConversion>();
+    private static final Map<Object, TypeConversion> TYPE_CONVERSIONS
+            = new HashMap<Object, TypeConversion>();
 
     /**
      * Logical type name "null".
@@ -958,35 +243,94 @@ public class TypeConverter extends Object {
      */
     public static final String TYPE_SQL_TIMESTAMP = "sqltimestamp";
 
-    public static final TypeConversion UNKNOWN_TYPE_CONVERSION
+    /**
+     * Type conversion instance for "unknown" type.
+     */
+    private static final TypeConversion UNKNOWN_TYPE_CONVERSION
             = new UnknownTypeConversion();
-    public static final TypeConversion OBJECT_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "object" type.
+     */
+    private static final TypeConversion OBJECT_TYPE_CONVERSION
             = new ObjectTypeConversion();
-    public static final TypeConversion STRING_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "string" type.
+     */
+    private static final TypeConversion STRING_TYPE_CONVERSION
             = new StringTypeConversion();
-    public static final TypeConversion INTEGER_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "int" type.
+     */
+    private static final TypeConversion INTEGER_TYPE_CONVERSION
             = new IntegerTypeConversion();
-    public static final TypeConversion DOUBLE_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "double" type.
+     */
+    private static final TypeConversion DOUBLE_TYPE_CONVERSION
             = new DoubleTypeConversion();
-    public static final TypeConversion BOOLEAN_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "boolean" type.
+     */
+    private static final TypeConversion BOOLEAN_TYPE_CONVERSION
             = new BooleanTypeConversion();
-    public static final TypeConversion LONG_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "long" type.
+     */
+    private static final TypeConversion LONG_TYPE_CONVERSION
             = new LongTypeConversion();
-    public static final TypeConversion FLOAT_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "float" type.
+     */
+    private static final TypeConversion FLOAT_TYPE_CONVERSION
             = new FloatTypeConversion();
-    public static final TypeConversion SHORT_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "short" type.
+     */
+    private static final TypeConversion SHORT_TYPE_CONVERSION
             = new ShortTypeConversion();
-    public static final TypeConversion BIG_DECIMAL_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "bigdecimal" type.
+     */
+    private static final TypeConversion BIG_DECIMAL_TYPE_CONVERSION
             = new BigDecimalTypeConversion();
-    public static final TypeConversion BYTE_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "byte" type.
+     */
+    private static final TypeConversion BYTE_TYPE_CONVERSION
             = new ByteTypeConversion();
-    public static final TypeConversion CHARACTER_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "char" type.
+     */
+    private static final TypeConversion CHARACTER_TYPE_CONVERSION
             = new CharacterTypeConversion();
-    public static final TypeConversion SQL_DATE_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "sqldate" type.
+     */
+    private static final TypeConversion SQL_DATE_TYPE_CONVERSION
             = new SqlDateTypeConversion();
-    public static final TypeConversion SQL_TIME_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "sqltime" type.
+     */
+    private static final TypeConversion SQL_TIME_TYPE_CONVERSION
             = new SqlTimeTypeConversion();
-    public static final TypeConversion SQL_TIMESTAMP_TYPE_CONVERSION
+
+    /**
+     * Type conversion instance for "sqltimestamp" type.
+     */
+    private static final TypeConversion SQL_TIMESTAMP_TYPE_CONVERSION
             = new SqlTimestampTypeConversion();
 
     static {
@@ -1012,23 +356,31 @@ public class TypeConverter extends Object {
         registerTypeConversion(Character.TYPE, CHARACTER_TYPE_CONVERSION);
         registerTypeConversion(java.sql.Date.class, SQL_DATE_TYPE_CONVERSION);
         registerTypeConversion(java.sql.Time.class, SQL_TIME_TYPE_CONVERSION);
-        registerTypeConversion(java.sql.Timestamp.class, SQL_TIMESTAMP_TYPE_CONVERSION);
+        registerTypeConversion(java.sql.Timestamp.class,
+                SQL_TIMESTAMP_TYPE_CONVERSION);
 
         // Add type conversions by class name
         registerTypeConversion(Object.class.getName(), OBJECT_TYPE_CONVERSION);
         registerTypeConversion(String.class.getName(), STRING_TYPE_CONVERSION);
-        registerTypeConversion(Integer.class.getName(), INTEGER_TYPE_CONVERSION);
+        registerTypeConversion(Integer.class.getName(),
+                INTEGER_TYPE_CONVERSION);
         registerTypeConversion(Double.class.getName(), DOUBLE_TYPE_CONVERSION);
-        registerTypeConversion(Boolean.class.getName(), BOOLEAN_TYPE_CONVERSION);
+        registerTypeConversion(Boolean.class.getName(),
+                BOOLEAN_TYPE_CONVERSION);
         registerTypeConversion(Long.class.getName(), LONG_TYPE_CONVERSION);
         registerTypeConversion(Float.class.getName(), FLOAT_TYPE_CONVERSION);
         registerTypeConversion(Short.class.getName(), SHORT_TYPE_CONVERSION);
-        registerTypeConversion(BigDecimal.class.getName(), BIG_DECIMAL_TYPE_CONVERSION);
+        registerTypeConversion(BigDecimal.class.getName(),
+                BIG_DECIMAL_TYPE_CONVERSION);
         registerTypeConversion(Byte.class.getName(), BYTE_TYPE_CONVERSION);
-        registerTypeConversion(Character.class.getName(), CHARACTER_TYPE_CONVERSION);
-        registerTypeConversion(java.sql.Date.class.getName(), SQL_DATE_TYPE_CONVERSION);
-        registerTypeConversion(java.sql.Time.class.getName(), SQL_TIME_TYPE_CONVERSION);
-        registerTypeConversion(java.sql.Timestamp.class.getName(), SQL_TIMESTAMP_TYPE_CONVERSION);
+        registerTypeConversion(Character.class.getName(),
+                CHARACTER_TYPE_CONVERSION);
+        registerTypeConversion(java.sql.Date.class.getName(),
+                SQL_DATE_TYPE_CONVERSION);
+        registerTypeConversion(java.sql.Time.class.getName(),
+                SQL_TIME_TYPE_CONVERSION);
+        registerTypeConversion(java.sql.Timestamp.class.getName(),
+                SQL_TIMESTAMP_TYPE_CONVERSION);
 
         // Add type conversions by name
         registerTypeConversion(TYPE_UNKNOWN, UNKNOWN_TYPE_CONVERSION);
@@ -1047,6 +399,676 @@ public class TypeConverter extends Object {
         registerTypeConversion(TYPE_CHARACTER, CHARACTER_TYPE_CONVERSION);
         registerTypeConversion(TYPE_SQL_DATE, SQL_DATE_TYPE_CONVERSION);
         registerTypeConversion(TYPE_SQL_TIME, SQL_TIME_TYPE_CONVERSION);
-        registerTypeConversion(TYPE_SQL_TIMESTAMP, SQL_TIMESTAMP_TYPE_CONVERSION);
+        registerTypeConversion(TYPE_SQL_TIMESTAMP,
+                SQL_TIMESTAMP_TYPE_CONVERSION);
+    }
+
+    /**
+     * Cannot instantiated.
+     */
+    private TypeConverter() {
+        super();
+    }
+
+    /**
+     * Return the map of type conversion objects.The keys for the values in this
+     * map may be arbitrary objects, but the values are of type
+     * {@code TypeConversion}.
+     *
+     * @return Map
+     */
+    public static Map<Object, TypeConversion> getTypeConversions() {
+        return TYPE_CONVERSIONS;
+    }
+
+    /**
+     * Register a type conversion object under the specified key.This method can
+     * be used by developers to register custom type conversion objects.
+     *
+     * @param key type key
+     * @param conversion type conversion
+     */
+    private static void registerTypeConversion(final Object key,
+            final TypeConversion conversion) {
+
+        TYPE_CONVERSIONS.put(key, conversion);
+    }
+
+    /**
+     * Convert an object to the type specified by the provided type key. A type
+     * conversion object must have been previously registered under the provided
+     * key in order for the conversion to succeed (with one exception, see
+     * below).
+     *
+     * Note, this method treats type keys of type {@code Class} differently than
+     * other type keys. That is, this method will check if the provided value is
+     * the same as or a subclass of the specified class. If it is, this method
+     * returns the value object immediately without attempting to convert its
+     * type. One exception to this rule is if the provided type key is
+     * {@code Object.class}, in which case the conversion is attempted anyway.
+     * The reason for this deviation is that this key may have special meaning
+     * based on the type of the provided value. For example, if the provided
+     * value is a byte array, the {@code ObjectTypeConversion} class assumes it
+     * is a serialized object and attempts to de-serialize it. Because all
+     * objects, including arrays, are of type {@code Object}, this conversion
+     * would never be attempted without this special handling. (Note that the
+     * default conversion for type key {@code
+     *      Object.class} is to simply return the original object.)
+     *
+     * @param typeKey The key under which the desired type conversion object has
+     * been previously registered. Most commonly, this key should be a
+     * {@code Class} object, a class name string, or a logical type string
+     * represented by the various {@code TYPE_*} constants defined in this
+     * class.
+     *
+     * @param value The value to convert to the specified target type
+     *
+     * @return The converted value object, or {@code null} if the original value
+     * is {@code null}
+     */
+    private static Object asType(final Object typeKey, final Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        if (typeKey == null) {
+            return value;
+        }
+
+        // Check if the provided value is already of the target type
+        if (typeKey instanceof Class && ((Class) typeKey) != Object.class) {
+            if (((Class) typeKey).isInstance(value)) {
+                return value;
+            }
+        }
+
+        // Find the type conversion object
+        TypeConversion conversion = TYPE_CONVERSIONS.get(typeKey);
+
+        // Convert the value
+        if (conversion != null) {
+            return conversion.convertValue(value);
+        } else {
+            throw new IllegalArgumentException(
+                    "Could not find type conversion for "
+                    + "type \"" + typeKey + "\" (value = \""
+                    + value + "\"");
+        }
+    }
+
+    /**
+     * Convert an object to byte.
+     *
+     * @param value value to convert
+     * @return byte
+     */
+    public static byte asByte(final Object value) {
+        return asByte(value, (byte) 0);
+    }
+
+    /**
+     * Convert an object to byte with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return byte
+     */
+    public static byte asByte(final Object value, final byte defaultValue) {
+        Object res = asType(Byte.class, value);
+        if (res != null) {
+            return ((Byte) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to short.
+     *
+     * @param value value to convert
+     * @return short
+     */
+    public static short asShort(final Object value) {
+        return asShort(value, (short) 0);
+    }
+
+    /**
+     * Convert an object to short with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return short
+     */
+    public static short asShort(final Object value, final short defaultValue) {
+        Object res = asType(Short.class, value);
+        if (res != null) {
+            return ((Short) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to int.
+     *
+     * @param value value to convert
+     * @return int
+     */
+    public static int asInt(final Object value) {
+        return asInt(value, 0);
+    }
+
+    /**
+     * Convert an object to int with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return int
+     */
+    public static int asInt(final Object value, final int defaultValue) {
+        Object res = asType(Integer.class, value);
+        if (res != null) {
+            return ((Integer) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to long.
+     *
+     * @param value value to convert
+     * @return long
+     */
+    public static long asLong(final Object value) {
+        return asLong(value, 0L);
+    }
+
+    /**
+     * Convert an object to long with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return long
+     */
+    public static long asLong(final Object value, final long defaultValue) {
+        Object res = asType(Long.class, value);
+        if (res != null) {
+            return ((Long) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to float.
+     *
+     * @param value value to convert
+     * @return float
+     */
+    public static float asFloat(final Object value) {
+        return asFloat(value, 0F);
+    }
+
+    /**
+     * Convert an object to float with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return float
+     */
+    public static float asFloat(final Object value, final float defaultValue) {
+        Object res = asType(Float.class, value);
+        if (res != null) {
+            return ((Float) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to double.
+     *
+     * @param value value to convert
+     * @return double
+     */
+    public static double asDouble(final Object value) {
+        return asDouble(value, 0D);
+    }
+
+    /**
+     * Convert an object to double with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return double
+     */
+    public static double asDouble(final Object value,
+            final double defaultValue) {
+
+        Object res = asType(Double.class, value);
+        if (res != null) {
+            return ((Double) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to char.
+     *
+     * @param value value to convert
+     * @return char
+     */
+    public static char asChar(final Object value) {
+        return asChar(value, (char) 0);
+    }
+
+    /**
+     * Convert an object to char with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return char
+     */
+    public static char asChar(final Object value, final char defaultValue) {
+        Object res = asType(Character.class, value);
+        if (res != null) {
+            return ((Character) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to boolean.
+     *
+     * @param value value to convert
+     * @return boolean
+     */
+    public static boolean asBoolean(final Object value) {
+        return asBoolean(value, false);
+    }
+
+    /**
+     * Convert an object to boolean with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return boolean
+     */
+    public static boolean asBoolean(final Object value,
+            final boolean defaultValue) {
+
+        Object res = asType(Boolean.class, value);
+        if (res != null) {
+            return ((Boolean) res);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Convert an object to String.
+     *
+     * @param value value to convert
+     * @return String
+     */
+    public static String asString(final Object value) {
+        return (String) asType(String.class, value);
+    }
+
+    /**
+     * Convert an object to String with a fallback default value.
+     *
+     * @param value value to convert
+     * @param defaultValue fallback default value
+     * @return String
+     */
+    public static String asString(final Object value,
+            final String defaultValue) {
+
+        Object res = asType(String.class, value);
+        if (res != null) {
+            return (String) res;
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Unknown type conversion.
+     */
+    private static final class UnknownTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            return value;
+        }
+    }
+
+    /**
+     * String conversion.
+     */
+    private static final class StringTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (value.getClass().isArray()) {
+                // This is a byte array; we can convert it to a string
+                if (value.getClass().getComponentType() == Byte.TYPE) {
+                    return new String((byte[]) value);
+                } else if (value.getClass()
+                        .getComponentType() == Character.TYPE) {
+                    return new String((char[]) value);
+                }
+            } else if (!(value instanceof String)) {
+                return value.toString();
+            }
+            return value;
+        }
+    }
+
+    /**
+     * Int conversion.
+     */
+    private static final class IntegerTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Integer)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new Integer(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Double conversion.
+     */
+    private static final class DoubleTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Double)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new Double(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Boolean conversion.
+     */
+    private static final class BooleanTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Boolean)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return Boolean.valueOf(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Long conversion.
+     */
+    private static final class LongTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Long)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new Long(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Float conversion.
+     */
+    private static final class FloatTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Float)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new Float(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Short conversion.
+     */
+    private static final class ShortTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Short)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new Short(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * BigDecimal conversion.
+     */
+    private static final class BigDecimalTypeConversion
+            implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof BigDecimal)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new BigDecimal(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Byte conversion.
+     */
+    private static final class ByteTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Byte)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return new Byte(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Char conversion.
+     */
+    private static final class CharacterTypeConversion
+            implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof Character)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    return v.charAt(0);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * SqlDate conversion.
+     */
+    private static final class SqlDateTypeConversion
+            implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof java.sql.Date)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    // Value must be in the "yyyy-mm-dd" format
+                    return java.sql.Date.valueOf(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * SqlTime conversion.
+     */
+    private static final class SqlTimeTypeConversion
+            implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof java.sql.Time)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    // Value must be in the "hh:mm:ss" format
+                    return java.sql.Time.valueOf(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * SqlTimestamp conversion.
+     */
+    private static final class SqlTimestampTypeConversion
+            implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            if (value == null) {
+                return null;
+            }
+
+            if (!(value instanceof java.sql.Timestamp)) {
+                String v = value.toString();
+                if (v.trim().length() == 0) {
+                    return null;
+                } else {
+                    // Value must be in the "yyyy-mm-dd hh:mm:ss.fffffffff"
+                    // format
+                    return java.sql.Timestamp.valueOf(v);
+                }
+            }
+
+            return value;
+        }
+    }
+
+    /**
+     * Object conversion.
+     */
+    private static final class ObjectTypeConversion implements TypeConversion {
+
+        @Override
+        public Object convertValue(final Object value) {
+            return value;
+        }
     }
 }

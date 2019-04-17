@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -31,27 +30,130 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
-import javax.faces.application.Application;
 import javax.faces.event.FacesEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.el.MethodBinding;
 import javax.el.MethodExpression;
 
 /**
- * The DropDown component is used to display a drop down menu to allow
- * users to select one or more items from a list.
+ * The DropDown component is used to display a drop down menu to allow users to
+ * select one or more items from a list.
  */
-@Component(type = "com.sun.webui.jsf.DropDown", family = "com.sun.webui.jsf.DropDown",
-displayName = "Drop Down List", tagName = "dropDown",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_dropdown_list",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_drop_down_props")
-public class DropDown extends ListSelector implements ActionSource2 {
+@Component(type = "com.sun.webui.jsf.DropDown",
+        family = "com.sun.webui.jsf.DropDown",
+        displayName = "Drop Down List", tagName = "dropDown",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_dropdown_list",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_drop_down_props")
+        //CHECKSTYLE:ON
+public final class DropDown extends ListSelector implements ActionSource2 {
 
-    public final static String SUBMIT = "_submitter";
-    private boolean fireAction = false;
+    /**
+     * Submit id.
+     */
+    public static final String SUBMIT = "_submitter";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
+
+    /**
+     * fireAction flag.
+     */
+    private boolean fireAction = false;
+
+    /**
+     * action listener.
+     */
     private MethodBinding methodBindingActionListener;
+
+    /**
+     * action expression.
+     */
     private MethodExpression actionExpression;
+
+   /**
+     * The actionListenerExpression attribute is used to specify a method to
+     * handle an action event that is triggered when this component is activated
+     * by the user. The actionListenerExpression attribute value must be a
+     * JavaServer Faces EL expression that resolves to a method in a backing
+     * bean. The method must take a single parameter that is an ActionEvent, and
+     * its return type must be {@code void}. The class that defines the
+     * method must implement the {@code java.io.Serializable} interface or
+     * {@code javax.faces.component.StateHolder} interface.
+     *
+     * <p>
+     * The actionListenerExpression method is only invoked when the submitForm
+     * attribute is true.
+     * </p>
+     */
+    @Property(name = "actionListenerExpression",
+            isHidden = true,
+            isAttribute = true,
+            displayName = "Action Listener Expression",
+            category = "Advanced")
+    @Property.Method(
+            signature = "void processAction(javax.faces.event.ActionEvent)")
+    private MethodExpression actionListenerExpression;
+
+    /**
+     * If this flag is set to true, then the component is always rendered with
+     * no initial selection. By default, the component displays the selection
+     * that was made in the last submit of the page. This value should be set to
+     * true when the drop down is used for navigation.
+     */
+    @Property(name = "forgetValue",
+            displayName = "Do not display selected value",
+            category = "Advanced", isHidden = true)
+    private boolean forgetValue = false;
+
+    /**
+     * forgetValue set flag.
+     */
+    private boolean forgetValueSet = false;
+
+    /**
+     * When this attribute is set to true, the value of the menu selection is
+     * used as the action, to determine which page is displayed next according
+     * to the registered navigation rules. Use this attribute instead of the
+     * action attribute when the drop down is used for navigation. When you set
+     * navigateToValue to true, you must also set submitForm to true.
+     */
+    @Property(name = "navigateToValue",
+            displayName = "Navigate to Component Value",
+            category = "Advanced",
+            isHidden = true)
+    private boolean navigateToValue = false;
+
+    /**
+     * navigateToValue set flag.
+     */
+    private boolean navigateToValueSet = false;
+
+    /**
+     * When the submitForm attribute is set to true, the form is immediately
+     * submitted when the user changes the selection in the drop down list.
+     */
+    @Property(name = "submitForm",
+            displayName = "Submit the Page on Change",
+            isHidden = true)
+    private boolean submitForm = false;
+
+    /**
+     * submitForm set flag.
+     */
+    private boolean submitFormSet = false;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool-tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior")
+    private String toolTip = null;
 
     /**
      * Default constructor.
@@ -61,112 +163,65 @@ public class DropDown extends ListSelector implements ActionSource2 {
         setRendererType("com.sun.webui.jsf.DropDown");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.DropDown";
     }
 
-    /**
-     * Getter for property Rows.
-     * @return Value of property Rows.
-     */
-    private int _getRows() {
-        return 1;
-    }
-
-    /**
-     * Setter for property Rows.
-     * @param DisplayRows New value of property DisplayRows.
-     */
     @Override
-    public void setRows(int DisplayRows) {
+    public void setRows(final int displayRows) {
         setRows(1);
     }
 
     /**
-     * Getter for property multiple
+     * Getter for property multiple.
+     *
      * @return Value of property multiple
      */
     public boolean getMultiple() {
-
         return false;
     }
 
     /**
-     * Setter for property multiple
+     * Setter for property multiple.
+     *
      * @param multiple New value of property multiple
      */
     @Override
-    public void setMultiple(boolean multiple) {
-
+    public void setMultiple(final boolean multiple) {
         super.setMultiple(false);
     }
 
-    /**
-     * <p>Add a new {@link ActionListener} to the set of listeners interested
-     * in being notified when {@link ActionEvent}s occur.</p>
-     *
-     * @param listener The {@link ActionListener} to be added
-     *
-     * @exception NullPointerException if <code>listener</code>
-     * is <code>null</code>
-     */
-    public void addActionListener(ActionListener listener) {
-        // add the specified action listener
+    @Override
+    public void addActionListener(final ActionListener listener) {
         addFacesListener(listener);
     }
 
-    /**
-     * <p>Return the set of registered {@link ActionListener}s for this
-     * {@link ActionSource2} instance.  If there are no registered listeners,
-     * a zero-length array is returned.</p>
-     */
+    @Override
     public ActionListener[] getActionListeners() {
-        // return all ActionListener instances associated with this component
-        ActionListener listeners[] =
-                (ActionListener[]) getFacesListeners(ActionListener.class);
+        ActionListener[] listeners
+                = (ActionListener[]) getFacesListeners(ActionListener.class);
         return listeners;
     }
 
-    /**
-     * <p>Remove an existing {@link ActionListener} (if any) from the set of
-     * listeners interested in being notified when {@link ActionEvent}s
-     * occur.</p>
-     *
-     * @param listener The {@link ActionListener} to be removed
-     *
-     * @exception NullPointerException if <code>listener</code>
-     * is <code>null</code>
-     */
-    public void removeActionListener(ActionListener listener) {
-        // remove the specified ActionListener from the list of listeners
+    @Override
+    public void removeActionListener(final ActionListener listener) {
         removeFacesListener(listener);
     }
 
-    /**
-     * <p>The DropDown needs to override the standard decoding 
-     * behaviour since it may also be an action source. We 
-     * decode the component w.r.t. the value first, and 
-     * validate it if the component is immediate. Then we 
-     * fire an action event.</p>
-     * @exception NullPointerException  
-     */
     @Override
-    public void processDecodes(FacesContext context) {
-
+    public void processDecodes(final FacesContext context) {
         if (DEBUG) {
             log("processDecodes()");
         }
+
         // Skip processing if our rendered flag is false
         if (!isRendered()) {
             return;
         }
 
-        // Decode the component and any children 
-        // Do we really want to decode any children? 
+        // Decode the component and any children
+        // Do we really want to decode any children?
         // Process all facets and children of this component
         Iterator childComponents = getFacetsAndChildren();
         while (childComponents.hasNext()) {
@@ -199,16 +254,14 @@ public class DropDown extends ListSelector implements ActionSource2 {
         //
         // Also not that the submittedValue check has been added to
         // validate, as in UIInput's validate method.
-        //
         boolean isSubmitter = isSubmitter(context);
 
         // Should we fire an action?
         //
         // Check submittedValue. Let the code fall through to
         // validate for an immediate action and it will just return.
-        //
-        fireAction = isSubmitter && isSubmitForm() &&
-                getSubmittedValue() != null;
+        fireAction = isSubmitter && isSubmitForm()
+                && getSubmittedValue() != null;
 
         // If we are supposed to fire an action and navigate to the value
         // of the component, we get the submitted value now and pass
@@ -246,7 +299,7 @@ public class DropDown extends ListSelector implements ActionSource2 {
             }
         }
 
-        // Next, if the component is immediate, we validate the component        
+        // Next, if the component is immediate, we validate the component
         if (isImmediate()) {
             try {
                 validate(context);
@@ -260,103 +313,74 @@ public class DropDown extends ListSelector implements ActionSource2 {
         }
     }
 
-    /**
-     * <p>In addition to to the default {@link UIComponent#broadcast} 
-     * processing, pass the {@link ActionEvent} being broadcast to the method 
-     * referenced by <code>actionListener</code> (if any), and to the default 
-     * {@link ActionListener} registered on the {@link javax.faces.application.Application}.</p>
-     *
-     * @param event {@link FacesEvent} to be broadcast
-     *
-     * @exception AbortProcessingException Signal the JavaServer Faces 
-     * implementation that no further processing on the current event should be 
-     * performed @exception IllegalArgumentException if the implementation class
-     * of this {@link FacesEvent} is not supported by this component
-     * @exception NullPointerException if <code>event</code> is
-     * <code>null</code>
-     */
     @Override
-    public void broadcast(FacesEvent event) throws AbortProcessingException {
+    public void broadcast(final FacesEvent event)
+            throws AbortProcessingException {
 
         // Perform standard superclass processing
         super.broadcast(event);
 
         if (isSubmitForm() && (event instanceof ActionEvent)) {
             FacesContext context = getFacesContext();
-
-            // Notify the specified action expression method (if any)
-            /* FIXME : Temporary hack to prevent to "actionListenerExpression"
-            events.
-
-            MethodExpression mb= getActionListenerExpression();
-            if (mb != null) {
-            mb.invoke(context.getELContext(), new Object[] { event });
-            }
-             */
-
             // Invoke the default ActionListener
-            ActionListener listener =
-                    context.getApplication().getActionListener();
+            ActionListener listener
+                    = context.getApplication().getActionListener();
             if (listener != null) {
                 listener.processAction((ActionEvent) event);
             }
         }
     }
 
-    /**
-     * <p>Intercept <code>queueEvent</code> and, for {@link ActionEvent}s, mark 
-     * the phaseId for the event to be <code>PhaseId.APPLY_REQUEST_VALUES</code>
-     * if the <code>immediate</code> flag is true, 
-     * <code>PhaseId.INVOKE_APPLICATION</code> otherwise.</p>
-     */
     @Override
-    public void queueEvent(FacesEvent e) {
+    public void queueEvent(final FacesEvent event) {
         // If this is an action event, we set the phase according to whether
-        // the component is immediate or not. 
+        // the component is immediate or not.
         if (isSubmitForm()) {
-            if (e instanceof ActionEvent) {
+            if (event instanceof ActionEvent) {
                 if (isImmediate()) {
-                    e.setPhaseId(PhaseId.APPLY_REQUEST_VALUES);
+                    event.setPhaseId(PhaseId.APPLY_REQUEST_VALUES);
                 } else {
-                    e.setPhaseId(PhaseId.INVOKE_APPLICATION);
+                    event.setPhaseId(PhaseId.INVOKE_APPLICATION);
                 }
             }
         }
-
-        super.queueEvent(e);
+        super.queueEvent(event);
     }
 
-    private boolean isSubmitter(FacesContext context) {
+    /**
+     * Test if the request component is a submitter.
+     * @param context faces context
+     * @return {@code boolean}
+     */
+    private boolean isSubmitter(final FacesContext context) {
 
         if (DEBUG) {
             log("isSubmitter()");
         }
         String compID = getClientId(context).concat(SUBMIT);
-        Map requestParameters =
-                context.getExternalContext().getRequestParameterMap();
+        Map requestParameters
+                = context.getExternalContext().getRequestParameterMap();
 
         String submitter = (String) requestParameters.get(compID);
         if (DEBUG) {
             log("\tValue of submitter field " + submitter);
         }
-        return (submitter != null) ? submitter.equals("true") : false;
+        if (submitter != null) {
+            return submitter.equals("true");
+        }
+        return false;
     }
 
     @Override
-    public void validate(FacesContext context) {
-
-        // From UIInput
-        //
+    public void validate(final FacesContext context) {
         // Submitted value == null means "the component was not submitted
         // at all";  validation should not continue
-        //
         Object submittedValue = getSubmittedValue();
         if (submittedValue == null) {
             return;
         }
 
         super.validate(context);
-
         if (isValid() && fireAction) {
             if (DEBUG) {
                 log("\tQueue the component event");
@@ -366,30 +390,6 @@ public class DropDown extends ListSelector implements ActionSource2 {
         }
     }
 
-    // ----------------------------------------------------- StateHolder Methods
-    @Override
-    public Object saveState(FacesContext context) {
-
-        Object values[] = new Object[4];
-        values[0] = _saveState(context);
-        values[1] = saveAttachedState(context, methodBindingActionListener);
-        values[2] = saveAttachedState(context, actionExpression);
-        values[3] = saveAttachedState(context, actionListenerExpression);
-        return (values);
-    }
-
-    @Override
-    public void restoreState(FacesContext context, Object state) {
-        Object values[] = (Object[]) state;
-        _restoreState(context, values[0]);
-        methodBindingActionListener = (MethodBinding) restoreAttachedState(context, values[1]);
-        actionExpression = (MethodExpression) restoreAttachedState(context, values[2]);
-        actionListenerExpression = (MethodExpression) restoreAttachedState(context, values[3]);
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Hide onSelect
     @Property(name = "onSelect", isHidden = true, isAttribute = false)
     @Override
@@ -401,7 +401,7 @@ public class DropDown extends ListSelector implements ActionSource2 {
     @Property(name = "rows", isHidden = true, isAttribute = false)
     @Override
     public int getRows() {
-        return _getRows();
+        return 1;
     }
 
     // Hide value
@@ -411,64 +411,76 @@ public class DropDown extends ListSelector implements ActionSource2 {
         return super.getValue();
     }
 
-    /**  
-     * <p>The actionExpression attribute is used to specify the action to take when this
-     * component is activated by the user. The value of the actionExpression attribute
-     * must be one of the following:
+    /**
+     * The actionExpression attribute is used to specify the action to take when
+     * this component is activated by the user. The value of the
+     * actionExpression attribute must be one of the following:
      * <ul>
-     * <li>an outcome string, used to indicate which page to display next,
-     * as defined by a navigation rule in the application configuration
-     * resource file <code>(faces-config.xml)</code>.</li>
-     * <li>a JavaServer Faces EL expression that resolves
-     * to a backing bean method. The method must take no parameters
-     * and return an outcome string. The class that defines the method
-     * must implement the <code>java.io.Serializable</code> interface or
-     * <code>javax.faces.component.StateHolder</code> interface.</li></ul> 
-     * <p>When you use the actionExpression attribute in the DropDown component, you must also
-     * set the submitForm attribute to true. 
+     * <li>an outcome string, used to indicate which page to display next, as
+     * defined by a navigation rule in the application configuration resource
+     * file {@code (faces-config.xml)}.</li>
+     * <li>a JavaServer Faces EL expression that resolves to a backing bean
+     * method. The method must take no parameters and return an outcome string.
+     * The class that defines the method must implement the
+     * {@code java.io.Serializable} interface or
+     * {@code javax.faces.component.StateHolder} interface.</li>
+     * </ul>
+     *
+     * When you use the actionExpression attribute in the DropDown component,
+     * you must also set the submitForm attribute to true.
      */
-    @Property(name = "actionExpression", isHidden = true, displayName = "Action Expression")
+    @Property(name = "actionExpression",
+            isHidden = true,
+            displayName = "Action Expression")
     @Property.Method(signature = "java.lang.String action()")
+    @Override
     public MethodExpression getActionExpression() {
-
         if (this.actionExpression == null && isNavigateToValue()) {
             setActionExpression(new DropDownMethodExpression());
         }
-
         return this.actionExpression;
     }
 
-    /**  
-     * <p>The actionExpression attribute is used to specify the action to take when this
-     * component is activated by the user. The value of the actionExpression attribute
-     * must be one of the following:
+    /**
+     * The actionExpression attribute is used to specify the action to take when
+     * this component is activated by the user.The value of the actionExpression
+     * attribute must be one of the following:
      * <ul>
-     * <li>an outcome string, used to indicate which page to display next,
-     * as defined by a navigation rule in the application configuration
-     * resource file <code>(faces-config.xml)</code>.</li>
-     * <li>a JavaServer Faces EL expression that resolves
-     * to a backing bean method. The method must take no parameters
-     * and return an outcome string. The class that defines the method
-     * must implement the <code>java.io.Serializable</code> interface or
-     * <code>javax.faces.component.StateHolder</code> interface.</li></ul> 
-     * <p>When you use the actionExpression attribute in the DropDown component, you must also
-     * set the submitForm attribute to true. 
+     * <li>an outcome string, used to indicate which page to display next, as
+     * defined by a navigation rule in the application configuration resource
+     * file {@code (faces-config.xml)}.</li>
+     * <li>a JavaServer Faces EL expression that resolves to a backing bean
+     * method. The method must take no parameters and return an outcome string.
+     * The class that defines the method must implement the
+     * {@code java.io.Serializable} interface or
+     * {@code javax.faces.component.StateHolder} interface.</li>
+     * </ul>
+     *
+     * When you use the actionExpression attribute in the DropDown component,
+     * you must also set the submitForm attribute to true.
+     *
+     * @param me new action expression
      */
-    public void setActionExpression(MethodExpression me) {
+    @Override
+    public void setActionExpression(final MethodExpression me) {
         this.actionExpression = me;
     }
 
-    /**@deprecated*/
+    /**
+     * @deprecated
+     * @return {@code javax.faces.el.MethodBinding}
+     */
     //emulating UICommand
+    @Override
     public javax.faces.el.MethodBinding getAction() {
         MethodBinding result = null;
-        MethodExpression me = null;
-
-        if (null != (me = getActionExpression())) {
+        MethodExpression me = getActionExpression();
+        if (me != null) {
             // if the MethodExpression is an instance of our private
             // wrapper class.
             if (me.getClass() == MethodExpressionMethodBindingAdapter.class) {
-                result = ((MethodExpressionMethodBindingAdapter) me).getWrapped();
+                result = ((MethodExpressionMethodBindingAdapter) me)
+                        .getWrapped();
             } else {
                 // otherwise, this is a real MethodExpression.  Wrap it
                 // in a MethodBinding.
@@ -478,10 +490,14 @@ public class DropDown extends ListSelector implements ActionSource2 {
         return result;
     }
 
-    /**@deprecated*/
+    /**
+     * @deprecated
+     * @param action action
+     */
     //emulating UICommand
-    public void setAction(javax.faces.el.MethodBinding action) {
-        MethodExpressionMethodBindingAdapter adapter = null;
+    @Override
+    public void setAction(final javax.faces.el.MethodBinding action) {
+        MethodExpressionMethodBindingAdapter adapter;
         if (null != action) {
             adapter = new MethodExpressionMethodBindingAdapter(action);
             setActionExpression(adapter);
@@ -490,286 +506,294 @@ public class DropDown extends ListSelector implements ActionSource2 {
         }
     }
 
-    /**@deprecated*/
+    /**
+     * @deprecated
+     * @return {@code javax.faces.el.MethodBinding}
+     */
     //emulating UICommand
+    @Override
     public javax.faces.el.MethodBinding getActionListener() {
         return this.methodBindingActionListener;
     }
 
-    /**@deprecated*/
+    /**
+     * @deprecated
+     * @param actionListener actionListener
+     */
     //emulating UICommand
-    public void setActionListener(javax.faces.el.MethodBinding actionListener) {
+    @Override
+    public void setActionListener(
+            final javax.faces.el.MethodBinding actionListener) {
+
         this.methodBindingActionListener = actionListener;
     }
-    /**
-     * <p>The actionListenerExpression attribute is used to specify a method to handle
-     * an action event that is triggered when this
-     * component is activated by the user. The actionListenerExpression attribute
-     * value must be a JavaServer Faces EL expression that resolves
-     * to a method in a backing bean. The method must take a single parameter
-     * that is an ActionEvent, and its return type must be <code>void</code>.
-     * The class that defines the method must implement the <code>java.io.Serializable</code>
-     * interface or <code>javax.faces.component.StateHolder</code> interface. </p>
-     * 
-     * <p>The actionListenerExpression method is only invoked when the submitForm attribute
-     * is true.
-     */
-    @Property(name = "actionListenerExpression", isHidden = true, isAttribute = true,
-    displayName = "Action Listener Expression", category = "Advanced")
-    @Property.Method(signature = "void processAction(javax.faces.event.ActionEvent)")
-    private MethodExpression actionListenerExpression;
 
     /**
-     * <p>The actionListenerExpression attribute is used to specify a method to handle
-     * an action event that is triggered when this
-     * component is activated by the user. The actionListenerExpression attribute
-     * value must be a JavaServer Faces EL expression that resolves
-     * to a method in a backing bean. The method must take a single parameter
-     * that is an ActionEvent, and its return type must be <code>void</code>.
-     * The class that defines the method must implement the <code>java.io.Serializable</code>
-     * interface or <code>javax.faces.component.StateHolder</code> interface. </p>
-     * 
-     * <p>The actionListenerExpression method is only invoked when the submitForm attribute
-     * is true.
+     * The actionListenerExpression attribute is used to specify a method to
+     * handle an action event that is triggered when this component is activated
+     * by the user. The actionListenerExpression attribute value must be a
+     * JavaServer Faces EL expression that resolves to a method in a backing
+     * bean. The method must take a single parameter that is an ActionEvent, and
+     * its return type must be {@code void}. The class that defines the
+     * method must implement the {@code java.io.Serializable} interface or
+     * {@code javax.faces.component.StateHolder} interface.
+     *
+     * <p>
+     * The actionListenerExpression method is only invoked when the submitForm
+     * attribute is true.
+     * </p>
+     * @return MethodExpression
      */
     public MethodExpression getActionListenerExpression() {
         return this.actionListenerExpression;
     }
 
     /**
-     * <p>The actionListenerExpression attribute is used to specify a method to handle
-     * an action event that is triggered when this
-     * component is activated by the user. The actionListenerExpression attribute
-     * value must be a JavaServer Faces EL expression that resolves
-     * to a method in a backing bean. The method must take a single parameter
-     * that is an ActionEvent, and its return type must be <code>void</code>.
-     * The class that defines the method must implement the <code>java.io.Serializable</code>
-     * interface or <code>javax.faces.component.StateHolder</code> interface. </p>
-     * 
-     * <p>The actionListenerExpression method is only invoked when the submitForm attribute
-     * is true.
+     * The actionListenerExpression attribute is used to specify a method to
+     * handle an action event that is triggered when this component is activated
+     * by the user. The actionListenerExpression attribute value must be a
+     * JavaServer Faces EL expression that resolves to a method in a backing
+     * bean. The method must take a single parameter that is an ActionEvent, and
+     * its return type must be {@code void}. The class that defines the
+     * method must implement the {@code java.io.Serializable} interface or
+     * {@code javax.faces.component.StateHolder} interface.
+     *
+     * <p>
+     * The actionListenerExpression method is only invoked when the submitForm
+     * attribute is true.
+     * </p>
+     * @param newActionListenerExpression actionListenerExpression
      */
-    public void setActionListenerExpression(MethodExpression me) {
+    public void setActionListenerExpression(
+            final MethodExpression newActionListenerExpression) {
+
         //call thru
         ActionListener[] curActionListeners = getActionListeners();
         // see if we need to remove existing actionListener.
-        // only need to if this.actionListenerExpression != null (since curMethodExpression won't be null)
-        if (null != curActionListeners && this.actionListenerExpression != null) {
-            for (int i = 0; i < curActionListeners.length; i++) {
-                if (curActionListeners[i] instanceof MethodExprActionListener) {
-                    MethodExprActionListener curActionListener = (MethodExprActionListener) curActionListeners[i];
-                    MethodExpression curMethodExpression = curActionListener.getMethodExpression();
-                    if (this.actionListenerExpression.equals(curMethodExpression)) {
+        // only need to if this.actionListenerExpression != null
+        // (since curMethodExpression won't be null)
+        if (null != curActionListeners
+                && this.actionListenerExpression != null) {
+            for (ActionListener curActionListener1 : curActionListeners) {
+                if (curActionListener1 instanceof MethodExprActionListener) {
+                    MethodExprActionListener curActionListener =
+                            (MethodExprActionListener) curActionListener1;
+                    MethodExpression curMethodExpression =
+                            curActionListener.getMethodExpression();
+                    if (this.actionListenerExpression
+                            .equals(curMethodExpression)) {
                         removeActionListener(curActionListener);
                         break;
                     }
                 }
             }
         }
-        if (me == null) {
+        if (newActionListenerExpression == null) {
             this.actionListenerExpression = null;
         } else {
-            this.actionListenerExpression = me;
-            addActionListener(new MethodExprActionListener(this.actionListenerExpression));
+            this.actionListenerExpression = newActionListenerExpression;
+            addActionListener(new MethodExprActionListener(
+                            this.actionListenerExpression));
         }
     }
-    /**
-     * <p>If this flag is set to true, then the component is always
-     * rendered with no initial selection. By default, the component displays 
-     * the selection that was made in the last submit of the page. This value
-     * should be set to true when the drop down is used for navigation.</p>
-     */
-    @Property(name = "forgetValue", displayName = "Do not display selected value", category = "Advanced", isHidden = true)
-    private boolean forgetValue = false;
-    private boolean forgetValue_set = false;
 
     /**
-     * <p>If this flag is set to true, then the component is always
-     * rendered with no initial selection. By default, the component displays 
-     * the selection that was made in the last submit of the page. This value
-     * should be set to true when the drop down is used for navigation.</p>
+     * If this flag is set to true, then the component is always rendered with
+     * no initial selection. By default, the component displays the selection
+     * that was made in the last submit of the page. This value should be set to
+     * true when the drop down is used for navigation.
+     * @return {@code boolean}
      */
     public boolean isForgetValue() {
-        if (this.forgetValue_set) {
+        if (this.forgetValueSet) {
             return this.forgetValue;
         }
-        ValueExpression _vb = getValueExpression("forgetValue");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("forgetValue");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>If this flag is set to true, then the component is always
-     * rendered with no initial selection. By default, the component displays 
-     * the selection that was made in the last submit of the page. This value
-     * should be set to true when the drop down is used for navigation.</p>
+     * If this flag is set to true, then the component is always rendered with
+     * no initial selection. By default, the component displays the selection
+     * that was made in the last submit of the page. This value should be set to
+     * true when the drop down is used for navigation.
+     *
      * @see #isForgetValue()
+     * @param newForgetValue forgetValue
      */
-    public void setForgetValue(boolean forgetValue) {
-        this.forgetValue = forgetValue;
-        this.forgetValue_set = true;
+    public void setForgetValue(final boolean newForgetValue) {
+        this.forgetValue = newForgetValue;
+        this.forgetValueSet = true;
     }
-    /**
-     * <p>When this attribute is set to true, the value of the menu selection 
-     * is used as the action, to determine which page is displayed next 
-     * according to the registered navigation rules. Use this attribute 
-     * instead of the action attribute when the drop down is used for
-     * navigation.  
-     * When you set navigateToValue to true, you must also set submitForm to true.</p>
-     */
-    @Property(name = "navigateToValue", displayName = "Navigate to Component Value",
-    category = "Advanced", isHidden = true)
-    private boolean navigateToValue = false;
-    private boolean navigateToValue_set = false;
 
     /**
-     * <p>When this attribute is set to true, the value of the menu selection 
-     * is used as the action, to determine which page is displayed next 
-     * according to the registered navigation rules. Use this attribute 
-     * instead of the action attribute when the drop down is used for
-     * navigation.  
-     * When you set navigateToValue to true, you must also set submitForm to true.</p>
+     * When this attribute is set to true, the value of the menu selection is
+     * used as the action, to determine which page is displayed next according
+     * to the registered navigation rules. Use this attribute instead of the
+     * action attribute when the drop down is used for navigation. When you set
+     * navigateToValue to true, you must also set submitForm to true.
+     * @return {@code boolean}
      */
     public boolean isNavigateToValue() {
-        if (this.navigateToValue_set) {
+        if (this.navigateToValueSet) {
             return this.navigateToValue;
         }
-        ValueExpression _vb = getValueExpression("navigateToValue");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("navigateToValue");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>When this attribute is set to true, the value of the menu selection 
-     * is used as the action, to determine which page is displayed next 
-     * according to the registered navigation rules. Use this attribute 
-     * instead of the action attribute when the drop down is used for
-     * navigation.  
-     * When you set navigateToValue to true, you must also set submitForm to true.</p>
+     * When this attribute is set to true, the value of the menu selection is
+     * used as the action, to determine which page is displayed next according
+     * to the registered navigation rules. Use this attribute instead of the
+     * action attribute when the drop down is used for navigation. When you set
+     * navigateToValue to true, you must also set submitForm to true.
+     *
      * @see #isNavigateToValue()
+     * @param newNavigateToValue navigateToValue
      */
-    public void setNavigateToValue(boolean navigateToValue) {
-        this.navigateToValue = navigateToValue;
-        this.navigateToValue_set = true;
+    public void setNavigateToValue(final boolean newNavigateToValue) {
+        this.navigateToValue = newNavigateToValue;
+        this.navigateToValueSet = true;
     }
-    /**
-     * <p>When the submitForm attribute is set to true, 
-     * the form is immediately submitted when the user changes the 
-     * selection in the drop down list.</p>
-     */
-    @Property(name = "submitForm", displayName = "Submit the Page on Change", isHidden = true)
-    private boolean submitForm = false;
-    private boolean submitForm_set = false;
 
     /**
-     * <p>When the submitForm attribute is set to true, 
-     * the form is immediately submitted when the user changes the 
-     * selection in the drop down list.</p>
+     * When the submitForm attribute is set to true, the form is immediately
+     * submitted when the user changes the selection in the drop down list.
+     * @return {@code boolean}
      */
     public boolean isSubmitForm() {
-        if (this.submitForm_set) {
+        if (this.submitFormSet) {
             return this.submitForm;
         }
-        ValueExpression _vb = getValueExpression("submitForm");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("submitForm");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>When the submitForm attribute is set to true, 
-     * the form is immediately submitted when the user changes the 
-     * selection in the drop down list.</p>
+     * When the submitForm attribute is set to true, the form is immediately
+     * submitted when the user changes the selection in the drop down list.
+     *
      * @see #isSubmitForm()
+     * @param newSubmitForm submitForm
      */
-    public void setSubmitForm(boolean submitForm) {
-        this.submitForm = submitForm;
-        this.submitForm_set = true;
+    public void setSubmitForm(final boolean newSubmitForm) {
+        this.submitForm = newSubmitForm;
+        this.submitFormSet = true;
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior")
-    private String toolTip = null;
 
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     */
     @Override
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
-     * @see #getToolTip()
-     */
     @Override
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[8];
+        values[0] = super.saveState(context);
+        if (this.forgetValue) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.forgetValueSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.navigateToValue) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        if (this.navigateToValueSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.submitForm) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        if (this.submitFormSet) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        values[7] = this.toolTip;
+        Object[] values2 = new Object[4];
+        values2[0] = values;
+        values2[1] = saveAttachedState(context, methodBindingActionListener);
+        values2[2] = saveAttachedState(context, actionExpression);
+        values2[3] = saveAttachedState(context, actionListenerExpression);
+        return (values2);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values2 = (Object[]) state;
+        Object[] values = (Object[]) values2[0];
+        super.restoreState(context, values[0]);
+        this.forgetValue = ((Boolean) values[1]);
+        this.forgetValueSet = ((Boolean) values[2]);
+        this.navigateToValue = ((Boolean) values[3]);
+        this.navigateToValueSet = ((Boolean) values[4]);
+        this.submitForm = ((Boolean) values[5]);
+        this.submitFormSet = ((Boolean) values[6]);
+        this.toolTip = (String) values[7];
+        methodBindingActionListener = (MethodBinding)
+                restoreAttachedState(context, values2[1]);
+        actionExpression = (MethodExpression)
+                restoreAttachedState(context, values2[2]);
+        actionListenerExpression = (MethodExpression)
+                restoreAttachedState(context, values2[3]);
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * Private method for development time error detecting.
+     *
+     * @param msg message to log
      */
-    private void _restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.forgetValue = ((Boolean) _values[1]).booleanValue();
-        this.forgetValue_set = ((Boolean) _values[2]).booleanValue();
-        this.navigateToValue = ((Boolean) _values[3]).booleanValue();
-        this.navigateToValue_set = ((Boolean) _values[4]).booleanValue();
-        this.submitForm = ((Boolean) _values[5]).booleanValue();
-        this.submitForm_set = ((Boolean) _values[6]).booleanValue();
-        this.toolTip = (String) _values[7];
-    }
-
-    /**
-     * <p>Save the state of this component.</p>
-     */
-    private Object _saveState(FacesContext _context) {
-        Object _values[] = new Object[8];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.forgetValue ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.forgetValue_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.navigateToValue ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = this.navigateToValue_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.submitForm ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.submitForm_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = this.toolTip;
-        return _values;
+    private static void log(final String msg) {
+        System.out.println(AddRemove.class.getName() + "::" + msg);
     }
 }

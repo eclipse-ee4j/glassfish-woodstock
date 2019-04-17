@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,41 +22,140 @@ import javax.lang.model.element.Element;
 /**
  * Represents a property declared on a component class or non-component base
  * class, in the current compilation unit.
- *
- * @author gjmurphy
  */
-public class DeclaredPropertyInfo extends PropertyInfo {
+public final class DeclaredPropertyInfo extends PropertyInfo {
 
+    /**
+     * Property name key.
+     */
     static final String NAME = "name";
+
+    /**
+     * Property display name key.
+     */
     static final String DISPLAY_NAME = "displayName";
+
+    /**
+     * Property short description key.
+     */
     static final String SHORT_DESCRIPTION = "shortDescription";
+
+    /**
+     * Property editor class name key.
+     */
     static final String EDITOR_CLASS_NAME = "editorClassName";
+
+    /**
+     * Property help key.
+     */
     static final String HELP_KEY = "helpKey";
+
+    /**
+     * Property category key.
+     */
     static final String CATEGORY = "category";
+
+    /**
+     * Property default flag key.
+     */
     static final String IS_DEFAULT = "isDefault";
+
+    /**
+     * Property isAttribute key.
+     */
     static final String IS_ATTRIBUTE = "isAttribute";
+
+    /**
+     * Property isHidden key.
+     */
     static final String IS_HIDDEN = "isHidden";
+
+    /**
+     * Property attribute key.
+     */
     static final String ATTRIBUTE = "attribute";
+
+    /**
+     * Property read method name key.
+     */
     static final String READ_METHOD_NAME = "readMethodName";
+
+    /**
+     * Property write method name key.
+     */
     static final String WRITE_METHOD_NAME = "writeMethodName";
 
-    Element decl;
-    Map<String, Object> annotationValueMap;
-    ProcessingEnvironment env;
+    /**
+     * Element representing the declared property.
+     */
+    private final Element decl;
+
+    /**
+     * Annotation value map.
+     */
+    private final Map<String, Object> annotationValueMap;
+
+    /**
+     * Annotation processing environment.
+     */
+    private final ProcessingEnvironment env;
+
+    /**
+     * Property name.
+     */
     private String name;
+
+    /**
+     * Property type.
+     */
     private String type;
+
+    /**
+     * Property write method name.
+     */
     private String writeMethodName;
+
+    /**
+     * Property read method name.
+     */
     private String readMethodName;
+
+    /**
+     * Property category info.
+     */
     private CategoryInfo categoryInfo;
+
+    /**
+     * Property attribute info.
+     */
     private AttributeInfo attributeInfo;
 
-    DeclaredPropertyInfo(Map<String, Object> annotationValueMap, Element decl,
-            ProcessingEnvironment env) {
-        this.annotationValueMap = annotationValueMap;
-        this.decl = decl;
-        this.env = env;
+    /**
+     * Create a new instance.
+     * @param annotValueMap annotation value map
+     * @param eltDecl element declaration representing this property
+     * @param processingEnv annotation processing environment
+     */
+    DeclaredPropertyInfo(final Map<String, Object> annotValueMap,
+            final Element eltDecl, final ProcessingEnvironment processingEnv) {
+
+        this.annotationValueMap = annotValueMap;
+        this.decl = eltDecl;
+        this.env = processingEnv;
     }
 
+    /**
+     * Get the annotation value map.
+     * @return {@code Map<String, Object>}
+     */
+    Map<String, Object> getAnnotationValueMap() {
+        return annotationValueMap;
+    }
+
+    /**
+     * Get the declaration element for this property.
+     * @return Element
+     */
     public Element getDeclaration() {
         return this.decl;
     }
@@ -66,8 +165,12 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         return name;
     }
 
-    void setName(String name) {
-        this.name = name;
+    /**
+     * Set the name for this property.
+     * @param propName new property name
+     */
+    void setName(final String propName) {
+        this.name = propName;
     }
 
     @Override
@@ -106,24 +209,32 @@ public class DeclaredPropertyInfo extends PropertyInfo {
                         && Character.isSpaceChar(chars[index])) {
                     index++;
                 }
+                OUTER:
                 while (index < chars.length) {
-                    if (chars[index] == '<') {
-                        index++;
-                        while (index < chars.length && chars[index] != '>') {
+                    switch (chars[index]) {
+                        case '<':
                             index++;
-                        }
-                    } else if (chars[index] == '\n') {
-                        buffer.append(" ");
-                    } else if (chars[index] == '"') {
-                        buffer.append("&quot;");
-                    } else if (chars[index] == '.') {
-                        if (index == chars.length - 1
-                                || Character.isSpaceChar(chars[index + 1])) {
+                            while (index < chars.length
+                                    && chars[index] != '>') {
+                                index++;
+                            }   break;
+                        case '\n':
+                            buffer.append(" ");
                             break;
-                        }
-                        buffer.append('.');
-                    } else {
-                        buffer.append(chars[index]);
+                        case '"':
+                            buffer.append("&quot;");
+                            break;
+                        case '.':
+                            if (index == chars.length - 1
+                                    || Character.isSpaceChar(
+                                            chars[index + 1])) {
+                                break OUTER;
+                            }
+                            buffer.append('.');
+                            break;
+                        default:
+                            buffer.append(chars[index]);
+                            break;
                     }
                     index++;
                 }
@@ -138,8 +249,12 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         return this.type;
     }
 
-    void setType(String type) {
-        this.type = type;
+    /**
+     * Set the property type.
+     * @param propType new property type
+     */
+    void setType(final String propType) {
+        this.type = propType;
     }
 
     @Override
@@ -152,8 +267,12 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         return methodName;
     }
 
-    void setWriteMethodName(String writeMethodName) {
-        this.writeMethodName = writeMethodName;
+    /**
+     * Set the write method name.
+     * @param methodName new write method name
+     */
+    void setWriteMethodName(final String methodName) {
+        this.writeMethodName = methodName;
     }
 
     @Override
@@ -166,8 +285,12 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         return methodName;
     }
 
-    void setReadMethodName(String readMethodName) {
-        this.readMethodName = readMethodName;
+    /**
+     * Set the read method name.
+     * @param methodName new read method name
+     */
+    void setReadMethodName(final String methodName) {
+        this.readMethodName = methodName;
     }
 
     @Override
@@ -188,8 +311,12 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         return this.categoryInfo;
     }
 
-    void setCategoryInfo(CategoryInfo categoryInfo) {
-        this.categoryInfo = categoryInfo;
+    /**
+     * Set the category info for this property.
+     * @param catInfo new category info
+     */
+    void setCategoryInfo(final CategoryInfo catInfo) {
+        this.categoryInfo = catInfo;
     }
 
     @Override
@@ -198,7 +325,7 @@ public class DeclaredPropertyInfo extends PropertyInfo {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof PropertyInfo)) {
             return false;
         }
@@ -219,19 +346,29 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         String thisWriteName = this.getReadMethodName();
         String thatWriteName = that.getReadMethodName();
         if (thisWriteName != null
-                && (thatWriteName == null ||
-                !thatWriteName.equals(thisWriteName))) {
+                && (thatWriteName == null
+                 || !thatWriteName.equals(thisWriteName))) {
             return false;
         }
         return !(thatWriteName == null && thatWriteName != null);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + (this.decl != null ? this.decl.hashCode() : 0);
-        hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 31 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 31 * hash;
+        if (this.decl != null) {
+            hash = hash + this.decl.hashCode();
+        }
+        hash = 31 * hash;
+        if (this.name != null) {
+            hash = hash + this.name.hashCode();
+        }
+        hash = 31 * hash;
+        if (this.type != null) {
+            hash = hash + this.type.hashCode();
+        }
         return hash;
     }
 
@@ -254,8 +391,12 @@ public class DeclaredPropertyInfo extends PropertyInfo {
         return this.attributeInfo;
     }
 
-    void setAttributeInfo(AttributeInfo attributeInfo) {
-        this.attributeInfo = attributeInfo;
+    /**
+     * Set the attribute info.
+     * @param attrInfo new attribute info
+     */
+    void setAttributeInfo(final AttributeInfo attrInfo) {
+        this.attributeInfo = attrInfo;
     }
 
     /**
@@ -264,8 +405,9 @@ public class DeclaredPropertyInfo extends PropertyInfo {
      * annotation elements, and only if the elements where not explicitly
      * declared for this property. Also, if a read or write method is inherited
      * but not overridden, the method names will be copied.
+     * @param propertyInfo property info
      */
-    void updateInheritedValues(PropertyInfo propertyInfo) {
+    void updateInheritedValues(final PropertyInfo propertyInfo) {
         if (!this.annotationValueMap.containsKey(DISPLAY_NAME)) {
             this.annotationValueMap.put(DISPLAY_NAME,
                     propertyInfo.getDisplayName());

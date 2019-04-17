@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Property;
@@ -29,45 +28,155 @@ import javax.faces.convert.Converter;
 import javax.faces.event.ValueChangeEvent;
 
 /**
- * A set of one or more tabs. A TabSet is a naming container which should contain
- * only {@link Tab} components. The currently selected tab is specified via the
- * {@code selected} property, which may be bound to a model value. Action listeners
- * may be registered individually with a Tab; or, an action listener may be
- * registered with the containing tabSet, in which case it is notified of all tab
- * selection actions.
+ * A set of one or more tabs. A TabSet is a naming container which should
+ * contain only {@link Tab} components. The currently selected tab is specified
+ * via the {@code selected} property, which may be bound to a model value.
+ * Action listeners may be registered individually with a Tab; or, an action
+ * listener may be registered with the containing tabSet, in which case it is
+ * notified of all tab selection actions.
  *
- * <p>TabSet implements {@link javax.faces.component.EditableValueHolder}, but it
- * diverges significantly from the behavior of a typical editable value holder. Note
- * that the {@code selected} property is an alias for the {@code value} property. 
- * 
+ * <p>
+ * TabSet implements {@link javax.faces.component.EditableValueHolder}, but it
+ * diverges significantly from the behavior of a typical editable value holder.
+ * Note that the {@code selected} property is an alias for the {@code value}
+ * property.
+ *
  * <ul>
- * <li><b>Converters and Validators</b>. Converters and validators are not used by
- * the tab set component. The value of a tab set is the ID of the currently selected
- * tab, set as a result of the tab selection action. The id is always a String,
- * and need not be converted. Also, since the tab always sets a correct id, the id
- * need not be validated.</li>
- * <li><b>Validation and tab navigation</b>. Tabs may contain input components. By
- * default, when a new tab is selected, the tab set checks whether all input components
- * inside the current tab are valid. If one or more is not valid, then the tab set
- * marks itself as invalid. As a result, the selected property will not be updated,
- * and the tab set will output the previously selected tab as selected. In other
- * words, by default, users cannot move from one tab to another until all they have
- * provided valid values for all the tab's input components.</li>
- * <li><b>Updating of bound value models</b>. If a tab set is valid, and the value of
- * the selected property is changed, a model bound to the value will be updated.</li>
- * <li><b>Immediate tab sets</b>. If a tab set is made immediate, tab nagivation will
- * be allowed to occur even if there are invalid input components inside the
- * current tab. However, in this case, the model value will <emph>not</emph> be
- * updated. This generally works best if the tabs themselves are also made immediate,
- * and if some other command component is used to actually submit the page for
- * value processing.</li>
+ * <li><b>Converters and Validators</b>. Converters and validators are not used
+ * by the tab set component. The value of a tab set is the ID of the currently
+ * selected tab, set as a result of the tab selection action. The id is always a
+ * String, and need not be converted. Also, since the tab always sets a correct
+ * id, the id need not be validated.</li>
+ * <li><b>Validation and tab navigation</b>. Tabs may contain input components.
+ * By default, when a new tab is selected, the tab set checks whether all input
+ * components inside the current tab are valid. If one or more is not valid,
+ * then the tab set marks itself as invalid. As a result, the selected property
+ * will not be updated, and the tab set will output the previously selected tab
+ * as selected. In other words, by default, users cannot move from one tab to
+ * another until all they have provided valid values for all the tab's input
+ * components.</li>
+ * <li><b>Updating of bound value models</b>. If a tab set is valid, and the
+ * value of the selected property is changed, a model bound to the value will be
+ * updated.</li>
+ * <li><b>Immediate tab sets</b>. If a tab set is made immediate, tab navigation
+ * will be allowed to occur even if there are invalid input components inside
+ * the current tab. However, in this case, the model value will <b>not</b>
+ * be updated. This generally works best if the tabs themselves are also made
+ * immediate, and if some other command component is used to actually submit the
+ * page for value processing.</li>
  * </ul>
  */
-@Component(type = "com.sun.webui.jsf.TabSet", family = "com.sun.webui.jsf.TabSet",
-displayName = "Tab Set", tagName = "tabSet",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_tab_set",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_tab_set_props")
-public class TabSet extends WebuiInput implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.TabSet",
+        family = "com.sun.webui.jsf.TabSet",
+        displayName = "Tab Set", tagName = "tabSet",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_tab_set",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_tab_set_props")
+        //CHECKSTYLE:ON
+public final class TabSet extends WebuiInput implements NamingContainer {
+
+    /**
+     * Set the method expression that identifies a method that handles the
+     * action event fired when one of this tab set's tabs is used to submit the
+     * page. The signature of the bound method must correspond to {@link
+     * javax.faces.event.ActionListenerExpression#processAction}. The class that
+     * defines the method must implement the {@code java.io.Serializable}
+     * interface or {@code javax.faces.component.StateHolder} interface.
+     */
+    @Property(name = "actionListenerExpression",
+            displayName = "Action Listener Expression",
+            category = "Advanced")
+    @Property.Method(signature
+            = "void processAction(javax.faces.event.ActionEvent)")
+    private MethodExpression actionListenerExpression;
+
+    /**
+     * Returns true if the tabs in this tab set should remember which of their
+     * tab children was last selected. This enables the user to choose other
+     * tabs in the set, and have the child tab selection in the original tab be
+     * retained when the user returns to the original tab.
+     */
+    @Property(name = "lastSelectedChildSaved",
+            displayName = "Last Selected Child Saved",
+            isHidden = true)
+    private boolean lastSelectedChildSaved = true;
+
+    /**
+     * lastSelectedChildSaved set.
+     */
+    private boolean lastSelectedChildSavedSet = true;
+
+    /**
+     * Returns true if the tabs should render in a visually lighter style, with
+     * reduced shading and bolding. This attribute can only be used with mini
+     * tabs, so you must also set the mini attribute to true to render
+     * lightweight tabs.
+     */
+    @Property(name = "lite",
+            displayName = "Lightweight Tab Set",
+            category = "Appearance")
+    private boolean lite = false;
+
+    /**
+     * lite set flag.
+     */
+    private boolean liteSet = false;
+
+    /**
+     * Set this attribute to true in a first level tab set, to create tabs that
+     * have the smaller "mini" tab style. Note that mini tab sets will not
+     * display properly if more than one level of tabs are specified.
+     */
+    @Property(name = "mini", displayName = "Mini", category = "Appearance")
+    private boolean mini = false;
+
+    /**
+     * mini set flag.
+     */
+    private boolean miniSet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+            //CHECKSTYLE:ON
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
 
     /**
      * Create a new TabSet.
@@ -83,7 +192,7 @@ public class TabSet extends WebuiInput implements NamingContainer {
     }
 
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("selected")) {
             return super.getValueExpression("value");
         }
@@ -91,7 +200,9 @@ public class TabSet extends WebuiInput implements NamingContainer {
     }
 
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("selected")) {
             super.setValueExpression("value", binding);
             return;
@@ -117,113 +228,93 @@ public class TabSet extends WebuiInput implements NamingContainer {
         return super.getValidatorExpression();
     }
 
-    /**
-     * The current value of this component.
-     */
     @Property(isHidden = true, isAttribute = true)
     @Override
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * Set the method expression that identifies a method that handles
-     * the action event fired when one of this tab set's tabs is used to submit
-     * the page. The signature of the bound method must correspond to {@link
-     * javax.faces.event.ActionListenerExpression#processAction}. The class that
-     * defines the method must implement the <code>java.io.Serializable</code>
-     * interface or <code>javax.faces.component.StateHolder</code> interface.
-     */
-    @Property(name = "actionListenerExpression", displayName = "Action Listener Expression", category = "Advanced")
-    @Property.Method(signature = "void processAction(javax.faces.event.ActionEvent)")
-    private MethodExpression actionListenerExpression;
 
     /**
-     * Get the method expression that identifies a method that handles
-     * the action event fired when one of this tab set's tabs is used to submit
-     * the page.
+     * Get the method expression that identifies a method that handles the
+     * action event fired when one of this tab set's tabs is used to submit the
+     * page.
+     * @return MethodExpression
      */
     public MethodExpression getActionListenerExpression() {
         return this.actionListenerExpression;
     }
 
     /**
-     * Set the method expression that identifies a method that handles
-     * the action event fired when one of this tab set's tabs is used to submit
-     * the page. The signature of the bound method must correspond to {@link
-     * javax.faces.event.MethodExpressionActionListener#processAction}. The class that
-     * defines the method must implement the <code>java.io.Serializable</code>
-     * interface or <code>javax.faces.component.StateHolder</code> interface.
+     * Set the method expression that identifies a method that handles the
+     * action event fired when one of this tab set's tabs is used to submit the
+     * page. The signature of the bound method must correspond to {@link
+     * javax.faces.event.MethodExpressionActionListener#processAction}. The
+     * class that defines the method must implement the
+     * {@code java.io.Serializable} interface or
+     * {@code javax.faces.component.StateHolder} interface.
+     * @param newActionListenerExpression actionListenerExpression
      */
-    public void setActionListenerExpression(MethodExpression actionListenerExpression) {
-        this.actionListenerExpression = actionListenerExpression;
+    public void setActionListenerExpression(
+            final MethodExpression newActionListenerExpression) {
+
+        this.actionListenerExpression = newActionListenerExpression;
     }
-    /**
-     * Returns true if the tabs in this tab set should remember
-     * which of their tab children was last selected. This enables the user to
-     * choose other tabs in the set, and have the child tab selection in the
-     * original tab be retained when the user returns to the original tab.
-     */
-    @Property(name = "lastSelectedChildSaved", displayName = "Last Selected Child Saved", isHidden = true)
-    private boolean lastSelectedChildSaved = true;
-    private boolean lastSelectedChildSaved_set = true;
 
     /**
-     * Returns true if the tabs in this tab set should remember
-     * which of their tab children was last selected. This enables the user to
-     * choose other tabs in the set, and have the child tab selection in the
-     * original tab be retained when the user returns to the original tab.
+     * Returns true if the tabs in this tab set should remember which of their
+     * tab children was last selected. This enables the user to choose other
+     * tabs in the set, and have the child tab selection in the original tab be
+     * retained when the user returns to the original tab.
+     * @return {@code boolean}
      */
     public boolean isLastSelectedChildSaved() {
-        if (this.lastSelectedChildSaved_set) {
+        if (this.lastSelectedChildSavedSet) {
             return this.lastSelectedChildSaved;
         }
-        ValueExpression _vb = getValueExpression("lastSelectedChildSaved");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("lastSelectedChildSaved");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * Set to true if the tabs in this tab set should remember
-     * which of their tab children was last selected. This enables the user to
-     * choose other tabs in the set, and have the child tab selection in the
-     * original tab be retained when the user returns to the original tab.
+     * Set to true if the tabs in this tab set should remember which of their
+     * tab children was last selected. This enables the user to choose other
+     * tabs in the set, and have the child tab selection in the original tab be
+     * retained when the user returns to the original tab.
+     * @param newLastSelectedChildSaved lastSelectedChildSaved
      */
-    public void setLastSelectedChildSaved(boolean lastSelectedChildSaved) {
-        this.lastSelectedChildSaved = lastSelectedChildSaved;
-        this.lastSelectedChildSaved_set = true;
+    public void setLastSelectedChildSaved(
+            final boolean newLastSelectedChildSaved) {
+
+        this.lastSelectedChildSaved = newLastSelectedChildSaved;
+        this.lastSelectedChildSavedSet = true;
     }
-    /**
-     * Returns true if the tabs should render in a visually lighter style, with reduced
-     * shading and bolding. This attribute can only be used with mini tabs, so
-     * you must also set the mini attribute to true to render lightweight tabs.
-     */
-    @Property(name = "lite", displayName = "Lightweight Tab Set", category = "Appearance")
-    private boolean lite = false;
-    private boolean lite_set = false;
 
     /**
-     * Returns true if the tabs should render in a visually lighter style, with reduced
-     * shading and bolding. This attribute can only be used with mini tabs, so
-     * you must also set the mini attribute to true to render lightweight tabs.
+     * Returns true if the tabs should render in a visually lighter style, with
+     * reduced shading and bolding. This attribute can only be used with mini
+     * tabs, so you must also set the mini attribute to true to render
+     * lightweight tabs.
+     * @return {@code boolean}
      */
     public boolean isLite() {
-        if (this.lite_set) {
+        if (this.liteSet) {
             return this.lite;
         }
-        ValueExpression _vb = getValueExpression("lite");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("lite");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
@@ -233,36 +324,30 @@ public class TabSet extends WebuiInput implements NamingContainer {
      * Set to true to render the tabs in a visually lighter style, with reduced
      * shading and bolding. This attribute can only be used with mini tabs, so
      * you must also set the mini attribute to true to render lightweight tabs.
+     * @param newLite lite
      */
-    public void setLite(boolean lite) {
-        this.lite = lite;
-        this.lite_set = true;
+    public void setLite(final boolean newLite) {
+        this.lite = newLite;
+        this.liteSet = true;
     }
-    /**
-     * Set this attribute to true in a first level tab set, to create tabs that
-     * have the smaller "mini" tab style. Note that mini tab sets will not display
-     * properly if more than one level of tabs are specified.
-     */
-    @Property(name = "mini", displayName = "Mini", category = "Appearance")
-    private boolean mini = false;
-    private boolean mini_set = false;
 
     /**
      * Set this attribute to true in a first level tab set, to create tabs that
-     * have the smaller "mini" tab style. Note that mini tab sets will not display
-     * properly if more than one level of tabs are specified.
+     * have the smaller "mini" tab style. Note that mini tab sets will not
+     * display properly if more than one level of tabs are specified.
+     * @return {@code boolean}
      */
     public boolean isMini() {
-        if (this.mini_set) {
+        if (this.miniSet) {
             return this.mini;
         }
-        ValueExpression _vb = getValueExpression("mini");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("mini");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
@@ -270,38 +355,44 @@ public class TabSet extends WebuiInput implements NamingContainer {
 
     /**
      * Set this attribute to true in a first level tab set, to create tabs that
-     * have the smaller "mini" tab style. Note that mini tab sets will not display
-     * properly if more than one level of tabs are specified.
+     * have the smaller "mini" tab style. Note that mini tab sets will not
+     * display properly if more than one level of tabs are specified.
+     * @param newMini mini
      */
-    public void setMini(boolean mini) {
-        this.mini = mini;
-        this.mini_set = true;
+    public void setMini(final boolean newMini) {
+        this.mini = newMini;
+        this.miniSet = true;
     }
 
     /**
      * The id of the selected tab.
+     * @return String
      */
-    @Property(name = "selected", displayName = "Selected", category = "Data",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.TabIdsEditor")
-    /**
-     * The id of the selected tab.
-     */
+    @Property(name = "selected",
+            displayName = "Selected",
+            category = "Data",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.TabIdsEditor")
+            //CHECKSTYLE:ON
     public String getSelected() {
         return (String) getValue();
     }
 
     /**
      * The id of the selected tab.
+     *
      * @see #getSelected()
+     * @param selected selected
      */
-    public void setSelected(String selected) {
+    public void setSelected(final String selected) {
         setValue((Object) selected);
     }
 
     /**
-     * Returns this tab set's tab descendant with id equal to the value of
-     * the selected property. If the value of the selected property is null,
-     * returns the first tab child. If there are no tab children, returns null.
+     * Returns this tab set's tab descendant with id equal to the value of the
+     * selected property. If the value of the selected property is null, returns
+     * the first tab child. If there are no tab children, returns null.
+     * @return Tab
      */
     public Tab getSelectedTab() {
         if (this.getChildCount() == 0) {
@@ -315,7 +406,7 @@ public class TabSet extends WebuiInput implements NamingContainer {
         }
         String id = this.getSelected();
         if (id == null) {
-            if (tabStack.size() == 0) {
+            if (tabStack.isEmpty()) {
                 return null;
             } else {
                 return tabStack.get(0);
@@ -332,25 +423,19 @@ public class TabSet extends WebuiInput implements NamingContainer {
         }
         return selectedTab;
     }
-    /**
-     * CSS style(s) to be applied to the outermost HTML element when this
-     * component is rendered.
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
      * CSS style(s) to be applied to the outermost HTML element when this
      * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -358,30 +443,26 @@ public class TabSet extends WebuiInput implements NamingContainer {
     /**
      * CSS style(s) to be applied to the outermost HTML element when this
      * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * CSS style class(es) to be applied to the outermost HTML element when this
-     * component is rendered.
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
      * CSS style class(es) to be applied to the outermost HTML element when this
      * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -389,44 +470,35 @@ public class TabSet extends WebuiInput implements NamingContainer {
     /**
      * CSS style class(es) to be applied to the outermost HTML element when this
      * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
      * Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
      * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
@@ -434,17 +506,19 @@ public class TabSet extends WebuiInput implements NamingContainer {
 
     /**
      * Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
      * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
     /**
@@ -452,7 +526,7 @@ public class TabSet extends WebuiInput implements NamingContainer {
      * currently selected tab are valid.
      */
     @Override
-    public void validate(FacesContext context) {
+    public void validate(final FacesContext context) {
         if (!this.isRendered()) {
             return;
         }
@@ -464,7 +538,8 @@ public class TabSet extends WebuiInput implements NamingContainer {
                 componentStack.addAll(selectedTab.getChildren());
                 while (this.isValid() && !componentStack.isEmpty()) {
                     UIComponent component = componentStack.pop();
-                    if (component instanceof EditableValueHolder && !((EditableValueHolder) component).isValid()) {
+                    if (component instanceof EditableValueHolder
+                            && !((EditableValueHolder) component).isValid()) {
                         this.setValid(false);
                     }
                     if (component.getChildCount() > 0) {
@@ -475,69 +550,102 @@ public class TabSet extends WebuiInput implements NamingContainer {
         }
         if (this.isValid()) {
             Object submittedValue = getSubmittedValue();
-            // If a child tab was used to submit the page, then the tab will have set
-            // a non-null submitted value. Otherwise, if the submitted value is null,
-            // it means a command elsewhere on the page sumitted the tab set. In this
-            // case, leave the tab set's current value unchanged.
+            // If a child tab was used to submit the page, then the tab will
+            // have set
+            // a non-null submitted value. Otherwise, if the submitted value
+            // is null,
+            // it means a command elsewhere on the page sumitted the tab set.
+            // In this case, leave the tab set's current value unchanged.
             if (submittedValue != null) {
                 Object previousValue = getValue();
                 setValue(submittedValue);
                 setSubmittedValue(null);
                 if (compareValues(previousValue, submittedValue)) {
-                    queueEvent(new ValueChangeEvent(this, previousValue, submittedValue));
+                    queueEvent(new ValueChangeEvent(this, previousValue,
+                            submittedValue));
                 }
             }
         }
     }
 
-    /**
-     * Restore the state of this component.
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.actionListenerExpression = (javax.el.MethodExpression) _values[1];
-        this.lastSelectedChildSaved = ((Boolean) _values[2]).booleanValue();
-        this.lastSelectedChildSaved_set = ((Boolean) _values[3]).booleanValue();
-        this.lite = ((Boolean) _values[4]).booleanValue();
-        this.lite_set = ((Boolean) _values[5]).booleanValue();
-        this.mini = ((Boolean) _values[6]).booleanValue();
-        this.mini_set = ((Boolean) _values[7]).booleanValue();
-        this.style = (String) _values[8];
-        this.styleClass = (String) _values[9];
-        this.visible = ((Boolean) _values[10]).booleanValue();
-        this.visible_set = ((Boolean) _values[11]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.actionListenerExpression = (javax.el.MethodExpression) values[1];
+        this.lastSelectedChildSaved = ((Boolean) values[2]);
+        this.lastSelectedChildSavedSet = ((Boolean) values[3]);
+        this.lite = ((Boolean) values[4]);
+        this.liteSet = ((Boolean) values[5]);
+        this.mini = ((Boolean) values[6]);
+        this.miniSet = ((Boolean) values[7]);
+        this.style = (String) values[8];
+        this.styleClass = (String) values[9];
+        this.visible = ((Boolean) values[10]);
+        this.visibleSet = ((Boolean) values[11]);
     }
 
-    /**
-     * Save the state of this component.
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[12];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.actionListenerExpression;
-        _values[2] = this.lastSelectedChildSaved ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.lastSelectedChildSaved_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = this.lite ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.lite_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.mini ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = this.mini_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[8] = this.style;
-        _values[9] = this.styleClass;
-        _values[10] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[11] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[12];
+        values[0] = super.saveState(context);
+        values[1] = this.actionListenerExpression;
+        if (this.lastSelectedChildSaved) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.lastSelectedChildSavedSet) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        if (this.lite) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.liteSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        if (this.mini) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        if (this.miniSet) {
+            values[7] = Boolean.TRUE;
+        } else {
+            values[7] = Boolean.FALSE;
+        }
+        values[8] = this.style;
+        values[9] = this.styleClass;
+        if (this.visible) {
+            values[10] = Boolean.TRUE;
+        } else {
+            values[10] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[11] = Boolean.TRUE;
+        } else {
+            values[11] = Boolean.FALSE;
+        }
+        return values;
     }
 
     /**
      * Returns the tab with the id specified that is a child of this tabSet. If
      * no such descendant tab exists, returns null. If this tabSet contains more
-     * than one tab with the same id, the tab returned will be the first encountered
-     * in document order.
+     * than one tab with the same id, the tab returned will be the first
+     * encountered in document order.
+     * @param tabId tabId
+     * @return Tab
      */
-    public Tab findChildTab(String tabId) {
+    public Tab findChildTab(final String tabId) {
         if (tabId == null) {
             return null;
         }
@@ -551,12 +659,15 @@ public class TabSet extends WebuiInput implements NamingContainer {
     }
 
     /**
-     * Returns the tab with the id specified that is a child of the tab specified. If
-     * no such descendant tab exists, returns null. If the tab specified contains more
-     * than one tab with the same id, the tab returned will be the first encountered
-     * in document order.
+     * Returns the tab with the id specified that is a child of the tab
+     * specified. If no such descendant tab exists, returns null. If the tab
+     * specified contains more than one tab with the same id, the tab returned
+     * will be the first encountered in document order.
+     * @param tab tab
+     * @param tabId tabId
+     * @return Tab
      */
-    public static Tab findChildTab(Tab tab, String tabId) {
+    public static Tab findChildTab(final Tab tab, final String tabId) {
         if (tab == null || tabId == null) {
             return null;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -29,19 +29,20 @@ import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 /**
  * This class renders Table2Column components.
  */
-@Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.widget.Table2Column",
-componentFamily = "com.sun.webui.jsf.Table2Column"))
+@Renderer(@Renderer.Renders(
+        rendererType = "com.sun.webui.jsf.widget.Table2Column",
+        componentFamily = "com.sun.webui.jsf.Table2Column"))
 public final class Table2ColumnRenderer extends RendererBase {
 
     /**
      * The set of pass-through attributes to be rendered.
      * <p>
      * Note: The WIDTH, HEIGHT, and BGCOLOR attributes are all deprecated (in
-     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and 
+     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and
      * LANG attributes are not currently supported.
      * </p>
      */
-    private static final String ATTRIBUTES[] = {
+    private static final String[] ATTRIBUTES = {
         "abbr",
         "axis",
         "bgColor",
@@ -67,15 +68,15 @@ public final class Table2ColumnRenderer extends RendererBase {
     };
 
     @Override
-    protected String[] getModuleNames(UIComponent component) {
+    protected String[] getModuleNames(final UIComponent component) {
         return new String[]{
             "table2RowGroup"
         };
     }
 
     @Override
-    protected JsonObjectBuilder getProperties(FacesContext context,
-            UIComponent component) throws IOException {
+    protected JsonObjectBuilder getProperties(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         Table2Column col = (Table2Column) component;
         JsonObjectBuilder jsonBuilder = JSON_BUILDER_FACTORY
@@ -90,8 +91,8 @@ public final class Table2ColumnRenderer extends RendererBase {
     }
 
     @Override
-    protected void renderNestedContent(FacesContext context,
-            UIComponent component) throws IOException {
+    protected void renderNestedContent(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     /**
@@ -102,8 +103,8 @@ public final class Table2ColumnRenderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setFooterProperties(FacesContext context,
-            Table2Column component, JsonObjectBuilder jsonBuilder)
+    protected void setFooterProperties(final FacesContext context,
+            final Table2Column component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         // Get footer facet.
@@ -116,7 +117,7 @@ public final class Table2ColumnRenderer extends RendererBase {
         }
     }
 
-    /** 
+    /**
      * Helper method to obtain header properties.
      *
      * @param context FacesContext for the current request.
@@ -124,8 +125,8 @@ public final class Table2ColumnRenderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setHeaderProperties(FacesContext context,
-            Table2Column component, JsonObjectBuilder jsonBuilder)
+    protected void setHeaderProperties(final FacesContext context,
+            final Table2Column component, final JsonObjectBuilder jsonBuilder)
             throws IOException {
 
         // Get header facet.

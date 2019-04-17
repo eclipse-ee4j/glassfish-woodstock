@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,20 +19,40 @@ package com.sun.webui.jsf.model;
 import javax.faces.model.SelectItem;
 
 /**
- * <p>Model bean that represents a selectable choice in a selection
- * component such as <code>Menu</code>, <code>RadioButtonGroup</code>,
+ * Model bean that represents a selectable choice in a selection
+ * component such as {@code Menu}, {@code RadioButtonGroup},
  * etc.
- * </p>
  */
 public class Option extends SelectItem {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -2164172320702956584L;
+
+    /**
+     * Option image.
+     */
     private String image;
-    // Zero is a valid width and height
-    //
+
+    /**
+     * Image width. Zero is a valid width.
+     */
     private int imageWidth = -1;
+
+    /**
+     * Image height. Zero is a valid height.
+     */
     private int imageHeight = -1;
+
+    /**
+     * Image alternate text.
+     */
     private String imageAlt;
+
+    /**
+     * Image tool tip.
+     */
     private String tooltip;
 
     /**
@@ -44,34 +64,48 @@ public class Option extends SelectItem {
 
     /**
      * Create an instance of Selection.
+     * @param value option value
      */
-    public Option(Object value) {
+    public Option(final Object value) {
         super(value, null);
     }
 
     /**
      * Create an instance of Selection.
+     * @param value option value
+     * @param label option label
      */
-    public Option(Object value, String label) {
+    public Option(final Object value, final String label) {
         super(value, label);
     }
 
     /**
      * Create an instance of Selection.
+     * @param value value
+     * @param label label
+     * @param description description
      */
-    public Option(Object value, String label, String description) {
+    public Option(final Object value, final String label,
+            final String description) {
+
         super(value, label, description);
     }
 
     /**
      * Create an instance of Selection.
+     * @param value value
+     * @param label label
+     * @param description description
+     * @param disabled disabled flag
      */
-    public Option(Object value, String label, String description, boolean disabled) {
+    public Option(final Object value, final String label,
+            final String description, final boolean disabled) {
         super(value, label, description, disabled);
     }
 
     /**
      * Get the image resource path.
+     * @return String
      */
     public String getImage() {
         return image;
@@ -80,13 +114,15 @@ public class Option extends SelectItem {
     /**
      * Set an image resource path
      * Used for an image in a radio button for example.
+     * @param newImage new value
      */
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage(final String newImage) {
+        this.image = newImage;
     }
 
     /**
      * Get the image width.
+     * @return width
      */
     public int getImageWidth() {
         return imageWidth;
@@ -95,13 +131,15 @@ public class Option extends SelectItem {
     /**
      * Set an image resource path
      * Used for an image in a radio button for example.
+     * @param newImageWidth new value
      */
-    public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
+    public void setImageWidth(final int newImageWidth) {
+        this.imageWidth = newImageWidth;
     }
 
     /**
      * Get the image height.
+     * @return height
      */
     public int getImageHeight() {
         return imageHeight;
@@ -110,13 +148,15 @@ public class Option extends SelectItem {
     /**
      * Set an image resource path
      * Used for an image in a radio button for example.
+     * @param newImageHeight image height
      */
-    public void setImageHeight(int imageHeight) {
-        this.imageHeight = imageHeight;
+    public void setImageHeight(final int newImageHeight) {
+        this.imageHeight = newImageHeight;
     }
 
     /**
      * Get the alternate text for the image.
+     * @return image alt
      */
     public String getImageAlt() {
         return imageAlt;
@@ -124,22 +164,25 @@ public class Option extends SelectItem {
 
     /**
      * Set the alternate text for the image.
+     * @param newImageAlt alternate text
      */
-    public void setImageAlt(String imageAlt) {
-        this.imageAlt = imageAlt;
+    public void setImageAlt(final String newImageAlt) {
+        this.imageAlt = newImageAlt;
     }
 
     /**
-     * Get the tooltip for this instance.
+     * Get the tool-tip for this instance.
+     * @return String
      */
     public String getTooltip() {
         return tooltip;
     }
 
     /**
-     * Set the tooltip for this instance.
+     * Set the tool-tip for this instance.
+     * @param newTooltip tool tip
      */
-    public void setTooltip(String tooltip) {
-        this.tooltip = tooltip;
+    public void setTooltip(final String newTooltip) {
+        this.tooltip = newTooltip;
     }
 }

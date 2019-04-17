@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,19 +13,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package org.example.base;
 
-/**
- *
- * @author gjmurphy
- */
 public class SuperSuperBean01 {
-    
+
     private String one;
 
     /**
      * Getter for property one.
+     *
      * @return Value of property one.
      */
     public String getOne() {
@@ -34,11 +30,11 @@ public class SuperSuperBean01 {
 
     /**
      * Setter for property one.
+     *
      * @param one New value of property one.
      */
     public void setOne(String one) {
         this.one = one;
     }
 
-    
 }

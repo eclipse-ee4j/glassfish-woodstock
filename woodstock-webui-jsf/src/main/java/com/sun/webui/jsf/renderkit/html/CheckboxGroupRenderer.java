@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,26 +32,25 @@ import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * The <code>CheckboxGroupRenderer</code> renders a <code>CheckboxGroup</code>
- * component as set of checkboxes. The <code>CheckboxGroupRenderer</code>
- * creates an instance of <code>Checkbox</code> for each
- * <code>Option</code> instance in the <code>Array</code>, <code>Map</code>, or
- * <code>Collection</code> returned by the <code>CheckboxGroup</code>
- * <code>getItems()</code> method and renders them. It also creates
- * a <code>Label</code> component and renders it as the label for the group.
+ * The {@code CheckboxGroupRenderer} renders a {@code CheckboxGroup}
+ * component as set of checkboxes. The {@code CheckboxGroupRenderer}
+ * creates an instance of {@code Checkbox} for each
+ * {@code Option} instance in the {@code Array}, {@code Map}, or
+ * {@code Collection} returned by the {@code CheckboxGroup}
+ * {@code getItems()} method and renders them. It also creates
+ * a
+ * {@code Label} component and renders it as the label for the group.
  * <p>
- * Zero or more checkboxes may be selected.
- * The value of the <code>CheckboxGroup</code> will determine
- * which checkboxes shall be initially selected and subsequetly hold
- * the current selections.
+ * Zero or more checkboxes may be selected. The value of the
+ * {@code CheckboxGroup} will determine which checkboxes shall be initially
+ * selected and subsequetly hold the current selections.
  * </p>
  * <p>
- * The checkboxes are rendered as a single column or some number of
- * rows and columns. The rows and columns are rendered as a table as
- * defined by the {@link com.sun.webui.jsf.renderkit.html.RowColumnRenderer} superclass.
- * The elements
- * that make up the checkbox occupy a cell in the table.
- * The style class selector for the group elements is identified by a java
+ * The checkboxes are rendered as a single column or some number of rows and
+ * columns. The rows and columns are rendered as a table as defined by the
+ * {@link com.sun.webui.jsf.renderkit.html.RowColumnRenderer} superclass. The
+ * elements that make up the checkbox occupy a cell in the table. The style
+ * class selector for the group elements is identified by a java
  * constants defined in the {@link com.sun.webui.jsf.theme.ThemeStyles} class.
  * </p>
  * <ul>
@@ -72,33 +71,63 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  * <li>CHECKBOX_IMAGE_DISABLED for an IMG element of a disabled checkbox</li>
  * </ul>
  * <p>
- * The <code>name</code> property of each checkbox is the component id of the
- * <code>CheckboxGroup</code> instance. The id of a <code>Checkbox</code>
+ * The {@code name} property of each checkbox is the component id of the
+ * {@code CheckboxGroup} instance. The id of a {@code Checkbox}
  * component is <em>cbgrpid_N</em> where <em>cbgrpid</em> is the id of the
- * <code>CheckboxGroup</code> instance and <em>_N</em> is the nth checkbox.
+ * {@code CheckboxGroup} instance and <em>_N</em> is the nth checkbox.
  * </p>
  * <p>
- * The <code>CheckboxGroup</code> is decoded by identifying the
- * <code>CheckboxGroup</code> instance component id which is
+ * The {@code CheckboxGroup} is decoded by identifying the
+ * {@code CheckboxGroup} instance component id which is
  * returned as a request parameter. It represents the name attribute
  * of the selected checkbox's &lt;input&gt; element. The values of the
  * identified request parameter are assigned as the submitted value of the
- * <code>CheckboxGroup</code> component.
+ * {@code CheckboxGroup} component.
  * </p>
  * <p>
- * If the items property of the <code>CheckboxGroup</code> is null or
+ * If the items property of the {@code CheckboxGroup} is null or
  * zero length, no output is produced.
  * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CheckboxGroup"))
+@Renderer(@Renderer.Renders(
+        componentFamily = "com.sun.webui.jsf.CheckboxGroup"))
 //FIXME check about making SelectGroupRenderer a public abstract class
 public class CheckboxGroupRenderer extends SelectorGroupRenderer {
 
-    private final String MSG_COMPONENT_NOT_CHECKBOXGROUP =
-            "CheckboxGroupRenderer only renders CheckboxGroup components.";//NOI18N
+    /**
+     * Error message for component not a check-box group type.
+     */
+    private static final String MSG_COMPONENT_NOT_CHECKBOXGROUP =
+     "CheckboxGroupRenderer only renders CheckboxGroup components.";
 
     /**
-     * Creates a new instance of CheckboxGroupRenderer
+     * The style constants defined in
+     * {@link com.sun.webui.jsf.theme.ThemeStyles} mapped to the value of
+     * constants defined in
+     * {@link com.sun.webui.jsf.renderkit.html.SelectorGroupRenderer}.
+     */
+    private static final String[] STYLES = {
+        ThemeStyles.CHECKBOX_GROUP, /* GRP */
+        ThemeStyles.CHECKBOX_GROUP_CAPTION, /* GRP_CAPTION */
+        ThemeStyles.CHECKBOX_GROUP_LABEL, /* GRP_LABEL */
+        ThemeStyles.CHECKBOX_GROUP_LABEL_DISABLED, /* GRP_LABEL_DIS */
+        ThemeStyles.CHECKBOX_GROUP_ROW_EVEN, /* GRP_ROW_EVEN */
+        ThemeStyles.CHECKBOX_GROUP_ROW_ODD, /* GRP_ROW_EVEN */
+        ThemeStyles.CHECKBOX_GROUP_CELL_EVEN, /* GRP_CELL_EVEN */
+        ThemeStyles.CHECKBOX_GROUP_CELL_ODD, /* GRP_CELL_ODD */
+        ThemeStyles.CHECKBOX, /* INPUT */
+        ThemeStyles.CHECKBOX_DISABLED, /* INPUT_DIS */
+        ThemeStyles.CHECKBOX_LABEL, /* LABEL */
+        ThemeStyles.CHECKBOX_LABEL_DISABLED, /* LABEL_DIS */
+        ThemeStyles.CHECKBOX_IMAGE, /* IMAGE */
+        ThemeStyles.CHECKBOX_IMAGE_DISABLED, /* IMAGE_DIS */
+        ThemeStyles.LABEL_LEVEL_ONE_TEXT, /* LABEL_LVL1 */
+        ThemeStyles.LABEL_LEVEL_TWO_TEXT, /* LABEL_LVL2 */
+        ThemeStyles.LABEL_LEVEL_THREE_TEXT /* LABLE_LVL3 */
+    };
+
+    /**
+     * Creates a new instance of CheckboxGroupRenderer.
      */
     public CheckboxGroupRenderer() {
         super();
@@ -106,18 +135,21 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
 
     /**
      * Ensure that the component to be rendered is a CheckboxGroup instance.
-     * Actual rendering occurs during the <code>renderEnd</code> method.
+     * Actual rendering occurs during the {@code renderEnd} method.
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
+     * @throws IOException if an IO error occurs
      */
-    public void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    @Override
+    public void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         // Bail out if the component is not a CheckboxGroup component.
         if (!(component instanceof CheckboxGroup)) {
-            throw new IllegalArgumentException(MSG_COMPONENT_NOT_CHECKBOXGROUP);
+            throw new IllegalArgumentException(
+                    MSG_COMPONENT_NOT_CHECKBOXGROUP);
         }
     }
 
@@ -127,14 +159,15 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
+     * @throws IOException if an IO error occurs
      */
-    public void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    @Override
+    public void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         // Use only the cols value. If not valid render a single column.
         // If there are more items than columns, render additional rows.
-        //
         CheckboxGroup cbgrp = (CheckboxGroup) component;
 
         Theme theme = ThemeUtilities.getTheme(context);
@@ -145,13 +178,17 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
     /**
      * Return a Checkbox component to render.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>CheckboxGroup</code> component rendered
-     * @param theme <code>Theme</code> for the component
-     * @param option the <code>Option</code> being rendered.
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code CheckboxGroup} component rendered
+     * @param theme {@code Theme} for the component
+     * @param id component id
+     * @param option the {@code Option} being rendered.
+     * @return UIComponent
      */
-    protected UIComponent getSelectorComponent(FacesContext context,
-            UIComponent component, Theme theme, String id, Option option) {
+    @Override
+    protected UIComponent getSelectorComponent(final FacesContext context,
+            final UIComponent component, final Theme theme, final String id,
+            final Option option) {
 
         CheckboxGroup cbgrp = (CheckboxGroup) component;
 
@@ -169,8 +206,8 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
         cb.setTabIndex(cbgrp.getTabIndex());
 
         // mbohm 6300361,6300362
-        // transfer event attributes from cbgrp to cb 
-        // see RowColumnRenderer.renderRowColumnLayout 
+        // transfer event attributes from cbgrp to cb
+        // see RowColumnRenderer.renderRowColumnLayout
         transferEventAttributes(cbgrp, cb);
 
         // Default to not selected
@@ -190,8 +227,8 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
                     ConversionUtilities.convertValueToString(component,
                     selectedValue);
             for (int i = 0; i < subValue.length; ++i) {
-                if (subValue[i] != null &&
-                        subValue[i].equals(selectedValueAsString)) {
+                if (subValue[i] != null
+                        && subValue[i].equals(selectedValueAsString)) {
                     cb.setSelected(cb.getSelectedValue());
                     break;
                 }
@@ -202,15 +239,16 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
     }
 
     /**
-     * Return true if the <code>item</item> argument is the currently
-     * selected checkbox. Equality is determined by the <code>equals</code>
-     * method of the object instance stored as the <code>value</code> of
-     * <code>item</code>. Return false otherwise.
+     * Return true if the {@code item} argument is the currently
+     * selected checkbox. Equality is determined by the {@code equals}
+     * method of the object instance stored as the {@code value} of
+     * {@code item}. Return false otherwise.
      *
      * @param item the current checkbox being rendered.
      * @param currentValue the value of the current selected checkbox.
+     * @return {@code boolean}
      */
-    private boolean isSelected(Option item, Object currentValue) {
+    private boolean isSelected(final Option item, final Object currentValue) {
         // How is the selected value determined ?
         // Is it the Selection value on CheckboxGroup or
         // the boolean value on the current Selection being processed ?
@@ -234,34 +272,13 @@ public class CheckboxGroupRenderer extends SelectorGroupRenderer {
         return false;
 
     }
-    /**
-     * The style constants defined in {@link com.sun.webui.jsf.theme.ThemeStyles} mapped
-     * to the value of constants defined in 
-     * {@link com.sun.webui.jsf.renderkit.html.SelectorGroupRenderer}.
-     */
-    protected String[] styles = {
-        ThemeStyles.CHECKBOX_GROUP, /* GRP */
-        ThemeStyles.CHECKBOX_GROUP_CAPTION, /* GRP_CAPTION */
-        ThemeStyles.CHECKBOX_GROUP_LABEL, /* GRP_LABEL */
-        ThemeStyles.CHECKBOX_GROUP_LABEL_DISABLED, /* GRP_LABEL_DIS */
-        ThemeStyles.CHECKBOX_GROUP_ROW_EVEN, /* GRP_ROW_EVEN */
-        ThemeStyles.CHECKBOX_GROUP_ROW_ODD, /* GRP_ROW_EVEN */
-        ThemeStyles.CHECKBOX_GROUP_CELL_EVEN, /* GRP_CELL_EVEN */
-        ThemeStyles.CHECKBOX_GROUP_CELL_ODD, /* GRP_CELL_ODD */
-        ThemeStyles.CHECKBOX, /* INPUT */
-        ThemeStyles.CHECKBOX_DISABLED, /* INPUT_DIS */
-        ThemeStyles.CHECKBOX_LABEL, /* LABEL */
-        ThemeStyles.CHECKBOX_LABEL_DISABLED, /* LABEL_DIS */
-        ThemeStyles.CHECKBOX_IMAGE, /* IMAGE */
-        ThemeStyles.CHECKBOX_IMAGE_DISABLED, /* IMAGE_DIS */
-        ThemeStyles.LABEL_LEVEL_ONE_TEXT, /* LABEL_LVL1 */
-        ThemeStyles.LABEL_LEVEL_TWO_TEXT, /* LABEL_LVL2 */
-        ThemeStyles.LABEL_LEVEL_THREE_TEXT /* LABLE_LVL3 */};
 
     /**
-     * Return style constants for a <code>Checkbox</code> component.
+     * Return style constants for a {@code Checkbox} component.
+     * @return String[]
      */
+    @Override
     protected String[] getStyles() {
-        return styles;
+        return STYLES;
     }
 }

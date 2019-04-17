@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,10 +13,8 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package javax.faces.component;
 
-import com.sun.rave.designtime.Constants;
 import com.sun.rave.designtime.markup.AttributeDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -24,44 +22,52 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR;
+
 /**
  * BeanInfo for {@link javax.faces.component.UIGraphic}.
- *
- * @author gjmurphy
  */
-public class UIGraphicBeanInfo extends UIComponentBaseBeanInfo {
-    
+public final class UIGraphicBeanInfo extends UIComponentBaseBeanInfo {
+
+    /**
+     * Create a new instance.
+     */
     public UIGraphicBeanInfo() {
         super(UIGraphic.class);
     }
-    
+
+    /**
+     * The property descriptors.
+     */
     private PropertyDescriptor[] propertyDescriptors;
-    
+
+    @Override
     public PropertyDescriptor[] getPropertyDescriptors() {
-        
+
         if (propertyDescriptors == null) {
             try {
-                List<PropertyDescriptor> propertyDescriptorList = new ArrayList<PropertyDescriptor>();
-                propertyDescriptorList.addAll(Arrays.asList(super.getPropertyDescriptors()));
-                AttributeDescriptor attrib = null;
-                
-                PropertyDescriptor prop_value = new PropertyDescriptor("value", UIOutput.class, "getValue", "setValue");
-                prop_value.setDisplayName(resourceBundle.getString("UICommand_value_DisplayName"));
-                prop_value.setShortDescription(resourceBundle.getString("UICommand_value_Description"));
+                List<PropertyDescriptor> descList =
+                        new ArrayList<PropertyDescriptor>();
+                descList.addAll(Arrays
+                        .asList(super.getPropertyDescriptors()));
+                AttributeDescriptor attrib;
+
+                PropertyDescriptor propValue = new PropertyDescriptor("value",
+                        UIOutput.class, "getValue", "setValue");
+                propValue.setDisplayName(RESOURCE_BUNDLE
+                        .getString("UICommand_value_DisplayName"));
+                propValue.setShortDescription(RESOURCE_BUNDLE
+                        .getString("UICommand_value_Description"));
                 attrib = new AttributeDescriptor("value", false, null, true);
-                prop_value.setValue(Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR, attrib);
-                propertyDescriptorList.add(prop_value);
-                
-                propertyDescriptors = (PropertyDescriptor[]) propertyDescriptorList.toArray(
-                        new PropertyDescriptor[propertyDescriptorList.size()]);
-                
+                propValue.setValue(ATTRIBUTE_DESCRIPTOR, attrib);
+                descList.add(propValue);
+                propertyDescriptors = (PropertyDescriptor[])
+                        descList.toArray(new PropertyDescriptor[0]);
             } catch (IntrospectionException e) {
                 e.printStackTrace();
                 return null;
             }
         }
-        
         return propertyDescriptors;
-        
     }
 }

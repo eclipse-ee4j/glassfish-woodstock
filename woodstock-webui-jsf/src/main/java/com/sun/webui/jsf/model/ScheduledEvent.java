@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,16 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
-/*
- * Event.java
- *
- * Created on July 6, 2005, 9:13 AM
- *
- * To change this template, choose Tools | Options and locate the template under
- * the Source Creation and Management node. Right-click the template and choose
- * Open. You can then make changes to the template in the Source Editor.
- */
 package com.sun.webui.jsf.model;
 
 import java.io.Serializable;
@@ -34,68 +24,100 @@ import com.sun.webui.jsf.model.scheduler.RepeatInterval;
 import com.sun.webui.jsf.model.scheduler.RepeatUnit;
 
 /**
- *
- * @author avk, John Yeary
+ * Scheduled event.
  */
-//TODO Add hashcode
-public class ScheduledEvent implements Serializable {
+public final class ScheduledEvent implements Serializable {
 
-    private static final long serialVersionUID = 3470068141211045713L;
     /**
-     * The start time, as a java.util.Date
+     * Serialization UID.
+     */
+    private static final long serialVersionUID = 3470068141211045713L;
+
+    /**
+     * The start time, as a {@link java.util.Date}.
      */
     private Date startTime = null;
+
     /**
-     * The end time, as a java.util.Date
+     * The end time, as a {@link java.util.Date}.
      */
     private Date endTime = null;
-    private ArrayList<Object> dateList = null;
+
     /**
-     * Whether the event is repeating or not
+     * Date list.
+     */
+    private ArrayList<Object> dateList = null;
+
+    /**
+     * Whether the event is repeating or not.
      */
     private boolean repeatingEvent = false;
-    private final static boolean DEBUG = false;
 
     /**
-     * Retrieves the start time, as a java.util.Date
-     * @return The start time, as a java.util.Date
+     * Holds value of property frequency.
+     */
+    private RepeatInterval frequency = null;
+
+    /**
+     * The repeat frequency. The value must be the Integer value of a calendar
+     * field identifier (Calendar.HOUR_OF_DAY, etc). See
+     * {@code java.util.Calendar} for details.
+     * <p>
+     * To specify that the event repeats for three months... </p>
+     */
+    private RepeatUnit durationUnit = null;
+
+    /**
+     * Holds value of property duration.
+     */
+    private Integer duration = null;
+
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
+     * Retrieves the start time, as a {@link java.util.Date}.
+     *
+     * @return The start time, as a {@link java.util.Date}
      */
     public Date getStartTime() {
-
         return this.startTime;
     }
 
     /**
-     * Sets the start time
-     * @param startTime The start time, as a java.util.Date
+     * Sets the start time.
+     *
+     * @param newStartTime The start time, as a {@link java.util.Date}
      */
-    public void setStartTime(Date startTime) {
+    public void setStartTime(final Date newStartTime) {
         dateList = null;
-        this.startTime = startTime;
+        this.startTime = newStartTime;
     }
 
     /**
-     * The end time, as a java.util.Date
-     * @return The end time, as a java.util.Date
+     * The end time, as a {@link java.util.Date}.
+     *
+     * @return The end time, as a {@link java.util.Date}
      */
     public Date getEndTime() {
-
         return this.endTime;
     }
 
     /**
-     * Setter for The end time, as a java.util.Date
-     * @param endTime The end time, as a java.util.Date
+     * Setter for The end time, as a {@link java.util.Date}.
+     *
+     * @param newEndTime The end time, as a {@link java.util.Date}
      */
-    public void setEndTime(Date endTime) {
-
-        this.endTime = endTime;
+    public void setEndTime(final Date newEndTime) {
+        this.endTime = newEndTime;
         dateList = null;
     }
 
     @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder(128);
+        StringBuilder buffer = new StringBuilder();
         buffer.append(this.getClass().getName());
         if (startTime != null) {
             buffer.append(": Start time: ");
@@ -128,123 +150,106 @@ public class ScheduledEvent implements Serializable {
     }
 
     /**
-     * If true, indicates that this is a repeating event
+     * If true, indicates that this is a repeating event.
+     *
      * @return true it this is a repeating event, false otherwise
      */
     public boolean isRepeatingEvent() {
-
         return this.repeatingEvent;
     }
 
     /**
-     * Invoke this method with the value true to indicate that the event
-     * is repeating, false if it is not repeating
-     * @param repeatingEvent whether the event is repeating
+     * Invoke this method with the value true to indicate that the event is
+     * repeating, false if it is not repeating.
+     *
+     * @param newRepeatingEvent whether the event is repeating
      */
-    public void setRepeatingEvent(boolean repeatingEvent) {
-
-        this.repeatingEvent = repeatingEvent;
+    public void setRepeatingEvent(final boolean newRepeatingEvent) {
+        this.repeatingEvent = newRepeatingEvent;
     }
-    /**
-     * Holds value of property frequency.
-     */
-    private RepeatInterval frequency = null;
 
     /**
-     * <p>Get the repeat frequency. The value must be the Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * <p>To specify that the event repeats weekely... </p>
+     * <p>
+     * Get the repeat frequency. The value must be the Integer value of a
+     * calendar field identifier (Calendar.HOUR_OF_DAY, etc). See
+     * {@code java.util.Calendar} for details. </p>
+     * <p>
+     * To specify that the event repeats weekly... </p>
+     *
      * @return Value of property frequency.
      */
     public RepeatInterval getRepeatInterval() {
-
         return this.frequency;
     }
 
     /**
-     * <p>Setter for the repeat frequency. The new value must be the 
-     * Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * <p>To specify that the event repeats weekly... </p>
-     * @param frequency New value of property frequency.
+     * Setter for the repeat frequency. The new value must be the Integer value
+     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See
+     * {@code java.util.Calendar} for details.
+     * <p>
+     * To specify that the event repeats weekly... </p>
+     *
+     * @param newFrequency New value of property frequency.
      */
-    public void setRepeatInterval(RepeatInterval frequency) {
-
-        this.frequency = frequency;
+    public void setRepeatInterval(final RepeatInterval newFrequency) {
+        this.frequency = newFrequency;
         dateList = null;
     }
-    /**
-     *  * <p>The repeat frequency. The value must be the Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * <p>To specify that the event repeats for three months... </p>
-     */
-    private RepeatUnit durationUnit = null;
 
     /**
-     * <p>Get the unit (hours, weeks, days, etc) for the duration interval
-     * of the event. The value must be the Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * <p>To specify that the event repeats for three months... </p>
+     * Get the unit (hours, weeks, days, etc) for the duration interval of the
+     * event. The value must be the Integer value of a calendar field identifier
+     * (Calendar.HOUR_OF_DAY, etc). See {@code java.util.Calendar} for details.
+     * <p>
+     * To specify that the event repeats for three months... </p>
+     *
      * @return Value of property durationUnit.
      */
     public RepeatUnit getDurationUnit() {
-
         return this.durationUnit;
     }
 
     /**
-     * <p>Set the unit (hours, weeks, days, etc) for the duration interval
-     * of the event. The value must be the Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * 
-     * <p>To specify that the event repeats for three months... </p>
-     * @param durationUnit New value of property durationUnit.
+     * Set the unit (hours, weeks, days, etc) for the duration interval of the
+     * event. The value must be the Integer value of a calendar field identifier
+     * (Calendar.HOUR_OF_DAY, etc). See {@code java.util.Calendar} for details.
+     * <p>
+     * To specify that the event repeats for three months... </p>
+     *
+     * @param newDurationUnit New value of property durationUnit.
      */
-    public void setDurationUnit(RepeatUnit durationUnit) {
-
-        this.durationUnit = durationUnit;
+    public void setDurationUnit(final RepeatUnit newDurationUnit) {
+        this.durationUnit = newDurationUnit;
         dateList = null;
     }
-    /**
-     * Holds value of property duration.
-     */
-    private Integer duration = null;
 
     /**
-     * <p>Get the number of units (see DurationUnit) for the duration interval
-     * of the event. The value must be the Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * <p>To specify that the event repeats for three months... </p>
+     * Get the number of units (see DurationUnit) for the duration interval of
+     * the event. The value must be the Integer value of a calendar field
+     * identifier (Calendar.HOUR_OF_DAY, etc). See {@code java.util.Calendar}
+     * for details. To specify that the event repeats for three months...
+     *
      * @return Value of property duration.
      */
     public Integer getDuration() {
-
         return this.duration;
     }
 
     /**
-     *  <p>Set the number of units (see DurationUnit) for the duration interval 
-     * of the event. The value must be the Integer value 
-     * of a calendar field identifier (Calendar.HOUR_OF_DAY, etc). See 
-     * <code>java.util.Calendar</code> for details. </p>
-     * <p>To specify that the event repeats weekely... </p>
-     * @param duration New value of property duration.
+     * Set the number of units (see DurationUnit) for the duration interval of
+     * the event. The value must be the Integer value of a calendar field
+     * identifier (Calendar.HOUR_OF_DAY, etc). See {@code java.util.Calendar}
+     * for details. To specify that the event repeats weekly...
+     *
+     * @param newDuration New value of property duration.
      */
-    public void setDuration(Integer duration) {
-
-        this.duration = duration;
+    public void setDuration(final Integer newDuration) {
+        this.duration = newDuration;
         dateList = null;
     }
 
     @Override
-    public boolean equals(Object object) {
-
+    public boolean equals(final Object object) {
         if (object == null) {
             return false;
         }
@@ -252,8 +257,6 @@ public class ScheduledEvent implements Serializable {
             return false;
         }
         ScheduledEvent event = (ScheduledEvent) object;
-
-
         if (getStartTime() == null) {
             if (event.getStartTime() != null) {
                 return false;
@@ -261,8 +264,6 @@ public class ScheduledEvent implements Serializable {
         } else if (!getStartTime().equals(event.getStartTime())) {
             return false;
         }
-
-
         if (getEndTime() == null) {
             if (event.getEndTime() != null) {
                 return false;
@@ -270,8 +271,6 @@ public class ScheduledEvent implements Serializable {
         } else if (!getEndTime().equals(event.getEndTime())) {
             return false;
         }
-
-
         if (getDuration() == null) {
             if (event.getDuration() != null) {
                 return false;
@@ -279,8 +278,6 @@ public class ScheduledEvent implements Serializable {
         } else if (!getDuration().equals(event.getDuration())) {
             return false;
         }
-
-
         if (getDurationUnit() == null) {
             if (event.getDurationUnit() != null) {
                 return false;
@@ -288,8 +285,6 @@ public class ScheduledEvent implements Serializable {
         } else if (!getDurationUnit().equals(event.getDurationUnit())) {
             return false;
         }
-
-
         if (getRepeatInterval() == null) {
             if (event.getRepeatInterval() != null) {
                 return false;
@@ -297,24 +292,69 @@ public class ScheduledEvent implements Serializable {
         } else if (!getRepeatInterval().equals(event.getRepeatInterval())) {
             return false;
         }
-
         return true;
     }
 
-    /** Returns an iterator of dates which mark the start of scheduled event.
-     * If no time has been set, an empty iterator is returned.
-     * If a time has been set and the event is not repeating, an iterator
-     * with a single date corresponding to the start time is returned
-     * provided it is before the date specified in untilDate.
-     * If the event is repeating, all start times before untilDate are
-     * returned.
-     * @return a java.util.Iterator whose items are java.util.Calendar
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash;
+        if (this.startTime != null) {
+            hash = hash + this.startTime.hashCode();
+        }
+        hash = 23 * hash;
+        if (this.endTime != null) {
+            hash = hash + this.endTime.hashCode();
+        }
+        hash = 23 * hash;
+        if (this.dateList != null) {
+            hash = hash + this.dateList.hashCode();
+        }
+        hash = 23 * hash;
+        if (this.repeatingEvent) {
+            hash = hash + 1;
+        }
+        hash = 23 * hash;
+        if (this.frequency != null) {
+            hash = hash + this.frequency.hashCode();
+        }
+        hash = 23 * hash;
+        if (this.durationUnit != null) {
+            hash = hash + this.durationUnit.hashCode();
+        }
+        hash = 23 * hash;
+        if (this.duration != null) {
+            hash = hash + this.duration.hashCode();
+        }
+        return hash;
+    }
+
+    /**
+     * Returns an iterator of dates which mark the start of scheduled event.If
+     * no time has been set, an empty iterator is returned. If a time has been
+     * set and the event is not repeating, an iterator with a single date
+     * corresponding to the start time is returned provided it is before the
+     * date specified in untilDate. If the event is repeating, all start times
+     * before untilDate are returned.
+     *
+     * @param untilDate date filter
+     * @return a {@link java.util.Iterator} whose items are
+     * {@link java.util.Calendar}
      */
-    public Iterator getDates(Calendar untilDate) {
+    public Iterator getDates(final Calendar untilDate) {
         return getDates(null, untilDate);
     }
 
-    public Iterator getDates(Calendar fromDate, Calendar untilDate) {
+    /**
+     * Get an iterator of dates between the specified dates.
+     *
+     * @param fromDate date filter from
+     * @param untilDate date filter until
+     * @return Iterator
+     */
+    public Iterator getDates(final Calendar fromDate,
+            final Calendar untilDate) {
 
         if (dateList != null) {
             return dateList.iterator();
@@ -325,16 +365,16 @@ public class ScheduledEvent implements Serializable {
 
         if (DEBUG) {
             if (date != null) {
-                log("First event on " + date.toString()); //NOI18N
+                log("First event on " + date.toString());
             } else {
-                log("No events scheduled"); //NOI18N
+                log("No events scheduled");
             }
         }
 
         Date from = null;
         if (fromDate != null) {
             if (DEBUG) {
-                log("Start date is " + fromDate.getTime().toString());//NOI18N
+                log("Start date is " + fromDate.getTime().toString());
             }
             from = fromDate.getTime();
         } else if (DEBUG) {
@@ -350,14 +390,14 @@ public class ScheduledEvent implements Serializable {
             Calendar startDate = (Calendar) (untilDate.clone());
             startDate.setTime(date);
 
-            dateList.add((Calendar)startDate.clone());
+            dateList.add((Calendar) startDate.clone());
             if (DEBUG) {
                 log("Added date " + date.toString());
             }
 
             if (isRepeatingEvent()) {
 
-                int interval = getRepeatInterval().getCalendarField().intValue();
+                int interval = getRepeatInterval().getCalendarField();
                 if (interval > -1) {
 
                     if (DEBUG) {
@@ -366,15 +406,15 @@ public class ScheduledEvent implements Serializable {
 
                     Calendar endCalendar = (Calendar) (untilDate.clone());
 
-                    Integer duration = getDuration();
+                    Integer dur = getDuration();
                     RepeatUnit repeatUnit = getDurationUnit();
-                    Integer durationUnit = null;
+                    Integer durUnit = null;
                     if (repeatUnit != null) {
-                        durationUnit = repeatUnit.getCalendarField();
+                        durUnit = repeatUnit.getCalendarField();
                     }
-                    if (duration != null && durationUnit != null) {
-                        int durationValue = duration.intValue();
-                        int durationField = durationUnit.intValue();
+                    if (dur != null && durUnit != null) {
+                        int durationValue = dur;
+                        int durationField = durUnit;
                         if (durationValue > 0) {
                             endCalendar = (Calendar) (startDate.clone());
                             endCalendar.add(durationField, durationValue);
@@ -389,11 +429,9 @@ public class ScheduledEvent implements Serializable {
                     if (DEBUG) {
                         log("Using end date " + end.toString());
                     }
-
                     Date current = startDate.getTime();
 
                     while (current.before(end)) {
-
                         startDate.add(interval, 1);
                         current = startDate.getTime();
                         if (from != null) {
@@ -416,7 +454,12 @@ public class ScheduledEvent implements Serializable {
         return dateList.iterator();
     }
 
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s);
+    /**
+     * Log a message to the standard output.
+     *
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(ScheduledEvent.class.getName() + "::" + msg);
     }
 }

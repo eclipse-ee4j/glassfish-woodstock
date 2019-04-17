@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -34,215 +34,215 @@
     </application>
 
     <converter>
-        <converter-id>com.sun.webui.jsf.example.statictext.Employee</converter-id>
-        <converter-class>com.sun.webui.jsf.example.statictext.EmployeeConverter</converter-class>
+        <converter-id>com.sun.webui.jsf.example.Employee</converter-id>
+        <converter-class>com.sun.webui.jsf.example.EmployeeConverter</converter-class>
     </converter>
 
     <validator>
         <validator-id>dirValidator</validator-id>
-        <validator-class>com.sun.webui.jsf.example.chooseruploader.ChooserUploaderValidator</validator-class>
+        <validator-class>com.sun.webui.jsf.example.ChooserUploaderValidator</validator-class>
     </validator>
 
     <managed-bean>
         <description>The backing bean for the index page</description>
         <managed-bean-name>IndexBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.index.IndexBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.IndexBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the show code page</description>
         <managed-bean-name>ShowCodeBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.index.ShowCodeBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.ShowCodeBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the button example</description>
         <managed-bean-name>ButtonBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.button.ButtonBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.ButtonBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the label example</description>
         <managed-bean-name>LabelBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.label.LabelBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.LabelBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the inline alert example</description>
         <managed-bean-name>InlineAlertBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.alert.InlineAlertBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.InlineAlertBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the page alert example</description>
         <managed-bean-name>PageAlertBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.alert.PageAlertBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.PageAlertBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the checkbox and radiobutton example</description>
         <managed-bean-name>CheckboxRadiobuttonBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.cbrb.CheckboxRadiobuttonBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.CheckboxRadiobuttonBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the text input example</description>
         <managed-bean-name>TextInputBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.field.TextInputBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.TextInputBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the add remove example</description>
         <managed-bean-name>AddRemoveBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.addremove.AddRemoveBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.AddRemoveBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the table example</description>
         <managed-bean-name>TableBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.table.TableBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.TableBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the dynamic group table example</description>
         <managed-bean-name>DynamicGroupTableBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.table.DynamicGroupTableBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.DynamicGroupTableBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the dynamic table example</description>
         <managed-bean-name>DynamicTableBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.table.DynamicTableBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.DynamicTableBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the orderable list example</description>
         <managed-bean-name>OrderableListBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.orderablelist.OrderableListBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.OrderableListBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the file/folder chooser and file uploader</description>
         <managed-bean-name>ChooserUploaderBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.chooseruploader.ChooserUploaderBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.ChooserUploaderBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the file chooser </description>
         <managed-bean-name>FileChooserBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.chooseruploader.FileChooserBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.FileChooserBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the folder chooser </description>
         <managed-bean-name>FolderChooserBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.chooseruploader.FolderChooserBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.FolderChooserBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the file uploader </description>
         <managed-bean-name>FileUploaderBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.chooseruploader.FileUploaderBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.FileUploaderBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the menu and list example</description>
         <managed-bean-name>MenuListBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.menu.MenuListBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.MenuListBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Image and Masthead example</description>
         <managed-bean-name>MastheadBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.masthead.MastheadBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.MastheadBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Property Sheet </description>
         <managed-bean-name>PropertySheetBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.propertysheet.PropertySheetBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.PropertySheetBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Editable List </description>
         <managed-bean-name>EditableListBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.editablelist.EditableListBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.EditableListBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Content Page Title example</description>
         <managed-bean-name>PagetitleBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.pagetitle.PagetitleBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.PagetitleBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Hyperlink </description>
         <managed-bean-name>HyperlinkBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.hyperlink.HyperlinkBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.HyperlinkBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Static Text example</description>
         <managed-bean-name>StatictextBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.statictext.StatictextBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.StatictextBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the Common Tasks Section example</description>
         <managed-bean-name>commonTask</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.commontask.commonTaskBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.CommonTaskBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the dynamic tree example</description>
         <managed-bean-name>DynamicTreeBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.tree.DynamicTreeBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.DynamicTreeBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the navigation tree example</description>
         <managed-bean-name>NavTreeBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.tree.NavTreeBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.NavTreeBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the ProgressBar example</description>
         <managed-bean-name>ProgressBarBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.progressbar.ProgressBarBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.ProgressBarBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <description>The backing bean for the simple Wizard example</description>
         <managed-bean-name>SimpleWizardBean</managed-bean-name>
-        <managed-bean-class>com.sun.webui.jsf.example.wizard.SimpleWizardBackingBean</managed-bean-class>
+        <managed-bean-class>com.sun.webui.jsf.example.SimpleWizardBackingBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -482,7 +482,6 @@
             <to-view-id>/tree/navTree.jspx</to-view-id>
             <redirect/>
         </navigation-case>
-
     </navigation-rule>
 
     <!-- Navigation cases for Table Example -->

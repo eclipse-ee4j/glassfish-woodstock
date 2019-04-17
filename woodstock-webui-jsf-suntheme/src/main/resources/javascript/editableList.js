@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,10 +16,12 @@
 
 define([
     "webui/suntheme/listbox",
-    "webui/suntheme/field"
-], function (listbox, field) {
+    "webui/suntheme/field",
+    "webui/suntheme/common"
+], function (listbox, field, common) {
 
     return {
+        addOnInitCallback: common.addOnInitCallback,
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.
@@ -39,6 +41,9 @@ define([
             var domNode = document.getElementById(props.id);
             if (domNode === null) {
                 return false;
+            }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
             }
 
             // Set given properties on domNode.
@@ -99,6 +104,7 @@ define([
             domNode.setRemoveDisabled = this.setRemoveDisabled;
             domNode.updateButtons = this.updateButtons;
             domNode.setDisabled = this.setDisabled;
+            common.setInitialized(domNode);
         },
 
         add: function (elementId) {

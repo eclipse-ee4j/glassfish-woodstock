@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,16 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
-/*
- * DateConverter.java
- *
- * Created on September 30, 2005, 12:30 PM
- *
- * To change this template, choose Tools | Options and locate the template under
- * the Source Creation and Management node. Right-click the template and choose
- * Open. You can then make changes to the template in the Source Editor.
- */
 package com.sun.webui.jsf.converter;
 
 import java.io.Serializable;
@@ -35,21 +25,35 @@ import com.sun.webui.jsf.component.DateManager;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import javax.faces.application.FacesMessage;
 
 /**
- *
- * @author avk, John Yeary
+ * Data converter.
  */
-public class DateConverter implements Converter, Serializable {
+public final class DateConverter implements Converter, Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 1580936705838582740L;
-    private static final String INVALID_DATE_ID = "DateConverter.invalidDate"; //NOI18N
 
+    /**
+     * Invalid date id.
+     */
+    private static final String INVALID_DATE_ID = "DateConverter.invalidDate";
+
+    /**
+     * Create a new instance.
+     */
     public DateConverter() {
     }
 
-    public String getAsString(FacesContext context, UIComponent component, Object o) throws ConverterException {
+    @Override
+    public String getAsString(final FacesContext context,
+            final UIComponent component, final Object o)
+            throws ConverterException {
+
         try {
             return getDateManager(component).getDateFormat().format((Date) o);
         } catch (Exception ex) {
@@ -57,7 +61,11 @@ public class DateConverter implements Converter, Serializable {
         }
     }
 
-    public Object getAsObject(FacesContext context, UIComponent component, String s) throws ConverterException {
+    @Override
+    public Object getAsObject(final FacesContext context,
+            final UIComponent component, final String s)
+            throws ConverterException {
+
         if (s.length() == 0) {
             return null;
         }
@@ -69,13 +77,15 @@ public class DateConverter implements Converter, Serializable {
         try {
             Date date = df.parse(s);
             return date;
-        } catch (Exception ex) {
+        } catch (ParseException ex) {
             FacesMessage facesMessage = null;
             try {
-                String message = ThemeUtilities.getTheme(context).getMessage(INVALID_DATE_ID);
+                String message = ThemeUtilities.getTheme(context)
+                        .getMessage(INVALID_DATE_ID);
                 MessageFormat mf = new MessageFormat(message,
                         context.getViewRoot().getLocale());
-                String example = getDateManager(component).getDateFormat().format(new Date());
+                String example = getDateManager(component).getDateFormat()
+                        .format(new Date());
                 Object[] params = {s, example};
                 facesMessage = new FacesMessage(mf.format(params));
             } catch (Exception e) {
@@ -88,7 +98,12 @@ public class DateConverter implements Converter, Serializable {
         }
     }
 
-    private DateManager getDateManager(UIComponent component) {
+    /**
+     * Get the data manager.
+     * @param component UI component
+     * @return DateManager
+     */
+    private static DateManager getDateManager(final UIComponent component) {
         DateManager dateManager = null;
         if (component instanceof DateManager) {
             dateManager = (DateManager) component;
@@ -96,9 +111,10 @@ public class DateConverter implements Converter, Serializable {
             dateManager = (DateManager) (component.getParent());
         }
         if (dateManager == null) {
-            throw new RuntimeException("The DateConverter can only be used with components which implement DateManager"); //NOI18N
+            throw new RuntimeException(
+                    "The DateConverter can only be used with components"
+                    + " which implement DateManager");
         }
         return dateManager;
     }
 }
-

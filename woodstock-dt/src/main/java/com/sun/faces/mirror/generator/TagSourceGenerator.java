@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,15 +19,28 @@ package com.sun.faces.mirror.generator;
 import com.sun.faces.mirror.DeclaredComponentInfo;
 
 /**
- *
- * @author gjmurphy
+ * Tag source generator.
  */
-abstract public class TagSourceGenerator extends SourceGenerator {
-    
+public abstract class TagSourceGenerator extends SourceGenerator {
+
+    /**
+     * Declared component.
+     */
     private DeclaredComponentInfo declaredComponentInfo;
 
     /**
+     * Namespace.
+     */
+    private String namespace;
+
+    /**
+     * Namespace prefix.
+     */
+    private String namespacePrefix;
+
+    /**
      * Protected getter for property declaredComponentInfo.
+     * @return DeclaredComponentInfo
      */
     protected DeclaredComponentInfo getDeclaredComponentInfo() {
         return this.declaredComponentInfo;
@@ -35,15 +48,15 @@ abstract public class TagSourceGenerator extends SourceGenerator {
 
     /**
      * Setter for property declaredComponentInfo.
+     * @param compInfo new component info
      */
-    public void setDeclaredComponentInfo(DeclaredComponentInfo declaredComponentInfo) {
-        this.declaredComponentInfo = declaredComponentInfo;
+    public void setDeclaredComponentInfo(final DeclaredComponentInfo compInfo) {
+        this.declaredComponentInfo = compInfo;
     }
-
-    private String namespace;
 
     /**
      * Protected getter for property namespace.
+     * @return String
      */
     protected String getNamespace() {
         return this.namespace;
@@ -51,12 +64,11 @@ abstract public class TagSourceGenerator extends SourceGenerator {
 
     /**
      * Setter for property namespace.
+     * @param newNs new namespace
      */
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
+    public void setNamespace(final String newNs) {
+        this.namespace = newNs;
     }
-
-    private String namespacePrefix;
 
     /**
      * Protected getter for property namespacePrefix.
@@ -68,9 +80,9 @@ abstract public class TagSourceGenerator extends SourceGenerator {
 
     /**
      * Setter for property namespacePrefix.
+     * @param newNsPrefix new namespace prefix
      */
-    public void setNamespacePrefix(String namespacePrefix) {
-        this.namespacePrefix = namespacePrefix;
+    public void setNamespacePrefix(final String newNsPrefix) {
+        this.namespacePrefix = newNsPrefix;
     }
-    
 }

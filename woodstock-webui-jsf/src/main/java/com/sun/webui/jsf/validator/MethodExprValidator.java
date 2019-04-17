@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,16 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
-/*
- * MethodExprValidator.java
- *
- * Created on August 7, 2006, 1:31 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package com.sun.webui.jsf.validator;
 
 import javax.el.ELContext;
@@ -36,11 +26,11 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
- * <strong>MethodExprValidator</strong> is a {@link Validator} that 
- * wraps a {@link MethodExpression}, and it performs validation by executing
- * a method on an object identified by the {@link MethodExpression}.
+ * <strong>MethodExprValidator</strong> is a {@link Validator} that wraps a
+ * {@link MethodExpression}, and it performs validation by executing a method on
+ * an object identified by the {@link MethodExpression}.
  */
-public class MethodExprValidator implements Validator, StateHolder {
+public final class MethodExprValidator implements Validator, StateHolder {
 
     /**
      * Method expression.
@@ -55,19 +45,24 @@ public class MethodExprValidator implements Validator, StateHolder {
     }
 
     /**
-     * Construct a {@link Validator} that contains a {@link MethodExpression}.
-     * @param methodExpression
+     * Transient flag.
      */
-    public MethodExprValidator(MethodExpression methodExpression) {
+    private boolean transientValue = false;
 
+    /**
+     * Construct a {@link Validator} that contains a {@link MethodExpression}.
+     *
+     * @param newMethodExpression method expression
+     */
+    public MethodExprValidator(final MethodExpression newMethodExpression) {
         super();
-        this.methodExpression = methodExpression;
+        this.methodExpression = newMethodExpression;
     }
 
     @Override
-    public void validate(FacesContext context,
-                         UIComponent  component,
-                         Object       value) throws ValidatorException {
+    public void validate(final FacesContext context,
+            final UIComponent component, final Object value)
+            throws ValidatorException {
 
         if ((context == null) || (component == null)) {
             throw new NullPointerException();
@@ -75,7 +70,7 @@ public class MethodExprValidator implements Validator, StateHolder {
         if (value != null) {
             try {
                 ELContext elContext = context.getELContext();
-                methodExpression.invoke(elContext, new Object[] {
+                methodExpression.invoke(elContext, new Object[]{
                     context,
                     component,
                     value
@@ -89,25 +84,20 @@ public class MethodExprValidator implements Validator, StateHolder {
                 throw new ValidatorException(message, ee.getCause());
             }
         }
-
     }
 
     @Override
-    public Object saveState(FacesContext context) {
-
-        Object values[] = new Object[1];
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[1];
         values[0] = methodExpression;
         return (values);
     }
 
     @Override
-    public void restoreState(FacesContext context, Object state) {
-
-        Object values[] = (Object[]) state;
-        methodExpression = (MethodExpression)values[0];
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        methodExpression = (MethodExpression) values[0];
     }
-
-    private boolean transientValue = false;
 
     @Override
     public boolean isTransient() {
@@ -115,29 +105,36 @@ public class MethodExprValidator implements Validator, StateHolder {
     }
 
     @Override
-    public void setTransient(boolean transientValue) {
-        this.transientValue = transientValue;
+    public void setTransient(final boolean newTransientValue) {
+        this.transientValue = newTransientValue;
     }
 
+    /**
+     * Get the method expression.
+     * @return MethodExpression
+     */
     public MethodExpression getMethodExpression() {
         return methodExpression;
     }
 
     @Override
-    public boolean equals(Object otherObject) {
-        if (! (otherObject instanceof MethodExprValidator)) {
+    public boolean equals(final Object otherObject) {
+        if (!(otherObject instanceof MethodExprValidator)) {
             return false;
         }
-        MethodExprValidator other = (MethodExprValidator)otherObject;
+        MethodExprValidator other = (MethodExprValidator) otherObject;
         MethodExpression otherMe = other.getMethodExpression();
         return methodExpression.equals(otherMe);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + (this.methodExpression != null
-                ? this.methodExpression.hashCode() : 0);
+        hash = 47 * hash;
+        if (this.methodExpression != null) {
+            hash = hash + this.methodExpression.hashCode();
+        }
         return hash;
     }
 }

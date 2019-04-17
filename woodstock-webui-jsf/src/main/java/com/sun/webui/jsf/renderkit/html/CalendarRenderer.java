@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,16 +31,13 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.ConversionUtilities;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import javax.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
-import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 
 /**
  * Renders an instance of the Calendar component.
@@ -49,7 +46,10 @@ import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Calendar"))
 public class CalendarRenderer extends FieldRenderer {
 
-    private final static boolean DEBUG = false;
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
 
     /**
      * Creates a new instance of CalendarRenderer.
@@ -65,10 +65,11 @@ public class CalendarRenderer extends FieldRenderer {
      * @exception IOException if an input/output error occurs
      */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
-        if(component == null){
+        if (component == null) {
             return;
         }
         if (!(component instanceof Calendar)) {
@@ -153,7 +154,7 @@ public class CalendarRenderer extends FieldRenderer {
 
             renderDatePicker(context, writer, styles, calendar);
 
-            // Close the remaining div and table cell 
+            // Close the remaining div and table cell
             writer.endElement("div");
             writer.writeText("\n", null);
             writer.endElement("td");
@@ -165,9 +166,17 @@ public class CalendarRenderer extends FieldRenderer {
         writer.writeText("\n", null);
     }
 
-    // <rave> Fix popup so that it always appears near button. eeg 2005-11-04
-    private void renderDatePicker(FacesContext context, ResponseWriter writer,
-            String[] styles, Calendar calendar) throws IOException {
+    /**
+     * Render the date picker.
+     * @param context faces context
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @param calendar calendar
+     * @throws IOException if an IO error occurs
+     */
+    private void renderDatePicker(final FacesContext context,
+            final ResponseWriter writer, final String[] styles,
+            final Calendar calendar) throws IOException {
 
         // render date picker
         CalendarMonth datePicker = calendar.getDatePicker();
@@ -192,10 +201,19 @@ public class CalendarRenderer extends FieldRenderer {
         //JS should be initialized by CalendarMonth, not by this component....
         renderJavaScript(context, calendar, writer, styles);
     }
-    // </rave>
 
-    private void renderTableStart(Calendar calendar, String rootStyle,
-            String hiddenStyle, FacesContext context, ResponseWriter writer)
+    /**
+     * Render the table start.
+     * @param calendar calendar
+     * @param rootStyle root style
+     * @param hiddenStyle hidden style
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderTableStart(final Calendar calendar,
+            final String rootStyle, final String hiddenStyle,
+            final FacesContext context, final ResponseWriter writer)
             throws IOException {
 
         writer.startElement("table", calendar);
@@ -227,9 +245,15 @@ public class CalendarRenderer extends FieldRenderer {
         writer.writeText("\n", null);
     }
 
-    private void renderCellStart(Calendar calendar, String style,
-            ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render table cell start.
+     * @param calendar calendar
+     * @param style CSS style
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderCellStart(final Calendar calendar, final String style,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement("td", calendar);
         writer.writeAttribute("valign", "top", null);
@@ -239,7 +263,12 @@ public class CalendarRenderer extends FieldRenderer {
         writer.writeText("\n", null);
     }
 
-    private void renderCellEnd(ResponseWriter writer)
+    /**
+     * Render table cell end.
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderCellEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.writeText("\n", null);
@@ -249,7 +278,12 @@ public class CalendarRenderer extends FieldRenderer {
         writer.writeText("\n", null);
     }
 
-    private void renderTableEnd(ResponseWriter writer)
+    /**
+     * Render table end.
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderTableEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.endElement("tr");
@@ -258,9 +292,18 @@ public class CalendarRenderer extends FieldRenderer {
         writer.writeText("\n", null);
     }
 
-    private void renderPattern(Calendar calendar, String styleClass,
-            String hiddenStyle, FacesContext context, ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render pattern.
+     * @param calendar calendar
+     * @param styleClass CSS style
+     * @param hiddenStyle hidden CSS style
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderPattern(final Calendar calendar, final String styleClass,
+            final String hiddenStyle, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         String hint = calendar.getDateFormatPatternHelp();
         if (hint == null) {
@@ -290,8 +333,19 @@ public class CalendarRenderer extends FieldRenderer {
         }
     }
 
-    private void renderJavaScript(FacesContext context, Calendar calendar,
-            ResponseWriter writer, String[] styles) throws IOException {
+    /**
+     * Render the JS.
+     * @param context faces context
+     * @param calendar calendar
+     * @param writer writer to use
+     * @param styles CSS style
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderJavaScript(final FacesContext context,
+            final Calendar calendar, final ResponseWriter writer,
+            final String[] styles) throws IOException {
+
         if (DEBUG) {
             log("renderJavaScript()");
         }
@@ -358,7 +412,16 @@ public class CalendarRenderer extends FieldRenderer {
             renderInitScriptTag(writer, "calendar", initProps);
     }
 
-    private String[] getStyles(Calendar calendar, FacesContext context) {
+    /**
+     * Get the CSS styles.
+     * @param calendar calendar
+     * @param context faces context
+     * @return String[]
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private String[] getStyles(final Calendar calendar,
+            final FacesContext context) {
+
         Theme theme = ThemeUtilities.getTheme(context);
         String[] styles = new String[19];
         styles[0] = theme.getStyleClass(ThemeStyles.TEXT_FIELD);
@@ -384,5 +447,13 @@ public class CalendarRenderer extends FieldRenderer {
         styles[17] = theme.getStyleClass(ThemeStyles.DATE_TIME_TODAY_LINK);
         styles[18] = theme.getStyleClass(ThemeStyles.CALENDAR_ROOT_TABLE);
         return styles;
+    }
+
+    /**
+     * Log an error - only used during development time.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(CalendarRenderer.class.getName() + "::" + msg);
     }
 }

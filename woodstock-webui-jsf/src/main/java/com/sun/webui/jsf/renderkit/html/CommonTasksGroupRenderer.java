@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -39,22 +39,33 @@ import static com.sun.webui.jsf.util.RenderingUtilities.getStyleClasses;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 
 /**
- * Renderer for a {@link com.sun.webui.jsf.component.CommonTasksGroup} component.
+ * Renderer for a {@link com.sun.webui.jsf.component.CommonTasksGroup}
+ * component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CommonTasksGroup"))
+@Renderer(
+        @Renderer.Renders(
+                componentFamily = "com.sun.webui.jsf.CommonTasksGroup"))
 public class CommonTasksGroupRenderer extends AbstractRenderer {
 
     /**
      *Append this string for the id of span for the group header's title.
      */
     private static final String TITLE_SPAN = "_groupTitle";
+
+    /**
+     * Group title property.
+     */
     public static final String GROUP_TITLE = "commonTasks.groupTitle";
+
+    /**
+     * Skip group property.
+     */
     public static final String SKIP_GROUP = "commonTasks.skipTagAltText";
 
     /**
      * Skip a complete common tasks group.
      */
-    private static final String SKIP_TASKSGROUP = "skipGroup"; // NOI18N
+    private static final String SKIP_TASKSGROUP = "skipGroup";
 
     /**
      * Creates a new instance of CommonTaskGroupRenderer.
@@ -63,15 +74,15 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         // purposefully don't want to do anything here!
     }
 
     /**
      * Render a common tasks group.
-     * 
+     *
      * @param context The current FacesContext
      * @param component The CommonTasksGroup object to render
      * @param writer The current ResponseWriter
@@ -79,9 +90,10 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
      * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }
@@ -132,7 +144,7 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
     }
 
     /**
-     * Renders the JS necessary to precache the "i" images
+     * Renders the JS necessary to precache the "i" images.
      *
      * @param theme The current theme
      * @param writer The ResponseWriter object
@@ -140,9 +152,9 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
      * @param context faces context
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderJavascriptImages(Theme theme, ResponseWriter writer,
-            UIComponent component, FacesContext context) throws IOException {
-
+    protected void renderJavascriptImages(final Theme theme,
+            final ResponseWriter writer, final UIComponent component,
+            final FacesContext context) throws IOException {
 
         JsonObject initProps = getJSONProperties(context, theme, component);
 
@@ -150,8 +162,16 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
         renderInitScriptTag(writer, "commonTasksSection", initProps);
     }
 
-    protected JsonObject getJSONProperties(FacesContext context, Theme theme,
-            UIComponent component) throws IOException {
+    /**
+     * Get the JSON properties.
+     * @param context faces context
+     * @param theme theme to use
+     * @param component component
+     * @return JsonObject
+     * @throws IOException if an IO error occurs
+     */
+    protected JsonObject getJSONProperties(final FacesContext context,
+            final Theme theme, final UIComponent component) throws IOException {
 
         return JSON_BUILDER_FACTORY.createObjectBuilder()
                 .add("id", component.getClientId(context))
@@ -167,7 +187,7 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
 
     /**
      * Render a common tasks group.
-     * 
+     *
      * @param context The current FacesContext
      * @param component The CommonTasksGroup object to render
      * @param writer The current ResponseWriter
@@ -175,8 +195,8 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
      * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
     }
 
@@ -189,8 +209,9 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
      * @param context The current FacesContext
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderTaskGroupHeader(String header, ResponseWriter writer,
-            FacesContext context, UIComponent component, Theme theme)
+    protected void renderTaskGroupHeader(final String header,
+            final ResponseWriter writer, final FacesContext context,
+            final UIComponent component, final Theme theme)
             throws IOException {
 
         StaticText staticText = new StaticText();
@@ -201,6 +222,10 @@ public class CommonTasksGroupRenderer extends AbstractRenderer {
         renderComponent(staticText, context);
     }
 
+    /**
+     * This implementation returns {@code true}.
+     * @return {@code boolean}
+     */
     @Override
     public boolean getRendersChildren() {
         return true;

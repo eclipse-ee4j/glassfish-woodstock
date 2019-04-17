@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -61,7 +61,7 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
  * contents of the current open folder.</li>
  * <li>An input field to accept and display the files to select.</li>
  * <li>A list box to display the contents of the current open folder.</li>
- * <li>A drop down menu of sort options to control the order of the 
+ * <li>A drop down menu of sort options to control the order of the
  * open folder's contents.</li>
  * <li>An open folder button to open and display a selected folder in the
  * list box.</li>
@@ -77,8 +77,14 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.FileChooser"))
 public class FileChooserRenderer extends AbstractRenderer {
 
-    private final static boolean DEBUG = false;
-    // the "-" string constant
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
+     * The "-" string constant.
+     */
     public static final String HYFEN = "-";
 
     /**
@@ -87,8 +93,15 @@ public class FileChooserRenderer extends AbstractRenderer {
     public FileChooserRenderer() {
     }
 
+    /**
+     * This implementation decodes the user input.
+     * @param context faces context
+     * @param component UI component
+     */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         if (DEBUG) {
             log("decode(context, component)");
         }
@@ -100,8 +113,8 @@ public class FileChooserRenderer extends AbstractRenderer {
         }
 
         if (!(component instanceof FileChooser)) {
-            throw new FacesException("FileChooserRenderer can only " +
-                    "render FileChooser components.");
+            throw new FacesException("FileChooserRenderer can only "
+                    + "render FileChooser components.");
         }
         FileChooser chooser = (FileChooser) component;
 
@@ -110,7 +123,6 @@ public class FileChooserRenderer extends AbstractRenderer {
         // set the file chooser's submitted value.
         // All future processing should occur as if the value was
         // decoded here.
-        //
         if (chooser.getSubmittedValue() == null) {
             decodeSubmittedValue(context, chooser);
         }
@@ -123,8 +135,12 @@ public class FileChooserRenderer extends AbstractRenderer {
      * This must be reworked to not depend on an operation
      * and a delimiter. Use a select element so that named
      * array can returned in the request.
+     * @param context faces context
+     * @param chooser file chooser
      */
-    private void decodeSubmittedValue(FacesContext context, FileChooser chooser) {
+    private void decodeSubmittedValue(final FacesContext context,
+            final FileChooser chooser) {
+
         // Look for the submitted dynamically created select element.
         // This will be set for the
         //
@@ -138,17 +154,11 @@ public class FileChooserRenderer extends AbstractRenderer {
         //
         // Probable want to always create the hidded select element
         // to reduce dependence on javascript.
-        //
-        String selectionsId = chooser.getClientId(context) + ":" +
-                chooser.getId() + "_selections";
+        String selectionsId = chooser.getClientId(context) + ":"
+                + chooser.getId() + "_selections";
 
         Map requestParameters =
                 context.getExternalContext().getRequestParameterValuesMap();
-
-        /*
-        java.util.Set keyset = requestParameters.keySet();
-        Object[] keys = keyset.toArray();
-         */
 
         String[] selections = (String[]) requestParameters.get(selectionsId);
         if (selections != null) {
@@ -158,9 +168,19 @@ public class FileChooserRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * This implementation of getConvertedValue calls back into the component's
+     * getConvertedValue.
+     *
+     * @param context faces context
+     * @param component UI component
+     * @param submittedValue value to convert
+     * @return String
+     * @throws ConverterException if a conversion error occurs
+     */
     @Override
-    public java.lang.Object getConvertedValue(FacesContext context,
-            UIComponent component, Object submittedValue)
+    public java.lang.Object getConvertedValue(final FacesContext context,
+            final UIComponent component, final Object submittedValue)
             throws ConverterException {
 
         // This implementation of getConvertedValue calls back into
@@ -174,7 +194,6 @@ public class FileChooserRenderer extends AbstractRenderer {
         // back to an overloaded FileChooser.getConvertedValue().
         //
         // public Object getConvertedValue(FacesContext, FileChooser, Object);
-        //
         if (!(component instanceof FileChooser)) {
             String msg = "Can only convert values for FileChooser component.";
             throw new ConverterException(msg);
@@ -183,24 +202,41 @@ public class FileChooserRenderer extends AbstractRenderer {
                 (FileChooser) component, submittedValue);
     }
 
-    // We shouldn't bother with a default implementation - this is exactly
-    // what happens when you rendersChildren = false. Why duplicate the
-    // code here?
+    /**
+     * This implementation is empty.
+     * @param context faces context
+     * @param component UI component
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component)
             throws IOException {
     }
 
+    /**
+     * This implementation returns {@code true}.
+     * @return {@code boolean}
+     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
+    /**
+     * This implementation renders the component.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    @SuppressWarnings("checkstyle:methodlength")
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
-        if(component == null){
+        if (component == null) {
             return;
         }
 
@@ -212,7 +248,8 @@ public class FileChooserRenderer extends AbstractRenderer {
                 String message = "Component " + component.toString()
                         + " has been associated with a FileChooser. "
                         + " This renderer can only be used by components "
-                        + " that extend com.sun.webui.jsf.component.FileChooser.";
+                        + " that extend"
+                        + " com.sun.webui.jsf.component.FileChooser.";
                 throw new FacesException(message);
             }
 
@@ -293,20 +330,24 @@ public class FileChooserRenderer extends AbstractRenderer {
                     theme.getStyleClass(ThemeStyles.FILECHOOSER_LST_HDR), null);
             writer.startElement("div", chooser);
             writer.writeAttribute("class",
-                    theme.getStyleClass(ThemeStyles.FILECHOOSER_NAME_HDR), null);
+                    theme.getStyleClass(ThemeStyles.FILECHOOSER_NAME_HDR),
+                    null);
             writer.write(theme.getMessage("filechooser.name_column_header"));
             writer.endElement("div");
             writer.writeText("\n", null);
             writer.startElement("div", chooser);
             writer.writeAttribute("class",
-                    theme.getStyleClass(ThemeStyles.FILECHOOSER_SIZE_HDR), null);
+                    theme.getStyleClass(ThemeStyles.FILECHOOSER_SIZE_HDR),
+                    null);
             writer.write(theme.getMessage("filechooser.size_column_header"));
             writer.endElement("div");
             writer.writeText("\n", null);
             writer.startElement("div", chooser);
             writer.writeAttribute("class",
-                    theme.getStyleClass(ThemeStyles.FILECHOOSER_DATE_TIME_HDR), null);
-            writer.write(theme.getMessage("filechooser.date_time_column_header"));
+                    theme.getStyleClass(ThemeStyles.FILECHOOSER_DATE_TIME_HDR),
+                    null);
+            writer.write(theme
+                    .getMessage("filechooser.date_time_column_header"));
             writer.endElement("div");
             writer.writeText("\n", null);
             writer.endElement("div");
@@ -345,8 +386,8 @@ public class FileChooserRenderer extends AbstractRenderer {
             writer.endElement("div");
 
             // end of filechooser layout, now add the two hidden fields.
-            String hiddenID = chooser.getClientId(context) + ":" +
-                    chooser.getId() + FileChooser.FILECHOOSER_HIDDENFIELD_ID;
+            String hiddenID = chooser.getClientId(context) + ":"
+                    + chooser.getId() + FileChooser.FILECHOOSER_HIDDENFIELD_ID;
             writer.startElement("input", chooser);
             writer.writeAttribute("id", hiddenID, null);
             writer.writeAttribute("name", hiddenID, null);
@@ -355,7 +396,8 @@ public class FileChooserRenderer extends AbstractRenderer {
             writer.endElement("input");
 
             Button hiddenButton = (Button) chooser.getHiddenFCButton();
-            hiddenButton.setStyleClass(theme.getStyleClass(ThemeStyles.HIDDEN));
+            hiddenButton.setStyleClass(
+                    theme.getStyleClass(ThemeStyles.HIDDEN));
             renderComponent(hiddenButton, context);
 
             // Render a hidden select to hold the currently selected
@@ -379,21 +421,27 @@ public class FileChooserRenderer extends AbstractRenderer {
             // on the selected file field.
             //
             //renderRoots(context, chooser, writer, theme);
-
             renderJavaScript(chooser, context, writer, theme);
         } catch (Exception e) {
-            throw new FacesException("Filechooser throws exception while" +
-                    "rendering: " + e.getMessage());
+            throw new FacesException("Filechooser throws exception while"
+                    + "rendering: " + e.getMessage());
         }
     }
 
-    private void renderSelectedSelections(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
+    /**
+     * Render the selected selections.
+     * @param context faces context
+     * @param chooser file chooser
+     * @param writer writer to use
+     * @throws Exception if an error occurs
+     */
+    private void renderSelectedSelections(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer)
             throws Exception {
 
         writer.startElement("select", chooser);
-        String id = chooser.getClientId(context) + ":" +
-                chooser.getId() + "_selections";
+        String id = chooser.getClientId(context) + ":"
+                + chooser.getId() + "_selections";
         writer.writeAttribute("id", id, null);
         writer.writeAttribute("name", id, null);
         writer.writeAttribute("style", "{display:none}", null);
@@ -410,16 +458,16 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param context faces context
      * @param chooser UI component
      * @param writer writer to use
-     * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    private void renderRoots(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, Theme theme) throws IOException {
+    private void renderRoots(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer)
+            throws IOException {
 
         String[] roots = chooser.getRoots();
         writer.startElement("select", chooser);
-        String id = chooser.getClientId(context) + ":" +
-                chooser.getId() + "_roots";
+        String id = chooser.getClientId(context) + ":"
+                + chooser.getId() + "_roots";
         writer.writeAttribute("id", id, null);
         writer.writeAttribute("name", id, null);
         writer.writeAttribute("style", "{display:none}", null);
@@ -446,9 +494,9 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderServerName(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderServerName(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         UIOutput uio = (UIOutput) chooser.getServerNameText();
         Label label = (Label) chooser.getServerNameLabel();
@@ -485,25 +533,25 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderChooserTitle(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderChooserTitle(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         // Append alert icon html.
         StaticText title = (StaticText) chooser.getFileChooserTitle();
         if (!title.isRendered()) {
             return;
         }
-        writer.startElement("table", chooser); 
-        writer.writeAttribute("width", "100%", "width"); 
-        writer.writeAttribute("border", "0", "border"); 
+        writer.startElement("table", chooser);
+        writer.writeAttribute("width", "100%", "width");
+        writer.writeAttribute("border", "0", "border");
         writer.writeAttribute("cellpadding", "0", "cellpadding");
         writer.writeAttribute("cellspacing", "0", "cellspacing");
-        writer.writeAttribute("title", "", "title"); 
-        writer.startElement("tr", chooser);   
-        writer.writeAttribute("valign", "bottom", "valign"); 
-        writer.startElement("td", chooser);   
-        writer.writeAttribute("valign", "bottom", "valign"); 
+        writer.writeAttribute("title", "", "title");
+        writer.startElement("tr", chooser);
+        writer.writeAttribute("valign", "bottom", "valign");
+        writer.startElement("td", chooser);
+        writer.writeAttribute("valign", "bottom", "valign");
         writer.startElement("div", chooser);
         writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.TITLE_TEXT_DIV), "class");
@@ -530,8 +578,9 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param messageKey message key to lookup
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderInlineHelp(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, String messageKey, Theme theme)
+    protected void renderInlineHelp(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final String messageKey, final Theme theme)
             throws IOException {
 
         UIComponent help = chooser.getEnterInlineHelp();
@@ -558,9 +607,9 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderLookinTextField(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderLookinTextField(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         TextField lookinField = (TextField) chooser.getLookInTextField();
         if (!lookinField.isRendered()) {
@@ -598,10 +647,11 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param writer writer to use
      * @param theme theme in use
-     * @throws java.io.IOException if an IO error occurs
+     * @throws Exception if an IO error occurs
      */
-    protected void renderFilterField(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, Theme theme) throws Exception {
+    protected void renderFilterField(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws Exception {
 
         TextField filterOnField = (TextField) chooser.getFilterTextField();
         if (!filterOnField.isRendered()) {
@@ -636,10 +686,11 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderSortFields(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, Theme theme) throws IOException {
+    protected void renderSortFields(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        writer.startElement("div", chooser); 
+        writer.startElement("div", chooser);
         writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.FILECHOOSER_SORT_BY_DIV), null);
 
@@ -665,12 +716,13 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param writer writer to use
      * @param theme theme in use
-     * @throws java.io.IOException if an IO error occurs
+     * @throws Exception if an IO error occurs
      */
-    protected void renderFileList(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, Theme theme) throws Exception {
+    protected void renderFileList(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws Exception {
 
-        writer.startElement("div", chooser); 
+        writer.startElement("div", chooser);
         writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.FILECHOOSER_LST_DIV), null);
 
@@ -689,11 +741,11 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param writer writer to use
      * @param theme theme in use
-     * @throws java.io.IOException if an IO error occurs
+     * @throws Exception if an IO error occurs
      */
-    protected void renderMultiSelectHelp(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
-            throws Exception {
+    protected void renderMultiSelectHelp(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws Exception {
 
         HelpInline help = (HelpInline) chooser.getMultiSelectHelp();
         if (help != null && help.isRendered()) {
@@ -720,27 +772,16 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderButtons(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, Theme theme) throws IOException {
+    protected void renderButtons(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        writer.startElement("div", chooser); 
+        writer.startElement("div", chooser);
         writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.FILECHOOSER_BTN_GRP_DIV), null);
 
-        /*
-        HelpInline help = (HelpInline)chooser.getMultiSelectHelp();
-        if (help == null) {
-            writer.write("&nbsp;"); 
-        } else{
-            if (help.isRendered()) {
-                renderComponent(help, context);
-            }
-        }
-         */
-
         renderUpLevelButton(context, chooser, writer, theme);
         renderOpenFolderButton(context, chooser, writer, theme);
-
         writer.endElement("div");
     }
 
@@ -753,16 +794,16 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderUpLevelButton(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderUpLevelButton(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        writer.writeText("\n", null); 
+        writer.writeText("\n", null);
         Button child = (Button) chooser.getUpLevelButton(false);
         if (!child.isRendered()) {
             return;
         }
-        StringBuilder jsBuffer = new StringBuilder(256);
+        StringBuilder jsBuffer = new StringBuilder();
         jsBuffer.append(getDomNode(context, chooser));
         jsBuffer.append(".moveUpButtonClicked();");
         child.setOnClick(jsBuffer.toString());
@@ -779,16 +820,16 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderOpenFolderButton(FacesContext context,
-            FileChooser chooser, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderOpenFolderButton(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
-        writer.writeText("\n", null);  
+        writer.writeText("\n", null);
         Button child = (Button) chooser.getOpenFolderButton();
         if (!child.isRendered()) {
             return;
         }
-        StringBuilder jsBuffer = new StringBuilder(256);
+        StringBuilder jsBuffer = new StringBuilder();
         jsBuffer.append(getDomNode(context, chooser));
         jsBuffer.append(".openFolderClicked();");
         child.setOnClick(jsBuffer.toString());
@@ -829,8 +870,9 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderSelectText(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, Theme theme) throws IOException {
+    protected void renderSelectText(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         TextField selectedTextField
                 = (TextField) chooser.getSelectedTextField();
@@ -864,8 +906,9 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme theme in use
      * @throws java.io.IOException if an IO error occurs
      */
-    private void renderJavaScript(FileChooser chooser, FacesContext context,
-            ResponseWriter writer, Theme theme) throws IOException {
+    private void renderJavaScript(final FileChooser chooser,
+            final FacesContext context, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         // boolean folderChooser = chooser.isFolderChooser();
         String chooserType;
@@ -942,7 +985,7 @@ public class FileChooserRenderer extends AbstractRenderer {
                 .add("escapeChar", esc)
                 .add("delimiter", chooser.getDelimiterChar())
                 .add("currentFolder", currentFolder)
-                .build();;
+                .build();
 
         // Render JavaScript.
         renderInitScriptTag(writer, "fileChooser", initProps);
@@ -954,14 +997,14 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param fileList file list
      */
-    private void createJavaScriptForFileList(FileChooser chooser,
-            FacesContext context, UIComponent fileList) {
+    private void createJavaScriptForFileList(final FileChooser chooser,
+            final FacesContext context, final UIComponent fileList) {
 
         String jsObject = getDomNode(context, chooser);
 
         // generate the JavaScript that will disable DBL clicks
         // on files in a folderchooser.
-        StringBuilder dblClickBuffer = new StringBuilder(256);
+        StringBuilder dblClickBuffer = new StringBuilder();
         dblClickBuffer.append(jsObject);
         dblClickBuffer.append(".handleDblClick();");
         fileList.getAttributes().put("onDblClick", dblClickBuffer.toString());
@@ -983,7 +1026,7 @@ public class FileChooserRenderer extends AbstractRenderer {
         // function. Add the file/folder to the selected file/folder
         // textfield if its of the appropriate type and has been selected.
 
-        StringBuilder jsBuffer = new StringBuilder(256);
+        StringBuilder jsBuffer = new StringBuilder();
         jsBuffer.append(jsObject);
         jsBuffer.append(".handleOnChange();");
         fileList.getAttributes().put("onChange", jsBuffer.toString());
@@ -996,8 +1039,8 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param child UI component child
      */
-    private void setEnterKeyPressHandler(FacesContext context,
-            FileChooser chooser, UIComponent child) {
+    private void setEnterKeyPressHandler(final FacesContext context,
+            final FileChooser chooser, final UIComponent child) {
 
         StringBuilder scriptBuffer = new StringBuilder();
         scriptBuffer.append("return ");
@@ -1016,12 +1059,14 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param writer the writer to use
      * @param colSpan dot image colSpan
+     * @param wd width
      * @param ht dot image ht
      * @param theme the theme in-use
      * @throws java.io.IOException if an IO error occurs
      */
-    private void renderEmptyLine(FacesContext context, FileChooser chooser,
-            ResponseWriter writer, String colSpan, int wd, int ht, Theme theme)
+    private void renderEmptyLine(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final String colSpan, final int wd, final int ht, final Theme theme)
             throws IOException {
 
         writer.startElement("tr", chooser);
@@ -1038,8 +1083,9 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param theme the theme in-use
      * @throws java.io.IOException if an IO error occurs
      */
-    private void renderClearDiv(FacesContext context, FileChooser chooser,
-        ResponseWriter writer, Theme theme) throws IOException {
+    private void renderClearDiv(final FacesContext context,
+            final FileChooser chooser, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         writer.startElement("div", chooser);
         writer.writeAttribute("class",
@@ -1054,12 +1100,14 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param chooser UI component
      * @param writer the writer to use
      * @param colSpan dot image colSpan
+     * @param wd width
      * @param ht dot image ht
      * @param theme the theme in-use
      * @throws java.io.IOException if an IO error occurs
      */
-    private void renderDotImage(ResponseWriter writer, FileChooser chooser,
-            FacesContext context, String colSpan, int wd, int ht, Theme theme)
+    private void renderDotImage(final ResponseWriter writer,
+            final FileChooser chooser, final FacesContext context,
+            final String colSpan, final int wd, final int ht, final Theme theme)
             throws IOException {
 
             writer.startElement("td", chooser);
@@ -1083,7 +1131,7 @@ public class FileChooserRenderer extends AbstractRenderer {
      * Log an error - only used during development time.
      * @param msg log message
      */
-    void log(String msg) {
+    void log(final String msg) {
         if (LogUtil.fineEnabled(FileChooserRenderer.class)) {
             LogUtil.fine(FileChooserRenderer.class, msg);
         }
@@ -1096,18 +1144,25 @@ public class FileChooserRenderer extends AbstractRenderer {
      * @param body page body
      * @return The JS used to submit the "go" button.
      */
-    private String getReturnKeyJavascriptWrapper(String body) {
+    private String getReturnKeyJavascriptWrapper(final String body) {
         ClientSniffer cs = ClientSniffer.getInstance(getFacesContext());
 
         // Get key code.
-        String keyCode = cs.isNav() ? "event.which" : "event.keyCode";
+        String keyCode;
+        if (cs.isNav()) {
+            keyCode = "event.which";
+        } else {
+            keyCode = "event.keyCode";
+        }
 
         // Append JS to capture the event.
-        StringBuffer buff = new StringBuffer(128).append("if (")
-                .append(keyCode).append("==13) {");
+        StringBuffer buff = new StringBuffer()
+                .append("if (")
+                .append(keyCode)
+                .append("==13) {");
 
-        // To prevent an auto-submit, Netscape 6.x and netscape 7.0 require 
-        // setting the cancelBubble property. However, Netscape 7.1, 
+        // To prevent an auto-submit, Netscape 6.x and netscape 7.0 require
+        // setting the cancelBubble property. However, Netscape 7.1,
         // Mozilla 1.x, IE 5.x for SunOS/Windows do not use this property.
         if (cs.isNav6() || cs.isNav70()) {
             buff.append("event.cancelBubble = true;");

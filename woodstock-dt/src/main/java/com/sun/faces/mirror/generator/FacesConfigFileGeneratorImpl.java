@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,39 +28,56 @@ import org.apache.velocity.app.VelocityEngine;
 /**
  * An implementation of FacesConfigFileGenerator that creates the config file by
  * merging component and renderer info with a template file.
- *
- *
- * @author gjmurphy
  */
-class FacesConfigFileGeneratorImpl extends FacesConfigFileGenerator {
+final class FacesConfigFileGeneratorImpl extends FacesConfigFileGenerator {
 
-    static final String TEMPLATE = "com/sun/faces/mirror/generator/FacesConfig.template";
+    /**
+     * Template resource path.
+     */
+    private static final String TEMPLATE =
+            "com/sun/faces/mirror/generator/FacesConfig.template";
 
-    VelocityEngine velocityEngine;
+    /**
+     * Template engine.
+     */
+    private final VelocityEngine velocityEngine;
 
-    FacesConfigFileGeneratorImpl(VelocityEngine velocityEngine) {
-        this.velocityEngine = velocityEngine;
+    /**
+     * Create a new instance.
+     * @param velocity template engine
+     */
+    FacesConfigFileGeneratorImpl(final VelocityEngine velocity) {
+        this.velocityEngine = velocity;
     }
 
     @Override
     public void generate() throws GeneratorException {
-        Set<DeclaredComponentInfo> componentInfoSet = this.getDeclaredComponentInfos();
-        Set<DeclaredRendererInfo> rendererInfoSet = this.getDeclaredRendererInfos();
-        Set<String> propertyResolverNameSet = this.getDeclaredPropertyResolverNames();
-        Set<String> variableResolverNameSet = this.getDeclaredVariableResolverNameSet();
-        Set<String> javaeeResolverNameSet = this.getDeclaredJavaEEResolverNames();
+        Set<DeclaredComponentInfo> componentInfoSet =
+                this.getDeclaredComponentInfos();
+        Set<DeclaredRendererInfo> rendererInfoSet =
+                this.getDeclaredRendererInfos();
+        Set<String> propertyResolverNameSet =
+                this.getDeclaredPropertyResolverNames();
+        Set<String> variableResolverNameSet =
+                this.getDeclaredVariableResolverNameSet();
+        Set<String> javaeeResolverNameSet =
+                this.getDeclaredJavaEEResolverNames();
         PrintWriter printWriter = this.getPrintWriter();
         if (componentInfoSet.isEmpty() && rendererInfoSet.isEmpty()) {
             return;
         }
         try {
             VelocityContext velocityContext = new VelocityContext();
-            velocityContext.put("date", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
+            velocityContext.put("date", DateFormat
+                    .getDateInstance(DateFormat.MEDIUM).format(new Date()));
             velocityContext.put("componentInfoSet", componentInfoSet);
             velocityContext.put("rendererInfoSet", rendererInfoSet);
-            velocityContext.put("propertyResolverNameSet", propertyResolverNameSet);
-            velocityContext.put("variableResolverNameSet", variableResolverNameSet);
-            velocityContext.put("javaeeResolverNameSet", javaeeResolverNameSet);
+            velocityContext.put("propertyResolverNameSet",
+                    propertyResolverNameSet);
+            velocityContext.put("variableResolverNameSet",
+                    variableResolverNameSet);
+            velocityContext.put("javaeeResolverNameSet",
+                    javaeeResolverNameSet);
             Template template = velocityEngine.getTemplate(TEMPLATE);
             template.merge(velocityContext, printWriter);
             printWriter.flush();

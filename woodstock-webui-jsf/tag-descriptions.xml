@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 
-    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -3915,9 +3915,7 @@ The Common Tasks Section component. This encapsulates a number of common task gr
     <tag>
         <name>footer</name>
 
-        <description><![CDATA[
- @author deep
-]]></description>
+        <description></description>
     </tag>
 
     <tag>
@@ -5941,9 +5939,6 @@ import javax.faces.event.AbortProcessingException;<br>
 import util.JSFUtilities;<br>
 <br>
 /**<br>
-&nbsp;*<br>
-&nbsp;* @author Administrator<br>
-&nbsp;*/<br>
 public class MastheadBean{&nbsp;&nbsp;&nbsp; <br>
 &nbsp;&nbsp;&nbsp; String message = "foobar";<br>
 &nbsp;&nbsp;&nbsp; Hyperlink[] links = null;<br>
@@ -10815,11 +10810,6 @@ text=&quot;Three B&quot; /&gt;<br>
  provider.getFieldKey("first"), row)<br>
  }</code><br>
  <h4 style="color: rgb(0, 0, 0);"><span style="font-weight: bold;">Logging</span></h4>
- To see messages logged by the table component, set the following global
- defaults in your JDK's "jre/lib/logging.properties" file.
- Alternatively, you can use a different file by specifying a filename
- with the java.util.logging.config.file system property (e.g., setenv
- CATALINA_OPTS -Djava.util.logging.config.file=myFile).<br>
  <br>
  <code></code><code>java.util.logging.ConsoleHandler.level = FINE <br>
  com.sun.webui.jsf.event.TablePaginationActionListener.level = FINE <br>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,15 +21,27 @@ import java.util.Set;
 
 /**
  * Base generator for the JSP tag library descriptor file.
- *
- * @author gjmurphy
  */
-abstract public class TagLibFileGenerator extends Generator {
+public abstract class TagLibFileGenerator extends Generator {
 
+    /**
+     * Declared component.
+     */
     private Set<DeclaredComponentInfo> declaredComponentInfoSet;
 
     /**
+     * Namespace.
+     */
+    private String namespace;
+
+    /**
+     * Namespace prefix.
+     */
+    private String namespacePrefix;
+
+    /**
      * Protected getter for property declaredComponentInfoSet.
+     * @return {@code Set<DeclaredComponentInfo>}
      */
     protected Set<DeclaredComponentInfo> getDeclaredComponentInfoSet() {
         return this.declaredComponentInfoSet;
@@ -37,15 +49,16 @@ abstract public class TagLibFileGenerator extends Generator {
 
     /**
      * Setter for property declaredComponentInfoSet.
+     * @param newCompInfos new declared components
      */
-    public void setDeclaredComponentInfoSet(Set<DeclaredComponentInfo> declaredComponentInfoSet) {
-        this.declaredComponentInfoSet = declaredComponentInfoSet;
+    public void setDeclaredComponentInfoSet(
+            final Set<DeclaredComponentInfo> newCompInfos) {
+        this.declaredComponentInfoSet = newCompInfos;
     }
-    
-    private String namespace;
 
     /**
      * Protected getter for property namespace.
+     * @return String
      */
     protected String getNamespace() {
         return this.namespace;
@@ -53,12 +66,11 @@ abstract public class TagLibFileGenerator extends Generator {
 
     /**
      * Setter for property namespace.
+     * @param newNs new namespace
      */
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
+    public void setNamespace(final String newNs) {
+        this.namespace = newNs;
     }
-
-    private String namespacePrefix;
 
     /**
      * Protected getter for property namespacePrefix.
@@ -70,9 +82,9 @@ abstract public class TagLibFileGenerator extends Generator {
 
     /**
      * Setter for property namespacePrefix.
+     * @param newNsPrefix new namespace prefix
      */
-    public void setNamespacePrefix(String namespacePrefix) {
-        this.namespacePrefix = namespacePrefix;
+    public void setNamespacePrefix(final String newNsPrefix) {
+        this.namespacePrefix = newNsPrefix;
     }
-    
 }

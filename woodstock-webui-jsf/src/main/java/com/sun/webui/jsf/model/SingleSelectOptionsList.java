@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,20 +19,24 @@ package com.sun.webui.jsf.model;
 /**
  * A default list of options, for components which can select only one option
  * at a time.
- *
- * @author gjmurphy, John Yeary
  */
-public class SingleSelectOptionsList extends DefaultOptionsList {
+public final class SingleSelectOptionsList extends DefaultOptionsList {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -5424069058620671793L;
 
+    /**
+     * Create a new instance.
+     */
     public SingleSelectOptionsList() {
         super();
         super.setMultiple(false);
     }
-    //FIXME Is this missing an implementation
 
+    //FIXME Is this missing an implementation
     @Override
-    public void setMultiple(boolean isMultiple) {
+    public void setMultiple(final boolean isMultiple) {
     }
 }

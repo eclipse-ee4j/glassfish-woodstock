@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,37 +27,59 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
- *
- * @author gjmurphy
+ * Tag source generator.
  */
 class TagSourceGeneratorImpl extends TagSourceGenerator {
 
-    final static String TEMPLATE = "com/sun/faces/mirror/generator/TagSource.template";
+    /**
+     * Template resource path.
+     */
+    private static final String TEMPLATE =
+            "com/sun/faces/mirror/generator/TagSource.template";
 
-    VelocityEngine velocityEngine;
+    /**
+     * Template engine.
+     */
+    private final VelocityEngine velocityEngine;
 
-    public TagSourceGeneratorImpl(VelocityEngine vEngine) {
+    /**
+     * Create a new instance.
+     * @param vEngine template engine
+     */
+    TagSourceGeneratorImpl(final VelocityEngine vEngine) {
         this.velocityEngine = vEngine;
     }
 
     @Override
     public void generate() throws GeneratorException {
         try {
-            DeclaredComponentInfo componentInfo = this.getDeclaredComponentInfo();
+            DeclaredComponentInfo componentInfo =
+                    this.getDeclaredComponentInfo();
             String namespace = this.getNamespace();
             String namespacePrefix = this.getNamespacePrefix();
             PrintWriter printWriter = this.getPrintWriter();
-            Collection<PropertyInfo> propertyInfos = new ArrayList<PropertyInfo>();
-            propertyInfos.addAll(componentInfo.getInheritedPropertyInfos().values());
+            Collection<PropertyInfo> propertyInfos =
+                    new ArrayList<PropertyInfo>();
+            propertyInfos.addAll(componentInfo.getInheritedPropertyInfos()
+                    .values());
             propertyInfos.addAll(componentInfo.getPropertyInfos().values());
             VelocityContext velocityContext = new VelocityContext();
-            velocityContext.put("date", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
+            velocityContext.put("date", DateFormat
+                    .getDateInstance(DateFormat.MEDIUM).format(new Date()));
             velocityContext.put("tagPackage", getPackageName());
             velocityContext.put("tagClass", getClassName());
             velocityContext.put("componentInfo", componentInfo);
             velocityContext.put("propertyInfos", propertyInfos);
-            velocityContext.put("namespace", namespace == null ? "" : namespace);
-            velocityContext.put("namespacePrefix", namespacePrefix == null ? "" : namespacePrefix);
+            if (namespace == null) {
+                velocityContext.put("namespace", "");
+            } else {
+                velocityContext.put("namespace", namespace);
+            }
+            if (namespacePrefix == null) {
+                velocityContext.put("namespacePrefix", "");
+            } else {
+                velocityContext.put("namespacePrefix", namespacePrefix);
+            }
             Template template = this.velocityEngine.getTemplate(TEMPLATE);
             template.merge(velocityContext, printWriter);
             printWriter.flush();
@@ -77,5 +99,4 @@ class TagSourceGeneratorImpl extends TagSourceGenerator {
     public String getClassName() {
         return this.getDeclaredComponentInfo().getClassName() + "Tag";
     }
-
 }

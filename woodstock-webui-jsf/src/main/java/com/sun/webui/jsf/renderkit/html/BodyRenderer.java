@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -38,12 +38,12 @@ import static com.sun.webui.jsf.util.RenderingUtilities.decodeHiddenField;
  * Renderer for a {@link Body} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Body"))
-public class BodyRenderer extends AbstractRenderer {
+public final class BodyRenderer extends AbstractRenderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "onClick",
         "onDblClick",
         "onMouseDown",
@@ -61,12 +61,14 @@ public class BodyRenderer extends AbstractRenderer {
     /**
      * The set of integer pass-through attributes to be rendered.
      */
-    private static final String INT_ATTRIBUTES[] = {
+    private static final String[] INT_ATTRIBUTES = {
         "tabIndex"
     };
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         // Enforce NPE requirements in the Javadocs
         if ((context == null) || (component == null)) {
             throw new NullPointerException();
@@ -83,14 +85,18 @@ public class BodyRenderer extends AbstractRenderer {
         }
 
         String id = decodeHiddenField(context, FocusManager.FOCUS_FIELD_ID);
-        if (id != null && (id = id.trim()).length() != 0) {
-            FocusManager.setRequestFocusElementId(context, id);
+        if (id != null) {
+            id = id.trim();
+            if (id.length() != 0) {
+                FocusManager.setRequestFocusElementId(context, id);
+            }
         }
     }
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // Start the appropriate element
         if (isPortlet(context) || component == null) {
@@ -113,8 +119,10 @@ public class BodyRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (isPortlet(context)) {
             return;
@@ -155,8 +163,9 @@ public class BodyRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (isPortlet(context)) {
             return;
@@ -179,7 +188,8 @@ public class BodyRenderer extends AbstractRenderer {
         // javascript argument.
         String defaultFocusElementId = getFocusElementId(context,
                 body.getFocus());
-        if(defaultFocusElementId != null && defaultFocusElementId.isEmpty()){
+        if (defaultFocusElementId != null
+                && defaultFocusElementId.isEmpty()) {
             defaultFocusElementId = null;
         }
 
@@ -190,7 +200,7 @@ public class BodyRenderer extends AbstractRenderer {
         // a client id. If its null pass javascript null and not 'null'.
         // This is the "focusElementId" javascript argument.
         String focusElementId = FocusManager.getRequestFocusElementId(context);
-        if(focusElementId != null && focusElementId.isEmpty()){
+        if (focusElementId != null && focusElementId.isEmpty()) {
             focusElementId = null;
         }
 
@@ -210,15 +220,6 @@ public class BodyRenderer extends AbstractRenderer {
     }
 
     /**
-     * Log an message to the standard output.
-     * Only used during development time.
-     * @param msg message to log
-     */
-    void log(String msg) {
-        System.out.println(this.getClass().getName() + "::" + msg);
-    }
-
-    /**
      * Helper method to obtain the id of a ComplexComponent sub component.If a
      * developer specified the focus property they may not have been able to
      * obtain the sub component that should receive the focus, since they can
@@ -230,7 +231,8 @@ public class BodyRenderer extends AbstractRenderer {
      * @param id element id
      * @return String
      */
-    protected String getFocusElementId(FacesContext context, String id) {
+    private static String getFocusElementId(final FacesContext context,
+            final String id) {
 
         // Note that this code is duplicated in
         // Body because we don't want to
@@ -256,7 +258,7 @@ public class BodyRenderer extends AbstractRenderer {
             // to return.
             UIComponent comp = context.getViewRoot().findComponent(absid);
             if (comp != null && comp instanceof ComplexComponent) {
-                id = ((ComplexComponent) comp).getFocusElementId(context);
+                return ((ComplexComponent) comp).getFocusElementId(context);
             }
         } catch (Exception e) {
             if (LogUtil.finestEnabled()) {

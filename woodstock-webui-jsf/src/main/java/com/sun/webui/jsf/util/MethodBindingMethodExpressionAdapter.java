@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,7 +28,7 @@ import javax.el.ELException;
 /**
  * Wrap a MethodExpression instance and expose it as a MethodBinding.
  */
-public class MethodBindingMethodExpressionAdapter extends MethodBinding
+public final class MethodBindingMethodExpressionAdapter extends MethodBinding
         implements StateHolder, Serializable {
 
     /**
@@ -54,14 +54,16 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
 
     /**
      * Create a new instance.
-     * @param methodExpression method expression
+     * @param newMethodExpression method expression
      */
-    public MethodBindingMethodExpressionAdapter(MethodExpression methodExpression) {
-        this.methodExpression = methodExpression;
+    public MethodBindingMethodExpressionAdapter(
+            final MethodExpression newMethodExpression) {
+
+        this.methodExpression = newMethodExpression;
     }
 
     @Override
-    public Object invoke(FacesContext context, Object params[])
+    public Object invoke(final FacesContext context, final Object[] params)
             throws javax.faces.el.EvaluationException,
             javax.faces.el.MethodNotFoundException {
 
@@ -97,7 +99,7 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
     }
 
     @Override
-    public Class getType(FacesContext context)
+    public Class getType(final FacesContext context)
             throws javax.faces.el.MethodNotFoundException {
 
         assert (null != methodExpression);
@@ -127,7 +129,7 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         assert (null != methodExpression);
         boolean result = false;
 
@@ -153,12 +155,12 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
     }
 
     @Override
-    public void setTransient(boolean tranzient) {
-        this.tranzient = tranzient;
+    public void setTransient(final boolean newTranzient) {
+        this.tranzient = newTranzient;
     }
 
     @Override
-    public Object saveState(FacesContext context) {
+    public Object saveState(final FacesContext context) {
         Object result = null;
         if (!tranzient) {
             if (methodExpression instanceof StateHolder) {
@@ -179,7 +181,7 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
     }
 
     @Override
-    public void restoreState(FacesContext context, Object state) {
+    public void restoreState(final FacesContext context, final Object state) {
         // if we have state
         if (null == state) {
             return;
@@ -201,7 +203,7 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
 
                 if (null != toRestoreClass) {
                     try {
-                        result= (MethodExpression) toRestoreClass
+                        result = (MethodExpression) toRestoreClass
                                         .newInstance();
                     } catch (InstantiationException e) {
                         throw new IllegalStateException(e.getMessage());
@@ -229,8 +231,8 @@ public class MethodBindingMethodExpressionAdapter extends MethodBinding
      * @return Class
      * @throws ClassNotFoundException if the given class is not found
      */
-    private static Class loadClass(String name,
-            Object fallbackClass) throws ClassNotFoundException {
+    private static Class loadClass(final String name,
+            final Object fallbackClass) throws ClassNotFoundException {
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         if (loader == null) {

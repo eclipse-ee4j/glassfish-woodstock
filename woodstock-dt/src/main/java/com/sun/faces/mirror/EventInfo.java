@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,13 +19,18 @@ package com.sun.faces.mirror;
  * A base class that defines the basic metadata available for an event set,
  * whether it belongs to a class declared in the current compilation unit, or to
  * a class in a dependent library.
- *
- * @author gjmurphy
  */
 public abstract class EventInfo extends FeatureInfo {
 
+    /**
+     * Property info.
+     */
     private PropertyInfo propertyInfo;
-    protected EventInfo original = null;
+
+    /**
+     * Original event info.
+     */
+    private EventInfo original = null;
 
     /**
      * Get the simple name of the method used to add event listeners.
@@ -83,18 +88,22 @@ public abstract class EventInfo extends FeatureInfo {
     public PropertyInfo getPropertyInfo() {
         PropertyInfo propInfo = null;
         EventInfo eventInfo = this;
-        while(propInfo == null && eventInfo != null){
+        while (propInfo == null && eventInfo != null) {
             propInfo = eventInfo.propertyInfo;
             eventInfo = eventInfo.original;
         }
         return propInfo;
     }
 
-    void setPropertyInfo(PropertyInfo propertyInfo) {
-        if(this.propertyInfo != null){
+    /**
+     * Set the property info if not already set.
+     * @param propInfo new prop info
+     */
+    void setPropertyInfo(final PropertyInfo propInfo) {
+        if (this.propertyInfo != null) {
             throw new IllegalStateException("propertyInfo is already set");
         }
-        this.propertyInfo = propertyInfo;
+        this.propertyInfo = propInfo;
     }
 
     /**
@@ -103,4 +112,20 @@ public abstract class EventInfo extends FeatureInfo {
      * @return EventInfo
      */
     abstract EventInfo copy();
+
+    /**
+     * Get the original event.
+     * @return EventInfo
+     */
+    EventInfo getOriginal() {
+        return original;
+    }
+
+    /**
+     * Set the original event.
+     * @param newOriginal new original event
+     */
+    public void setOriginal(final EventInfo newOriginal) {
+        this.original = newOriginal;
+    }
 }

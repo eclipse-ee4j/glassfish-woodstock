@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,8 +18,6 @@ package com.sun.faces.mirror;
 /**
  * Defines the basic metadata available for the JSP tag attribute that
  * corresponds to a property. See {@link PropertyInfo#getAttribute}.
- *
- * @author gjmurphy
  */
 public interface AttributeInfo {
 
@@ -30,7 +28,7 @@ public interface AttributeInfo {
      *
      * @return String
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns true if this attribute is required in the JSP. See
@@ -38,7 +36,7 @@ public interface AttributeInfo {
      *
      * @return {@code true} if required, {@code false} otherwise
      */
-    public boolean isRequired();
+    boolean isRequired();
 
     /**
      * Returns true if this attribute is bind-able. See
@@ -46,7 +44,7 @@ public interface AttributeInfo {
      *
      * @return {@code true} if bind-able, {@code false} otherwise
      */
-    public boolean isBindable();
+    boolean isBindable();
 
     /**
      * If this attribute corresponds to a property of type
@@ -55,7 +53,7 @@ public interface AttributeInfo {
      *
      * @return String
      */
-    public abstract String getMethodSignature();
+    String getMethodSignature();
 
     /**
      * Returns the description of this attribute, appropriate for use as a
@@ -64,7 +62,7 @@ public interface AttributeInfo {
      *
      * @return String
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns the name of the method used to set the attribute value in the tag
@@ -72,6 +70,6 @@ public interface AttributeInfo {
      *
      * @return String
      */
-    public String getWriteMethodName();
+    String getWriteMethodName();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -33,46 +33,51 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
- *
- * @author mbohm
+ * WebUI input.
  */
 public class WebuiInput extends UIInput {
 
     /**
      * The converter attribute is used to specify a method to translate native
-     * property values to String and back for this component. The converter 
+     * property values to String and back for this component. The converter
      * attribute value must be one of the following:
      * <ul>
      * <li>A JavaServer Faces EL expression that resolves to a backing bean or
-     * bean property that implements the 
-     * <code>javax.faces.converter.Converter</code> interface; or
+     * bean property that implements the
+     * {@code javax.faces.converter.Converter} interface; or
      * </li><li>the ID of a registered converter (a String).</li>
      * </ul>
+     * This implementation invokes {@code super.setConverter}.
+     * @param converter converter
      */
     @Property(name = "converter")
     @Override
-    public void setConverter(Converter converter) {
+    public void setConverter(final Converter converter) {
         super.setConverter(converter);
     }
 
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * This implementation invokes {@code super.setId}.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
     /**
      * Flag indicating that event handling for this component should be handled
-     * immediately (in Apply Request Values phase) rather than waiting until 
+     * immediately (in Apply Request Values phase) rather than waiting until
      * Invoke Application phase.
+     * This implementation invokes {@code super.setImmediate}.
+     * @param immediate immediate
      */
     @Property(name = "immediate")
     @Override
-    public void setImmediate(boolean immediate) {
+    public void setImmediate(final boolean immediate) {
         super.setImmediate(immediate);
     }
 
@@ -82,25 +87,30 @@ public class WebuiInput extends UIInput {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * This implementation invokes {@code super.setRendered}.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
     /**
-     * Flag indicating that an input value for this field is mandatory, and 
+     * Flag indicating that an input value for this field is mandatory, and
      * failure to provide one will trigger a validation error.
+     * This implementation invokes {@code super.setRequired}.
+     * @param required required
      */
     @Property(name = "required")
     @Override
-    public void setRequired(boolean required) {
+    public void setRequired(final boolean required) {
         super.setRequired(required);
     }
 
     /**
      * {@inheritDoc}
+     * This implementation invokes {@code super.getValidator}.
      **/
     //Override to annotate
     @Property(isHidden = true, isAttribute = false)
@@ -111,6 +121,7 @@ public class WebuiInput extends UIInput {
 
     /**
      * {@inheritDoc}
+     * This implementation invokes {@code super.getValueChangeListener}.
      **/
     //Override to annotate
     @Property(isHidden = true, isAttribute = false)
@@ -118,39 +129,48 @@ public class WebuiInput extends UIInput {
     public MethodBinding getValueChangeListener() {
         return super.getValueChangeListener();
     }
+
     /**
-     * The <code>valueChangeListener</code> attribute is used to specify a
+     * The {@code valueChangeListener} attribute is used to specify a
      * method to handle an value-change event that is triggered when the
-     * user enters data in the input component. The value of the 
+     * user enters data in the input component. The value of the
      * attribute value must be a JavaServer Faces EL expression that
      * resolves to a backing bean method. The method must take a single
-     * parameter of type <code>javax.faces.event.ValueChangeEvent</code>,
+     * parameter of type {@code javax.faces.event.ValueChangeEvent},
      * and its return type must be void. The backing bean where the
-     * method is defined must implement <code>java.io.Serializable</code>
-     * or <code>javax.faces.component.StateHolder</code>.
+     * method is defined must implement {@code java.io.Serializable}
+     * or {@code javax.faces.component.StateHolder}.
      */
-    @Property(name = "valueChangeListenerExpression", isHidden = true, 
-    displayName = "Value Change Listener Expression", category = "Advanced",
+    @Property(name = "valueChangeListenerExpression",
+            isHidden = true,
+            displayName = "Value Change Listener Expression",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
             editorClassName = "com.sun.rave.propertyeditors.MethodBindingPropertyEditor")
+            //CHECKSTYLE:ON
     @Property.Method(event = "valueChange")
     private MethodExpression valueChangeListenerExpression;
 
     /**
-     * <p>Get the <code>valueChangeListenerExpression</code>. 
-     * The corresponding listener will be called from the 
-     * <code>broadcast</code> method.</p>
+     * Get the {@code valueChangeListenerExpression}.
+     * The corresponding listener will be called from the
+     * {@code broadcast} method.
+     * @return MethodExpression
      */
     public MethodExpression getValueChangeListenerExpression() {
         return this.valueChangeListenerExpression;
     }
 
-    /** 
-     * <p>Set the <code>valueChangeListenerExpression</code>.
-     * The corresponding listener will be called from the 
-     * <code>broadcast</code> method.</p>
+    /**
+     * Set the {@code valueChangeListenerExpression}.
+     * The corresponding listener will be called from the
+     * {@code broadcast} method.
+     * @param newValueChangeListenerExpression valueChangeListenerExpression
      */
-    public void setValueChangeListenerExpression(MethodExpression me) {
-        this.valueChangeListenerExpression = me;
+    public void setValueChangeListenerExpression(
+            final MethodExpression newValueChangeListenerExpression) {
+
+        this.valueChangeListenerExpression = newValueChangeListenerExpression;
     }
 
     /**
@@ -159,55 +179,69 @@ public class WebuiInput extends UIInput {
      * JavaServer Faces EL expression that resolves to a public method with
      * return type void. The method must take three parameters:
      * <ul>
-     * <li>a <code>javax.faces.context.FacesContext</code></li>
-     * <li>a <code>javax.faces.component.UIComponent</code> (the component whose
+     * <li>a {@code javax.faces.context.FacesContext}</li>
+     * <li>a {@code javax.faces.component.UIComponent} (the component whose
      * data is to be validated)</li>
-     * <li>a <code>java.lang.Object</code> containing the data to be validated.
+     * <li>a {@code java.lang.Object} containing the data to be validated.
      * </li>
-     * </ul> 
-     * <p>The backing bean where the method is defined must implement 
-     * <code>java.io.Serializable</code> or
-     * <code>javax.faces.component.StateHolder</code>.</p>
-     * <p>The method is invoked during the Process Validations Phase.</p> 
+     * </ul>
+     * <p>The backing bean where the method is defined must implement
+     * {@code java.io.Serializable} or
+     * {@code javax.faces.component.StateHolder}.
+     * </p>
+     * <p>The method is invoked during the Process Validations Phase.</p>
      */
-    @Property(name = "validatorExpression", displayName = "Validator Expression",
-    category = "Data", editorClassName = "com.sun.rave.propertyeditors.ValidatorPropertyEditor")
+    @Property(name = "validatorExpression",
+            displayName = "Validator Expression",
+            category = "Data",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.ValidatorPropertyEditor")
+            //CHECKSTYLE:ON
     @Property.Method(event = "validate")
     private MethodExpression validatorExpression;
 
     /**
-     * <p>Get the <code>validatorExpression</code>.
+     * Get the {@code validatorExpression}.
      * The corresponding validator will be called from the
-     * <code>validateValue</code> method.</p>
-     *
+     * {@code validateValue} method.
+     * @return MethodExpression
      */
     public MethodExpression getValidatorExpression() {
         return this.validatorExpression;
     }
 
     /**
-     * <p>Set the <code>validatorExpression</code>.
+     * Set the {@code validatorExpression}.
      * The corresponding validator will be called from the
-     * <code>validateValue</code> method.</p>
-     *
+     * {@code validateValue} method.
+     * @param newValidatorExpression validatorExpression
      */
-    public void setValidatorExpression(MethodExpression me) {
-        this.validatorExpression = me;
+    public void setValidatorExpression(
+            final MethodExpression newValidatorExpression) {
+
+        this.validatorExpression = newValidatorExpression;
     }
 
     /**
      * {@inheritDoc}
+     * This implementation invokes {@code super.broadcast} and
+     * evaluates the value change listener expression.
      **/
     @Override
-    public void broadcast(FacesEvent event) throws AbortProcessingException {
+    public void broadcast(final FacesEvent event)
+            throws AbortProcessingException {
+
         // Perform standard superclass processing
         super.broadcast(event);
 
         if (event instanceof ValueChangeEvent) {
-            MethodExpression vclExpression = getValueChangeListenerExpression();
+            MethodExpression vclExpression =
+                    getValueChangeListenerExpression();
             if (vclExpression != null) {
-                ValueChangeListener vcl = new MethodExprValueChangeListener(vclExpression);
-                //just to be sure, use the semantics of the inherited broadcast method
+                ValueChangeListener vcl =
+                        new MethodExprValueChangeListener(vclExpression);
+                //just to be sure, use the semantics of the inherited broadcast
+                // method
                 if (event.isAppropriateListener(vcl)) {
                     event.processListener(vcl);
                 }
@@ -217,10 +251,14 @@ public class WebuiInput extends UIInput {
 
     /**
      * {@inheritDoc}
+     * This implementation invokes {@code super.validateValue} and
+     * evaluates the validator expression.
      **/
     @Override
     @SuppressWarnings("unchecked")
-    protected void validateValue(FacesContext context, Object newValue) {
+    protected void validateValue(final FacesContext context,
+            final Object newValue) {
+
         // Perform standard superclass processing
         super.validateValue(context, newValue);
 
@@ -235,7 +273,7 @@ public class WebuiInput extends UIInput {
                     // If the validator throws an exception, we're
                     // invalid, and we need to add a message
                     setValid(false);
-                    FacesMessage message = null;
+                    FacesMessage message;
                     String validatorMessageString = getValidatorMessage();
 
                     if (null != validatorMessageString) {
@@ -255,23 +293,31 @@ public class WebuiInput extends UIInput {
 
     /**
      * {@inheritDoc}
-     **/
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
+     *
+     */
     @Override
-    public void restoreState(FacesContext context, Object state) {
-        Object values[] = (Object[]) state;
-
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
         super.restoreState(context, values[0]);
-        valueChangeListenerExpression = (MethodExpression) restoreAttachedState(context, values[1]);
-        validatorExpression = (MethodExpression) restoreAttachedState(context, values[2]);
-
+        valueChangeListenerExpression = (MethodExpression)
+                restoreAttachedState(context, values[1]);
+        validatorExpression = (MethodExpression)
+                restoreAttachedState(context, values[2]);
     }
 
     /**
      * {@inheritDoc}
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      **/
     @Override
-    public Object saveState(FacesContext context) {
-        Object values[] = new Object[3];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[3];
         values[0] = super.saveState(context);
         values[1] = saveAttachedState(context, valueChangeListenerExpression);
         values[2] = saveAttachedState(context, validatorExpression);

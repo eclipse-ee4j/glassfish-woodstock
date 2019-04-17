@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * TextAreaRenderer.java
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -31,28 +28,40 @@ import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>Renderer for TextAreaRenderer {@link TextArea} component.</p>
+ * Renderer for TextAreaRenderer {@link TextArea} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TextArea"))
-public class TextAreaRenderer extends FieldRenderer {
+public final class TextAreaRenderer extends FieldRenderer {
 
+    /**
+     * This implementation invokes {@link FieldRenderer#renderField}.
+     * @param context faces context
+     * @param component UIn component
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (!(component instanceof TextArea)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                TextArea.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                TextArea.class.getName()
+            };
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
-        super.renderField(context, (TextArea) component, "textarea", getStyles(context));
+        super.renderField(context, (TextArea) component, "textarea",
+                getStyles(context));
     }
 
     @Override
-    String[] getStyles(FacesContext context) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected String[] getStyles(final FacesContext context) {
         Theme theme = ThemeUtilities.getTheme(context);
         String[] styles = new String[4];
         styles[0] = theme.getStyleClass(ThemeStyles.TEXT_AREA);

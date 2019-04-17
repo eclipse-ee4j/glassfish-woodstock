@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -48,7 +48,7 @@ public final class Table2Renderer extends RendererBase {
      * currently supported.
      * </p>
      */
-    private static final String ATTRIBUTES[] = {
+    private static final String[] ATTRIBUTES = {
         "align",
         "bgColor",
         "dir",
@@ -69,15 +69,15 @@ public final class Table2Renderer extends RendererBase {
     };
 
     @Override
-    protected String[] getModuleNames(UIComponent component) {
+    protected String[] getModuleNames(final UIComponent component) {
         return new String[]{
             "table2"
         };
     }
 
     @Override
-    protected JsonObjectBuilder getProperties(FacesContext context,
-            UIComponent component) throws IOException {
+    protected JsonObjectBuilder getProperties(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         Table2 table = (Table2) component;
 
@@ -93,8 +93,8 @@ public final class Table2Renderer extends RendererBase {
     }
 
     @Override
-    protected void renderNestedContent(FacesContext context,
-            UIComponent component) throws IOException {
+    protected void renderNestedContent(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     /**
@@ -105,8 +105,9 @@ public final class Table2Renderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setActionsProperties(FacesContext context, Table2 component,
-            JsonObjectBuilder jsonBuilder) throws IOException {
+    private static void setActionsProperties(final FacesContext context,
+            final Table2 component, final JsonObjectBuilder jsonBuilder)
+            throws IOException {
 
         // Get actions facet.
         UIComponent facet = component.getFacet(Table2.ACTIONS_TOP_FACET);
@@ -115,7 +116,7 @@ public final class Table2Renderer extends RendererBase {
         }
     }
 
-    /** 
+    /**
      * Helper method to obtain row group properties.
      *
      * @param context FacesContext for the current request.
@@ -123,8 +124,9 @@ public final class Table2Renderer extends RendererBase {
      * @param jsonBuilder JSONObject to assign properties to.
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void setRowGroupProperties(FacesContext context, Table2 component,
-            JsonObjectBuilder jsonBuilder) throws IOException {
+    private static void setRowGroupProperties(final FacesContext context,
+            final Table2 component, final JsonObjectBuilder jsonBuilder)
+            throws IOException {
 
         // Add properties for each Table2RowGroup child.
         JsonArrayBuilder jsonArrayBuilder = JSON_BUILDER_FACTORY
@@ -139,7 +141,7 @@ public final class Table2Renderer extends RendererBase {
         jsonBuilder.add("rowGroups", jsonArrayBuilder);
     }
 
-    /** 
+    /**
      * Helper method to obtain title properties.
      *
      * @param context FacesContext for the current request.
@@ -147,8 +149,9 @@ public final class Table2Renderer extends RendererBase {
      * @throws java.io.IOException if an IO error occurs
      * @param jsonBuilder JSONObject to assign properties to.
      */
-    protected void setTitleProperties(FacesContext context, Table2 component,
-            JsonObjectBuilder jsonBuilder) throws IOException {
+    private static void setTitleProperties(final FacesContext context,
+            final Table2 component, final JsonObjectBuilder jsonBuilder)
+            throws IOException {
 
         // Get facet.
         UIComponent facet = component.getFacet(Table2.TABLE2_TITLE_FACET);

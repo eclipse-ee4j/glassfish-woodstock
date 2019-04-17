@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -36,7 +36,7 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
  * Render an instance of the AlarmStatus component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.AlarmStatus"))
-public class AlarmStatusRenderer extends HyperlinkRenderer {
+public final class AlarmStatusRenderer extends HyperlinkRenderer {
 
     /**
      * Creates a new instance of AlarmStatusRenderer.
@@ -44,43 +44,14 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
     public AlarmStatusRenderer() {
     }
 
-    /**
-     * Render an alarm label.
-     * @param context faces context
-     * @param alarmStatus alarm status
-     * @param writer writer to use
-     * @param theme theme in-use
-     * @throws IOException if an IO error occurs
-     */
-    protected void renderAlarmLabel(FacesContext context,
-            AlarmStatus alarmStatus, ResponseWriter writer, Theme theme)
+    @Override
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
-        writer.startElement("span", alarmStatus);
-        addCoreAttributes(context, alarmStatus, writer,
-                theme.getStyleClass(ThemeStyles.MASTHEAD_TEXT));
-
-        Object textObj = alarmStatus.getText();
-        String text;
-        if (textObj == null) {
-            text = theme.getMessage("masthead.currentAlarms");
-        } else {
-            text = convertValueToString(alarmStatus, textObj);
-        }
-
-        writer.write(text);
-        writer.write("&nbsp;");
-        writer.endElement("span");
-    }
-
-    @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
         AlarmStatus alarmStatus = (AlarmStatus) component;
         Theme theme = ThemeUtilities.getTheme(context);
-
         UIComponent facet = alarmStatus.getFacet("alarmLabel");
-
         if (facet != null) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
@@ -188,9 +159,51 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
         }
     }
 
-    protected void renderAlarmCount(FacesContext context,
-            ResponseWriter writer, AlarmStatus alarmStatus, String icon,
-            String styleClass, int numAlarms, String alt) throws IOException {
+    /**
+     * Render an alarm label.
+     *
+     * @param context faces context
+     * @param alarmStatus alarm status
+     * @param writer writer to use
+     * @param theme theme in-use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderAlarmLabel(final FacesContext context,
+            final AlarmStatus alarmStatus, final ResponseWriter writer,
+            final Theme theme) throws IOException {
+
+        writer.startElement("span", alarmStatus);
+        addCoreAttributes(context, alarmStatus, writer,
+                theme.getStyleClass(ThemeStyles.MASTHEAD_TEXT));
+
+        Object textObj = alarmStatus.getText();
+        String text;
+        if (textObj == null) {
+            text = theme.getMessage("masthead.currentAlarms");
+        } else {
+            text = convertValueToString(alarmStatus, textObj);
+        }
+
+        writer.write(text);
+        writer.write("&nbsp;");
+        writer.endElement("span");
+    }
+
+    /**
+     * Render the alarm count.
+     * @param context faces context
+     * @param writer writer to use
+     * @param alarmStatus alarm status component
+     * @param icon icon key
+     * @param styleClass CSS class
+     * @param numAlarms alarm count
+     * @param alt alternate text
+     * @throws IOException if an IO error occurs
+     */
+    private void renderAlarmCount(final FacesContext context,
+            final ResponseWriter writer, final AlarmStatus alarmStatus,
+            final String icon, final String styleClass, final int numAlarms,
+            final String alt) throws IOException {
 
         // We don't want conversion here. This is just to cache
         // the original value so we can restore it after calling
@@ -227,15 +240,16 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // override super so tha we do nothing here
     }
 
     @Override
-    protected void finishRenderAttributes(FacesContext context,
-            UIComponent component,
-            ResponseWriter writer)
+    protected void finishRenderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         // this method will (usually) be called 4 times to render each alarm
@@ -263,9 +277,9 @@ public class AlarmStatusRenderer extends HyperlinkRenderer {
      * @throws java.io.IOException if an IO error occurs
      * @deprecated do not use
      */
-    protected void renderAlarmImage(FacesContext context,
-            AlarmStatus alarmStatus, ResponseWriter writer, Theme theme,
-            String alarmSrc) throws IOException {
+    private static void renderAlarmImage(final FacesContext context,
+            final AlarmStatus alarmStatus, final ResponseWriter writer,
+            final Theme theme, final String alarmSrc) throws IOException {
 
         ImageComponent image = new ImageComponent();
         image.setIcon(alarmSrc);

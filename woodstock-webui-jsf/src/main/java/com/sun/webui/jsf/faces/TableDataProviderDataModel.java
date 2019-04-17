@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,74 +31,76 @@ import javax.faces.model.DataModelEvent;
 import javax.faces.model.DataModelListener;
 
 /**
- * <p><code>DataModel</code> implementation that wraps a specified
+ * {@code DataModel} implementation that wraps a specified
  * {@link TableDataProvider} with the standard JavaServer Faces API.
- * Note that setting the <code>rowIndex</code> property of this
- * <code>DataModel</code> does <strong>NOT</strong> cause the cursor of
- * the wrapped {@link TableDataProvider} to be repositioned.</p>
+ * Note that setting the {@code rowIndex} property of this
+ * {@code DataModel} does <strong>NOT</strong> cause the cursor of
+ * the wrapped {@link TableDataProvider} to be repositioned.
  */
-public class TableDataProviderDataModel extends DataModel {
+public final class TableDataProviderDataModel extends DataModel {
 
-    // ------------------------------------------------------------ Constructors
     /**
-     * <p>Construct an unitialized {@link TableDataProviderDataModel}.</p>
+     * The set of {@link FieldKey}s for the currently wrapped
+     * {@link TableDataProvider}.
+     */
+    private FieldKey[] fieldKeys = null;
+
+    /**
+     * The row index to which this {@code DataModel} is positioned.
+     */
+    private int rowIndex = -1;
+
+    /**
+     * The {@link TableDataProvider} that we are wrapping.
+     */
+    private TableDataProvider tdp = null;
+
+    /**
+     * Construct an uninitialized {@link TableDataProviderDataModel}.
      */
     public TableDataProviderDataModel() {
         this(null);
     }
 
     /**
-     * <p>Construct an {@link TableDataProviderDataModel} that wraps the
-     * specified {@link TableDataProvider}.</p>
+     * Construct an {@link TableDataProviderDataModel} that wraps the
+     * specified {@link TableDataProvider}.
+     * @param newTdp new table data provider
      */
-    public TableDataProviderDataModel(TableDataProvider tdp) {
-        setTableDataProvider(tdp);
+    public TableDataProviderDataModel(final TableDataProvider newTdp) {
+        setTableDataProvider(newTdp);
     }
-    // ------------------------------------------------------ Instance Variables
-    /**
-     * <p>The set of {@link FieldKey}s for the currently wrapped
-     * {@link TableDataProvider}.</p>
-     */
-    private FieldKey fieldKeys[] = null;
-    /**
-     * <p>The row index to which this <code>DataModel</code>
-     * is positioned.</p>
-     */
-    private int rowIndex = -1;
-    // -------------------------------------------------------------- Properties
-    /**
-     * <p>The {@link TableDataProvider} that we are wrapping.</p>
-     */
-    private TableDataProvider tdp = null;
 
     /**
-     * <p>Return the {@link TableDataProvider} we are wrapping.</p>
+     * Return the {@link TableDataProvider} we are wrapping.
+     * @return TableDataProvider
      */
     public TableDataProvider getTableDataProvider() {
         return this.tdp;
     }
 
     /**
-     * <p>Set the {@link TableDataProvider} we are wrapping.</p>
+     * Set the {@link TableDataProvider} we are wrapping.
      *
-     * @param tdp The {@link TableDataProvider} to be wraapped
+     * @param newTdp The {@link TableDataProvider} to be wrapped
      */
-    public void setTableDataProvider(TableDataProvider tdp) {
-        this.tdp = tdp;
-        if (tdp == null) {
+    public void setTableDataProvider(final TableDataProvider newTdp) {
+        this.tdp = newTdp;
+        if (newTdp == null) {
             this.fieldKeys = null;
             this.rowIndex = -1;
         } else {
-            this.fieldKeys = tdp.getFieldKeys();
+            this.fieldKeys = newTdp.getFieldKeys();
         }
     }
 
-
-    // ---------------------------------------------------- DataModel Properties
     /**
-     * <p>Return <code>true</code> if the wrapped {@link TableDataProvider}
-     * has an available row at the currently specified <code>rowIndex</code>.</p>
+     * Return {@code true} if the wrapped {@link TableDataProvider}
+     * has an available row at the currently specified {@code rowIndex}.
+     * @return @code true} if the wrapped {@link TableDataProvider}
+     * has an available row, {@code false} otherwise
      */
+    @Override
     public boolean isRowAvailable() {
         if (getTableDataProvider() == null) {
             return false;
@@ -107,9 +109,11 @@ public class TableDataProviderDataModel extends DataModel {
     }
 
     /**
-     * <p>Return the number of rows available in the wrapped
-     * {@link TableDataProvider}, or <code>-1</code> if unknown.</p>
+     * Return the number of rows available in the wrapped
+     * {@link TableDataProvider}, or {@code -1} if unknown.
+     * @return count
      */
+    @Override
     public int getRowCount() {
         if (getTableDataProvider() == null) {
             return -1;
@@ -118,15 +122,17 @@ public class TableDataProviderDataModel extends DataModel {
     }
 
     /**
-     * <p>Return a <code>Map</code> representing the data elements in the
+     * Return a {@code Map} representing the data elements in the
      * current row, keyed by the canonical identifier for each element.
-     * Any call to <code>get()</code> or <code>put()</code> operations on
-     * this <code>Map</code> will be delegated to corresponding
-     * <code>getValue()</code> and <code>setValue()</code> calls on the
+     * Any call to {@code get()} or {@code put()} operations on
+     * this {@code Map} will be delegated to corresponding
+     * {@code getValue()} and {@code setValue()} calls on the
      * wrapped {@link TableDataProvider}.  Operations that attempt to add,
-     * delete, or replace keys will be rejected.</p>
+     * delete, or replace keys will be rejected.
+     * @return Object
      */
     @SuppressWarnings("unchecked")
+    @Override
     public Object getRowData() {
         if (getTableDataProvider() == null) {
             return null;
@@ -135,20 +141,27 @@ public class TableDataProviderDataModel extends DataModel {
             throw new IllegalArgumentException("" + getRowIndex());
         }
         Map map = new TableDataProviderMap();
-        for (int i = 0; i < fieldKeys.length; i++) {
-            map.put(fieldKeys[i].getFieldId(), tdp.getValue(fieldKeys[i], getRowKey()));
+        for (FieldKey fieldKey : fieldKeys) {
+            map.put(fieldKey.getFieldId(), tdp.getValue(fieldKey,
+                    getRowKey()));
         }
         return map;
     }
 
     /**
-     * <p>Return the currently selected <code>rowIndex</code>, or -1 for
-     * no current position.</p>
+     * Return the currently selected {@code rowIndex}, or -1 for
+     * no current position.
+     * @return int
      */
+    @Override
     public int getRowIndex() {
         return this.rowIndex;
     }
 
+    /**
+     * Get the row key.
+     * @return RowKey
+     */
     public RowKey getRowKey() {
         int i = getRowIndex();
         RowKey[] rks = tdp.getRowKeys(i + 1, null);
@@ -159,70 +172,93 @@ public class TableDataProviderDataModel extends DataModel {
     }
 
     /**
-     * <p>Set the currently selected <code>rowIndex</code>.  The cursor
+     * Set the currently selected {@code rowIndex}.  The cursor
      * position of the wrapped {@link TableDataProvider} is <strong>NOT</strong>
-     * updated.</p>
+     * updated.
      *
-     * @param rowIndex The new selected row index, or -1 for no selection
+     * @param newRowIndex The new selected row index, or -1 for no selection
      */
-    public void setRowIndex(int rowIndex) {
-        if (rowIndex < -1) {
-            throw new IllegalArgumentException("" + rowIndex);
+    @Override
+    public void setRowIndex(final int newRowIndex) {
+        if (newRowIndex < -1) {
+            throw new IllegalArgumentException("" + newRowIndex);
         }
         int oldIndex = this.rowIndex;
-        this.rowIndex = rowIndex;
+        this.rowIndex = newRowIndex;
         if (getTableDataProvider() == null) {
             return;
         }
-        DataModelListener listeners[] = getDataModelListeners();
-        if ((oldIndex != rowIndex) && (listeners != null)) {
+        DataModelListener[] listeners = getDataModelListeners();
+        if ((oldIndex != newRowIndex) && (listeners != null)) {
             Object rowData = null;
             if (isRowAvailable()) {
                 rowData = getRowData();
             }
             DataModelEvent event =
-                    new DataModelEvent(this, rowIndex, rowData);
-            for (int i = 0; i < listeners.length; i++) {
-                listeners[i].rowSelected(event);
+                    new DataModelEvent(this, newRowIndex, rowData);
+            for (DataModelListener listener : listeners) {
+                listener.rowSelected(event);
             }
         }
     }
 
     /**
-     * <p>Return the wrapped {@link TableDataProvider} instance, if any.</p>
+     * Return the wrapped {@link TableDataProvider} instance, if any.
+     * @return Object
      */
+    @Override
     public Object getWrappedData() {
         return getTableDataProvider();
     }
 
     /**
-     * <p>Set the wrapped {@link TableDataProvider} instance (if any).</p>
+     * Set the wrapped {@link TableDataProvider} instance (if any).
      *
-     * @param data New {@link TableDataProvider} instance, or <code>null</code>
+     * @param data New {@link TableDataProvider} instance, or {@code null}
      *  to disassociate from any instance
      */
-    public void setWrappedData(Object data) {
+    @Override
+    public void setWrappedData(final Object data) {
         setTableDataProvider((TableDataProvider) data);
     }
 
-
-    // --------------------------------------------------------- Private Classes
     /**
-     * <p>Private implementation of <code>Map</code> that delegates
-     * <code>get()</code> and <code>put()</code> operations to
-     * <code>getValue()</code> and <code>setValue()</code> calls on the
-     * underlying {@link TableDataProvider}.</p>
+     * Private implementation of {@code Map} that delegates
+     * {@code get()} and {@code put()} operations to
+     * {@code getValue()} and {@code setValue()} calls on the
+     * underlying {@link TableDataProvider}.
      */
-    private class TableDataProviderMap extends AbstractMap {
+    private final class TableDataProviderMap extends AbstractMap {
 
-        public TableDataProviderMap() {
+        /**
+         * Row index.
+         */
+        private final int rowIndex;
+
+        /**
+         * Row key.
+         */
+        private final RowKey rowKey;
+
+        /**
+         * Field keys.
+         */
+        private final FieldKey[] fieldKeys =
+                TableDataProviderDataModel.this.fieldKeys;
+
+        /**
+         * Table data provider.
+         */
+        private final TableDataProvider tdp =
+                TableDataProviderDataModel.this.tdp;
+
+        /**
+         * Create a new instance.
+         */
+        TableDataProviderMap() {
             this.rowIndex = TableDataProviderDataModel.this.getRowIndex();
             this.rowKey = TableDataProviderDataModel.this.getRowKey();
         }
-        private int rowIndex;
-        private RowKey rowKey;
-        private FieldKey fieldKeys[] = TableDataProviderDataModel.this.fieldKeys;
-        private TableDataProvider tdp = TableDataProviderDataModel.this.tdp;
 
         @Override
         public void clear() {
@@ -230,7 +266,7 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             Iterator keys = keySet().iterator();
             while (keys.hasNext()) {
                 Object key = keys.next();
@@ -248,12 +284,13 @@ public class TableDataProviderDataModel extends DataModel {
             return false;
         }
 
+        @Override
         public Set entrySet() {
             return new TableDataProviderEntries(this);
         }
 
         @Override
-        public Object get(Object key) {
+        public Object get(final Object key) {
             int columnIndex = index(key);
             if (columnIndex < 0) {
                 return null;
@@ -267,7 +304,7 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public Object put(Object key, Object value) {
+        public Object put(final Object key, final Object value) {
             int columnIndex = index(key);
             if (columnIndex < 0) {
                 return null;
@@ -278,7 +315,7 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public void putAll(Map map) {
+        public void putAll(final Map map) {
             Iterator keys = map.keySet().iterator();
             while (keys.hasNext()) {
                 Object key = keys.next();
@@ -287,7 +324,7 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public Object remove(Object key) {
+        public Object remove(final Object key) {
             throw new UnsupportedOperationException();
         }
 
@@ -296,7 +333,12 @@ public class TableDataProviderDataModel extends DataModel {
             return new TableDataProviderValues(this);
         }
 
-        private int index(Object key) {
+        /**
+         * Get the index for the given key.
+         * @param key mapped key
+         * @return int
+         */
+        private int index(final Object key) {
             int index = -1;
             for (int i = 0; i < fieldKeys.length; i++) {
                 if (key.equals(fieldKeys[i].getFieldId())) {
@@ -307,33 +349,50 @@ public class TableDataProviderDataModel extends DataModel {
             return index;
         }
 
-        Object realKey(Object key) {
+        /**
+         * Get the real key.
+         * @param key mapped key
+         * @return Object
+         */
+        Object realKey(final Object key) {
             return super.get(key);
         }
 
+        /**
+         * Get the real keys.
+         * @return Iterator
+         */
         Iterator realKeys() {
             return super.keySet().iterator();
         }
     }
 
     /**
-     * <p>Private implementation of <code>Set</code> for implementing the
-     * <code>entrySet()</code> behavior of <code>TableDataProviderMap</code>.</p>
+     * Private implementation of {@code Set} for implementing the
+     * {@code entrySet()} behavior of {@code TableDataProviderMap}.
      */
-    private class TableDataProviderEntries extends AbstractSet {
+    private final class TableDataProviderEntries extends AbstractSet {
 
-        public TableDataProviderEntries(TableDataProviderMap map) {
-            this.map = map;
-        }
+        /**
+         * Underlying map.
+         */
         private TableDataProviderMap map = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap table data provider map
+         */
+        TableDataProviderEntries(final TableDataProviderMap newMap) {
+            this.map = newMap;
+        }
+
         @Override
-        public boolean add(Object o) {
+        public boolean add(final Object o) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean addAll(Collection c) {
+        public boolean addAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
@@ -343,7 +402,7 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public boolean contains(Object o) {
+        public boolean contains(final Object o) {
             if (o == null) {
                 throw new NullPointerException();
             }
@@ -368,73 +427,105 @@ public class TableDataProviderDataModel extends DataModel {
             return map.isEmpty();
         }
 
+        @Override
         public Iterator iterator() {
             return new TableDataProviderIterator(map);
         }
 
         @Override
-        public boolean remove(Object o) {
+        public boolean remove(final Object o) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean removeAll(Collection c) {
+        public boolean removeAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean retainAll(Collection c) {
+        public boolean retainAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public int size() {
             return map.size();
         }
     }
 
     /**
-     * <p>Private implementation of <code>Iterator</code> for the
-     * <code>Set</code> returned by <code>entrySet()</code>.</p>
+     * Private implementation of {@code Iterator} for the
+     * {@code Set} returned by {@code entrySet()}.
      */
-    private class TableDataProviderIterator implements Iterator {
+    private final class TableDataProviderIterator implements Iterator {
 
-        public TableDataProviderIterator(TableDataProviderMap map) {
-            this.map = map;
-            this.keys = map.keySet().iterator();
-        }
+        /**
+         * Underlying map.
+         */
         private TableDataProviderMap map = null;
+
+        /**
+         * Map keys.
+         */
         private Iterator keys = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap table data provider map
+         */
+        TableDataProviderIterator(final TableDataProviderMap newMap) {
+            this.map = newMap;
+            this.keys = newMap.keySet().iterator();
+        }
+
+        @Override
         public boolean hasNext() {
             return keys.hasNext();
         }
 
+        @Override
         public Object next() {
             Object key = keys.next();
             return (new TableDataProviderEntry(map, key));
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
 
     /**
-     * <p>Private implementation of <code>Map.Entry</code> that implements
-     * the behavior for a single entry from the <code>Set</code> that is
-     * returned by <code>entrySet()</code>.</p>
+     * Private implementation of {@code Map.Entry} that implements
+     * the behavior for a single entry from the {@code Set} that is
+     * returned by {@code entrySet()}.
      */
-    private class TableDataProviderEntry implements Map.Entry {
+    private final class TableDataProviderEntry implements Map.Entry {
 
-        public TableDataProviderEntry(TableDataProviderMap map, Object key) {
-            this.map = map;
-            this.key = key;
-        }
+        /**
+         * Value.
+         */
         private TableDataProviderMap map = null;
+
+        /**
+         * Key.
+         */
         private Object key = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap value
+         * @param newKey key
+         */
+        TableDataProviderEntry(final TableDataProviderMap newMap,
+                final Object newKey) {
+
+            this.map = newMap;
+            this.key = newKey;
+        }
+
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (o == null) {
                 return false;
             }
@@ -464,10 +555,12 @@ public class TableDataProviderDataModel extends DataModel {
             return true;
         }
 
+        @Override
         public Object getKey() {
             return this.key;
         }
 
+        @Override
         public Object getValue() {
             return map.get(key);
         }
@@ -475,11 +568,17 @@ public class TableDataProviderDataModel extends DataModel {
         @Override
         public int hashCode() {
             Object value = map.get(key);
-            return ((key == null) ? 0 : key.hashCode()) ^
-                    ((value == null) ? 0 : value.hashCode());
+            if (key == null) {
+                return 0;
+            }
+            if (value == null) {
+                return key.hashCode();
+            }
+            return key.hashCode() ^ value.hashCode();
         }
 
-        public Object setValue(Object value) {
+        @Override
+        public Object setValue(final Object value) {
             Object previous = map.get(key);
             map.put(key, value);
             return previous;
@@ -487,23 +586,31 @@ public class TableDataProviderDataModel extends DataModel {
     }
 
     /**
-     * <p>Private implementation of <code>Set</code> that implements the
-     * <code>keySet()</code> behavior.</p>
+     * Private implementation of {@code Set} that implements the
+     * {@code keySet()} behavior.
      */
-    private class TableDataProviderKeys extends AbstractSet {
+    private final class TableDataProviderKeys extends AbstractSet {
 
-        public TableDataProviderKeys(TableDataProviderMap map) {
-            this.map = map;
-        }
+        /**
+         * Underlying map.
+         */
         private TableDataProviderMap map = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap table data provider map
+         */
+        TableDataProviderKeys(final TableDataProviderMap newMap) {
+            this.map = newMap;
+        }
+
         @Override
-        public boolean add(Object o) {
+        public boolean add(final Object o) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean addAll(Collection c) {
+        public boolean addAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
@@ -513,7 +620,7 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public boolean contains(Object o) {
+        public boolean contains(final Object o) {
             return map.containsKey(o);
         }
 
@@ -522,74 +629,101 @@ public class TableDataProviderDataModel extends DataModel {
             return map.isEmpty();
         }
 
+        @Override
         public Iterator iterator() {
             return new TableDataProviderKeysIterator(map);
         }
 
         @Override
-        public boolean remove(Object o) {
+        public boolean remove(final Object o) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean removeAll(Collection c) {
+        public boolean removeAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean retainAll(Collection c) {
+        public boolean retainAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public int size() {
             return map.size();
         }
     }
 
     /**
-     * <p>Private implementation of <code>Iterator</code> that implements the
-     * <code>iterator()</code> method returned by <code>keySet()</code>.</p>
+     * Private implementation of {@code Iterator} that implements the
+     * {@code iterator()} method returned by {@code keySet()}.
      */
-    private class TableDataProviderKeysIterator implements Iterator {
+    private final class TableDataProviderKeysIterator implements Iterator {
 
-        public TableDataProviderKeysIterator(TableDataProviderMap map) {
-            this.map = map;
-            this.keys = map.realKeys();
-        }
+        /**
+         * Underlying map.
+         */
         private TableDataProviderMap map = null;
+
+        /**
+         * Keys.
+         */
         private Iterator keys = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap table data provider map
+         */
+        TableDataProviderKeysIterator(
+                final TableDataProviderMap newMap) {
+
+            this.map = newMap;
+            this.keys = newMap.realKeys();
+        }
+
+        @Override
         public boolean hasNext() {
             return keys.hasNext();
         }
 
+        @Override
         public Object next() {
             return keys.next();
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
 
     /**
-     * <p>Private implementation of <code>Collection</code> that implements
-     * the <code>values()</code> method.</p>
+     * Private implementation of {@code Collection} that implements
+     * the {@code values()} method.
      */
-    private class TableDataProviderValues extends AbstractCollection {
+    private final class TableDataProviderValues extends AbstractCollection {
 
-        public TableDataProviderValues(TableDataProviderMap map) {
-            this.map = map;
-        }
+        /**
+         * Underlying map.
+         */
         private TableDataProviderMap map = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap table data provider map
+         */
+        TableDataProviderValues(final TableDataProviderMap newMap) {
+            this.map = newMap;
+        }
+
         @Override
-        public boolean add(Object o) {
+        public boolean add(final Object o) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean addAll(Collection c) {
+        public boolean addAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
@@ -599,56 +733,74 @@ public class TableDataProviderDataModel extends DataModel {
         }
 
         @Override
-        public boolean contains(Object value) {
+        public boolean contains(final Object value) {
             return map.containsValue(value);
         }
 
+        @Override
         public Iterator iterator() {
             return new TableDataProviderValuesIterator(map);
         }
 
         @Override
-        public boolean remove(Object o) {
+        public boolean remove(final Object o) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean removeAll(Collection c) {
+        public boolean removeAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean retainAll(Collection c) {
+        public boolean retainAll(final Collection c) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public int size() {
             return map.size();
         }
     }
 
     /**
-     * <p>Private implementation of <code>Iterator</code> that implements the
-     * <code>behavior for the <code>Iterator</code> returned by
-     * <code>values().iterator()</code>.</p>
+     * Private implementation of {@code Iterator} that implements the
+     * {@code behavior for the {@code Iterator} returned by
+     * {@code values().iterator()}.
      */
-    private class TableDataProviderValuesIterator implements Iterator {
+    private final class TableDataProviderValuesIterator implements Iterator {
 
-        public TableDataProviderValuesIterator(TableDataProviderMap map) {
-            this.map = map;
-            this.keys = map.keySet().iterator();
-        }
+        /**
+         * Underlying map.
+         */
         private TableDataProviderMap map = null;
+
+        /**
+         * Keys.
+         */
         private Iterator keys = null;
 
+        /**
+         * Create a new instance.
+         * @param newMap table data provider map
+         */
+        TableDataProviderValuesIterator(
+                final TableDataProviderMap newMap) {
+
+            this.map = newMap;
+            this.keys = newMap.keySet().iterator();
+        }
+        @Override
         public boolean hasNext() {
             return keys.hasNext();
         }
 
+        @Override
         public Object next() {
             return map.get(keys.next());
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

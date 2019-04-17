@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -29,11 +29,12 @@ import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
  * Renderer for a {@link IFrameRenderer} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.IFrame"))
-public class IFrameRenderer extends FrameRenderer {
+public final class IFrameRenderer extends FrameRenderer {
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (!isPortlet(context)) {
             writer.startElement("iframe", component);
@@ -41,11 +42,11 @@ public class IFrameRenderer extends FrameRenderer {
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         IFrame frame = (IFrame) component;
-
         super.renderAttributes(context, component, writer);
 
         // Render a nested "head" element
@@ -69,19 +70,19 @@ public class IFrameRenderer extends FrameRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // End the outermost "html" element
         if (!isPortlet(context)) {
-            writer.endElement("iframe"); //NOI18N
-            writer.write("\n"); //NOI18N
+            writer.endElement("iframe");
+            writer.write("\n");
         }
-
     }
 
     @Override
-    protected void renderResizeAttribute(ResponseWriter writer, UIComponent comp)
-            throws IOException {
+    protected void renderResizeAttribute(final ResponseWriter writer,
+            final UIComponent comp) throws IOException {
     }
 }

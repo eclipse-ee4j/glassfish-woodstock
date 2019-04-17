@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -29,12 +29,12 @@ import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
  * Renderer for a {@link FrameSet} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.FrameSet"))
-public class FrameSetRenderer extends AbstractRenderer {
+public final class FrameSetRenderer extends AbstractRenderer {
 
     /**
      * The set of {@code String} pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "rows",
         "cols",
         "borderColor"
@@ -43,7 +43,7 @@ public class FrameSetRenderer extends AbstractRenderer {
     /**
      * The set of {@code Integer} attributes to be rendered.
      */
-    private static final String INTEGER_ATTRIBUTES[] = {
+    private static final String[] INTEGER_ATTRIBUTES = {
         "border",
         "frameSpacing"
     };
@@ -51,13 +51,14 @@ public class FrameSetRenderer extends AbstractRenderer {
     /**
      * The set of {@code boolean} attributes to be rendered.
      */
-    private static final String BOOLEAN_ATTRIBUTES[] = {
+    private static final String[] BOOLEAN_ATTRIBUTES = {
         "frameBorder"
     };
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // I don't think this is the correct way to write the XML
         // header
@@ -67,8 +68,9 @@ public class FrameSetRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         FrameSet frameset = (FrameSet) component;
 
@@ -91,17 +93,21 @@ public class FrameSetRenderer extends AbstractRenderer {
                 writer.writeAttribute("title", toolTip, "toolTip");
             }
             // write out the rest of the attributes
-            addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
-            addBooleanAttributes(context, component, writer, BOOLEAN_ATTRIBUTES);
-            addIntegerAttributes(context, component, writer, INTEGER_ATTRIBUTES);
+            addStringAttributes(context, component, writer,
+                    STRING_ATTRIBUTES);
+            addBooleanAttributes(context, component, writer,
+                    BOOLEAN_ATTRIBUTES);
+            addIntegerAttributes(context, component, writer,
+                    INTEGER_ATTRIBUTES);
             writer.write("\n");
         }
 
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // End the outermost "html" element
         if (!isPortlet(context)) {

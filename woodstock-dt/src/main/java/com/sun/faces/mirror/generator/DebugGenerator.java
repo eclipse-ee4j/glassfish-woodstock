@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,22 +27,52 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
- *
- * @author gjmurphy
+ * Debug generator.
  */
-public class DebugGenerator extends Generator {
+public final class DebugGenerator extends Generator {
 
-    final static String TEMPLATE = "com/sun/faces/mirror/generator/Debug.template";
+    /**
+     * Template resource path.
+     */
+    private static final String TEMPLATE =
+            "com/sun/faces/mirror/generator/Debug.template";
 
-    VelocityEngine velocityEngine;
+    /**
+     * Template engine.
+     */
+    private final VelocityEngine velocityEngine;
+
+    /**
+     * Namespace prefix.
+     */
     private String namespacePrefix;
+
+    /**
+     * Components.
+     */
     private Set<DeclaredComponentInfo> compInfos;
+
+    /**
+     * Namespace.
+     */
     private String namespace;
+
+    /**
+     * Renderers.
+     */
     private Set<DeclaredRendererInfo> rendererInfos;
+
+    /**
+     * Package names.
+     */
     private Set<String> packageNames;
 
-    public DebugGenerator(VelocityEngine velocityEngine) {
-        this.velocityEngine = velocityEngine;
+    /**
+     * Create a new instance.
+     * @param velocity template engine
+     */
+    public DebugGenerator(final VelocityEngine velocity) {
+        this.velocityEngine = velocity;
     }
 
     @Override
@@ -52,10 +82,20 @@ public class DebugGenerator extends Generator {
             String ns = this.getNamespace();
             String nsPrefix = this.getNamespacePrefix();
             velocityContext.put("packageNameSet", this.getPackageNames());
-            velocityContext.put("componentInfoSet", this.getDeclaredComponentInfos());
-            velocityContext.put("rendererInfoSet", this.getDeclaredRendererInfos());
-            velocityContext.put("namespace", ns == null ? "" : ns);
-            velocityContext.put("namespacePrefix", nsPrefix == null ? "" : nsPrefix);
+            velocityContext.put("componentInfoSet",
+                    this.getDeclaredComponentInfos());
+            velocityContext.put("rendererInfoSet",
+                    this.getDeclaredRendererInfos());
+            if (ns == null) {
+                velocityContext.put("namespace", "");
+            } else {
+                velocityContext.put("namespace", ns);
+            }
+            if (nsPrefix == null) {
+                velocityContext.put("namespacePrefix", "");
+            } else {
+                velocityContext.put("namespacePrefix", nsPrefix);
+            }
             Template template = velocityEngine.getTemplate(TEMPLATE);
             PrintWriter printWriter = this.getPrintWriter();
             template.merge(velocityContext, printWriter);
@@ -66,10 +106,10 @@ public class DebugGenerator extends Generator {
     }
 
     /**
-     * Protected getter for property namespace.
+     * Getter for property namespace.
      * @return namespace
      */
-    protected String getNamespace() {
+    public String getNamespace() {
         return this.namespace;
     }
 
@@ -77,16 +117,16 @@ public class DebugGenerator extends Generator {
      * Setter for property namespace.
      * @param newNs new namespace
      */
-    public void setNamespace(String newNs) {
+    public void setNamespace(final String newNs) {
         this.namespace = newNs;
     }
 
     /**
-     * Protected getter for property namespacePrefix.
+     * Getter for property namespacePrefix.
      *
      * @return Value of property namespacePrefix.
      */
-    protected String getNamespacePrefix() {
+    public String getNamespacePrefix() {
         return this.namespacePrefix;
     }
 
@@ -94,7 +134,7 @@ public class DebugGenerator extends Generator {
      * Setter for property namespacePrefix.
      * @param newNsPrefix new namespace prefix
      */
-    public void setNamespacePrefix(String newNsPrefix) {
+    public void setNamespacePrefix(final String newNsPrefix) {
         this.namespacePrefix = newNsPrefix;
     }
 
@@ -103,7 +143,7 @@ public class DebugGenerator extends Generator {
      * @return set of component info
      */
     @SuppressWarnings("unchecked")
-    protected Set<DeclaredComponentInfo> getDeclaredComponentInfos() {
+    public Set<DeclaredComponentInfo> getDeclaredComponentInfos() {
         TreeSet<DeclaredComponentInfo> sortedSet =
                 new TreeSet<DeclaredComponentInfo>(new ClassInfoComparator());
         sortedSet.addAll(this.compInfos);
@@ -115,7 +155,7 @@ public class DebugGenerator extends Generator {
      * @param newCompInfos new component info
      */
     public void setDeclaredComponentInfo(
-            Set<DeclaredComponentInfo> newCompInfos) {
+            final Set<DeclaredComponentInfo> newCompInfos) {
 
         this.compInfos = newCompInfos;
     }
@@ -137,7 +177,7 @@ public class DebugGenerator extends Generator {
      * @param newRendererInfos new set of renderer info
      */
     public void setDeclaredRendererInfos(
-            Set<DeclaredRendererInfo> newRendererInfos) {
+            final Set<DeclaredRendererInfo> newRendererInfos) {
 
         this.rendererInfos = newRendererInfos;
     }
@@ -146,7 +186,7 @@ public class DebugGenerator extends Generator {
      * Getter for property packageNameSet.
      * @return set of package name
      */
-    protected Set<String> getPackageNames() {
+    public Set<String> getPackageNames() {
         TreeSet<String> sortedSet = new TreeSet<String>();
         sortedSet.addAll(this.packageNames);
         return sortedSet;
@@ -156,14 +196,17 @@ public class DebugGenerator extends Generator {
      * Setter for property packageNameSet.
      * @param newPackageNames new set of package name
      */
-    public void setPackageNames(Set<String> newPackageNames) {
+    public void setPackageNames(final Set<String> newPackageNames) {
         this.packageNames = newPackageNames;
     }
 
-    static class ClassInfoComparator implements Comparator {
+    /**
+     * Class info comparator.
+     */
+    private static final class ClassInfoComparator implements Comparator {
 
         @Override
-        public int compare(Object obj1, Object obj2) {
+        public int compare(final Object obj1, final Object obj2) {
             return ((ClassInfo) obj1).getQualifiedName()
                     .compareTo(((ClassInfo) obj2).getClassName());
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
- /*
- * $Id: MethodExpressionMethodBindingAdapter.java,v 1.1 2007-02-16 01:50:26 bob_yennaco Exp $
- */
 package com.sun.webui.jsf.util;
 
 import javax.el.MethodExpression;
@@ -34,7 +31,7 @@ import javax.faces.el.MethodNotFoundException;
 /**
  * Wrap a MethodBinding instance and expose it as a MethodExpression.
  */
-public class MethodExpressionMethodBindingAdapter extends MethodExpression
+public final class MethodExpressionMethodBindingAdapter extends MethodExpression
         implements Serializable, StateHolder {
 
     /**
@@ -65,15 +62,19 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
 
     /**
      * Create a new instance.
-     * @param binding method binding
+     * @param newBinding method binding
      */
-    public MethodExpressionMethodBindingAdapter(MethodBinding binding) {
-        assert (null != binding);
-        this.binding = binding;
+    public MethodExpressionMethodBindingAdapter(
+            final MethodBinding newBinding) {
+
+        assert (null != newBinding);
+        this.binding = newBinding;
     }
 
     @Override
-    public MethodInfo getMethodInfo(ELContext context) throws ELException {
+    public MethodInfo getMethodInfo(final ELContext context)
+            throws ELException {
+
         assert (null != binding);
 
         if (null == info) {
@@ -92,7 +93,7 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
     }
 
     @Override
-    public Object invoke(ELContext context, Object[] params)
+    public Object invoke(final ELContext context, final Object[] params)
             throws ELException {
 
         assert (null != binding);
@@ -126,7 +127,7 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         assert (null != binding);
         boolean result = false;
 
@@ -146,13 +147,16 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
         return binding.hashCode();
     }
 
+    /**
+     * Get the delimiter syntax.
+     * @return String
+     */
     public String getDelimiterSyntax() {
-        // XXX not implemented
-        return "";
+        return ""; // not implemented
     }
 
     @Override
-    public Object saveState(FacesContext context) {
+    public Object saveState(final FacesContext context) {
         Object result = null;
         if (!tranzient) {
             if (binding instanceof StateHolder) {
@@ -173,7 +177,7 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
     }
 
     @Override
-    public void restoreState(FacesContext context, Object state) {
+    public void restoreState(final FacesContext context, final Object state) {
         // if we have state
         if (null == state) {
             return;
@@ -222,7 +226,7 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
     }
 
     @Override
-    public void setTransient(boolean newTransientMethod) {
+    public void setTransient(final boolean newTransientMethod) {
         tranzient = newTransientMethod;
     }
 
@@ -242,8 +246,9 @@ public class MethodExpressionMethodBindingAdapter extends MethodExpression
      * @return Class
      * @throws ClassNotFoundException if the given class name is not found
      */
-    private static Class loadClass(String name,
-            Object fallbackClass) throws ClassNotFoundException {
+    private static Class loadClass(final String name,
+            final Object fallbackClass) throws ClassNotFoundException {
+
         ClassLoader loader
                 = Thread.currentThread().getContextClassLoader();
         if (loader == null) {

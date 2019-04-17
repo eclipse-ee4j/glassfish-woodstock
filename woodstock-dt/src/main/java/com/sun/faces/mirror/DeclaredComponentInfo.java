@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,42 +21,113 @@ import javax.lang.model.element.TypeElement;
 
 /**
  * Represents a JSF component class declared in the current compilation unit.
- *
- * @author gjmurphy
  */
-public class DeclaredComponentInfo extends DeclaredClassInfo {
+public final class DeclaredComponentInfo extends DeclaredClassInfo {
 
-    // Annotation element names
+    /**
+     * Type key.
+     */
     static final String TYPE = "type";
+
+    /**
+     * Family key.
+     */
     static final String FAMILY = "family";
+
+    /**
+     * Display name key.
+     */
     static final String DISPLAY_NAME = "displayName";
+
+    /**
+     * Instance name key.
+     */
     static final String INSTANCE_NAME = "instanceName";
+
+    /**
+     * Tag name key.
+     */
     static final String TAG_NAME = "tagName";
+
+    /**
+     * Tag renderer type key.
+     */
     static final String TAG_RENDERER_TYPE = "tagRendererType";
+
+    /**
+     * Short description key.
+     */
     static final String SHORT_DESCRIPTION = "shortDescription";
+
+    /**
+     * Help key.
+     */
     static final String HELP_KEY = "helpKey";
+
+    /**
+     * isContainer flag key.
+     */
     static final String IS_CONTAINER = "isContainer";
+
+    /**
+     * isTag flag key.
+     */
     static final String IS_TAG = "isTag";
+
+    /**
+     * Properties help key.
+     */
     static final String PROPERTIES_HELP_KEY = "propertiesHelpKey";
 
-    Map<String, Object> annotationValues;
+    /**
+     * Tag description.
+     */
+    private String tagDescription;
+
+    /**
+     * Tag renderer type.
+     */
+    private String tagRendererType;
+
+    /**
+     * Annotation value map.
+     */
+    private final Map<String, Object> annotationValues;
+
+    /**
+     * TypeElement representing the class declaration for this component.
+     */
     private TypeElement tagClassDeclaration;
 
-    DeclaredComponentInfo(ProcessingEnvironment env, Map<String, Object> values,
-            TypeElement decl) {
+    /**
+     * Create a new instance.
+     * @param env annotation processing environment
+     * @param values annotation value map
+     * @param decl type declaration
+     */
+    DeclaredComponentInfo(final ProcessingEnvironment env,
+            final Map<String, Object> values, final TypeElement decl) {
 
         super(env, decl);
         this.annotationValues = values;
     }
 
+    /**
+     * Get the component type.
+     * @return String
+     */
     public String getType() {
         String type = (String) this.annotationValues.get(TYPE);
         if (type == null) {
-            type = this.decl.getQualifiedName().toString();
+            type = getDeclaration().getQualifiedName().toString();
         }
         return type;
     }
 
+    /**
+     * Get the component family.
+     * @return String
+     */
     public String getFamily() {
         String family = (String) this.annotationValues.get(FAMILY);
         if (family == null) {
@@ -65,6 +136,10 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return family;
     }
 
+    /**
+     * Get the short description.
+     * @return String
+     */
     public String getShortDescription() {
         String shortDescription = (String) this.annotationValues
                 .get(SHORT_DESCRIPTION);
@@ -116,25 +191,37 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return shortDescription;
     }
 
+    /**
+     * Get the display name.
+     * @return String
+     */
     public String getDisplayName() {
         String displayName = (String) this.annotationValues.get(DISPLAY_NAME);
         if (displayName == null) {
-            displayName = this.decl.getSimpleName().toString();
+            displayName = getDeclaration().getSimpleName().toString();
         }
         return displayName;
     }
 
+    /**
+     * Get the instance name.
+     * @return String
+     */
     public String getInstanceName() {
         String instanceName = (String) this.annotationValues
                 .get(INSTANCE_NAME);
         if (instanceName == null) {
-            String name = this.decl.getSimpleName().toString();
+            String name = getDeclaration().getSimpleName().toString();
             instanceName = name.substring(0, 1).toLowerCase()
                     + name.substring(1);
         }
         return instanceName;
     }
 
+    /**
+     * Get the isTag flag value.
+     * @return {@code true} if is a tag, {@code false} otherwise
+     */
     public boolean isTag() {
         Boolean isTag = (Boolean) this.annotationValues.get(IS_TAG);
         if (isTag == null) {
@@ -143,6 +230,10 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return isTag;
     }
 
+    /**
+     * Get the tag name.
+     * @return String
+     */
     public String getTagName() {
         String tagName = (String) this.annotationValues.get(TAG_NAME);
         if (tagName == null) {
@@ -151,8 +242,10 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return tagName;
     }
 
-    private String tagRendererType;
-
+    /**
+     * Get the tag renderer type.
+     * @return String
+     */
     public String getTagRendererType() {
         if (this.tagRendererType == null) {
             return (String) this.annotationValues.get(TAG_RENDERER_TYPE);
@@ -160,8 +253,12 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return this.tagRendererType;
     }
 
-    void setTagRendererType(String tagRendererType) {
-        this.tagRendererType = tagRendererType;
+    /**
+     * Set the tag renderer type.
+     * @param newTagRendererType new tag renderer type
+     */
+    void setTagRendererType(final String newTagRendererType) {
+        this.tagRendererType = newTagRendererType;
     }
 
     /**
@@ -174,10 +271,18 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return this.tagClassDeclaration;
     }
 
-    void setTagClassDeclaration(TypeElement tagClassDeclaration) {
-        this.tagClassDeclaration = tagClassDeclaration;
+    /**
+     * Set the tag class declaration.
+     * @param typeDecl new tag class declaration
+     */
+    void setTagClassDeclaration(final TypeElement typeDecl) {
+        this.tagClassDeclaration = typeDecl;
     }
 
+    /**
+     * Get the tag class qualifier name.
+     * @return String
+     */
     public String getTagClassQualifiedName() {
         TypeElement tagClassDecl = this.getTagClassDeclaration();
         if (tagClassDecl == null) {
@@ -185,8 +290,6 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         }
         return tagClassDecl.getQualifiedName().toString();
     }
-
-    private String tagDescription;
 
     /**
      * Returns the description of this component's tag, appropriate for use as a
@@ -202,21 +305,43 @@ public class DeclaredComponentInfo extends DeclaredClassInfo {
         return this.tagDescription;
     }
 
-    void setTagDescription(String tagDescription) {
-        this.tagDescription = tagDescription;
+    /**
+     * Set the tag description.
+     * @param newTagDesc new tag description
+     */
+    void setTagDescription(final String newTagDesc) {
+        this.tagDescription = newTagDesc;
     }
 
+    /**
+     * Get the help key.
+     * @return String
+     */
     public String getHelpKey() {
         String helpKey = (String) this.annotationValues.get(HELP_KEY);
-        return helpKey == null ? "" : helpKey;
+        if (helpKey == null) {
+            return "";
+        }
+        return helpKey;
     }
 
+    /**
+     * Get the help key properties.
+     * @return String
+     */
     public String getPropertiesHelpKey() {
         String propertiesHelpKey = (String) this.annotationValues
                 .get(PROPERTIES_HELP_KEY);
-        return propertiesHelpKey == null ? "" : propertiesHelpKey;
+        if (propertiesHelpKey == null) {
+            return "";
+        }
+        return propertiesHelpKey;
     }
 
+    /**
+     * Get the isContainer flag value.
+     * @return {@code true} if a container, {@code false} otherwise
+     */
     public Boolean isContainer() {
         if (Boolean.TRUE.equals(this.annotationValues.get(IS_CONTAINER))) {
             return Boolean.TRUE;

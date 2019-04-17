@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import java.io.IOException;
@@ -31,10 +30,12 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>Renders a version page.</p>
+ * Renders a version page.
  */
-@com.sun.faces.annotation.Renderer(@com.sun.faces.annotation.Renderer.Renders(componentFamily = "com.sun.webui.jsf.Property"))
-public class PropertyRenderer extends Renderer {
+@com.sun.faces.annotation.Renderer(
+        @com.sun.faces.annotation.Renderer.Renders(
+                componentFamily = "com.sun.webui.jsf.Property"))
+public final class PropertyRenderer extends Renderer {
 
     /**
      * Creates a new instance of PropertyRenderer.
@@ -42,25 +43,14 @@ public class PropertyRenderer extends Renderer {
     public PropertyRenderer() {
     }
 
-    /**
-     * This renderer renders the component's children.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    /**
-     * Render a property component.
-     * 
-     * @param context The current FacesContext
-     * @param component The Property object to render
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (context == null || component == null) {
             throw new NullPointerException();
@@ -74,7 +64,6 @@ public class PropertyRenderer extends Renderer {
         Property property = (Property) component;
 
         // Get the theme
-        //
         Theme theme = ThemeUtilities.getTheme(context);
 
         // Ideally the PropertyRenderer shouldn't have to know
@@ -85,14 +74,12 @@ public class PropertyRenderer extends Renderer {
         // LayoutComponent could be useful. The PropertyLayoutComponent
         // knows that a Property consists of a Label and some other
         // components and lays it out accordingly.
-        //
         writer.startElement(HTMLElements.TR, property);
         writer.writeAttribute(HTMLAttributes.ID, property.getClientId(context),
                 null);
 
         // Its not clear if the developer realizes that the styleClass
         // and style attributes are applied to a "tr".
-        //
         String propValue = RenderingUtilities.getStyleClasses(context,
                 component, null);
         if (propValue != null) {
@@ -106,14 +93,13 @@ public class PropertyRenderer extends Renderer {
         }
 
         writer.startElement(HTMLElements.TD, property);
-        writer.writeAttribute(HTMLAttributes.VALIGN, "top", null);//NOI18N
+        writer.writeAttribute(HTMLAttributes.VALIGN, "top", null);
 
         // Always render the nowrap, and labelAlign even if there
         // isn't a label.
-        //
         boolean nowrap = property.isNoWrap();
         if (nowrap) {
-            writer.writeAttribute(HTMLAttributes.NOWRAP, "nowrap", null); //NOI18N
+            writer.writeAttribute(HTMLAttributes.NOWRAP, "nowrap", null);
         }
         String labelAlign = property.getLabelAlign();
         if (labelAlign != null) {
@@ -126,7 +112,7 @@ public class PropertyRenderer extends Renderer {
         //
         boolean overlapLabel = property.isOverlapLabel();
         if (overlapLabel) {
-            writer.writeAttribute(HTMLAttributes.COLSPAN, "2", null);//NOI18N
+            writer.writeAttribute(HTMLAttributes.COLSPAN, "2", null);
         }
 
         writer.startElement(HTMLElements.DIV, property);
@@ -134,7 +120,6 @@ public class PropertyRenderer extends Renderer {
                 theme.getStyleClass(ThemeStyles.CONTENT_TABLE_COL1_DIV), null);
 
         renderLabel(context, property, theme, writer);
-
 
         // If overlapLabel is false, close the label TD and DIV
         // and open another TD and DIV for the property components.
@@ -145,7 +130,8 @@ public class PropertyRenderer extends Renderer {
             writer.startElement(HTMLElements.TD, property);
             writer.startElement(HTMLElements.DIV, property);
             writer.writeAttribute(HTMLAttributes.CLASS,
-                    theme.getStyleClass(ThemeStyles.CONTENT_TABLE_COL2_DIV), null);
+                    theme.getStyleClass(ThemeStyles.CONTENT_TABLE_COL2_DIV),
+                    null);
         }
 
         renderPropertyComponents(context, property, theme, writer);
@@ -157,11 +143,10 @@ public class PropertyRenderer extends Renderer {
     }
 
     /**
-     * Render the property components.
-     * If the <code>content</code> facet it defined it takes precendence
-     * over the existence of child components. If there is not
-     * <code>content</code> facet, then the children are rendered.
-     * 
+     * Render the property components. If the {@code content} facet it
+     * defined it takes precedence over the existence of child components. If
+     * there is not {@code content} facet, then the children are rendered.
+     *
      * @param context The current FacesContext
      * @param property The Property object to render
      * @param theme The Theme to reference.
@@ -169,14 +154,13 @@ public class PropertyRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderPropertyComponents(FacesContext context,
-            Property property, Theme theme,
-            ResponseWriter writer) throws IOException {
+    protected void renderPropertyComponents(final FacesContext context,
+            final Property property, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         // The presence of a content facet takes priority over
         // children. I'm not sure why there is both a content facet
         // and children.
-        //
         UIComponent content = property.getContentComponent();
         if (content != null) {
             RenderingUtilities.renderComponent(content, context);
@@ -184,7 +168,6 @@ public class PropertyRenderer extends Renderer {
         }
 
         // If there isn't a content facet, render any children.
-        //
         List children = property.getChildren();
         for (Object child : children) {
             RenderingUtilities.renderComponent((UIComponent) child, context);
@@ -192,8 +175,8 @@ public class PropertyRenderer extends Renderer {
     }
 
     /**
-     * Render a label for the property
-     * 
+     * Render a label for the property.
+     *
      * @param context The current FacesContext
      * @param property The Property object to render
      * @param theme The Theme to reference.
@@ -201,13 +184,12 @@ public class PropertyRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderLabel(FacesContext context,
-            Property property, Theme theme,
-            ResponseWriter writer) throws IOException {
+    protected void renderLabel(final FacesContext context,
+            final Property property, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         // Render a label facet if there is one, else a span
         // and "&nbsp".
-        //
         UIComponent label = property.getLabelComponent();
         if (label != null) {
             RenderingUtilities.renderComponent(label, context);
@@ -219,16 +201,15 @@ public class PropertyRenderer extends Renderer {
         // The class selector should be minimally themeable.
         // Not sure why we even need it for "nbsp".
         // Other components offer a labelLevel attribute as well.
-        //
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.LABEL_LEVEL_TWO_TEXT), null);
-        writer.write("&nbsp;"); // NOI18N
+        writer.write("&nbsp;");
         writer.endElement(HTMLElements.SPAN);
     }
 
     /**
-     * Render help text for the property
-     * 
+     * Render help text for the property.
+     *
      * @param context The current FacesContext
      * @param property The Property object to render
      * @param theme The Theme to reference.
@@ -236,29 +217,21 @@ public class PropertyRenderer extends Renderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderHelpText(FacesContext context,
-            Property property, Theme theme,
-            ResponseWriter writer) throws IOException {
+    protected void renderHelpText(final FacesContext context,
+            final Property property, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         // Render a help text facet if there is one
-        //
         UIComponent helpText = property.getHelpTextComponent();
         if (helpText != null) {
             RenderingUtilities.renderComponent(helpText, context);
         }
     }
 
-    /**
-     * Does nothing.
-     * 
-     * @param context The current FacesContext
-     * @param component The Property object to render
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }

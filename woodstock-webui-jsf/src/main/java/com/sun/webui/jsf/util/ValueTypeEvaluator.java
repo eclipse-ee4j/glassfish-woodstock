@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -29,12 +29,12 @@ import com.sun.webui.jsf.component.Selector;
  * classes for UIComponents which accept value bindings that can be either
  * single objects or a collection of objects (for example, an array). Typically,
  * these components have to process input differently depending on the type of
- * the value object. 
+ * the value object.
  *
  * Usage: create a ValueTypeEvaluator member class in the UIComponent's
  * constructor. Invoke getValueType() to get the type of the component's value
- * binding. ValueTypeEvaluator caches the value type after the first
- * invocation, so the component should not cache the value itself.
+ * binding. ValueTypeEvaluator caches the value type after the first invocation,
+ * so the component should not cache the value itself.
  */
 public class ValueTypeEvaluator {
 
@@ -56,12 +56,12 @@ public class ValueTypeEvaluator {
     /**
      * Creates a new instance of ValueTypeEvaluator.
      *
-     * @param component The UIComponent for which the ValueTypeEvaluator is
+     * @param newComponent The UIComponent for which the ValueTypeEvaluator is
      * created
      */
-    public ValueTypeEvaluator(UIComponent component) {
-        this.component = component;
-        if (!(component instanceof ValueHolder)) {
+    public ValueTypeEvaluator(final UIComponent newComponent) {
+        this.component = newComponent;
+        if (!(newComponent instanceof ValueHolder)) {
             if (DEBUG) {
                 log("\tComponent is not a value holder");
             }
@@ -100,7 +100,7 @@ public class ValueTypeEvaluator {
      * @param context The FacesContext
      * @return valueType the ValueType of this object
      */
-    public ValueType getValueType(FacesContext context) {
+    public ValueType getValueType(final FacesContext context) {
 
         if (DEBUG) {
             log("getValueType(context)");
@@ -131,11 +131,11 @@ public class ValueTypeEvaluator {
      * @param context faces context
      * @return evaluated type.s
      */
-    private ValueType evaluateValueType(FacesContext context) {
+    private ValueType evaluateValueType(final FacesContext context) {
 
         // Determine the type of the component's value object
         ValueExpression valueExpr
-                = component.getValueExpression("value"); //NOI18N
+                = component.getValueExpression("value");
 
         if (valueExpr != null) {
             if (DEBUG) {
@@ -181,8 +181,9 @@ public class ValueTypeEvaluator {
      * @param context faces context
      * @return ValueType
      */
-    private ValueType evaluateValueBinding(ValueExpression valueExpression,
-            FacesContext context) {
+    private static ValueType evaluateValueBinding(
+            final ValueExpression valueExpression, final FacesContext context) {
+
         // We have found a value expression.
         Class clazz = valueExpression.getType(context.getELContext());
 
@@ -210,9 +211,9 @@ public class ValueTypeEvaluator {
      * @param clazz the class to evaluate
      * @return ValueType
      */
-    private ValueType evaluateClass(Class clazz) {
+    private static ValueType evaluateClass(final Class clazz) {
 
-        // The value is an array 
+        // The value is an array
         if (clazz.isArray()) {
             return ValueType.ARRAY;
         }
@@ -229,7 +230,7 @@ public class ValueTypeEvaluator {
      * Log a message to the standard output.
      * @param msg message to log
      */
-    private void log(String msg) {
-        System.out.println(this.getClass().getName() + "::" + msg);
+    private static void log(final String msg) {
+        System.out.println(ValueTypeEvaluator.class.getName() + "::" + msg);
     }
 }

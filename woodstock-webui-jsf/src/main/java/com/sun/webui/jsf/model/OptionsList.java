@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,47 +18,78 @@ package com.sun.webui.jsf.model;
 
 import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.Arrays;
 
-/** 
+/**
  * Represents a list of selectable options, which can be used to
- * initialize the <code>items</code> property of all selector-based components
- * (<code>Listbox</code>, <code>Dropdown</code>, <code>JumpDropdown</code>, 
- * <code>CheckboxGroup</code>, <code>RadioButtonGroup</code>), and 
- * <code>AddRemove</code>.
- *
- * @author gjmurphy, John Yeary
+ * initialize the {@code items} property of all selector-based components
+ * ({@code Listbox}, {@code Dropdown}, {@code JumpDropdown},
+ * {@code CheckboxGroup}, {@code RadioButtonGroup}), and
+ * {@code AddRemove}.
  */
 public class OptionsList implements Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 6695656179045426419L;
-    private ArrayList<Option> options;
-    private ArrayList<Object> selectedValues;
+
+    /**
+     * The options list.
+     */
+    private final ArrayList<Option> options;
+
+    /**
+     * The selected values.
+     */
+    private final ArrayList<Object> selectedValues;
+
+    /**
+     * isMultiple flag.
+     */
     private boolean isMultiple;
 
-    public boolean isMultiple() {
-        return isMultiple;
-    }
-
-    public void setMultiple(boolean isMultiple) {
-        this.isMultiple = isMultiple;
-    }
-
+    /**
+     * Create a new instance.
+     */
     public OptionsList() {
         options = new ArrayList<Option>();
         selectedValues = new ArrayList<Object>();
         isMultiple = false;
     }
 
-    public void setOptions(Option[] options) {
-        this.options.clear();
-        if (options == null) {
-            return;
-        }
-        for (int i = 0; i < options.length; i++) {
-            this.options.add(options[i]);
-        }
+    /**
+     * Get the isMultiple flag value.
+     * @return {@code boolean}
+     */
+    public boolean isMultiple() {
+        return isMultiple;
     }
 
+    /**
+     * Set the isMultiple flag value.
+     * @param newIsMultiple new isMultiple flag value
+     */
+    public void setMultiple(final boolean newIsMultiple) {
+        this.isMultiple = newIsMultiple;
+    }
+
+    /**
+     * Set the options.
+     * @param newOptions options
+     */
+    public void setOptions(final Option[] newOptions) {
+        this.options.clear();
+        if (newOptions == null) {
+            return;
+        }
+        this.options.addAll(Arrays.asList(newOptions));
+    }
+
+    /**
+     * Get the options.
+     * @return Option[]
+     */
     public Option[] getOptions() {
         Option[] opts = new Option[this.options.size()];
         this.options.toArray(opts);
@@ -66,19 +97,21 @@ public class OptionsList implements Serializable {
     }
 
     /**
-     * If this options list is in "multiple" mode, value specified may be
-     * an array of objects or a singleton. Otherwise, the value is treated as
-     * a singleton.
+     * If this options list is in "multiple" mode, value specified may be an
+     * array of objects or a singleton.Otherwise, the value is treated as a
+     * singleton.
+     *
+     * @param value new value
      */
-    public void setSelectedValue(Object value) {
+    public void setSelectedValue(final Object value) {
         selectedValues.clear();
         if (value == null) {
             return;
         }
         if (value instanceof Object[]) {
             Object[] values = (Object[]) value;
-            for (int i = 0; i < values.length; i++) {
-                selectedValues.add(values[i]);
+            for (Object value1 : values) {
+                selectedValues.add(value1);
             }
         } else {
             selectedValues.add(value);
@@ -88,15 +121,16 @@ public class OptionsList implements Serializable {
     /**
      * If this options list is in "multiple" mode, returns an array of objects;
      * otherwise, returns a singleton.
+     * @return Object
      */
     public Object getSelectedValue() {
         if (isMultiple) {
-            if (selectedValues.size() == 0) {
+            if (selectedValues.isEmpty()) {
                 return new Object[0];
             }
             return selectedValues.toArray();
         } else {
-            if (selectedValues.size() == 0) {
+            if (selectedValues.isEmpty()) {
                 return null;
             }
             return selectedValues.get(0);

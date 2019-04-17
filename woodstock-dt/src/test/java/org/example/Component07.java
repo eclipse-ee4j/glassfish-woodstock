@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package org.example;
 
 import com.sun.faces.annotation.Component;
@@ -21,8 +20,8 @@ import com.sun.faces.annotation.Property;
 
 @Component()
 public class Component07 extends SuperComponent06 {
-    
-    @Property(displayName="The Third", isAttribute=false, isHidden=true)
+
+    @Property(displayName = "The Third", isAttribute = false, isHidden = true)
     private String three;
 
     public String getThree() {
@@ -32,14 +31,16 @@ public class Component07 extends SuperComponent06 {
     public void setThree(String three) {
         this.three = three;
     }
-    
-    @Property(isAttribute=false, isHidden=true)
+
+    @Property(isAttribute = false, isHidden = true)
     private String two;
 
+    @Override
     public String getTwo() {
         return this.two;
     }
 
+    @Override
     public void setTwo(String two) {
         this.two = two;
     }

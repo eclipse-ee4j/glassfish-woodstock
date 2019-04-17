@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/* $Id: ThemeImage.java,v 1.1.6.1 2009-12-29 05:05:17 jyeary Exp $ */
 package com.sun.webui.theme;
 
 /**
@@ -26,7 +25,7 @@ package com.sun.webui.theme;
  * alt text if the browser cannot load the image, and a title
  * that acts as a tool tip in a browser environment.
  */
-public class ThemeImage {
+public final class ThemeImage {
 
     /**
      * The suffix applied to the theme property key that defines an image
@@ -34,26 +33,30 @@ public class ThemeImage {
      * member.
      */
     public static final String HEIGHT_SUFFIX = "_HEIGHT";
+
     /**
      * The suffix applied to the theme property key that defines an image
      * for the width of the image expressed in the units defined for the units
      * member.
      */
     public static final String WIDTH_SUFFIX = "_WIDTH";
+
     /**
      * The suffix applied to the theme property key that defines an image
      * for the units to expressed by the width and height properties.
      */
     public static final String UNITS_SUFFIX = "_UNITS";
+
     /**
      * The suffix applied to the theme property key that defines an image
-     * for the alt text for the image if the resource cannot be loaded 
+     * for the alt text for the image if the resource cannot be loaded
      * in the client.
      */
     public static final String ALT_SUFFIX = "_ALT";
+
     /**
      * The suffix applied to the theme property key that defines an image
-     * for the title attribute for the image and used for a tooltip
+     * for the title attribute for the image and used for a tool-tip
      * in the client.
      */
     public static final String TITLE_SUFFIX = "_TITLE";
@@ -63,38 +66,80 @@ public class ThemeImage {
      * expressed in.
      */
     public enum UNITS {
-        px, em, percent, none
+        /**
+         * Pixels.
+         */
+        px,
+
+        /**
+         * Scalable.
+         */
+        em,
+
+        /**
+         * Percentage.
+         */
+        percent,
+
+        /**
+         * None.
+         */
+        none
     };
 
+    /**
+     * Image width.
+     */
     private int width;
+
+    /**
+     * Image height.
+     */
     private int height;
+
+    /**
+     * Image size units.
+     */
     private UNITS units;
+
+    /**
+     * Image alternative description.
+     */
     private String alt;
+
+    /**
+     * Image title.
+     */
     private String title;
+
+    /**
+     * Image path.
+     */
     private String path;
 
     /**
      * Construct a {@code ThemeImage} from the passed arguments.
-     * @param width image width
-     * @param height image height
-     * @param units size units
-     * @param alt alt attribute value
-     * @param title image title
-     * @param path image path
+     * @param newWidth image width
+     * @param newHeight image height
+     * @param newUnit size units
+     * @param newAlt alt attribute value
+     * @param newTitle image title
+     * @param newPath image path
      */
-    public ThemeImage(int width, int height, ThemeImage.UNITS units,
-            String alt, String title, String path) {
+    public ThemeImage(final int newWidth, final int newHeight,
+            final ThemeImage.UNITS newUnit, final String newAlt,
+            final String newTitle, final String newPath) {
 
-        this.width = width;
-        this.height = height;
-        this.units = units;
-        this.alt = alt;
-        this.title = title;
-        this.path = path;
+        this.width = newWidth;
+        this.height = newHeight;
+        this.units = newUnit;
+        this.alt = newAlt;
+        this.title = newTitle;
+        this.path = newPath;
     }
 
     /**
-     * Returns the width of the image in units defined in the 
+     * Returns the width of the image in units defined in the
      * {@code units} member.
      * @return width
      * @see #getUnits()
@@ -104,7 +149,7 @@ public class ThemeImage {
     }
 
     /**
-     * Returns the height of the image in units defined in the 
+     * Returns the height of the image in units defined in the
      * {@code units} member.
      * @return height
      * @see #getUnits()
@@ -158,54 +203,54 @@ public class ThemeImage {
     /**
      * Set the width of the image in units defined by the {@code units}
      * member.
-     * @param width new width
+     * @param newWidth new width
      */
-    public void setWidth(int width) {
-        this.width = width;
+    public void setWidth(final int newWidth) {
+        this.width = newWidth;
     }
 
     /**
      * Set the height of the image in units defined by the {@code units}
      * member.
-     * @param height new height
+     * @param newHeight new height
      */
-    public void setHeight(int height) {
-        this.height = height;
+    public void setHeight(final int newHeight) {
+        this.height = newHeight;
     }
 
     /**
      * Set the units used by the {@code height} and {@code width}
      * members.
-     * @param units new units
+     * @param newUnits new units
      */
-    public void setUnits(ThemeImage.UNITS units) {
-        this.units = units;
+    public void setUnits(final ThemeImage.UNITS newUnits) {
+        this.units = newUnits;
     }
 
     /**
      * Set the text that will appear on the client if the image cannot be
      * loaded.
-     * @param alt new alt
+     * @param newAlt new alt
      */
-    public void setAlt(String alt) {
-        this.alt = alt;
+    public void setAlt(final String newAlt) {
+        this.alt = newAlt;
     }
 
     /**
      * Set the text that may appear as a tool tip on the client.
-     * @param title new title
+     * @param newTitle new title
      */
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle(final String newTitle) {
+        this.title = newTitle;
     }
 
     /**
-     * Set the application or jar relative path of the image. 
+     * Set the application or jar relative path of the image.
      * The path is relative to location that can be found on the application
      * class path. This path must begin with a "/".
-     * @param path new path
+     * @param newPath new path
      */
-    public void setPath(String path) {
-        this.path = path;
+    public void setPath(final String newPath) {
+        this.path = newPath;
     }
 }

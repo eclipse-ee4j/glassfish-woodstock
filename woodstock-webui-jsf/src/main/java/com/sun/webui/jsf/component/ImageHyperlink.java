@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -28,19 +27,192 @@ import javax.faces.context.FacesContext;
 /**
  * The ImageHyperlink component is used to display a hyperlinked image.
  */
-@Component(type = "com.sun.webui.jsf.ImageHyperlink", family = "com.sun.webui.jsf.ImageHyperlink",
-displayName = "Image Hyperlink", tagName = "imageHyperlink",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_image_hyperlink",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_image_hyperlink_props")
+@Component(type = "com.sun.webui.jsf.ImageHyperlink",
+        family = "com.sun.webui.jsf.ImageHyperlink",
+        displayName = "Image Hyperlink", tagName = "imageHyperlink",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_image_hyperlink",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_image_hyperlink_props")
+        //CHECKSTYLE:ON
 public class ImageHyperlink extends Hyperlink implements NamingContainer {
 
-    private static final String IMAGE_FACET = "image"; //NOI18N
     /**
-     * Used for identifying the facet in the facet map associated
-     * with this component
-     * This is used as a suffix combined with the id of the component.
+     * Image facet.
      */
-    final protected String IMAGE_FACET_SUFFIX = "_" + IMAGE_FACET; //NOI18N
+    private static final String IMAGE_FACET = "image";
+
+    /**
+     * Used for identifying the facet in the facet map associated with this
+     * component This is used as a suffix combined with the id of the component.
+     */
+    protected static final String IMAGE_FACET_SUFFIX = "_" + IMAGE_FACET;
+
+    /**
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     */
+    @Property(name = "align",
+            displayName = "Align",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlAlignEditor")
+            //CHECKSTYLE:ON
+    private String align = null;
+
+    /**
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     */
+    @Property(name = "alt",
+            displayName = "Alt Text",
+            category = "Accessibility",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String alt = null;
+
+    /**
+     * Specifies the width of the img border in pixels. The default value for
+     * this attribute depends on the client browser.
+     */
+    @Property(name = "border",
+            displayName = "Border",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int border = Integer.MIN_VALUE;
+
+    /**
+     * border set flag.
+     */
+    private boolean borderSet = false;
+
+    /**
+     * When specified, the width and height attributes tell the client browser
+     * to override the natural image or object size in favor of these values,
+     * specified in pixels. Some browsers might not support this behavior.
+     */
+    @Property(name = "height",
+            displayName = "Height",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int height = Integer.MIN_VALUE;
+
+    /**
+     * height set flag.
+     */
+    private boolean heightSet = false;
+
+    /**
+     * Specifies the amount of white space in pixels to be inserted to the left
+     * and right of the image. The default value is not specified but is
+     * generally a small, non-zero size.
+     */
+    @Property(name = "hspace",
+            displayName = "Horizontal Space",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int hspace = Integer.MIN_VALUE;
+
+    /**
+     * hspace set flag.
+     */
+    private boolean hspaceSet = false;
+
+    /**
+     * The identifier of the desired theme image.
+     */
+    @Property(name = "icon",
+            displayName = "Icon",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.ThemeIconsEditor")
+            //CHECKSTYLE:ON
+    private String icon = null;
+
+    /**
+     * Absolute or relative URL to the image to be rendered.
+     */
+    @Property(name = "imageURL",
+            displayName = "Image Url",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.ImageUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String imageURL = null;
+
+    /**
+     * Specifies where the text will be placed relative to the image. The valid
+     * values currently are "right" or "left".
+     */
+    @Property(name = "textPosition",
+            displayName = "Text Position",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlHorizontalAlignEditor")
+            //CHECKSTYLE:ON
+    private String textPosition = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Specifies the amount of white space in pixels to be inserted above and
+     * below the image. The default value is not specified but is generally a
+     * small, non-zero size.
+     */
+    @Property(name = "vspace",
+            displayName = "Vertical Space",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int vspace = Integer.MIN_VALUE;
+
+    /**
+     * vspace set flag.
+     */
+    private boolean vspaceSet = false;
+
+    /**
+     * Image width override. When specified, the width and height attributes
+     * tell user agents to override the natural image or object size in favor of
+     * these values.
+     */
+    @Property(name = "width",
+            displayName = "Width",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int width = Integer.MIN_VALUE;
+
+    /**
+     * width set flag.
+     */
+    private boolean widthSet = false;
 
     /**
      * Default constructor.
@@ -51,86 +223,93 @@ public class ImageHyperlink extends Hyperlink implements NamingContainer {
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * This implementation returns {@code "com.sun.webui.jsf.ImageHyperlink"}.
+     * @return String
      */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.ImageHyperlink";
     }
 
-    // This facet is not meant to be overridden 
+    // This facet is not meant to be overridden
     // by others, but is only used as a storage bin for keeping the image
     // associated with the hyperlink
     // This component is actually created every time and is not
     // stored in the facet map.
     //
     /**
-     * Return a component that implements an image or an icon.
-     * If <code>getImageURL()</code> returns a value that is not 
-     * null, an <code>ImageComponent</code> is returned.
-     * If <code>getImageURL()</code> returns null and <code>getIcon()</code>
-     * returns a value that is not null, an <code>Icon</code> component 
-     * is returned. If both methods return null, null is returned.
-     * The returned instance is intialized with the values from
+     * Return a component that implements an image or an icon. If
+     * {@code getImageURL()} returns a value that is not null, an
+     * {@code ImageComponent} is returned. If {@code getImageURL()}
+     * returns null and {@code getIcon()} returns a value that is not null,
+     * an {@code Icon} component is returned. If both methods return null,
+     * null is returned. The returned instance is initialized with the values
+     * from
      * <p>
      * <ul>
-     * <li><code>getImageURL()</code></li>
-     * <li><code>getIcon()</code></li>
-     * <li><code>getAlign()</code></li>
-     * <li><code>getBorder()</code></li>
-     * <li><code>getAlt()</code></li>
-     * <li><code>getHeight()</code></li>
-     * <li><code>getHspace()</code></li>
-     * <li><code>getVspace()</code></li>
-     * <li><code>getWidth()</code></li>
-     * <li><code>getDisabled</code></li>
-     * <li><code>getType()</code></li>
+     * <li>{@code getImageURL()}</li>
+     * <li>{@code getIcon()}</li>
+     * <li>{@code getAlign()}</li>
+     * <li>{@code getBorder()}</li>
+     * <li>{@code getAlt()}</li>
+     * <li>{@code getHeight()}</li>
+     * <li>{@code getHspace()}</li>
+     * <li>{@code getVspace()}</li>
+     * <li>{@code getWidth()}</li>
+     * <li>{@code getDisabled}</li>
+     * <li>{@code getType()}</li>
      * </ul>
      * </p>
      * <p>
-     * The returned <code>ImageComponent</code> or <code>Icon</code>
-     * component is created every time this method is called.
+     * The returned {@code ImageComponent} or {@code Icon} component
+     * is created every time this method is called.
      * </p>
+     *
      * @return ImageComponent or Icon instance
      */
     public UIComponent getImageFacet() {
-        UIComponent image =
-                ComponentUtilities.getPrivateFacet(this, IMAGE_FACET, false);
+        UIComponent image = ComponentUtilities
+                .getPrivateFacet(this, IMAGE_FACET, false);
         if (image != null) {
             return image;
         }
 
-        String imageURL = getImageURL();
-        String icon = getIcon();
+        String url = getImageURL();
+        String imgIcon = getIcon();
 
-        if (imageURL == null && icon == null) {
+        if (url == null && imgIcon == null) {
             ComponentUtilities.removePrivateFacet(this,
                     IMAGE_FACET);
             return null;
         }
 
         // ImageURL takes precedence
-        if (imageURL != null) {
+        if (url != null) {
             image = new ImageComponent();
         } else {
             image = new Icon();
         }
 
         Map<String, Object> map = image.getAttributes();
-        if (icon != null) {
-            map.put("icon", icon);  //NOI18N
+        if (imgIcon != null) {
+            map.put("icon", imgIcon);
         }
-        if (imageURL != null) {
-            map.put("url", imageURL);  //NOI18N
+        if (url != null) {
+            map.put("url", url);
         }
 
-        setAttributes(
-                ComponentUtilities.createPrivateFacetId(this, IMAGE_FACET), image);
-
+        setAttributes(ComponentUtilities
+                .createPrivateFacetId(this, IMAGE_FACET), image);
         return image;
     }
 
-    protected void setAttributes(String facetId, UIComponent image) {
+    /**
+     * Set the link attributes.
+     * @param facetId facet id
+     * @param image UI component containing the link attributes
+     */
+    protected void setAttributes(final String facetId,
+            final UIComponent image) {
 
         //must reset the id always due to a side effect in JSF and putting
         //components in a table.
@@ -138,513 +317,495 @@ public class ImageHyperlink extends Hyperlink implements NamingContainer {
         image.setParent(this);
 
         // align
-        String align = getAlign();
+        String alignAttr = getAlign();
         Map<String, Object> atts = image.getAttributes();
-        if (align != null) {
-            atts.put("align", align); // NOI18N
+        if (alignAttr != null) {
+            atts.put("align", alignAttr);
         }
         // border
         int dim = getBorder();
         if (dim >= 0) {
-            atts.put("border", dim); // NOI18N
+            atts.put("border", dim);
         }
         // description
         String description = getAlt();
         if (description != null) {
-            atts.put("alt", description); // NOI18N
+            atts.put("alt", description);
         }
         // height
         dim = getHeight();
         if (dim >= 0) {
-            atts.put("height", dim); // NOI18N
+            atts.put("height", dim);
         }
         // hspace
         dim = getHspace();
         if (dim >= 0) {
-            atts.put("hspace", dim); // NOI18N
+            atts.put("hspace", dim);
         }
         // vspace
         dim = getVspace();
         if (dim >= 0) {
-            atts.put("vspace", dim); // NOI18N
+            atts.put("vspace", dim);
         }
         // width
         dim = getWidth();
         if (dim >= 0) {
-            atts.put("width", dim); // NOI18N
+            atts.put("width", dim);
         }
         // disabled (based on parent)
-        Boolean disabled = (Boolean) getAttributes().get("disabled"); //NOI18N
+        Boolean disabled = (Boolean) getAttributes().get("disabled");
         if (disabled != null) {
-            atts.put("disabled", String.valueOf(disabled)); //NOI18N
+            atts.put("disabled", String.valueOf(disabled));
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     * This implementation invokes {@code super.getOnDbleClick}.
+     * @return String
      */
     @Property(name = "onDblClick", isHidden = true, isAttribute = true)
     @Override
     public String getOnDblClick() {
         return super.getOnDblClick();
     }
-    /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
-     */
-    @Property(name = "align", displayName = "Align", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlAlignEditor")
-    private String align = null;
 
     /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     * @return String
      */
     public String getAlign() {
         if (this.align != null) {
             return this.align;
         }
-        ValueExpression _vb = getValueExpression("align");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("align");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies the position of the image with respect to its context.
-     * Valid values are: bottom (the default); middle; top; left; right.</p>
+     * Specifies the position of the image with respect to its context. Valid
+     * values are: bottom (the default); middle; top; left; right.
+     *
      * @see #getAlign()
+     * @param newAlign align
      */
-    public void setAlign(String align) {
-        this.align = align;
+    public void setAlign(final String newAlign) {
+        this.align = newAlign;
     }
-    /**
-     * <p>Alternative textual description of the image rendered by this component. The alt
-     * text can be used by screen readers and in tool tips, and when image display is turned off in
-     * the web browser.</p>
-     */
-    @Property(name = "alt", displayName = "Alt Text", category = "Accessibility",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String alt = null;
 
     /**
-     * <p>Alternative textual description of the image rendered by this component. The alt
-     * text can be used by screen readers and in tool tips, and when image display is turned off in
-     * the web browser.</p>
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     * @return String
      */
     public String getAlt() {
         if (this.alt != null) {
             return this.alt;
         }
-        ValueExpression _vb = getValueExpression("alt");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("alt");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Alternative textual description of the image rendered by this component. The alt
-     * text can be used by screen readers and in tool tips, and when image display is turned off in
-     * the web browser.</p>
+     * Alternative textual description of the image rendered by this component.
+     * The alt text can be used by screen readers and in tool tips, and when
+     * image display is turned off in the web browser.
+     *
      * @see #getAlt()
+     * @param newAlt alt
      */
-    public void setAlt(String alt) {
-        this.alt = alt;
+    public void setAlt(final String newAlt) {
+        this.alt = newAlt;
     }
-    /**
-     * <p>Specifies the width of the img border in pixels.
-     * The default value for this attribute depends on the client browser</p>
-     */
-    @Property(name = "border", displayName = "Border", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int border = Integer.MIN_VALUE;
-    private boolean border_set = false;
 
     /**
-     * <p>Specifies the width of the img border in pixels.
-     * The default value for this attribute depends on the client browser</p>
+     * Specifies the width of the img border in pixels. The default value for
+     * this attribute depends on the client browser
+     * @return int
      */
     public int getBorder() {
-        if (this.border_set) {
+        if (this.borderSet) {
             return this.border;
         }
-        ValueExpression _vb = getValueExpression("border");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("border");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Specifies the width of the img border in pixels.
-     * The default value for this attribute depends on the client browser</p>
+     * Specifies the width of the img border in pixels. The default value for
+     * this attribute depends on the client browser
+     *
      * @see #getBorder()
+     * @param newBorder border
      */
-    public void setBorder(int border) {
-        this.border = border;
-        this.border_set = true;
+    public void setBorder(final int newBorder) {
+        this.border = newBorder;
+        this.borderSet = true;
     }
-    /**
-     * <p>When specified, the width and height attributes tell the client browser to override the natural image or object size in favor of these values, specified in pixels. Some browsers might not support this behavior.</p>
-     */
-    @Property(name = "height", displayName = "Height", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int height = Integer.MIN_VALUE;
-    private boolean height_set = false;
 
     /**
-     * <p>When specified, the width and height attributes tell the client browser to override the natural image or object size in favor of these values, specified in pixels. Some browsers might not support this behavior.</p>
+     * When specified, the width and height attributes tell the client browser
+     * to override the natural image or object size in favor of these values,
+     * specified in pixels. Some browsers might not support this behavior.
+     * @return int
      */
     public int getHeight() {
-        if (this.height_set) {
+        if (this.heightSet) {
             return this.height;
         }
-        ValueExpression _vb = getValueExpression("height");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("height");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>When specified, the width and height attributes tell the client browser to override the natural image or object size in favor of these values, specified in pixels. Some browsers might not support this behavior.</p>
+     * When specified, the width and height attributes tell the client browser
+     * to override the natural image or object size in favor of these values,
+     * specified in pixels. Some browsers might not support this behavior.
+     *
      * @see #getHeight()
+     * @param newHeight height
      */
-    public void setHeight(int height) {
-        this.height = height;
-        this.height_set = true;
+    public void setHeight(final int newHeight) {
+        this.height = newHeight;
+        this.heightSet = true;
     }
-    /**
-     * <p>Specifies the amount of white space in pixels to be inserted to the left and 
-     * right of the image. The default value is not specified but is 
-     * generally a small, non-zero size.</p>
-     */
-    @Property(name = "hspace", displayName = "Horizontal Space", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int hspace = Integer.MIN_VALUE;
-    private boolean hspace_set = false;
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted to the left and 
-     * right of the image. The default value is not specified but is 
-     * generally a small, non-zero size.</p>
+     * Specifies the amount of white space in pixels to be inserted to the left
+     * and right of the image. The default value is not specified but is
+     * generally a small, non-zero size.
+     * @return int
      */
     public int getHspace() {
-        if (this.hspace_set) {
+        if (this.hspaceSet) {
             return this.hspace;
         }
-        ValueExpression _vb = getValueExpression("hspace");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("hspace");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted to the left and 
-     * right of the image. The default value is not specified but is 
-     * generally a small, non-zero size.</p>
+     * Specifies the amount of white space in pixels to be inserted to the left
+     * and right of the image. The default value is not specified but is
+     * generally a small, non-zero size.
+     *
      * @see #getHspace()
+     * @param newHspace hspace
      */
-    public void setHspace(int hspace) {
-        this.hspace = hspace;
-        this.hspace_set = true;
+    public void setHspace(final int newHspace) {
+        this.hspace = newHspace;
+        this.hspaceSet = true;
     }
-    /**
-     * <p>The identifier of the desired theme image.</p>
-     */
-    @Property(name = "icon", displayName = "Icon", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.ThemeIconsEditor")
-    private String icon = null;
 
     /**
-     * <p>The identifier of the desired theme image.</p>
+     * The identifier of the desired theme image.
+     * @return String
      */
     public String getIcon() {
         if (this.icon != null) {
             return this.icon;
         }
-        ValueExpression _vb = getValueExpression("icon");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("icon");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The identifier of the desired theme image.</p>
+     * The identifier of the desired theme image.
+     *
      * @see #getIcon()
+     * @param newIcon icon
      */
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setIcon(final String newIcon) {
+        this.icon = newIcon;
     }
-    /**
-     * <p>Absolute or relative URL to the image to be rendered.</p>
-     */
-    @Property(name = "imageURL", displayName = "Image Url", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.ImageUrlPropertyEditor")
-    private String imageURL = null;
 
     /**
-     * <p>Absolute or relative URL to the image to be rendered.</p>
+     * Absolute or relative URL to the image to be rendered.
+     * @return String
      */
     public String getImageURL() {
         if (this.imageURL != null) {
             return this.imageURL;
         }
-        ValueExpression _vb = getValueExpression("imageURL");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("imageURL");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Absolute or relative URL to the image to be rendered.</p>
+     * Absolute or relative URL to the image to be rendered.
+     *
      * @see #getImageURL()
+     * @param newImageURL imageURL
      */
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageURL(final String newImageURL) {
+        this.imageURL = newImageURL;
     }
-    /**
-     * <p>Specifies where the text will be placed relative to the image. The valid 
-     * values currently are "right" or "left".</p>
-     */
-    @Property(name = "textPosition", displayName = "Text Position", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlHorizontalAlignEditor")
-    private String textPosition = null;
 
     /**
-     * <p>Specifies where the text will be placed relative to the image. The valid 
-     * values currently are "right" or "left".</p>
+     * Specifies where the text will be placed relative to the image. The valid
+     * values currently are "right" or "left".
+     * @return String
      */
     public String getTextPosition() {
         if (this.textPosition != null) {
             return this.textPosition;
         }
-        ValueExpression _vb = getValueExpression("textPosition");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("textPosition");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return "right";
     }
 
     /**
-     * <p>Specifies where the text will be placed relative to the image. The valid 
-     * values currently are "right" or "left".</p>
+     * Specifies where the text will be placed relative to the image. The valid
+     * values currently are "right" or "left".
+     *
      * @see #getTextPosition()
+     * @param newTextPosition textPosition
      */
-    public void setTextPosition(String textPosition) {
-        this.textPosition = textPosition;
+    public void setTextPosition(final String newTextPosition) {
+        this.textPosition = newTextPosition;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     @Override
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
     @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
-    /**
-     * <p>Specifies the amount of white space in pixels to be inserted above and below the 
-     * image. The default value is not specified but is generally a small, 
-     * non-zero size.</p>
-     */
-    @Property(name = "vspace", displayName = "Vertical Space", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int vspace = Integer.MIN_VALUE;
-    private boolean vspace_set = false;
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted above and below the 
-     * image. The default value is not specified but is generally a small, 
-     * non-zero size.</p>
+     * Specifies the amount of white space in pixels to be inserted above and
+     * below the image. The default value is not specified but is generally a
+     * small, non-zero size.
+     * @return int
      */
     public int getVspace() {
-        if (this.vspace_set) {
+        if (this.vspaceSet) {
             return this.vspace;
         }
-        ValueExpression _vb = getValueExpression("vspace");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("vspace");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Specifies the amount of white space in pixels to be inserted above and below the 
-     * image. The default value is not specified but is generally a small, 
-     * non-zero size.</p>
+     * Specifies the amount of white space in pixels to be inserted above and
+     * below the image. The default value is not specified but is generally a
+     * small, non-zero size.
+     *
      * @see #getVspace()
+     * @param newVspace vspace
      */
-    public void setVspace(int vspace) {
-        this.vspace = vspace;
-        this.vspace_set = true;
+    public void setVspace(final int newVspace) {
+        this.vspace = newVspace;
+        this.vspaceSet = true;
     }
-    /**
-     * <p>Image width override. When specified, the width and height attributes 
-     * tell user agents to override the natural image or object size in favor 
-     * of these values.</p>
-     */
-    @Property(name = "width", displayName = "Width", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int width = Integer.MIN_VALUE;
-    private boolean width_set = false;
 
     /**
-     * <p>Image width override. When specified, the width and height attributes 
-     * tell user agents to override the natural image or object size in favor 
-     * of these values.</p>
+     * Image width override. When specified, the width and height attributes
+     * tell user agents to override the natural image or object size in favor of
+     * these values.
+     * @return int
      */
     public int getWidth() {
-        if (this.width_set) {
+        if (this.widthSet) {
             return this.width;
         }
-        ValueExpression _vb = getValueExpression("width");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("width");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Image width override. When specified, the width and height attributes 
-     * tell user agents to override the natural image or object size in favor 
-     * of these values.</p>
+     * Image width override. When specified, the width and height attributes
+     * tell user agents to override the natural image or object size in favor of
+     * these values.
+     *
      * @see #getWidth()
+     * @param newWidth width
      */
-    public void setWidth(int width) {
-        this.width = width;
-        this.width_set = true;
+    public void setWidth(final int newWidth) {
+        this.width = newWidth;
+        this.widthSet = true;
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.align = (String) _values[1];
-        this.alt = (String) _values[2];
-        this.border = ((Integer) _values[3]).intValue();
-        this.border_set = ((Boolean) _values[4]).booleanValue();
-        this.height = ((Integer) _values[5]).intValue();
-        this.height_set = ((Boolean) _values[6]).booleanValue();
-        this.hspace = ((Integer) _values[7]).intValue();
-        this.hspace_set = ((Boolean) _values[8]).booleanValue();
-        this.icon = (String) _values[9];
-        this.imageURL = (String) _values[10];
-        this.textPosition = (String) _values[11];
-        this.visible = ((Boolean) _values[12]).booleanValue();
-        this.visible_set = ((Boolean) _values[13]).booleanValue();
-        this.vspace = ((Integer) _values[14]).intValue();
-        this.vspace_set = ((Boolean) _values[15]).booleanValue();
-        this.width = ((Integer) _values[16]).intValue();
-        this.width_set = ((Boolean) _values[17]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.align = (String) values[1];
+        this.alt = (String) values[2];
+        this.border = ((Integer) values[3]);
+        this.borderSet = ((Boolean) values[4]);
+        this.height = ((Integer) values[5]);
+        this.heightSet = ((Boolean) values[6]);
+        this.hspace = ((Integer) values[7]);
+        this.hspaceSet = ((Boolean) values[8]);
+        this.icon = (String) values[9];
+        this.imageURL = (String) values[10];
+        this.textPosition = (String) values[11];
+        this.visible = ((Boolean) values[12]);
+        this.visibleSet = ((Boolean) values[13]);
+        this.vspace = ((Integer) values[14]);
+        this.vspaceSet = ((Boolean) values[15]);
+        this.width = ((Integer) values[16]);
+        this.widthSet = ((Boolean) values[17]);
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[18];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.align;
-        _values[2] = this.alt;
-        _values[3] = new Integer(this.border);
-        _values[4] = this.border_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = new Integer(this.height);
-        _values[6] = this.height_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[7] = new Integer(this.hspace);
-        _values[8] = this.hspace_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = this.icon;
-        _values[10] = this.imageURL;
-        _values[11] = this.textPosition;
-        _values[12] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[13] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[14] = new Integer(this.vspace);
-        _values[15] = this.vspace_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[16] = new Integer(this.width);
-        _values[17] = this.width_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[18];
+        values[0] = super.saveState(context);
+        values[1] = this.align;
+        values[2] = this.alt;
+        values[3] = this.border;
+        if (this.borderSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        values[5] = this.height;
+        if (this.heightSet) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        values[7] = this.hspace;
+        if (this.hspaceSet) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] = Boolean.FALSE;
+        }
+        values[9] = this.icon;
+        values[10] = this.imageURL;
+        values[11] = this.textPosition;
+        if (this.visible) {
+            values[12] = Boolean.TRUE;
+        } else {
+            values[12] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[13] = Boolean.TRUE;
+        } else {
+            values[13] = Boolean.FALSE;
+        }
+        values[14] = this.vspace;
+        if (this.vspaceSet) {
+            values[15] = Boolean.TRUE;
+        } else {
+            values[15] = Boolean.FALSE;
+        }
+        values[16] = this.width;
+        if (this.widthSet) {
+            values[17] = Boolean.TRUE;
+        } else {
+            values[17] = Boolean.FALSE;
+        }
+        return values;
     }
 }

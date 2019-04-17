@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,20 +18,26 @@ package com.sun.webui.jsf.model;
 
 import com.sun.webui.jsf.util.MessageUtil;
 
-/** A default list of options, pre-populated with three default items.
- *
- * @author gjmurphy, John Yeary
+/**
+ * A default list of options, pre-populated with three default items.
  */
 public class DefaultOptionsList extends OptionsList {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -1377760857272606790L;
 
+    /**
+     * Create a new instance.
+     */
     public DefaultOptionsList() {
-        String bundle = DefaultOptionsList.class.getPackage().getName() + ".Bundle";
+        String bundle = DefaultOptionsList.class.getPackage().getName()
+                + ".Bundle";
         Option[] options = new Option[]{
-            new Option("item1", MessageUtil.getMessage(bundle, "item1")), //NOI18N
-            new Option("item2", MessageUtil.getMessage(bundle, "item2")), //NOI18N
-            new Option("item3", MessageUtil.getMessage(bundle, "item3")) //NOI18N
+            new Option("item1", MessageUtil.getMessage(bundle, "item1")),
+            new Option("item2", MessageUtil.getMessage(bundle, "item2")),
+            new Option("item3", MessageUtil.getMessage(bundle, "item3"))
         };
         this.setOptions(options);
     }

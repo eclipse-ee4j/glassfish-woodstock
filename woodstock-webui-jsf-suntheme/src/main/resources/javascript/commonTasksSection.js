@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,7 +17,7 @@
 define(["webui/suntheme/common"], function (common) {
 
     return {
-
+        addOnInitCallback: common.addOnInitCallback,
         /**
          * This function is used to initialize HTML element properties with the
          * following Object literals.
@@ -41,6 +41,9 @@ define(["webui/suntheme/common"], function (common) {
             if (domNode === null) {
                 return false;
             }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
+            }
 
             // Set given properties on domNode.
             Object.extend(domNode, props);
@@ -60,6 +63,7 @@ define(["webui/suntheme/common"], function (common) {
             window.onresize = function () {
                 domNode.windowResize();
             };
+            common.setInitialized(domNode);
         },
 
         // Hide all task sections.
@@ -237,7 +241,7 @@ define(["webui/suntheme/common"], function (common) {
 
             /*Javascript for setting the common task page's look and feel.*/
 
-            // The prized coordinate locating function - Thank you Danny Goodman...
+            // The prized coordinate locating function
             this.getElementPosition = function (elemID) {
                 var offsetTrail = document.getElementById(elemID);
                 var offsetLeft = 0;
@@ -249,8 +253,7 @@ define(["webui/suntheme/common"], function (common) {
                     offsetTrail = offsetTrail.offsetParent;
                 }
                 if (navigator.userAgent.indexOf("Mac") !== -1
-                        && typeof document.body.leftMargin !== "undefined") {
-                    alert("Undefined");
+                        && typeof document.body.leftMargin !== undefined) {
                     offsetLeft += document.body.leftMargin;
                     offsetTop += document.body.topMargin;
                 }
@@ -269,7 +272,7 @@ define(["webui/suntheme/common"], function (common) {
                     offsetTrail = offsetTrail.offsetParent;
                 }
                 if (navigator.userAgent.indexOf("Mac") !== -1 &&
-                        typeof document.body.leftMargin !== "undefined") {
+                        typeof document.body.leftMargin !== undefined) {
                     offsetLeft += document.body.leftMargin;
                     offsetTop += document.body.topMargin;
                 }

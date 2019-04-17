@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-define(function () {
+define([
+    "webui/suntheme/common"
+], function (common) {
 
     return {
+        addOnInitCallback: common.addOnInitCallback,
 
         /**
          * This function is used to initialize HTML element properties with the
@@ -38,6 +41,9 @@ define(function () {
             var domNode = document.getElementById(props.id);
             if (domNode === null) {
                 return false;
+            }
+            if(common.fireInitCallBacks(domNode)){
+                return true;
             }
 
             // Set given properties on domNode.
@@ -107,6 +113,7 @@ define(function () {
             domNode.updateButtons = this.updateButtons;
             domNode.updateValue = this.updateValue;
             domNode.onChange = this.updateButtons;
+            common.setInitialized(domNode);
         },
 
         // The original allowed items to be moved on both lists. Surely we

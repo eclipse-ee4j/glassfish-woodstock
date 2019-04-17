@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * PagetitleRenderer.java
  */
 package com.sun.webui.jsf.renderkit.html;
@@ -32,23 +32,27 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
  * Renders a Pagetitle component.
- *
- * @author  Sean Comerford
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.ContentPageTitle"))
+@Renderer(
+        @Renderer.Renders(
+                componentFamily = "com.sun.webui.jsf.ContentPageTitle"))
 public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
 
-    public final static String BOTTOM_ID = "_bottom";
+    /**
+     * Bottom id.
+     */
+    public static final String BOTTOM_ID = "_bottom";
 
-    /** Creates a new instance of PagetitleRenderer. */
+    /**
+     * Creates a new instance of PagetitleRenderer.
+     */
     public ContentPageTitleRenderer() {
         // default constructor
     }
 
     /**
-     * <p>Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns <code>false</code>.</p>
+     * This implementation returns {@code true}.
+     * @return {@code boolean}
      */
     @Override
     public boolean getRendersChildren() {
@@ -56,34 +60,35 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * <p>Render the Pagetitle component start.</p>
+     * This implementation renders the Pagetitle component start.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose
+     * submitted value is to be stored
      *
      * @exception IOException if an input/output error occurs
      */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         ContentPageTitle pagetitle = (ContentPageTitle) component;
         Theme theme = ThemeUtilities.getTheme(context);
         ResponseWriter writer = context.getResponseWriter();
         String style = pagetitle.getStyle();
 
-        writer.startElement("div", pagetitle); //NOI18N
+        writer.startElement("div", pagetitle);
         writer.writeAttribute("id",
-                pagetitle.getClientId(context), "id"); //NOI18N
+                pagetitle.getClientId(context), "id");
 
         if (style != null) {
-            writer.writeAttribute("style", style, null); // NOI18N
+            writer.writeAttribute("style", style, null);
         }
 
         String styleClass = RenderingUtilities.getStyleClasses(context,
                 component, null);
         if (styleClass != null) {
-            writer.writeAttribute("class", styleClass, null); // NOI18N
+            writer.writeAttribute("class", styleClass, null);
         }
 
         startLayoutTable(writer, pagetitle, "bottom", true, null, "bottom");
@@ -103,23 +108,24 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * Any facets related to the top of the page title will be rendered along
-     * with the children found in the body content.
+     * This implementation renders any facets related to the top of the page
+     * title will along with the children found in the body content.
      *
      * @param context The current FacesContext
      * @param component The Pagetitle component
+     * @throws IOException if an IO error occurs
      */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         ContentPageTitle pagetitle = (ContentPageTitle) component;
         ResponseWriter writer = context.getResponseWriter();
         Theme theme = ThemeUtilities.getTheme(context);
 
         // render the page help if any
-        if (pagetitle.getHelpText() != null ||
-                pagetitle.getFacet("pageHelp") != null) {
+        if (pagetitle.getHelpText() != null
+                || pagetitle.getFacet("pageHelp") != null) {
             renderPageHelp(context, pagetitle, theme, writer);
         }
 
@@ -146,16 +152,13 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
                 if (showActions) {
                     // actions are displayed, start new td for views
                     writer.startElement("td", pagetitle);
-                    writer.writeAttribute("align", "right", null); // NOI18N
-                    writer.writeAttribute("valign", "bottom", null); // NOI18N
-                    writer.writeAttribute("nowrap", "nowrap", null); // NOI18N
+                    writer.writeAttribute("align", "right", null);
+                    writer.writeAttribute("valign", "bottom", null);
+                    writer.writeAttribute("nowrap", "nowrap", null);
                 }
-
                 renderPageViews(context, pagetitle, theme, writer);
             }
-
             writer.endElement("td");
-
             endLayoutTable(writer);
         }
 
@@ -168,23 +171,23 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      *
      * @param context The current FacesContext
      * @param pagetitle The Pagetitle component
+     * @param theme the current theme
      * @param writer The current ResponseWriter
+     * @throws IOException if an IO error occurs
      */
-    protected void renderPageActions(FacesContext context,
-            ContentPageTitle pagetitle,
-            Theme theme,
-            ResponseWriter writer)
-            throws IOException {
+    protected void renderPageActions(final FacesContext context,
+            final ContentPageTitle pagetitle, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent pageActions = pagetitle.getFacet("pageActions");
 
         if (pageActions == null) {
             return;
-        //throw new NullPointerException("pageActions facet null");
+            //throw new NullPointerException("pageActions facet null");
         }
 
         writer.startElement("div", pagetitle);
-        writer.writeAttribute("class", //NOI18N
+        writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.TITLE_ACTION_DIV),
                 null);
 
@@ -199,13 +202,13 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      *
      * @param context The current FacesContext
      * @param pagetitle The Pagetitle component
+     * @param theme the current theme
      * @param writer The current ResponseWriter
+     * @throws IOException if an IO error occurs
      */
-    protected void renderPageViews(FacesContext context,
-            ContentPageTitle pagetitle,
-            Theme theme,
-            ResponseWriter writer)
-            throws IOException {
+    protected void renderPageViews(final FacesContext context,
+            final ContentPageTitle pagetitle, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         UIComponent pageViews = pagetitle.getFacet("pageViews");
 
@@ -229,45 +232,46 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      * @param writer The current ResponseWriter
      * @param pagetitle The Pagetitle component
      * @param firstRowValign Value to use for the first table row's valign
+     * @param noWrapTd nowrap attribute for the table cell
      * @param firstTdAlign Value to use for the first table div's align
      * @param firstTdValign Value to use for the first table div's valign
+     * @throws IOException if an IO error occurs
      */
-    private void startLayoutTable(ResponseWriter writer,
-            ContentPageTitle pagetitle, String firstRowValign, boolean noWrapTd,
-            String firstTdAlign, String firstTdValign) throws IOException {
-        writer.startElement("table", pagetitle);
-        writer.writeAttribute("border", "0", null); // NOI18N
-        writer.writeAttribute("width", "100%", null); // NOI18N
-        writer.writeAttribute("cellpadding", "0", null); // NOI18N
-        writer.writeAttribute("cellspacing", "0", null); // NOI18N
+    private void startLayoutTable(final ResponseWriter writer,
+            final ContentPageTitle pagetitle, final String firstRowValign,
+            final boolean noWrapTd, final String firstTdAlign,
+            final String firstTdValign) throws IOException {
 
+        writer.startElement("table", pagetitle);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
         writer.startElement("tr", pagetitle);
         if (firstRowValign != null) {
-            writer.writeAttribute("valign", firstRowValign, null); // NOI18N
+            writer.writeAttribute("valign", firstRowValign, null);
         }
-
         writer.startElement("td", pagetitle);
-
         if (noWrapTd) {
             writer.writeAttribute("nowrap", "nowrap", null);
         }
-
         if (firstTdAlign != null) {
             writer.writeAttribute("align", firstTdAlign, null);
         }
-
         if (firstTdValign != null) {
             writer.writeAttribute("valign", firstTdValign, null);
         }
-
     }
 
     /**
      * Convenience method to output the end of a layout table.
      *
      * @param writer The current ResponseWriter
+     * @throws IOException if an IO error occurs
      */
-    private void endLayoutTable(ResponseWriter writer) throws IOException {
+    private void endLayoutTable(final ResponseWriter writer)
+            throws IOException {
+
         writer.endElement("tr");
         writer.endElement("table");
     }
@@ -279,10 +283,11 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      * @param pagetitle The Pagetitle component
      * @param writer The current ResponseWriter
      * @param theme The current Theme object
+     * @throws IOException if an IO error occurs
      */
-    protected void renderPageTitle(FacesContext context,
-            ContentPageTitle pagetitle, ResponseWriter writer, Theme theme)
-            throws IOException {
+    protected void renderPageTitle(final FacesContext context,
+            final ContentPageTitle pagetitle, final ResponseWriter writer,
+            final Theme theme) throws IOException {
 
         writer.startElement("div", pagetitle);
         String style = theme.getStyleClass(ThemeStyles.TITLE_TEXT_DIV);
@@ -297,13 +302,11 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
             if (title != null) {
                 writer.startElement("h1", pagetitle);
                 style = theme.getStyleClass(ThemeStyles.TITLE_TEXT);
-                writer.writeAttribute("class", style, null); //NOI18N
-
-                writer.write(title != null ? title : "");
+                writer.writeAttribute("class", style, null);
+                writer.write(title);
                 writer.endElement("h1");
             }
         }
-
         writer.endElement("div");
         writer.endElement("td");
     }
@@ -313,13 +316,13 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      *
      * @param context The current FacesContext
      * @param pagetitle The Pagetitle component
+     * @param theme theme
      * @param writer The current ResponseWriter
+     * @throws IOException if an IO error occurs
      */
-    protected void renderPageHelp(FacesContext context,
-            ContentPageTitle pagetitle,
-            Theme theme,
-            ResponseWriter writer)
-            throws IOException {
+    protected void renderPageHelp(final FacesContext context,
+            final ContentPageTitle pagetitle, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         startLayoutTable(writer, pagetitle, null, false, null, null);
 
@@ -335,30 +338,29 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
             writer.startElement("div", pagetitle);
             style = theme.getStyleClass(ThemeStyles.HELP_PAGE_TEXT);
             writer.writeAttribute("class", style, null);
-
             writer.write(pagetitle.getHelpText());
-
             writer.endElement("div");
         }
-
         writer.endElement("div");
         writer.endElement("td");
-
         endLayoutTable(writer);
-
     }
 
     /**
      * Render the pageButtons facet.
+     *
      * @param context The current FacesContext
      * @param pagetitle The Pagetitle component
      * @param writer The current ResponseWriter
      * @param divStyle The style class name to use for the div enclosing the
      * button facet
+     * @param buttonFacet button component
+     * @throws IOException if an IO error occurs
      */
-    protected void renderPageButtons(FacesContext context,
-            ContentPageTitle pagetitle, ResponseWriter writer, String divStyle,
-            UIComponent buttonFacet) throws IOException {
+    protected void renderPageButtons(final FacesContext context,
+            final ContentPageTitle pagetitle, final ResponseWriter writer,
+            final String divStyle, final UIComponent buttonFacet)
+            throws IOException {
 
         if (buttonFacet == null) {
             // throw new NullPointerException("pageButtons facet null");
@@ -369,28 +371,26 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
         writer.writeAttribute("align", "right", null);
         writer.writeAttribute("nowrap", "nowrap", null);
         writer.writeAttribute("valign", "bottom", null);
-
         writer.startElement("div", pagetitle);
         writer.writeAttribute("class", divStyle, null);
-
         RenderingUtilities.renderComponent(buttonFacet, context);
-
         writer.endElement("div");
         writer.endElement("td");
     }
 
     /**
-     * <p>Render the Pagetitle component end.</p>
+     * Render the Pagetitle component end.
      *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code EditableValueHolder} component whose
+     * submitted value is to be stored
      *
      * @exception IOException if an input/output error occurs
      */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         ContentPageTitle pagetitle = (ContentPageTitle) component;
         Theme theme = ThemeUtilities.getTheme(context);
         ResponseWriter writer = context.getResponseWriter();
@@ -402,22 +402,18 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
             if (pagetitle.isSeparator()) {
                 renderPageSeparator(context, pagetitle, theme, writer);
             }
-
             writer.startElement("table", pagetitle);
-            writer.writeAttribute("border", "0", null); // NOI18N
-            writer.writeAttribute("width", "100%", null); // NOI18N
-            writer.writeAttribute("cellpadding", "0", null); // NOI18N
-            writer.writeAttribute("cellspacing", "0", null); // NOI18N
+            writer.writeAttribute("border", "0", null);
+            writer.writeAttribute("width", "100%", null);
+            writer.writeAttribute("cellpadding", "0", null);
+            writer.writeAttribute("cellspacing", "0", null);
 
             writer.startElement("tr", pagetitle);
-
-            String style =
-                    theme.getStyleClass(ThemeStyles.TITLE_BUTTON_BOTTOM_DIV);
+            String style
+                    = theme.getStyleClass(ThemeStyles.TITLE_BUTTON_BOTTOM_DIV);
 
             renderPageButtons(context, pagetitle, writer, style, facet);
-
             endLayoutTable(writer);
-
         }
         writer.endElement("div");
     }
@@ -427,19 +423,18 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      *
      * @param context The current FacesContext
      * @param pagetitle The Pagetitle component
+     * @param theme the current theme
      * @param writer The current ResponseWriter
+     * @exception IOException if an input/output error occurs
      */
-    protected void renderPageSeparator(FacesContext context,
-            ContentPageTitle pagetitle,
-            Theme theme,
-            ResponseWriter writer)
-            throws IOException {
-        UIComponent separatorFacet = pagetitle.getBottomPageSeparator();
+    protected void renderPageSeparator(final FacesContext context,
+            final ContentPageTitle pagetitle, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
+        UIComponent separatorFacet = pagetitle.getBottomPageSeparator();
         if (separatorFacet != null) {
             RenderingUtilities.renderComponent(separatorFacet, context);
         }
-
     }
 
     /**
@@ -452,16 +447,19 @@ public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
      * @param src The value to use for image src attribute
      * @param height The value to use for the image height attribute
      * @param width The value to use for the image width attribute
+     * @throws IOException if an IO error occurs
      */
-    private void writeDotImage(ResponseWriter writer,
-            ContentPageTitle pagetitle, String src, int height, int width)
+    private void writeDotImage(final ResponseWriter writer,
+            final ContentPageTitle pagetitle, final String src,
+            final int height, final int width)
             throws IOException {
+
         writer.startElement("img", pagetitle);
-        writer.writeAttribute("src", src, null); // NOI18N
-        writer.writeAttribute("alt", "", null); // NOI18N
-        writer.writeAttribute("border", "0", null); // NOI18N
-        writer.writeAttribute("height", new Integer(height), null); // NOI18N
-        writer.writeAttribute("width", new Integer(width), null); // NOI18N
+        writer.writeAttribute("src", src, null);
+        writer.writeAttribute("alt", "", null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("height", height, null);
+        writer.writeAttribute("width", width, null);
         writer.endElement("img");
     }
 }

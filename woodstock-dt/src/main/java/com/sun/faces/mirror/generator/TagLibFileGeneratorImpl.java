@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -29,26 +29,36 @@ import org.apache.velocity.app.VelocityEngine;
 /**
  * An implementation of TagLibFileGenerator that creates the tag lib file by
  * merging component info with a template file.
- *
- * @author gjmurphy
  */
-class TagLibFileGeneratorImpl extends TagLibFileGenerator {
+final class TagLibFileGeneratorImpl extends TagLibFileGenerator {
 
-    static final String TEMPLATE = "com/sun/faces/mirror/generator/TagLib.template";
+    /**
+     * Template resource path.
+     */
+    private static final String TEMPLATE =
+            "com/sun/faces/mirror/generator/TagLib.template";
 
-    VelocityEngine velocityEngine;
+    /**
+     * Template engine.
+     */
+    private final VelocityEngine velocityEngine;
 
-    TagLibFileGeneratorImpl(VelocityEngine velocityEngine) {
-        this.velocityEngine = velocityEngine;
+    /**
+     * Create a new instance.
+     * @param velocity template engine
+     */
+    TagLibFileGeneratorImpl(final VelocityEngine velocity) {
+        this.velocityEngine = velocity;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void generate() throws GeneratorException {
         try {
-            Set<DeclaredComponentInfo> componentInfoSet = new TreeSet(new Comparator() {
+            Set<DeclaredComponentInfo> componentInfoSet =
+                    new TreeSet(new Comparator() {
                 @Override
-                public int compare(Object obj1, Object obj2) {
+                public int compare(final Object obj1, final Object obj2) {
                     String tag1 = ((DeclaredComponentInfo) obj1).getTagName();
                     String tag2 = ((DeclaredComponentInfo) obj2).getTagName();
                     if (tag1 == null) {
@@ -66,10 +76,19 @@ class TagLibFileGeneratorImpl extends TagLibFileGenerator {
             String namespacePrefix = this.getNamespacePrefix();
             PrintWriter printWriter = this.getPrintWriter();
             VelocityContext velocityContext = new VelocityContext();
-            velocityContext.put("date", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
+            velocityContext.put("date", DateFormat
+                    .getDateInstance(DateFormat.MEDIUM).format(new Date()));
             velocityContext.put("componentInfoSet", componentInfoSet);
-            velocityContext.put("namespace", namespace == null ? "" : namespace);
-            velocityContext.put("namespacePrefix", namespacePrefix == null ? "" : namespacePrefix);
+            if (namespace == null) {
+                velocityContext.put("namespace", "");
+            } else {
+                velocityContext.put("namespace", namespace);
+            }
+            if (namespacePrefix == null) {
+                velocityContext.put("namespacePrefix", "");
+            } else {
+                velocityContext.put("namespacePrefix", namespacePrefix);
+            }
             Template template = this.velocityEngine.getTemplate(TEMPLATE);
             template.merge(velocityContext, printWriter);
             printWriter.flush();

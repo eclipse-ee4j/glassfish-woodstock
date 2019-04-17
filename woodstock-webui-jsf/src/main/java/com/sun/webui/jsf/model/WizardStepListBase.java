@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 import java.util.Iterator;
@@ -21,40 +20,89 @@ import java.util.NoSuchElementException;
 
 import com.sun.webui.jsf.component.WizardStep;
 
-public class WizardStepListBase implements WizardStepList {
+/**
+ * Wizard step list base.
+ */
+public final class WizardStepListBase implements WizardStepList {
 
-    private WizardModel wModel;
+    /**
+     * Dot character constant.
+     */
+    private static final String DOT = ".";
+
+    /**
+     * Left square bracket character constant.
+     */
+    private static final String SWBRACKET_OPEN = "[";
+
+    /**
+     * Right square bracket character constant.
+     */
+    private static final String SWBRACKET_CLOSE = "]";
+
+    /**
+     * Wizard model.
+     */
+    private final WizardModel wModel;
+
+    /**
+     * Current step.
+     */
     private int currentStep;
+
+    /**
+     * Current step number as a {@code String}.
+     */
     private String currentStepNumberString;
 
-    public WizardStepListBase(WizardModel wModel) {
-        this.wModel = wModel;
+    /**
+     * Create a new instance.
+     * @param newWModel wizard model
+     */
+    public WizardStepListBase(final WizardModel newWModel) {
+        this.wModel = newWModel;
         iterate();
     }
 
+    @Override
     public String getCurrentStepNumberString() {
         return currentStepNumberString;
     }
-    private static final String DOT = "."; //NOI18N
-    private static final String SWBRACKET_OPEN = "["; //NOI18N
-    private static final String SWBRACKET_CLOSE = "["; //NOI18N
 
-    protected String formatStepNumber(int stepNumber) {
+    /**
+     * Format the specified step number.
+     * @param stepNumber step number to format
+     * @return String
+     */
+    protected String formatStepNumber(final int stepNumber) {
         return String.valueOf(stepNumber);
     }
 
-    protected String formatSubstepNumber(int stepNumber, int substep) {
+    /**
+     * Format the specified step number and sub step number.
+     * @param stepNumber step number to format
+     * @param substep sub step number to format
+     * @return String
+     */
+    protected String formatSubstepNumber(final int stepNumber,
+            final int substep) {
+
         return String.valueOf(stepNumber).concat(DOT).
                 concat(String.valueOf(substep));
     }
 
-    protected String formatBranch(String placeholderText) {
+    /**
+     * Format the specified branch.
+     * @param placeholderText placeholder text
+     * @return String
+     */
+    protected String formatBranch(final String placeholderText) {
         return SWBRACKET_OPEN.concat(placeholderText).concat(SWBRACKET_CLOSE);
     }
 
-    // Do this to set up the state of the list,
-    // basically set up currentStep details.
-    //
+    /**
+     * Set up the state of the list.
+     */
     private void iterate() {
         Iterator iterator = this.iterator();
         while (iterator.hasNext()) {
@@ -62,38 +110,63 @@ public class WizardStepListBase implements WizardStepList {
         }
     }
 
+    @Override
     public Iterator iterator() {
 
         return new Iterator() {
 
+            /**
+             * Step number.
+             */
             private int stepNumber = 0;
-            private int substep = 0;
-            private String stepNumberString;
-            private String placeholderText;
-            private boolean isBranch;
-            private Iterator wizardStepIterator = wModel.getWizardStepIterator();
 
+            /**
+             * Sub step number.
+             */
+            private int substep = 0;
+
+            /**
+             * Step number as a {@code String}.
+             */
+            private String stepNumberString;
+
+            /**
+             * Placeholder text.
+             */
+            private String placeholderText;
+
+            /**
+             * isBranch flag.
+             */
+            private boolean isBranch;
+
+            /**
+             * Wizard step iterator.
+             */
+            private final Iterator wizardStepIterator =
+                    wModel.getWizardStepIterator();
+
+            @Override
             public boolean hasNext() {
                 return wizardStepIterator.hasNext();
             }
 
+            @Override
             public Object next() throws NoSuchElementException {
 
                 if (isBranch) {
                     // Log too
                     throw new NoSuchElementException(
-                            "No more steps after branch"); //NOI18N
+                            "No more steps after branch");
                 }
 
-                boolean isCurrentStep = false;
-
+                boolean isCurrentStep;
                 try {
                     WizardStep step = (WizardStep) wizardStepIterator.next();
                     boolean isSubstep = wModel.isSubstep(step);
                     isBranch = wModel.isBranch(step);
                     placeholderText = null;
                     // A substep cannot be the first step.
-                    //
                     if (isSubstep) {
                         ++substep;
                         stepNumberString =
@@ -101,10 +174,6 @@ public class WizardStepListBase implements WizardStepList {
                     } else if (isBranch) {
                         ++stepNumber;
                         substep = 0;
-                        /*
-                        placeholderText =
-                        formatBranch(wModel.getPlaceholderText(step));
-                         */
                         stepNumberString = null;
                     } else {
                         ++stepNumber;
@@ -116,12 +185,9 @@ public class WizardStepListBase implements WizardStepList {
                         currentStep = stepNumber;
                         currentStepNumberString = stepNumberString;
                     }
-                    return new WizardStepListItemBase(step,
-                            stepNumberString, isCurrentStep,
-                            isSubstep, isBranch,
-                            placeholderText,
+                    return new WizardStepListItemBase(step, stepNumberString,
+                            isCurrentStep, isSubstep, isBranch, placeholderText,
                             wModel.canGotoStep(step));
-
 
                 } catch (Exception e) {
                     NoSuchElementException nse = new NoSuchElementException();
@@ -130,6 +196,7 @@ public class WizardStepListBase implements WizardStepList {
                 }
             }
 
+            @Override
             public void remove() throws UnsupportedOperationException {
                 throw new UnsupportedOperationException();
             }

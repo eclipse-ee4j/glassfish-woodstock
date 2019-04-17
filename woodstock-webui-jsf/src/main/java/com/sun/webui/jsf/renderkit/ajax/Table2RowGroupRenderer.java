@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -37,18 +37,22 @@ import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 /**
  * This class renders Table2RowGroup components.
  */
-@Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.ajax.Table2RowGroup",
-componentFamily = "com.sun.webui.jsf.Table2RowGroup"))
-public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
+@Renderer(@Renderer.Renders(
+        rendererType = "com.sun.webui.jsf.ajax.Table2RowGroup",
+        componentFamily = "com.sun.webui.jsf.Table2RowGroup"))
+public final class Table2RowGroupRenderer extends javax.faces.render.Renderer {
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) {
+
         // Do nothing...
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }
@@ -72,7 +76,7 @@ public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
             }
         }
 
-        // TODO: Need algorithm to retrieve rows
+        // FIXME: Need algorithm to retrieve rows
         int maxRows = group.getRows();
         group.setRows(maxRows * 2);
         JsonArray rows = getRows(context, group);
@@ -84,7 +88,9 @@ public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component) {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) {
+
         // Do nothing...
     }
 
@@ -98,9 +104,11 @@ public class Table2RowGroupRenderer extends javax.faces.render.Renderer {
      *
      * @param context FacesContext for the current request.
      * @param component UIComponent to be rendered.
+     * @return JsonArray
+     * @throws IOException if an IO error occurs
      */
-    private JsonArray getRows(FacesContext context, Table2RowGroup component)
-            throws IOException {
+    private JsonArray getRows(final FacesContext context,
+            final Table2RowGroup component) throws IOException {
 
         if (context == null || component == null) {
             throw new NullPointerException();

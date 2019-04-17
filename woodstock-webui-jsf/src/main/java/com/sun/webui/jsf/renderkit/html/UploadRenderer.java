@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * $Id: UploadRenderer.java,v 1.1.4.1.2.1 2009-12-29 04:52:45 jyeary Exp $
  */
 package com.sun.webui.jsf.renderkit.html;
@@ -32,7 +32,6 @@ import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
-
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderHiddenField;
@@ -40,20 +39,18 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderHiddenField;
 /**
  * Renderer for a {@link Upload} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Upload"))
-public class UploadRenderer extends FieldRenderer {
-
-    private static final boolean DEBUG = false;
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Upload"))
+public final class UploadRenderer extends FieldRenderer {
 
     /**
-     * <p>Override the default implementation to conditionally trim the
-     * leading and trailing spaces from the submitted value.</p>
-     *
-     * @param context {@code FacesContext} for the current request
-     * @param component {@code Upload} component being processed
+     * Debug flag.
      */
+    private static final boolean DEBUG = false;
+
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         if (DEBUG) {
             log("decode()");
@@ -77,8 +74,8 @@ public class UploadRenderer extends FieldRenderer {
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (component == null) {
             return;
@@ -106,9 +103,10 @@ public class UploadRenderer extends FieldRenderer {
                     String maxSize = (String) map.get(Upload.FILE_SIZE_KEY);
                     String[] detailArgs = {maxSize};
                     String summaryMsg = theme.getMessage("FileUpload.noFile");
-                    String detailMsg =
-                            theme.getMessage("Upload.error", detailArgs);
-                    FacesMessage fmsg = new FacesMessage(summaryMsg, detailMsg);
+                    String detailMsg
+                            = theme.getMessage("Upload.error", detailArgs);
+                    FacesMessage fmsg = new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR, summaryMsg, detailMsg);
                     context.addMessage(
                             ((Upload) component).getClientId(context), fmsg);
                 } else {
@@ -134,5 +132,14 @@ public class UploadRenderer extends FieldRenderer {
             String param = id.concat(Upload.INPUT_PARAM_ID);
             renderHiddenField(component, writer, param, id);
         }
+    }
+
+    /**
+     * Log an error - only used during development time.
+     *
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(UploadRenderer.class.getName() + "::" + msg);
     }
 }

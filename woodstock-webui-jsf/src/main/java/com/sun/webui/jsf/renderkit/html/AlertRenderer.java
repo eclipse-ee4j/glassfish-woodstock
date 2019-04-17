@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,7 +22,6 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.CookieUtils;
-import com.sun.webui.jsf.util.ThemeUtilities;
 
 import java.beans.Beans;
 import java.io.IOException;
@@ -46,13 +45,12 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * Renderer for an {@link Alert} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Alert"))
-public class AlertRenderer extends AbstractRenderer {
+public final class AlertRenderer extends AbstractRenderer {
 
-    /** 
+    /**
      * Creates a new instance of AlertRenderer.
      */
     public AlertRenderer() {
-        // default constructor
     }
 
     @Override
@@ -61,402 +59,14 @@ public class AlertRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
-    }
-
-    /**
-     * Renders the outer div which contains the alert.
-     *
-     * @param context The current FacesContext
-     * @param alert The Alert object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     * @deprecated replaced by
-     * {@link #renderOuterDiv(context,Alert,String,ResponseWriter)}
-     */
-    protected void renderOuterDiv(FacesContext context, Alert alert,
-            ResponseWriter writer) throws IOException {
-
-        Theme theme = getTheme(context);
-        String defaultStyleClass = theme.getStyleClass(ThemeStyles.ALERT_DIV);
-        renderOuterDiv(context, alert, defaultStyleClass, writer);
-    }
-
-    /**
-     * Renders the outer div which contains the alert.
-     *
-     * @param context The current FacesContext
-     * @param alert The Alert object to use
-     * @param defaultStyleClass The styleClass to use if not set on alert
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderOuterDiv(FacesContext context, Alert alert,
-            String defaultStyleClass, ResponseWriter writer) throws IOException {
-
-        String style = alert.getStyle();
-        String id = alert.getClientId(context);
-
-        writer.startElement("div", alert);
-
-        // Write a id only if a style/class was specified?
-        if (id != null) {
-            writer.writeAttribute("id", id, null);
-        }
-
-        if (style != null) {
-            writer.writeAttribute("style", style, null);
-        }
-
-        // Even though renderStyleClass obtains the component's
-        // styleClass attribute, look for it here too. If it exists
-        // do not pass the defaultStyleClass.
-        //
-        String styleClass = alert.getStyleClass();
-        if (styleClass == null || styleClass.length() == 0) {
-            styleClass = defaultStyleClass;
-        } else {
-            // Don't pass it or else it will get added twice
-            styleClass = null;
-        }
-        renderStyleClass(context, writer, (UIComponent) alert, styleClass);
-    }
-
-    /**
-     * Renders the attributes for the outer table containing the inline alert.
-     * TODO: Use div's instead of tables for layout as soon as I can find a
-     * solution that works for IE.
-     *
-     * @param alert The Alert object to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderOpeningTable(Alert alert, ResponseWriter writer)
-            throws IOException {
-
-        writer.startElement("table", alert);
-        writer.writeAttribute("border", "0", null);
-        writer.writeAttribute("cellspacing", "0", null);
-        writer.writeAttribute("cellpadding", "0", null);
-        writer.writeAttribute("title", "", null);
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders the outer table top row containing three spacer columns.
-     *
-     * @param alert The Alert object to use
-     * @param spacerPath The path to the spacer image
-     * @param styles The array of styles
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderTopRow(Alert alert, String spacerPath, String[] styles,
-            ResponseWriter writer) throws IOException {
-
-        writer.startElement("tr", alert);
-        writer.writeText("\n", null);
-        renderSpacerCell(alert, styles[0], spacerPath, writer);
-        renderSpacerCell(alert, styles[1], spacerPath, writer);
-        renderSpacerCell(alert, styles[2], spacerPath, writer);
-        writer.endElement("tr");
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders the outer table middle row containing two spacer columns and
-     * a column that holds the alert.
-     *
-     * @param alert The Alert object to use
-     * @param theme The Theme to use
-     * @param spacerPath The path to the spacer image
-     * @param styles The array of styles
-     * @param context The current FacesContext
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderMiddleRow(Alert alert, Theme theme, String spacerPath,
-            String[] styles, FacesContext context, ResponseWriter writer)
-            throws IOException {
-
-        writer.startElement("tr", alert);
-        writer.writeAttribute("class", styles[3], null);
-        writer.writeText("\n", null);
-
-        // render a spacer in the left column
-        writer.startElement("td", alert);
-        writer.writeAttribute("class", styles[4], null);
-        writer.writeText("\n", null);
-        renderSpacerImage(alert, spacerPath, writer);
-        writer.endElement("td");
-        writer.writeText("\n", null);
-
-        // render middle column
-        renderMiddleCell(context, alert, theme, writer, styles);
-
-        // render a spacer in the right column
-        writer.startElement("td", alert);
-        writer.writeAttribute("class", styles[9], null);
-        writer.writeText("\n", null);
-        renderSpacerImage(alert, spacerPath, writer);
-        writer.endElement("td");
-        writer.writeText("\n", null);
-
-        // close the middle row
-        writer.endElement("tr");
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders the outer table bottom row containing three spacer columns.
-     *
-     * @param alert The Alert object to use
-     * @param theme The Theme to use
-     * @param spacerPath
-     * @param styles
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderBottomRow(Alert alert, Theme theme, String spacerPath,
-            String[] styles, ResponseWriter writer) throws IOException {
-
-        writer.startElement("tr", alert);
-        writer.writeText("\n", null);
-        renderSpacerCell(alert, styles[10], spacerPath, writer);
-        renderSpacerCell(alert, styles[11], spacerPath, writer);
-        renderSpacerCell(alert, styles[12], spacerPath, writer);
-        writer.endElement("tr");
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders a spacer coulmn.
-     *
-     * @param alert The Alert object to use
-     * @param styleClass CSS class
-     * @param spacerPath The path to the spacer image
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderSpacerCell(Alert alert, String styleClass,
-            String spacerPath, ResponseWriter writer) throws IOException {
-
-        writer.startElement("td", alert);
-        writer.writeText("\n", null);
-        writer.startElement("div", alert);
-        writer.writeAttribute("class", styleClass, null);
-        renderSpacerImage(alert, spacerPath, writer);
-        writer.endElement("div");
-        writer.writeText("\n", null);
-        writer.endElement("td");
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders the middle column  containing the alert icon, summary,
-     * detail message and the optional link.
-     *
-     * @param context The current FacesContext
-     * @param alert The Alert object to use
-     * @param theme The Theme to use
-     * @param writer The current ResponseWriter
-     * @param styles CSS styles
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderMiddleCell(FacesContext context, Alert alert,
-            Theme theme, ResponseWriter writer, String[] styles)
-            throws IOException {
-
-        writer.startElement("td", alert);
-        writer.writeText("\n", null);
-
-        // open the outer div containing the summary and detial areas
-        writer.startElement("div", alert);
-        writer.writeAttribute("class", styles[5], null);
-
-        // open the alert header div
-        writer.startElement("div", alert);
-        writer.writeAttribute("class", styles[6], null);
-
-        // Render the alert icon
-        renderAlertIcon(context, alert, theme, writer);
-        // Render the summary text
-        renderAlertSummaryText(alert, styles, writer, context);
-
-        // close the alert header div
-        writer.endElement("div");
-        writer.writeText("\n", null);
-
-        // Render the detailed text and the optional link
-        renderAlertDetailArea(context, alert, theme, styles, writer);
-
-        // Close the outer div
-        writer.endElement("div");
-        writer.writeText("\n", null);
-
-        // Close the cell
-        writer.endElement("td");
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders the icon associated with an inline alert message.
-     *
-     * @param context The current FacesContext
-     * @param alert The Alert object to use
-     * @param theme The theme to use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderAlertIcon(FacesContext context, Alert alert,
-            Theme theme, ResponseWriter writer) throws IOException {
-
-        UIComponent alertIcon = alert.getAlertIcon();
-        renderComponent(alertIcon, context);
-    }
-
-    /**
-     * Renders the summary message of the inline alert.
-     *
-     * @param alert The Alert object to use
-     * @param styles CSS styles
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderAlertSummaryText(Alert alert, String[] styles,
-            ResponseWriter writer) throws IOException {
-
-        // Render the summary text
-        String summary = alert.getSummary();
-
-        // Check if it should be HTML escaped (true by default).
-        writer.startElement("span", alert);
-        writer.writeAttribute("class", styles[7], null);
-        writer.writeText("\n", null);
-        writer.writeText(summary, null);
-        writer.endElement("span");
-        writer.writeText("\n", null);
-    }
-
-    protected void renderAlertSummaryText(Alert alert, String[] styles,
-            ResponseWriter writer, FacesContext context) throws IOException {
-
-        // Render the summary text
-        String summary = alert.getSummary();
-
-        if (summary != null) {
-            writer.startElement("span", alert);
-            writer.writeAttribute("class", styles[7], null);
-            writer.writeText("\n", null);
-            renderFormattedMessage(writer, alert, context, summary);
-            writer.endElement("span");
-            writer.writeText("\n", null);
-        }
-    }
-
-    /**
-     * Renders the optional detail message of the inline alert.
-     * Also renders the optional link.
-     *
-     * @param context faces context
-     * @param alert The Alert object to use
-     * @param theme The theme to use
-     * @param styles CSS styles
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderAlertDetailArea(FacesContext context, Alert alert,
-            Theme theme, String[] styles, ResponseWriter writer)
-            throws IOException {
-
-        // Get the detail text
-        String detail = alert.getDetail();
-
-        // Get the children, if any.
-        List children = alert.getChildren();
-        if ((detail == null
-                || detail.trim().length() == 0)
-                && children.size() <= 0) {
-            return;
-        }
-
-        // Set the style
-        writer.startElement("div", alert);
-        writer.writeAttribute("class", styles[8], null);
-
-        // Check if it should be HTML escaped (true by default).
-        if (detail != null) {
-            writer.startElement("span", alert);
-            writer.writeAttribute("class", styles[7], null);
-
-            //Added to force screen reader to read alert box incase of
-            // deployment error
-            writer.writeAttribute("role", "alert", null);
-
-            writer.writeText("\n", null);
-            renderFormattedMessage(writer, alert, context, detail);
-            writer.endElement("span");
-            writer.writeText("\n", null);
-        }
-
-        // render any children
-        super.encodeChildren(context, alert);
-
-        // Render the optional link, if specified
-        renderAlertLink(context, alert, theme, writer);
-
-        // Close the div
-        writer.endElement("div");
-        writer.writeText("\n", null);
-    }
-
-    /**
-     * Renders the optional link at the end of the alert.
-     *
-     * @param context The current FacesContext
-     * @param alert The Alert object to use
-     * @param theme theme in-use
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderAlertLink(FacesContext context, Alert alert,
-            Theme theme, ResponseWriter writer) throws IOException {
-
-        UIComponent link = alert.getAlertLink();
-        if (link != null) {
-            renderComponent(link, context);
-        }
-    }
-
-    /**
-     * Renders the optional detail message of the inline alert.
-     *
-     * @param writer The current ResponseWriter
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void renderClosingTags(ResponseWriter writer) throws IOException {
-        writer.endElement("table");
-        writer.endElement("div");
-        writer.writeText("\n", null);
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // Render end of alert
         Alert alert = (Alert) component;
@@ -468,7 +78,7 @@ public class AlertRenderer extends AbstractRenderer {
         }
 
         // Get the theme
-        Theme theme = ThemeUtilities.getTheme(context);
+        Theme theme = getTheme(context);
         String spacerPath = theme.getImagePath(ThemeImages.DOT);
         String[] styles = getStyles(theme);
 
@@ -511,7 +121,7 @@ public class AlertRenderer extends AbstractRenderer {
         renderTopRow(alert, spacerPath, styles, writer);
 
         // Render the middle row
-        renderMiddleRow(alert, theme, spacerPath, styles, context, writer);
+        renderMiddleRow(alert, spacerPath, styles, context, writer);
 
         // Render the bottom row
         renderBottomRow(alert, theme, spacerPath, styles, writer);
@@ -520,10 +130,377 @@ public class AlertRenderer extends AbstractRenderer {
         renderClosingTags(writer);
     }
 
-    // Private helper methods.
-    private void renderFormattedMessage(ResponseWriter writer,
-            UIComponent component, FacesContext context, String msg)
+    /**
+     * Renders the outer div which contains the alert.
+     *
+     * @param context The current FacesContext
+     * @param alert The Alert object to use
+     * @param defaultStyleClass The styleClass to use if not set on alert
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected static void renderOuterDiv(final FacesContext context,
+            final Alert alert, final String defaultStyleClass,
+            final ResponseWriter writer) throws IOException {
+
+        String style = alert.getStyle();
+        String id = alert.getClientId(context);
+
+        writer.startElement("div", alert);
+
+        // Write a id only if a style/class was specified?
+        if (id != null) {
+            writer.writeAttribute("id", id, null);
+        }
+
+        if (style != null) {
+            writer.writeAttribute("style", style, null);
+        }
+
+        // Even though renderStyleClass obtains the component's
+        // styleClass attribute, look for it here too. If it exists
+        // do not pass the defaultStyleClass.
+        //
+        String styleClass = alert.getStyleClass();
+        if (styleClass == null || styleClass.length() == 0) {
+            styleClass = defaultStyleClass;
+        } else {
+            // Don't pass it or else it will get added twice
+            styleClass = null;
+        }
+        renderStyleClass(context, writer, (UIComponent) alert, styleClass);
+    }
+
+    /**
+     * Renders the attributes for the outer table containing the inline alert.
+     * FIXME: Use div instead of tables for layout as soon as I can find a
+     * solution that works for IE.
+     *
+     * @param alert The Alert object to use
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void renderOpeningTable(final Alert alert,
+            final ResponseWriter writer) throws IOException {
+
+        writer.startElement("table", alert);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("title", "", null);
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders the outer table top row containing three spacer columns.
+     *
+     * @param alert The Alert object to use
+     * @param spacerPath The path to the spacer image
+     * @param styles The array of styles
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void renderTopRow(final Alert alert, final String spacerPath,
+            final String[] styles, final ResponseWriter writer)
             throws IOException {
+
+        writer.startElement("tr", alert);
+        writer.writeText("\n", null);
+        renderSpacerCell(alert, styles[0], spacerPath, writer);
+        renderSpacerCell(alert, styles[1], spacerPath, writer);
+        renderSpacerCell(alert, styles[2], spacerPath, writer);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders the outer table middle row containing two spacer columns and
+     * a column that holds the alert.
+     *
+     * @param alert The Alert object to use
+     * @param spacerPath The path to the spacer image
+     * @param styles The array of styles
+     * @param context The current FacesContext
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderMiddleRow(final Alert alert,
+            final String spacerPath, final String[] styles,
+            final FacesContext context, final ResponseWriter writer)
+            throws IOException {
+
+        writer.startElement("tr", alert);
+        writer.writeAttribute("class", styles[3], null);
+        writer.writeText("\n", null);
+
+        // render a spacer in the left column
+        writer.startElement("td", alert);
+        writer.writeAttribute("class", styles[4], null);
+        writer.writeText("\n", null);
+        renderSpacerImage(alert, spacerPath, writer);
+        writer.endElement("td");
+        writer.writeText("\n", null);
+
+        // render middle column
+        renderMiddleCell(context, alert, writer, styles);
+
+        // render a spacer in the right column
+        writer.startElement("td", alert);
+        writer.writeAttribute("class", styles[9], null);
+        writer.writeText("\n", null);
+        renderSpacerImage(alert, spacerPath, writer);
+        writer.endElement("td");
+        writer.writeText("\n", null);
+
+        // close the middle row
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders the outer table bottom row containing three spacer columns.
+     *
+     * @param alert The Alert object to use
+     * @param theme The Theme to use
+     * @param spacerPath spacer path
+     * @param styles CSS style
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderBottomRow(final Alert alert, final Theme theme,
+            final String spacerPath, final String[] styles,
+            final ResponseWriter writer) throws IOException {
+
+        writer.startElement("tr", alert);
+        writer.writeText("\n", null);
+        renderSpacerCell(alert, styles[10], spacerPath, writer);
+        renderSpacerCell(alert, styles[11], spacerPath, writer);
+        renderSpacerCell(alert, styles[12], spacerPath, writer);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders a spacer coulmn.
+     *
+     * @param alert The Alert object to use
+     * @param styleClass CSS class
+     * @param spacerPath The path to the spacer image
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private static void renderSpacerCell(final Alert alert,
+            final String styleClass, final String spacerPath,
+            final ResponseWriter writer) throws IOException {
+
+        writer.startElement("td", alert);
+        writer.writeText("\n", null);
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styleClass, null);
+        renderSpacerImage(alert, spacerPath, writer);
+        writer.endElement("div");
+        writer.writeText("\n", null);
+        writer.endElement("td");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders the middle column  containing the alert icon, summary,
+     * detail message and the optional link.
+     *
+     * @param context The current FacesContext
+     * @param alert The Alert object to use
+     * @param writer The current ResponseWriter
+     * @param styles CSS styles
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderMiddleCell(final FacesContext context,
+            final Alert alert, final ResponseWriter writer,
+            final String[] styles) throws IOException {
+
+        writer.startElement("td", alert);
+        writer.writeText("\n", null);
+
+        // open the outer div containing the summary and detial areas
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styles[5], null);
+
+        // open the alert header div
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styles[6], null);
+
+        // Render the alert icon
+        renderAlertIcon(context, alert);
+        // Render the summary text
+        renderAlertSummaryText(alert, styles, writer);
+
+        // close the alert header div
+        writer.endElement("div");
+        writer.writeText("\n", null);
+
+        // Render the detailed text and the optional link
+        renderAlertDetailArea(context, alert, styles, writer);
+
+        // Close the outer div
+        writer.endElement("div");
+        writer.writeText("\n", null);
+
+        // Close the cell
+        writer.endElement("td");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders the icon associated with an inline alert message.
+     *
+     * @param context The current FacesContext
+     * @param alert The Alert object to use
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private static void renderAlertIcon(final FacesContext context,
+            final Alert alert) throws IOException {
+
+        UIComponent alertIcon = alert.getAlertIcon();
+        renderComponent(alertIcon, context);
+    }
+
+    /**
+     * Renders the summary message of the inline alert.
+     *
+     * @param alert The Alert object to use
+     * @param styles CSS styles
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderAlertSummaryText(final Alert alert,
+            final String[] styles, final ResponseWriter writer)
+            throws IOException {
+
+        // Render the summary text
+        String summary = alert.getSummary();
+
+        if (summary != null) {
+            writer.startElement("span", alert);
+            writer.writeAttribute("class", styles[7], null);
+            writer.writeText("\n", null);
+            renderFormattedMessage(writer, alert, summary);
+            writer.endElement("span");
+            writer.writeText("\n", null);
+        }
+    }
+
+    /**
+     * Renders the optional detail message of the inline alert.
+     * Also renders the optional link.
+     *
+     * @param context faces context
+     * @param alert The Alert object to use
+     * @param styles CSS styles
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderAlertDetailArea(final FacesContext context,
+            final Alert alert, final String[] styles,
+            final ResponseWriter writer) throws IOException {
+
+        // Get the detail text
+        String detail = alert.getDetail();
+
+        // Get the children, if any.
+        List children = alert.getChildren();
+        if ((detail == null
+                || detail.trim().length() == 0)
+                && children.size() <= 0) {
+            return;
+        }
+
+        // Set the style
+        writer.startElement("div", alert);
+        writer.writeAttribute("class", styles[8], null);
+
+        // Check if it should be HTML escaped (true by default).
+        if (detail != null) {
+            writer.startElement("span", alert);
+            writer.writeAttribute("class", styles[7], null);
+
+            //Added to force screen reader to read alert box incase of
+            // deployment error
+            writer.writeAttribute("role", "alert", null);
+
+            writer.writeText("\n", null);
+            renderFormattedMessage(writer, alert, detail);
+            writer.endElement("span");
+            writer.writeText("\n", null);
+        }
+
+        // render any children
+        super.encodeChildren(context, alert);
+
+        // Render the optional link, if specified
+        renderAlertLink(context, alert);
+
+        // Close the div
+        writer.endElement("div");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Renders the optional link at the end of the alert.
+     *
+     * @param context The current FacesContext
+     * @param alert The Alert object to use
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private static void renderAlertLink(final FacesContext context,
+            final Alert alert)
+            throws IOException {
+
+        UIComponent link = alert.getAlertLink();
+        if (link != null) {
+            renderComponent(link, context);
+        }
+    }
+
+    /**
+     * Renders the optional detail message of the inline alert.
+     *
+     * @param writer The current ResponseWriter
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private static void renderClosingTags(final ResponseWriter writer)
+            throws IOException {
+
+        writer.endElement("table");
+        writer.endElement("div");
+        writer.writeText("\n", null);
+    }
+
+    /**
+     * Render a formatter message.
+     * @param writer writer to use
+     * @param component UI component
+     * @param msg message to format
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderFormattedMessage(final ResponseWriter writer,
+            final UIComponent component, final String msg) throws IOException {
 
         ArrayList<Object> parameterList = new ArrayList<Object>();
         // get UIParameter children...
@@ -549,9 +526,16 @@ public class AlertRenderer extends AbstractRenderer {
         }
     }
 
-    // Renders a spacer image.
-    private void renderSpacerImage(Alert alert, String spacerPath,
-            ResponseWriter writer) throws IOException {
+    /**
+     * Renders a spacer image.
+     * @param alert alert component
+     * @param spacerPath spacer path
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderSpacerImage(final Alert alert,
+            final String spacerPath, final ResponseWriter writer)
+            throws IOException {
 
         writer.startElement("img", alert);
         writer.writeAttribute("src", spacerPath, null);
@@ -559,7 +543,13 @@ public class AlertRenderer extends AbstractRenderer {
         writer.endElement("img");
     }
 
-    private String[] getStyles(Theme theme) {
+    /**
+     * Get the CSS style.
+     * @param theme theme to use
+     * @return String[]
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static String[] getStyles(final Theme theme) {
         String[] styles = new String[13];
         styles[0] = theme.getStyleClass(ThemeStyles.ALERT_TOP_LEFT_CORNER);
         styles[1] = theme.getStyleClass(ThemeStyles.ALERT_TOP_MIDDLE);
@@ -574,7 +564,6 @@ public class AlertRenderer extends AbstractRenderer {
         styles[10] = theme.getStyleClass(ThemeStyles.ALERT_BOTTOM_LEFT_CORNER);
         styles[11] = theme.getStyleClass(ThemeStyles.ALERT_BOTTOM_MIDDLE);
         styles[12] = theme.getStyleClass(ThemeStyles.ALERT_BOTTOM_RIGHT_CORNER);
-
         return styles;
     }
 }

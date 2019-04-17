@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -34,50 +33,50 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>This class is responsible for rendering the Message component.</p>
+ * This class is responsible for rendering the Message component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Message"))
-public class MessageRenderer extends AbstractRenderer {
-
-    protected String MESSAGE_START_ELEMENT = "div"; //NOI18N
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Message"))
+public final class MessageRenderer extends AbstractRenderer {
 
     /**
-     * Renders the Message component.
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
-     * @param writer <code>ResponseWriter</code> to which the element
-     * end should be rendered
-     * @exception IOException if an input/output error occurs
+     * Start element.
      */
+    private static final String MESSAGE_START_ELEMENT = "div";
+
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // End the appropriate element
         Message message = (Message) component;
 
         String forComponentId = message.getFor();
-        FacesMessage msg = null;
-        Iterator msgIt = null;
+        FacesMessage msg;
+        Iterator msgIt;
 
         if (Beans.isDesignTime()) {
             // At design-time, prepare a default message
-
             if (forComponentId == null || forComponentId.length() == 0) {
                 String summary = MessageUtil.getMessage(context,
-                        "com.sun.webui.jsf.renderkit.html.Bundle", //NOI18N
-                        "Message.default.summary"); //NOI18N
+                        "com.sun.webui.jsf.renderkit.html.Bundle",
+                        "Message.default.summary");
                 renderMessage(context, component, writer,
                         new FacesMessage(summary));
             } else {
                 String summary = MessageUtil.getMessage(context,
-                        "com.sun.webui.jsf.renderkit.html.Bundle", //NOI18N
-                        "Message.for.summary", //NOI18N
-                        new String[]{forComponentId});
+                        "com.sun.webui.jsf.renderkit.html.Bundle",
+                        "Message.for.summary",
+                        new String[]{
+                            forComponentId
+                        });
                 String detail = MessageUtil.getMessage(context,
-                        "com.sun.webui.jsf.renderkit.html.Bundle", //NOI18n
-                        "Message.for.detail", //NOI18N
-                        new String[]{forComponentId});
+                        "com.sun.webui.jsf.renderkit.html.Bundle",
+                        "Message.for.detail",
+                        new String[]{
+                            forComponentId
+                        });
 
                 renderMessage(context, component, writer,
                         new FacesMessage(summary, detail));
@@ -94,8 +93,8 @@ public class MessageRenderer extends AbstractRenderer {
     }
 
     /**
-     * Renders the Message text
-     *     
+     * Renders the Message text.
+     *
      * @param context The current FacesContext
      * @param component The Message object to use
      * @param writer The current ResponseWriter
@@ -103,9 +102,9 @@ public class MessageRenderer extends AbstractRenderer {
      *
      * @exception IOException if an input/output error occurs
      */
-    public void renderMessage(FacesContext context,
-            UIComponent component, ResponseWriter writer,
-            FacesMessage fMsg) throws IOException {
+    public void renderMessage(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer,
+            final FacesMessage fMsg) throws IOException {
 
         Message message = (Message) component;
         String summary = null;
@@ -126,7 +125,6 @@ public class MessageRenderer extends AbstractRenderer {
         }
 
         // No message text, don't write anything
-        //
         if (summary == null && detail == null) {
             return;
         }
@@ -139,7 +137,6 @@ public class MessageRenderer extends AbstractRenderer {
         // A div is always rendered, thereby giving the message
         // block behavior, vs inline behavior, and always renders
         // the div.
-
         // Originally
         // Creator always renders an opening div, followed by a span
         // that encloses the message. If both summary and detail are to
@@ -153,13 +150,10 @@ public class MessageRenderer extends AbstractRenderer {
         //
         // Since creator always renders a div, that div contains the id
         // and the hidden style.
-
         // Creator always writes a "div" and always returns true.
         // Braveheart only writes a "span" when both summary and
         // detail are to be written and then returns true, otherwise
         // return false
-        //
-
         boolean wroteStartElement = renderMessageStart(context, message,
                 null, haveSummaryAndDetail, writer);
 
@@ -171,17 +165,27 @@ public class MessageRenderer extends AbstractRenderer {
         // the message.
         //
         if (summary != null) {
-            String styleClass =
-                    severityStyleClass != null ? severityStyleClass : theme.getStyleClass(ThemeStyles.MESSAGE_FIELD_SUMMARY_TEXT);
+            String styleClass;
+            if (severityStyleClass != null) {
+                styleClass = severityStyleClass;
+            } else {
+                styleClass = theme.getStyleClass(
+                        ThemeStyles.MESSAGE_FIELD_SUMMARY_TEXT);
+            }
             renderMessageText(context, message, writer,
                     summary, styleClass, wroteStartElement);
         }
 
         if (detail != null) {
-            String styleClass =
-                    severityStyleClass != null ? severityStyleClass : theme.getStyleClass(ThemeStyles.MESSAGE_FIELD_TEXT);
+            String styleClass;
+            if (severityStyleClass != null) {
+                styleClass = severityStyleClass;
+            } else {
+                styleClass = theme.getStyleClass(
+                        ThemeStyles.MESSAGE_FIELD_TEXT);
+            }
             if (summary != null) {
-                detail = " " + detail; //NOI18N
+                detail = " " + detail;
             }
             renderMessageText(context, message, writer,
                     detail, styleClass, wroteStartElement);
@@ -190,76 +194,74 @@ public class MessageRenderer extends AbstractRenderer {
         // If the start element was written, close it
         // else close the message start element written in this
         // method.
-        //
         if (wroteStartElement) {
             renderMessageEnd(context, message, wroteStartElement, writer);
         }
     }
 
     /**
-     * Render the message text. If wroteStartElement is false
-     * render an enclosing span element and associate the message's id
-     * with that element and render the hidden style class if appropriate.
-     * If wroteStartElement is true, render an enclosing span element
-     * with just the class attribute with value textStyle.
+     * Render the message text. If wroteStartElement is false render an
+     * enclosing span element and associate the message's id with that element
+     * and render the hidden style class if appropriate. If wroteStartElement is
+     * true, render an enclosing span element with just the class attribute with
+     * value textStyle.
      *
      * @param context The current FacesContext
      * @param message The Message object being rendered
      * @param writer The current ResponseWriter
      * @param msgText The message text
      * @param textStyle The text style
-     * @param wroteOpeningSpanId Flag to indicate whether opening 
-     *        element with id was rendered
-     * 
+     * @param wroteStartElement Flag to indicate whether opening element with
+     * id was rendered
+     *
      * @exception IOException if an input/output error occurs
      */
-    private void renderMessageText(FacesContext context, Message message,
-            ResponseWriter writer, String msgText, String textStyle,
-            boolean wroteStartElement) throws IOException {
+    private void renderMessageText(final FacesContext context,
+            final Message message, final ResponseWriter writer,
+            final String msgText, final String textStyle,
+            final boolean wroteStartElement) throws IOException {
 
         // Render an opening span with the id attribute and hidden style
         // class.
-        //
         if (!wroteStartElement) {
             renderMessageIdElement(context, message, textStyle,
-                    "span", writer); //NOI18N
+                    "span", writer);
         } else {
-            writer.startElement("span", message); //NOI18N
-            writer.writeAttribute("class", textStyle, "class"); //NOI18N
+            writer.startElement("span", message);
+            writer.writeAttribute("class", textStyle, "class");
         }
         writer.writeText(msgText, null);
 
         // Always write the end span element, even for the span rendered by
         // renderMessageIdElement
-        //
-        writer.endElement("span"); // NOI18N
+        writer.endElement("span");
     }
 
     /**
-     * Method to encapsulate different rendering implementations for 
-     * the element associated with the Message id that encloses the message
-     * or messages. Returns true if a start element is written, false
-     * otherwise.
+     * Method to encapsulate different rendering implementations for the element
+     * associated with the Message id that encloses the message or messages.
+     * Returns true if a start element is written, false otherwise.
      *
-     * This implementation only writes an overall enclosing element, a span,
-     * if haveSummaryAndDetail is true.
+     * This implementation only writes an overall enclosing element, a span, if
+     * haveSummaryAndDetail is true.
      *
      * @param context The current FacesContext
      * @param message The Message object being rendered
      * @param writer The current ResponseWriter
      * @param styleClass The message style class
-     * @param haveSummaryAndDetail True if rendering both the summary and
-     * detail messages.
+     * @param haveSummaryAndDetail True if rendering both the summary and detail
+     * messages.
      *
      * @exception IOException if an input/output error occurs
+     * @return {@code boolean}
      */
-    protected boolean renderMessageStart(FacesContext context,
-            Message message, String styleClass, boolean haveSummaryAndDetail,
-            ResponseWriter writer) throws IOException {
+    protected boolean renderMessageStart(final FacesContext context,
+            final Message message, final String styleClass,
+            final boolean haveSummaryAndDetail, final ResponseWriter writer)
+            throws IOException {
 
         renderMessageIdElement(context, message, styleClass,
                 MESSAGE_START_ELEMENT, writer);
-
         return true;
     }
 
@@ -270,68 +272,71 @@ public class MessageRenderer extends AbstractRenderer {
      * @param message The Message object being rendered.
      * @param wroteStartElement True if renderMessageStart returned true.
      * @param writer The current ResponseWriter
+     * @exception IOException if an input/output error occurs
      */
-    protected void renderMessageEnd(FacesContext context, Message message,
-            boolean wroteStartElement,
-            ResponseWriter writer) throws IOException {
+    protected void renderMessageEnd(final FacesContext context,
+            final Message message, final boolean wroteStartElement,
+            final  ResponseWriter writer) throws IOException {
+
         writer.endElement(MESSAGE_START_ELEMENT);
     }
 
     /**
-     * Render the element that is associated with the
-     * component id.
+     * Render the element that is associated with the component id.
      *
      * @param context The current FacesContext
      * @param message The Message object being rendered.
      * @param styleClass The message style class
      * @param startElement The HTML element to render
      * @param writer The current ResponseWriter
+     * @exception IOException if an input/output error occurs
      */
-    protected void renderMessageIdElement(FacesContext context,
-            Message message, String styleClass,
-            String startElement,
-            ResponseWriter writer) throws IOException {
+    protected void renderMessageIdElement(final FacesContext context,
+            final Message message, final String styleClass,
+            final String startElement, final ResponseWriter writer)
+            throws IOException {
 
         String id = message.getClientId(context);
-
         writer.startElement(startElement, message);
-        writer.writeAttribute("id", id, "id"); //NOI18N
-
+        writer.writeAttribute("id", id, "id");
         String style = message.getStyle();
         if (style != null && style.length() > 0) {
-            writer.writeAttribute("style", style, "style"); //NOI18N
+            writer.writeAttribute("style", style, "style");
         }
         RenderingUtilities.renderStyleClass(context, writer,
                 message, styleClass);
     }
 
     /**
-     * Return a style class based on the FacesMesssage severity.
-     * If there is no style for a given severity return null.
+     * Return a style class based on the FacesMesssage severity. If there is no
+     * style for a given severity return null.
      *
      * @param facesMessage The FacesMessage
      * @param theme The current theme
+     * @return String
      */
-    protected String getSeverityStyleClass(FacesMessage facesMessage,
-            Theme theme) {
+    protected String getSeverityStyleClass(final FacesMessage facesMessage,
+            final Theme theme) {
 
         // Obtain a style based on message severity
-        //
         String severityStyleClass = null;
         Severity severity = facesMessage.getSeverity();
         if (severity == FacesMessage.SEVERITY_INFO) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_INFO);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_INFO);
         } else if (severity == FacesMessage.SEVERITY_WARN) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_WARN);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_WARN);
         } else if (severity == FacesMessage.SEVERITY_ERROR) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_ERROR);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_ERROR);
         } else if (severity == FacesMessage.SEVERITY_FATAL) {
-            severityStyleClass =
-                    theme.getStyleClass(ThemeStyles.MESSAGE_FATAL);
+            severityStyleClass
+                    = theme.getStyleClass(ThemeStyles.MESSAGE_FATAL);
         }
-        return severityStyleClass == null || severityStyleClass.length() == 0 ? null : severityStyleClass;
+        if (severityStyleClass == null || severityStyleClass.length() == 0) {
+            return null;
+        }
+        return severityStyleClass;
     }
 }

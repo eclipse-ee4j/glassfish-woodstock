@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 import java.io.Serializable;
@@ -38,73 +37,124 @@ import com.sun.webui.jsf.util.FilterUtil;
 // a way of bubbling up, like messages that don't accept arguments.
 //
 /**
- *
- * @author deep, John Yeary
+ * File chooser model.
  */
-public class FileChooserModel implements ResourceModel, Serializable {
+public final class FileChooserModel implements ResourceModel, Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 7437797148169351743L;
+
+    /**
+     * Windows os name constant.
+     */
     private static final String WINDOWS_OS = "window";
-    private static final String SPACE = "&nbsp;"; //NOI18N
-    // These need to be configurable in the Theme
-    //
+
+    /**
+     * HTML encoded space.
+     */
+    private static final String SPACE = "&nbsp;";
+
+    /**
+     * Windows root.
+     */
     private static final String WINDOWS_ROOT = "c:\\";
+
+    /**
+     * Unix root.
+     */
     private static final String UNIX_ROOT = "/";
+
+    /**
+     * Default server hsot name.
+     */
     private static final String DEFAULT_SERVER = "localhost";
+
+    /**
+     * File system root.
+     */
     private String root = null;
+
+    /**
+     * File separator character.
+     */
     private String separatorString = File.separator;
+
+    /**
+     * Current directory.
+     */
     private String currentDir = null;
+
+    /**
+     * Filter value.
+     */
     private String filterValue = "*";
+
+    /**
+     * Sort value.
+     */
     private String sortValue = null;
+
+    /**
+     * Folder chooser flag.
+     */
     private boolean folderChooser = false;
+
+    /**
+     * Type set flag.
+     */
     private boolean typeSet = false;
+
+    /**
+     * Server name.
+     */
     private String serverName = null;
+
+    /**
+     * Collator.
+     */
     private transient Collator collator = null;
-    // private transient Theme theme = null;
 
-    /** Creates a new instance of FileChooserModel */
+    /**
+     * Creates a new instance of FileChooserModel.
+     */
     public FileChooserModel() {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        // theme = ThemeUtilities.getTheme(context);
-
         if (isWindows()) {
             root = WINDOWS_ROOT;
         } else {
             root = UNIX_ROOT;
         }
-
         try {
             serverName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ukhe) {
             serverName = DEFAULT_SERVER;
         }
-
     }
 
+    /**
+     * Test if the current operating system is windows.
+     *
+     * @return {@code boolean}
+     */
     private boolean isWindows() {
-        String osName = System.getProperty("os.name").toUpperCase(); //NOI18N
+        String osName = System.getProperty("os.name").toUpperCase();
         return osName.startsWith(WINDOWS_OS.toUpperCase());
     }
 
-    // FIXME: This should be get/setRoot.
-    // Don't need "absolute".
-    //
     /**
-     * Returns the root value of the file system in question.
-     * For example, in the default implementation of this interface for local
-     * filesystems the root value would be "/" in Unix and "C:\" on Windows.
+     * Returns the root value of the file system in question. For example, in
+     * the default implementation of this interface for local filesystems the
+     * root value would be "/" in Unix and "C:\" on Windows.
      *
      * @return returns the absolute root (directory for files and folders).
      */
+    @Override
     public String getAbsoluteRoot() {
-
         return this.root;
     }
 
-    /**
-     * Return all available roots.
-     */
+    @Override
     public String[] getRoots() {
 
         File[] roots = File.listRoots();
@@ -128,14 +178,14 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     /**
-     * Sets the root value of the resource system in question.
-     * For example, in the default implementation of this interface for local
-     * filesystems the root value could be set to "/" in Unix and "C:\" on Windows.
+     * Sets the root value of the resource system in question. For example, in
+     * the default implementation of this interface for local file systems the
+     * root value could be set to "/" in Unix and "C:\" on Windows.
      *
      * @param absRoot - the value to be used as the root of this resource system
      */
-    public void setAbsoluteRoot(String absRoot) {
-
+    @Override
+    public void setAbsoluteRoot(final String absRoot) {
         if (absRoot != null) {
             this.root = absRoot;
         }
@@ -148,41 +198,36 @@ public class FileChooserModel implements ResourceModel, Serializable {
     // values on the client in javascript.
     //
     /**
-     * Return the separator String for this resource system. For a 
-     * file system chooser this would be File.separator.
+     * Return the separator String for this resource system. For a file system
+     * chooser this would be File.separator.
      *
      * @return returns the separator String.
      */
+    @Override
     public String getSeparatorString() {
-
         return this.separatorString;
-
     }
 
     /**
-     * Get the Server namefrom where the resources are being loaded.
+     * Get the Server name from where the resources are being loaded.
      *
      * @return the server name
-     * 
      */
+    @Override
     public String getServerName() {
-
         return serverName;
-
     }
 
     /**
      * Set the server name from where the resources are being loaded.
      *
-     * @param serverName - the server name to be set
-     * 
+     * @param newServerName - the server name to be set
      */
-    public void setServerName(String serverName) {
-
-        if (serverName != null) {
-            this.serverName = serverName;
+    @Override
+    public void setServerName(final String newServerName) {
+        if (newServerName != null) {
+            this.serverName = newServerName;
         }
-
     }
 
     /**
@@ -190,6 +235,7 @@ public class FileChooserModel implements ResourceModel, Serializable {
      *
      * @return returns the filter String.
      */
+    @Override
     public String getFilterValue() {
         return this.filterValue;
     }
@@ -197,48 +243,48 @@ public class FileChooserModel implements ResourceModel, Serializable {
     /**
      * Set the filter String entered by the user in the Filter text field.
      *
-     * @param filterValue - the filter string to be used subsequently.
-     * 
+     * @param newFilterValue - the filter string to be used subsequently.
      */
-    public void setFilterValue(String filterValue) {
-        if (filterValue != null) {
-            validateFilterValue(filterValue);
-            this.filterValue = filterValue;
+    @Override
+    public void setFilterValue(final String newFilterValue) {
+        if (newFilterValue != null) {
+            validateFilterValue(newFilterValue);
+            this.filterValue = newFilterValue;
         }
     }
 
     /**
      * Return the sort field that is currently active.
-     * 
+     *
      * @return returns the sort field in use.
      */
+    @Override
     public String getSortValue() {
-
         return this.sortValue;
-
     }
 
     /**
      * Set the sort field chosen by the user from the drop down menu.
-     * 
-     * @param sortValue - string representing sortValue selected by the user.
-     * 
+     *
+     * @param newSortValue - string representing sortValue selected by the user.
      */
-    public void setSortValue(String sortValue) {
-        if (sortValue != null) {
-            validateSortValue(sortValue);
-            this.sortValue = sortValue;
+    @Override
+    public void setSortValue(final String newSortValue) {
+        if (newSortValue != null) {
+            validateSortValue(newSortValue);
+            this.sortValue = newSortValue;
         }
     }
 
     /**
-     * This method is called to get the current directory of
-     * the resuource list being displayed in the filechooser's listbox
-     * If the current directory has not been set, root directory
-     * is returned by calling <code>getAbsoluteRoot()</code>.
+     * This method is called to get the current directory of the resource list
+     * being displayed in the file chooser's list box If the current directory
+     * has not been set, root directory is returned by calling
+     * {@code getAbsoluteRoot()}.
      *
      * @return returns the current directory or the root directory.
      */
+    @Override
     public String getCurrentDir() {
         if (this.currentDir != null) {
             return this.currentDir;
@@ -248,18 +294,15 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     /**
-     * This method is called to set the current directory of
-     * the resuource list that would be displayed in the next
-     * display cycle.
+     * This method is called to set the current directory of the resource list
+     * that would be displayed in the next display cycle.
      *
-     * @param dir - the value to be set the new current root node.
-     * 
+     * @param dir the value to be set the new current root node.
      */
-    public void setCurrentDir(String dir) throws ResourceModelException {
-
+    @Override
+    public void setCurrentDir(final String dir) throws ResourceModelException {
         // How about returning the previous value ?
         // And why silence for null dir ? Use default ?
-        //
         if (dir != null && dir.length() > 0) {
             validateFolder(dir);
             this.currentDir = dir;
@@ -268,48 +311,50 @@ public class FileChooserModel implements ResourceModel, Serializable {
 
     /**
      * Returns the list of files in the directory represented by the
-     * <code>folder</code> parameter. If <code>folder</code> is null
-     * the contents of folder returned by <code>getCurrentDir</code>
-     * are returned. This method returns an Array of ResourecItem objects
-     * 
+     * {@code folder} parameter. If {@code folder} is null the contents of
+     * folder returned by {@code getCurrentDir} are returned. This method
+     * returns an Array of ResourecItem objects
+     *
      * @return returns the contents of folder or the current directory.
      */
-    public ResourceItem[] getFolderContent(String folder,
-            boolean disableFiles, boolean disableFolders) {
+    @Override
+    public ResourceItem[] getFolderContent(final String folder,
+            final boolean disableFiles, final boolean disableFolders) {
 
         FacesContext context = FacesContext.getCurrentInstance();
         ArrayList<FileChooserItem> optList = new ArrayList<FileChooserItem>();
-        FileChooserItem[] fileEntries = null;
+        FileChooserItem[] fileEntries;
         FilterUtil filter = new FilterUtil(getFilterValue());
         boolean filesExist = false;
 
+        String zFolder;
         if (folder == null) {
-            folder = getCurrentDir();
+            zFolder = getCurrentDir();
+        } else {
+            zFolder = folder;
         }
-        if (folder == null) {
+        if (zFolder == null) {
             return null;
         }
 
-        File file = new File(folder);
+        File file = new File(zFolder);
         File[] fileList = file.listFiles();
         if ((fileList == null) || (fileList.length == 0)) {
             return null;
         }
 
-        // As per SWAED guidelines the list of folders should appear before the 
-        // list of files. Hence, we need to sort the dirs followed by the files  
-        // and then append the two arrays. 
-
+        // As per SWAED guidelines the list of folders should appear before the
+        // list of files. Hence, we need to sort the dirs followed by the files
+        // and then append the two arrays.
         // read each entry from the array and store it in one
         // of the two arraylists based on whether its a file or dir
-
         ArrayList<File> justFiles = new ArrayList<File>();
         ArrayList<File> justDirs = new ArrayList<File>();
-        for (int i = 0; i < fileList.length; i++) {
-            if (fileList[i].isDirectory()) {
-                justDirs.add(fileList[i]);
+        for (File fileList1 : fileList) {
+            if (fileList1.isDirectory()) {
+                justDirs.add(fileList1);
             } else {
-                justFiles.add(fileList[i]);
+                justFiles.add(fileList1);
             }
         }
 
@@ -325,30 +370,24 @@ public class FileChooserModel implements ResourceModel, Serializable {
         }
 
         // sort the two files arrays
-
         sort(fileArray, getSortValue());
         sort(dirArray, getSortValue());
 
         // merge the two files
-
         int count = 0;
         for (; count < justDirs.size(); count++) {
             fileList[count] = dirArray[count];
         }
-        for (int j = 0; j < justFiles.size(); j++) {
-            fileList[count + j] = fileArray[j];
-        }
+        System.arraycopy(fileArray, 0, fileList, count, justFiles.size());
 
         // end of code change to list of sorted dirs before files.
-
-        for (int i = 0; i < fileList.length; i++) {
-            String name = fileList[i].getName();
+        for (File fileList1 : fileList) {
+            String name = fileList1.getName();
             boolean bSelectable = false;
-            boolean bIsDirectory = fileList[i].isDirectory();
+            boolean bIsDirectory = fileList1.isDirectory();
             boolean disabled = false;
-
             if (!bIsDirectory) {
-                if (filter.accept(fileList[i])) {
+                if (filter.accept(fileList1)) {
                     bSelectable = true;
                     // if folderchooser then files should look as
                     // if they are disabled.
@@ -362,7 +401,7 @@ public class FileChooserModel implements ResourceModel, Serializable {
                 // all folders are selectable
                 bSelectable = true;
             }
-            FileChooserItem item = getItem(fileList[i], context, disabled);
+            FileChooserItem item = getItem(fileList1, context, disabled);
             optList.add(item);
             filesExist = true;
         }
@@ -380,16 +419,15 @@ public class FileChooserModel implements ResourceModel, Serializable {
     /**
      * Given a ResourceItem key return the ResourceItem.
      *
-     * @param  itemKey the resource item key which is the same as the value
-     * of the Option element in the listbox.
+     * @param itemKey the resource item key which is the same as the value of
+     * the Option element in the list box.
      *
      * @return the ResourceItem object
      */
     @Override
-    public ResourceItem getResourceItem(String itemKey) {
-
+    public ResourceItem getResourceItem(final String itemKey) {
         FacesContext context = FacesContext.getCurrentInstance();
-        String resource = null;
+        String resource;
         String[] strArray = itemKey.split("=");
         if (strArray == null) {
             return null;
@@ -404,27 +442,28 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     // FIXME: Don't need "Type" should be just "isFolder".
-    //
     /**
      * Returns true if the supplied absolute path is a folder type.
-     * 
-     * @param  path - the absolute path to the resource
+     *
+     * @param path - the absolute path to the resource
      * @return returns the current root (directory for files and folders).
      */
-    public boolean isFolderType(String path) {
+    @Override
+    public boolean isFolderType(final String path) {
         File f = new File(path);
         return f.isDirectory();
     }
 
     /**
-     * This methods checks if the resource path in question can be accessed
-     * by the user trying to select or view it.
+     * This methods checks if the resource path in question can be accessed by
+     * the user trying to select or view it.
      *
      * @param resourceName - the resource name to check for read access
-     * @return true if the user can select the resource specified
-     *  by the resource name.
+     * @return true if the user can select the resource specified by the
+     * resource name.
      */
-    public boolean canRead(String resourceName) {
+    @Override
+    public boolean canRead(final String resourceName) {
 
         File f = new File(resourceName);
         return f.canRead();
@@ -432,71 +471,76 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     /**
-     * This methods checks if the resource path in question can be accessed
-     * for writes by the user.
+     * This methods checks if the resource path in question can be accessed for
+     * writes by the user.
      *
      * @param resourceName - the resource name to check for write access
-     * @return true if the user can select the resource specified
-     *  by the resource name for write.
-     * 
+     * @return true if the user can select the resource specified by the
+     * resource name for write.
+     *
      */
-    public boolean canWrite(String resourceName) {
-
+    @Override
+    public boolean canWrite(final String resourceName) {
         File f = new File(resourceName);
         return f.canWrite();
     }
 
-    /////////////////////////////////////////////////////////////////////
-    // private methods 
-    /////////////////////////////////////////////////////////////////////
-    // FIXME: This formatting should be a theme based format spec.
-    // 
     /**
-     * Create and return an Option object representing en entry for
-     * the listbox.
+     * Create and return an Option object representing en entry for the list
+     * box.
+     *
+     * @param file file
+     * @param context faces context
+     * @param disabled disabled flag
+     * @return FileChooserItem
      */
-    protected FileChooserItem getItem(File file, FacesContext context,
-            boolean disabled) {
+    private static FileChooserItem getItem(final File file,
+            final FacesContext context, final boolean disabled) {
 
-        Theme theme = getTheme();
-        int fileNameLen = Integer.parseInt(theme.getMessage("filechooser.fileNameLen")); // NOI18N
-        int fileSizeLen = Integer.parseInt(theme.getMessage("filechooser.fileSizeLen")); // NOI18N
-        int fileDateLen = Integer.parseInt(theme.getMessage("filechooser.fileDateLen")); // NOI18N
+        Theme theme = ThemeUtilities.getTheme(context);
+
+        int fileNameLen = Integer.parseInt(
+                theme.getMessage("filechooser.fileNameLen"));
+        int fileSizeLen = Integer.parseInt(
+                theme.getMessage("filechooser.fileSizeLen"));
+        int fileDateLen = Integer.parseInt(
+                theme.getMessage("filechooser.fileDateLen"));
 
         Locale locale = context.getViewRoot().getLocale();
 
-        DateFormat dateFormat =
-                SimpleDateFormat.getDateInstance(DateFormat.SHORT, locale);
-        String defaultPattern =
-                ((SimpleDateFormat) dateFormat).toLocalizedPattern();
-        if (defaultPattern.indexOf("yyyy") == -1) {
-            defaultPattern = defaultPattern.replaceFirst("yy", "yyyy"); //NOI18N
+        DateFormat dateFormat
+                = SimpleDateFormat.getDateInstance(DateFormat.SHORT, locale);
+        String defaultPattern
+                = ((SimpleDateFormat) dateFormat).toLocalizedPattern();
+        if (!defaultPattern.contains("yyyy")) {
+            defaultPattern = defaultPattern.replaceFirst("yy", "yyyy");
         }
-        if (defaultPattern.indexOf("MM") == -1) {
-            defaultPattern = defaultPattern.replaceFirst("M", "MM"); //NOI18N
+        if (!defaultPattern.contains("MM")) {
+            defaultPattern = defaultPattern.replaceFirst("M", "MM");
         }
-        if (defaultPattern.indexOf("dd") == -1) {
-            defaultPattern = defaultPattern.replaceFirst("d", "dd"); //NOI18N
+        if (!defaultPattern.contains("dd")) {
+            defaultPattern = defaultPattern.replaceFirst("d", "dd");
         }
 
         try {
-            defaultPattern = ThemeUtilities.getTheme(context).getMessage("filechooser.".concat(defaultPattern));
+            defaultPattern = ThemeUtilities.getTheme(context)
+                    .getMessage("filechooser.".concat(defaultPattern));
         } catch (MissingResourceException mre) {
-            defaultPattern = "MM/dd/yyyy"; //NOI18N
+            defaultPattern = "MM/dd/yyyy";
         }
 
         ((SimpleDateFormat) dateFormat).applyPattern(defaultPattern);
 
-        SimpleDateFormat timeFormat =
-                new SimpleDateFormat(theme.getMessage("filechooser.timeFormat"), locale);
+        SimpleDateFormat timeFormat = new SimpleDateFormat(
+                theme.getMessage("filechooser.timeFormat"), locale);
 
         String name = file.getName();
-        String value = null;
+        String value;
         if (file.isDirectory()) {
             name += File.separator;
-            value = "folder" + "=" + file.getAbsolutePath();   //NOI18N
+            value = "folder" + "=" + file.getAbsolutePath();
         } else {
-            value = "file" + "=" + file.getAbsolutePath();    //NOI18N
+            value = "file" + "=" + file.getAbsolutePath();
         }
         name = getDisplayString(name, fileNameLen);
         String size = Long.toString(file.length());
@@ -504,8 +548,17 @@ public class FileChooserModel implements ResourceModel, Serializable {
         Date modifiedDate = new Date(file.lastModified());
         String date = dateFormat.format(modifiedDate);
         String time = timeFormat.format(modifiedDate);
-        StringBuffer buffer = new StringBuffer(128);
-        buffer.append(name).append(SPACE).append(SPACE).append(SPACE).append(size).append(SPACE).append(SPACE).append(date).append(SPACE).append(time);
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(name)
+                .append(SPACE)
+                .append(SPACE)
+                .append(SPACE)
+                .append(size)
+                .append(SPACE)
+                .append(SPACE)
+                .append(date)
+                .append(SPACE)
+                .append(time);
         FileChooserItem item = new FileChooserItem(file);
         item.setItemKey(value);
         item.setItemLabel(buffer.toString());
@@ -514,43 +567,57 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     /**
-     * This method returns the string of size maxLen by padding the
-     * appropriate amount of spaces next to str.
+     * This method returns the string of size maxLen by padding the appropriate
+     * amount of spaces next to str.
+     * @param str input string
+     * @param maxLen maximum length
+     * @return String
      */
-    private String getDisplayString(String str, int maxLen) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static String getDisplayString(final String str, final int maxLen) {
 
-        int length = str.length();
+        String res = str;
+        int length = res.length();
         if (length < maxLen) {
             int spaceCount = maxLen - length;
             for (int j = 0; j < spaceCount; j++) {
-                str += SPACE;
+                res += SPACE;
             }
         } else if (length > maxLen) {
             int shownLen = maxLen - 3;
-            str = str.substring(0, shownLen);
-            str += "...";    //NOI18N
+            res = res.substring(0, shownLen);
+            res += "...";
         }
-        return str;
-    }
-
-    interface SortRule {
-
-        public boolean compare(File f1, File f2);
+        return res;
     }
 
     /**
-     * This module sorts the files and dirs in a given directory
-     * according to the sort field selected by the user.
-     * By default the files will be sorted
-     * alphabetically with all folders first, followed by all files in
-     * alphabetical order. If the sort field is TIME the file will be
-     * sorted in ascending order with the earliest modified file first.
-     * if the sort field is SIZE, the files will be sorted by size with
-     * the smallest first. The bubble sort algorithm is being used here.
-     * @param fileList array of files to be sorted
-     * @param sortValue ths field to be sorted oin
+     * Sort rule interface.
      */
-    protected void sort(File[] fileList, String sortValue) {
+    private interface SortRule {
+
+        /**
+         * Compare two files.
+         * @param f1 first file
+         * @param f2 second file
+         * @return boolean
+         */
+        boolean compare(File f1, File f2);
+    }
+
+    /**
+     * This module sorts the files and directories in a given directory
+     * according to the sort field selected by the user. By default the files
+     * will be sorted alphabetically with all folders first, followed by all
+     * files in alphabetical order. If the sort field is TIME the file will be
+     * sorted in ascending order with the earliest modified file first. if the
+     * sort field is SIZE, the files will be sorted by size with the smallest
+     * first. The bubble sort algorithm is being used here.
+     *
+     * @param fileList array of files to be sorted
+     * @param newSortValue the field to be sorted in
+     */
+    private void sort(final File[] fileList, final String newSortValue) {
 
         if ((fileList == null) || (fileList.length == 0)) {
             return;
@@ -565,34 +632,37 @@ public class FileChooserModel implements ResourceModel, Serializable {
         collator = Collator.getInstance(locale);
         collator.setStrength(Collator.SECONDARY);
 
-        if (sortValue == null) {
-            sortValue = FileChooser.ALPHABETIC_ASC;
+        String zSortValue = newSortValue;
+        if (zSortValue == null) {
+            zSortValue = FileChooser.ALPHABETIC_ASC;
         }
 
         // check if the two files being compared are already
         // in the desired order
-
         SortRule sr = null;
-        if (sortValue.equals(FileChooser.ALPHABETIC_ASC)) {
+        if (zSortValue.equals(FileChooser.ALPHABETIC_ASC)) {
             sr = new SortRule() {
 
-                public boolean compare(File file1, File file2) {
+                @Override
+                public boolean compare(final File file1, final File file2) {
                     return (collator.compare(file1.getName(),
                             file2.getName()) >= 0);
                 }
             };
-        } else if (sortValue.equals(FileChooser.ALPHABETIC_DSC)) {
+        } else if (zSortValue.equals(FileChooser.ALPHABETIC_DSC)) {
             sr = new SortRule() {
 
-                public boolean compare(File file1, File file2) {
+                @Override
+                public boolean compare(final File file1, final File file2) {
                     return (collator.compare(file2.getName(),
                             file1.getName()) >= 0);
                 }
             };
-        } else if (sortValue.equals(FileChooser.SIZE_ASC)) {
+        } else if (zSortValue.equals(FileChooser.SIZE_ASC)) {
             sr = new SortRule() {
 
-                public boolean compare(File file1, File file2) {
+                @Override
+                public boolean compare(final File file1, final File file2) {
                     if (file1.length() == file2.length()) {
                         return (collator.compare(file1.getName(),
                                 file2.getName()) >= 0);
@@ -601,10 +671,11 @@ public class FileChooserModel implements ResourceModel, Serializable {
                     }
                 }
             };
-        } else if (sortValue.equals(FileChooser.SIZE_DSC)) {
+        } else if (zSortValue.equals(FileChooser.SIZE_DSC)) {
             sr = new SortRule() {
 
-                public boolean compare(File file1, File file2) {
+                @Override
+                public boolean compare(final File file1, final File file2) {
                     if (file1.length() == file2.length()) {
                         return (collator.compare(file1.getName(),
                                 file2.getName()) >= 0);
@@ -613,10 +684,11 @@ public class FileChooserModel implements ResourceModel, Serializable {
                     }
                 }
             };
-        } else if (sortValue.equals(FileChooser.LASTMODIFIED_ASC)) {
+        } else if (zSortValue.equals(FileChooser.LASTMODIFIED_ASC)) {
             sr = new SortRule() {
 
-                public boolean compare(File file1, File file2) {
+                @Override
+                public boolean compare(final File file1, final File file2) {
                     if (file1.lastModified() == file2.lastModified()) {
                         return (collator.compare(file1.getName(),
                                 file2.getName()) >= 0);
@@ -625,10 +697,11 @@ public class FileChooserModel implements ResourceModel, Serializable {
                     }
                 }
             };
-        } else if (sortValue.equals(FileChooser.LASTMODIFIED_DSC)) {
+        } else if (zSortValue.equals(FileChooser.LASTMODIFIED_DSC)) {
             sr = new SortRule() {
 
-                public boolean compare(File file1, File file2) {
+                @Override
+                public boolean compare(final File file1, final File file2) {
                     if (file1.lastModified() == file2.lastModified()) {
                         return (collator.compare(file1.getName(),
                                 file2.getName()) >= 0);
@@ -657,19 +730,16 @@ public class FileChooserModel implements ResourceModel, Serializable {
     // was no parent. This can result in an infinite loop
     // if this method is naviget up the hierarchy.
     // return null if there is no parent.
-    //
     /**
-     * Return the parent folder of the value of <code>getCurrentDir</code>.
-     * If the current directory does not have a parent
-     * null is returned.
+     * Return the parent folder of the value of {@code getCurrentDir}. If the
+     * current directory does not have a parent null is returned.
      */
+    @Override
     public String getParentFolder() {
-
-        File parent = null;
+        File parent;
         String parentDir = null;
         try {
             // Create a file object from the lookIn folder.
-            //
             parent = new File(getCurrentDir());
             parentDir = parent.getParent();
         } catch (Exception e) {
@@ -679,49 +749,63 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     // This is really a function of platform. And configurable.
-    //
+    @Override
     public String getEscapeChar() {
-        return getSeparatorString().equals("/") ? "\\" : "/"; //NOI18N
+        if (getSeparatorString().equals("/")) {
+            return "\\";
+        }
+        return "/";
     }
 
+    @Override
     public String getDelimiterChar() {
-        return ","; //NOI18N
+        return ",";
     }
 
     // Currently this is the only validation done for folders.
     // Actually this should be mode detailed, like doesn't
     // exist, no permission, etc.
-    //
-    protected void validateFolder(String folder)
+    /**
+     * Validate the specified folder.
+     * @param folder folder to validate
+     * @throws ResourceModelException if an error occurs
+     */
+    private void validateFolder(final String folder)
             throws ResourceModelException {
 
         if (!canRead(folder)) {
             throw new ResourceModelException(
                     createFacesMessage("filechooser.cannotCompleteErrSum",
-                    "filechooser.cannot_read_folder",
-                    null, new String[]{folder}));
+                            "filechooser.cannot_read_folder",
+                            null, new String[]{folder}));
         }
     }
 
-    // Currently no validation for the sort value.
-    //
-    protected void validateSortValue(String sortValue)
+    /**
+     * Validate the sort value.
+     * @param newSortValue sort value to validate
+     * @throws ResourceModelException if an error occurs
+     */
+    private void validateSortValue(final String newSortValue)
             throws ResourceModelException {
-    }
 
-    // Currently no validation for the filter value.
-    //
-    protected void validateFilterValue(String filterValue)
-            throws ResourceModelException {
+        // Currently no validation for the sort value.
     }
 
     /**
-     * Return a File[] of the selections in content validating the
-     * the entries.
+     * Validate the filter value.
+     * @param newFilterValue filter value to validate
+     * @throws ResourceModelException if an error occurs
      */
-    public Object[] getSelectedContent(String[] content,
-            boolean selectFolders)
+    private void validateFilterValue(final String newFilterValue)
             throws ResourceModelException {
+
+        // Currently no validation for the filter value.
+    }
+
+    @Override
+    public Object[] getSelectedContent(final String[] content,
+            final boolean selectFolders) throws ResourceModelException {
 
         // Contents of Selected File textfield could be a list of files
         // separated by commas. Parse the list, prepend the folder name
@@ -730,21 +814,22 @@ public class FileChooserModel implements ResourceModel, Serializable {
         // If folder, open this folder and enter folder name in
         // Look In field. If file, prepend folder name if required
         // and it to the selected files list.
-
         // Create the parent File object and pass it to the
         // appropriate method.
-        //
         File parent = null;
         try {
             parent = new File(getCurrentDir());
         } catch (Exception e) {
             // Convert to a ResourceModelException with the
             // cause.
-            //
-            throwException(e, "filechooser.cannotCompleteErrSum", //NOI18N
-                    selectFolders ? "filechooser.folderSelectError" : //NOI18N
-                    "filechooser.fileSelectError", //NOI18N
-                    null, null);
+            String detail;
+            if (selectFolders) {
+                detail = "filechooser.folderSelectError";
+            } else {
+                detail = "filechooser.fileSelectError";
+            }
+            throwException(e, "filechooser.cannotCompleteErrSum",
+                    detail, null, null);
         }
         if (selectFolders) {
             return getSelectedFolders(parent, content);
@@ -761,25 +846,26 @@ public class FileChooserModel implements ResourceModel, Serializable {
     // just as a directory change.
     //
     /**
-     * Return a File array of the selected folders from the
-     * parent directory. If there are no selections, an empty
-     * array is returned.
+     * Return a File array of the selected folders from the parent directory.If
+     * there are no selections, an empty array is returned.Typically the parent
+     * is the current directory or the look in folder value and folders is
+     * comprised of relative paths, relative to parent, but they can be absolute
+     * paths.This method validates the folder entries. This means the
+     * "File.canRead" method must return true and the entry must be a folder and
+     * not a file.
      *
-     * Typically the parent is the current directory or the look in
-     * folder value and folders is comprised of relative paths, relative
-     * to parent, but they can be absolute paths.
+     * If there is one selection and it is a folder, relative or absolute path,
+     * it is set as the current directory.
      *
-     * This method validates the folder entries. This means
-     * the "File.canRead" method must return true and the
-     * entry must be a folder and not a file.
-     *
-     * If there is one selection and it is a folder, relative or
-     * absolute path, it is set as the current directory.
-     * 
      * ResourceModelException are thrown on error.
+     *
+     * @param parent directory
+     * @param folders file names
+     * @return File[]
+     * @throws ResourceModelException if an error occurs
      */
-    protected File[] getSelectedFolders(File parent, String[] folders)
-            throws ResourceModelException {
+    private static File[] getSelectedFolders(final File parent,
+            final String[] folders) throws ResourceModelException {
 
         // If a selected folder is not an absolute path
         // it must be a child of the lookIn folder.
@@ -791,49 +877,42 @@ public class FileChooserModel implements ResourceModel, Serializable {
         for (int i = 0; i < folders.length; ++i) {
 
             // For general exceptions
-            //
             try {
                 File folder = new File(folders[i]);
                 // If its not an absolute path it must be a child entry
                 // of the parent.
-                //
                 if (!folder.isAbsolute()) {
                     folder = new File(parent, folders[i]);
                 }
                 // It must exist
                 // Currently we only have an error message for "canRead".
-                //
                 if (!folder.canRead()) {
                     throw new ResourceModelException(
                             createFacesMessage(
-                            "filechooser.cannotCompleteErrSum", //NOI18N
-                            "filechooser.cannot_read_selected_folder", //NOI18N
-                            null, new String[]{folders[i]}));
+                                    "filechooser.cannotCompleteErrSum",
+                                    "filechooser.cannot_read_selected_folder",
+                                    null, new String[]{folders[i]}));
                 }
                 // It must be a folder
                 // FIXME: This error should include an argument to let the
                 // user know which choice was a file.
-                //
                 if (!folder.isDirectory()) {
                     throw new ResourceModelException(
                             createFacesMessage(
-                            "filechooser.cannotCompleteErrSum", //NOI18N
-                            "filechooser.cannotSelectFile", //NOI18N
-                            null, null));
+                                    "filechooser.cannotCompleteErrSum",
+                                    "filechooser.cannotSelectFile",
+                                    null, null));
                 }
-
                 folderArray.add(folder);
 
             } catch (ResourceModelException fcme) {
                 // Just pass it on
-                //
                 throw fcme;
             } catch (Exception e) {
                 // Convert to a ResourceModelException with the
                 // cause.
-                //
-                throwException(e, "filechooser.cannotCompleteErrSum", //NOI18N
-                        "filechooser.fileSelectError", //NOI18N
+                throwException(e, "filechooser.cannotCompleteErrSum",
+                        "filechooser.fileSelectError",
                         null, null);
             }
         }
@@ -841,25 +920,24 @@ public class FileChooserModel implements ResourceModel, Serializable {
     }
 
     /**
-     * Return a File array of the selected files from the
-     * parent directory. If there are no selections, an empty
-     * array is returned.
+     * Return a File array of the selected files from the parent directory.If
+     * there are no selections, an empty array is returned.Typically the parent
+     * is the current directory or the look in folder value and files is
+     * comprised of relative paths, relative to parent, but they can be absolute
+     * paths.This method validates the file entries. This is currently that the
+     * "File.canRead" method must return true and the entry must be a file and
+     * not a folder, with one exception.
      *
-     * Typically the parent is the current directory or the look in
-     * folder value and files is comprised of relative paths, relative
-     * to parent, but they can be absolute paths.
+     * If there is one selection and it is a folder, relative or absolute path,
+     * it is set as the current directory and an empty File[] is returned.
      *
-     * This method validates the file entries. This is currently 
-     * that the "File.canRead" method must return true and the
-     * entry must be a file and not a folder, with one exception.
-     *
-     * If there is one selection and it is a folder, relative or
-     * absolute path, it is set as the current directory and an 
-     * empty File[] is returned.
-     * 
      * ResourceModelException are thrown on error.
+     *
+     * @param parent directory
+     * @param files file names
+     * @return File[]
      */
-    protected File[] getSelectedFiles(File parent, String[] files) {
+    private File[] getSelectedFiles(final File parent, final String[] files) {
 
         // If a selected file is not an absolute path
         // If it is an absolute path, capture the first
@@ -870,18 +948,15 @@ public class FileChooserModel implements ResourceModel, Serializable {
         // If it does not exist throw FileChooserModelExeption.
         // If it exists it must be a file, if it's not a file
         // throw FileChooserModelExeption
-        //
         String newCurrentDir = null;
         ArrayList<File> filesArray = new ArrayList<File>();
         for (int i = 0; i < files.length; ++i) {
 
             // For General Exception catching
-            //
             try {
                 File file = new File(files[i]);
                 // If it's not an absolute path it must be a child entry
                 // of the parent.
-                //
                 if (!file.isAbsolute()) {
                     file = new File(parent, files[i]);
                 } else {
@@ -891,18 +966,16 @@ public class FileChooserModel implements ResourceModel, Serializable {
                 }
                 // It must exist
                 // Currently we only have an error message for "canRead".
-                //
                 if (!file.canRead()) {
                     throw new ResourceModelException(
                             createFacesMessage(
-                            "filechooser.cannotCompleteErrSum", //NOI18N
-                            "filechooser.cannot_read_selected_file", //NOI18N
-                            null, new String[]{files[i]}));
+                                    "filechooser.cannotCompleteErrSum",
+                                    "filechooser.cannot_read_selected_file",
+                                    null, new String[]{files[i]}));
                 }
                 // It must be a file
                 // FIXME: This error should include an argument to let the
                 // user know which choice was a folder.
-                //
                 if (file.isDirectory()) {
                     // Special case.
                     // If there is only one selection and it is a
@@ -910,7 +983,6 @@ public class FileChooserModel implements ResourceModel, Serializable {
                     // and do not return it as a value.
                     //
                     // This may have set newCurrentDir
-                    //
                     newCurrentDir = null;
                     if (files.length == 1) {
                         setCurrentDir(file.getPath());
@@ -918,40 +990,46 @@ public class FileChooserModel implements ResourceModel, Serializable {
                     }
                     throw new ResourceModelException(
                             createFacesMessage(
-                            "filechooser.cannotCompleteErrSum", //NOI18N
-                            "filechooser.cannotSelectFolder", //NOI18N
-                            null, null));
+                                    "filechooser.cannotCompleteErrSum",
+                                    "filechooser.cannotSelectFolder",
+                                    null, null));
                 }
 
                 filesArray.add(file);
 
             } catch (ResourceModelException fcme) {
                 // Just pass it on
-                //
                 throw fcme;
             } catch (Exception e) {
                 // Convert to a ResourceModelException with the
                 // cause.
-                //
-                throwException(e, "filechooser.cannotCompleteErrSum", //NOI18N
-                        "filechooser.folderSelectError", //NOI18N
+                throwException(e, "filechooser.cannotCompleteErrSum",
+                        "filechooser.folderSelectError",
                         null, null);
             }
         }
         // If we have a new parent dir set it
-        //
         if (newCurrentDir != null) {
             setCurrentDir(newCurrentDir);
         }
         return filesArray.toArray(new File[0]);
     }
 
-    private void throwException(Exception e, String summKey,
-            String detKey, String[] summArg, String[] detArg)
-            throws ResourceModelException {
+    /**
+     * Throw an exception.
+     * @param e exception to wrap
+     * @param summary summary message key
+     * @param detail detail message key
+     * @param summaryArgs summary message arguments
+     * @param detailArgs detail message arguments
+     * @throws ResourceModelException if an error occurs
+     */
+    private static void throwException(final Exception e, final String summary,
+            final String detail, final String[] summaryArgs,
+            final String[] detailArgs) throws ResourceModelException {
 
-        FacesMessage fmsg = createFacesMessage(summKey, detKey, summArg,
-                detArg);
+        FacesMessage fmsg = createFacesMessage(summary, detail, summaryArgs,
+                detailArgs);
         Throwable cause = e.getCause();
         if (cause != null) {
             throw new ResourceModelException(fmsg, cause);
@@ -962,27 +1040,23 @@ public class FileChooserModel implements ResourceModel, Serializable {
 
     /**
      * This method creates a FacesMessage.
-     * @param summary The error message summary
-     * @param detail The error message detail
+     * @param summary summary message key
+     * @param detail detail message key
+     * @param summaryArgs summary message arguments
+     * @param detailArgs detail message arguments
+     * @return FacesMessage
      */
-    private FacesMessage createFacesMessage(String summary,
-            String detail, String[] summaryArgs, String[] detailArgs) {
+    private static FacesMessage createFacesMessage(final String summary,
+            final String detail, final String[] summaryArgs,
+            final String[] detailArgs) {
 
-        Theme theme = getTheme();
+        FacesContext context = FacesContext.getCurrentInstance();
+        Theme theme = ThemeUtilities.getTheme(context);
         String summaryMsg = theme.getMessage(summary, summaryArgs);
         String detailMsg = theme.getMessage(detail, detailArgs);
         FacesMessage fmsg = new FacesMessage(
                 FacesMessage.SEVERITY_ERROR,
                 summaryMsg, detailMsg);
         return fmsg;
-    }
-
-    /*
-     * Get the theme
-     */
-    private Theme getTheme() {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        return ThemeUtilities.getTheme(context);
     }
 }

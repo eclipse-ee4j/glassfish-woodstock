@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,10 +24,8 @@ import java.lang.annotation.Target;
 
 /**
  * A marker annotation, used to indicated to annotation processors that the
- * annotated element value may be localized. See for example {@link 
- * Component#displayName}.
- *
- * @author gjmurphy
+ * annotated element value may be localized. See for example
+ * {@link Component#displayName}.
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)

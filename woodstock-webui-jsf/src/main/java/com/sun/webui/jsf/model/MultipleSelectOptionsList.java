@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,20 +13,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 /**
- * A default list of options, for components which are always in multiple
- * select mode.
- *
- * @author gjmurphy, John Yeary
+ * A default list of options, for components which are always in multiple select
+ * mode.
  */
-public class MultipleSelectOptionsList extends DefaultOptionsList {
+public final class MultipleSelectOptionsList extends DefaultOptionsList {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -6465497882261933314L;
 
-    /** Creates a new instance of MultipleSelectOptionsList */
+    /**
+     * Creates a new instance of MultipleSelectOptionsList.
+     */
     public MultipleSelectOptionsList() {
         super();
         super.setMultiple(true);
@@ -34,6 +36,6 @@ public class MultipleSelectOptionsList extends DefaultOptionsList {
 
     //FIXME Is this is missing an implementation?
     @Override
-    public void setMultiple(boolean isMultiple) {
+    public void setMultiple(final boolean isMultiple) {
     }
 }

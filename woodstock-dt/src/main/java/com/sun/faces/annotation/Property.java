@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -104,8 +104,10 @@ import java.lang.annotation.Target;
  * <pre>
  *    &#64;Property(name="myProperty")
  *    &#64;Property(name="myProperty",isAttribute=true)
- *    &#64;Property(name="myProperty",attribute=&#64;Attribute(name="myProperty"))
- *    &#64;Property(name="myProperty",isAttribute=true,attribute=&#64;Attribute(name="myProperty"))
+ *    &#64;Property(name="myProperty",
+ *          attribute=&#64;Attribute(name="myProperty"))
+ *    &#64;Property(name="myProperty",isAttribute=true,
+ *          attribute=&#64;Attribute(name="myProperty"))
  * </pre> See the {@link Attribute} annotation for more information about
  * attribute metadata. If a property does not correspond to an attribute, this
  * information must be stated explicitly:
@@ -114,11 +116,12 @@ import java.lang.annotation.Target;
  * </pre> If a property corresponds to an attribute with a name different from
  * the property name, an attribute name must be provided explicitly:
  * <pre>
- *    &#64;Property(name="myProperty",attribute=&#64;Attribute(name="my-property"))
+ *    &#64;Property(name="myProperty",
+ *          attribute=&#64;Attribute(name="my-property"))
  * </pre>
  *
  * <p>
- * The javadoc-formatted comment found with the annotated property declaration
+ * The javadoc formatted comment found with the annotated property declaration
  * (field, getter method, or setter method) is also considered part of this
  * property's metadata. Typically, the first sentence of the comment will be
  * used as the property's default short description.
@@ -126,8 +129,6 @@ import java.lang.annotation.Target;
  * <p>
  * Some property elements may be used to generated localizable values. Such
  * elements are themselves annotated with the {@link Localizable} annotation.
- *
- * @author gjmurphy
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.FIELD, ElementType.METHOD})
@@ -146,7 +147,7 @@ public @interface Property {
      *
      * @return String
      */
-    public String name() default "";
+    String name() default "";
 
     /**
      * The display name, typically used at design-time. If no value is provided,
@@ -154,7 +155,7 @@ public @interface Property {
      *
      * @return String
      */
-    public String displayName() default "";
+    String displayName() default "";
 
     /**
      * An optional short description of this property, typically used as a tool
@@ -163,7 +164,7 @@ public @interface Property {
      *
      * @return String
      */
-    public String shortDescription() default "";
+    String shortDescription() default "";
 
     /**
      * The name of the "getter" method for this property. A value need be
@@ -172,7 +173,7 @@ public @interface Property {
      *
      * @return String
      */
-    public String readMethodName() default "";
+    String readMethodName() default "";
 
     /**
      * The name of the "setter" method for this property. A value need be
@@ -181,7 +182,7 @@ public @interface Property {
      *
      * @return String
      */
-    public String writeMethodName() default "";
+    String writeMethodName() default "";
 
     /**
      * The name of a property category descriptor, asserting that this property
@@ -191,7 +192,7 @@ public @interface Property {
      *
      * @return String
      */
-    public String category() default "";
+    String category() default "";
 
     /**
      * Indicates whether this property is the default property for its
@@ -203,14 +204,14 @@ public @interface Property {
      *
      * @return {@code true} if default, {@code false} otherwise
      */
-    public boolean isDefault() default false;
+    boolean isDefault() default false;
 
     /**
      * Indicates whether this property should be hidden at design-time.
      *
      * @return {@code true} if hidden, {@code false} otherwise
      */
-    public boolean isHidden() default false;
+    boolean isHidden() default false;
 
     /**
      * The fully qualified name of a property editor class, to be instantiated
@@ -219,14 +220,14 @@ public @interface Property {
      *
      * @return String
      */
-    public String editorClassName() default "";
+    String editorClassName() default "";
 
     /**
      * Indicates whether this property corresponds to a JSP tag attribute.
      *
      * @return {@code true} if an attribute, {@code false} otherwise
      */
-    public boolean isAttribute() default true;
+    boolean isAttribute() default true;
 
     /**
      * Metadata about the JSP tag attribute corresponding to this property. This
@@ -234,7 +235,7 @@ public @interface Property {
      *
      * @return Attribute
      */
-    public Attribute attribute() default @Attribute;
+    Attribute attribute() default @Attribute;
 
     /**
      * Annotation that provides additional information about properties of type
@@ -278,18 +279,17 @@ public @interface Property {
      *    public MethodExpression getValueChangeExpression() {...}
      *
      *    &#64;Event(name="valueChange")
-     *    public void addValueChangeListener(ValueChangeListener listener) {...}
-     *    public void removeValueChangeListener(ValueChangeListener listener) {...}
+     *    public void addValueChangeListener(ValueChangeListener l) {...}
+     *    public void removeValueChangeListener(ValueChangeListener l) {...}
      *    public ValueChangeListener[] getValueChangeListeners() {...}
      * </pre>
      *
      * Note that in the above example, since the "remove" and "get" method names
      * follow standard naming conventions, they need not be specified
      * explicitly.
-     *
-     * @author gjmurphy
      */
-    //TODO Need a way for this information to be introspected from property descriptors
+    //TODO Need a way for this information to be introspected from property
+    // descriptors
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.FIELD, ElementType.METHOD})
     public @interface Method {

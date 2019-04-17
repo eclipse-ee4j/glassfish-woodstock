@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -15,9 +15,10 @@
  */
 package com.sun.webui.jsf.util;
 
-import java.text.*;
-import java.util.*;
-
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import javax.faces.context.FacesContext;
 
 /**
@@ -27,11 +28,11 @@ import javax.faces.context.FacesContext;
  * Console, that task will most likely be done in the console's session filter.
  * <p>
  * Example:
- * </p><code>
+ * </p>
+ * <code>
  * ResponseWriter w = FacesContext.getCurrentInstance().getResponseWriter();
  * w.write(MessageUtil.getMessage("com.sun.webui.jsf.Resources", "key"));
  * </code>
- *
  */
 public class MessageUtil {
 
@@ -50,8 +51,9 @@ public class MessageUtil {
      * @throws NullPointerException if context or baseName is null.
      * @return String
      */
-    public static String getMessage(FacesContext context, String baseName,
-            String key) {
+    public static String getMessage(final FacesContext context,
+            final String baseName, final String key) {
+
         return getMessage(context, baseName, key, null);
     }
 
@@ -65,8 +67,9 @@ public class MessageUtil {
      * @throws NullPointerException if context or baseName is null.
      * @return String
      */
-    public static String getMessage(FacesContext context, String baseName,
-            String key, Object args[]) {
+    public static String getMessage(final FacesContext context,
+            final String baseName, final String key, final Object[] args) {
+
         return getMessage(getLocale(context), baseName, key, args);
     }
 
@@ -78,7 +81,8 @@ public class MessageUtil {
      * @throws NullPointerException if baseName is null.
      * @return String
      */
-    public static String getMessage(String baseName, String key) {
+    public static String getMessage(final String baseName, final String key) {
+
         return getMessage(baseName, key, null);
     }
 
@@ -91,8 +95,9 @@ public class MessageUtil {
      * @throws NullPointerException if baseName is null.
      * @return String
      */
-    public static String getMessage(String baseName, String key,
-            Object args[]) {
+    public static String getMessage(final String baseName, final String key,
+            final Object[] args) {
+
         return getMessage(getLocale(), baseName, key, args);
     }
 
@@ -106,10 +111,11 @@ public class MessageUtil {
      * @throws NullPointerException if locale or baseName is null.
      * @return String
      */
-    public static String getMessage(Locale locale, String baseName, String key,
-            Object args[]) {
-        ClassLoader loader
-                = ClassLoaderFinder.getCurrentLoader(MessageUtil.class);
+    public static String getMessage(final Locale locale, final String baseName,
+            final String key, final Object[] args) {
+
+        ClassLoader loader = ClassLoaderFinder
+                .getCurrentLoader(MessageUtil.class);
         // First try the context CL
         return getMessage(locale, baseName, key, args, loader);
     }
@@ -125,8 +131,9 @@ public class MessageUtil {
      * @throws NullPointerException if locale, baseName, or loader is null.
      * @return String
      */
-    public static String getMessage(Locale locale, String baseName, String key,
-            Object args[], ClassLoader loader) {
+    public static String getMessage(final Locale locale, final String baseName,
+            final String key, final Object[] args, final ClassLoader loader) {
+
         if (key == null) {
             return key;
         } else if (locale == null || baseName == null || loader == null) {
@@ -142,13 +149,14 @@ public class MessageUtil {
         }
 
         String message = null;
-
         try {
             message = bundle.getString(key);
         } catch (MissingResourceException e) {
         }
-
-        return getFormattedMessage((message != null) ? message : key, args);
+        if (message != null) {
+            return getFormattedMessage(message, args);
+        }
+        return getFormattedMessage(key, args);
     }
 
     /**
@@ -158,20 +166,23 @@ public class MessageUtil {
      * @param args The arguments to be inserted into the string.
      * @return String
      */
-    protected static String getFormattedMessage(String message, Object args[]) {
+    protected static String getFormattedMessage(final String message,
+            final Object[] args) {
+
         if ((args == null) || (args.length == 0)) {
             return message;
         }
 
         String result = null;
-
         try {
             MessageFormat mf = new MessageFormat(message);
             result = mf.format(args);
         } catch (NullPointerException e) {
         }
-
-        return (result != null) ? result : message;
+        if (result != null) {
+            return result;
+        }
+        return message;
     }
 
     /**
@@ -188,7 +199,7 @@ public class MessageUtil {
      * @param context The FacesContext object used to obtain locale.
      * @return Locale
      */
-    protected static Locale getLocale(FacesContext context) {
+    protected static Locale getLocale(final FacesContext context) {
         if (context == null) {
             return Locale.getDefault();
         }
@@ -199,8 +210,10 @@ public class MessageUtil {
         if (context.getViewRoot() != null) {
             locale = context.getViewRoot().getLocale();
         }
-
-        return (locale != null) ? locale : Locale.getDefault();
+        if (locale != null) {
+            return locale;
+        }
+        return Locale.getDefault();
     }
 
     /**
@@ -209,8 +222,11 @@ public class MessageUtil {
      * @param obj Object used to obtain fallback class loader.
      * @return ClassLoader
      */
-    public static ClassLoader getCurrentLoader(Object obj) {
+    public static ClassLoader getCurrentLoader(final Object obj) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        return (loader != null) ? loader : obj.getClass().getClassLoader();
+        if (loader != null) {
+            return loader;
+        }
+        return obj.getClass().getClassLoader();
     }
 }

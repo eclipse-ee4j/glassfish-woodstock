@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,19 +27,42 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
 /**
- * <p>The ValueExpressionSortCriteria class is an implementation of SortCriteria
+ * The ValueExpressionSortCriteria class is an implementation of SortCriteria
  * that simply retrieves the sort value from a {@link ValueExpression} which is
- * created using the specified value expression.</p>
- *
- * @author Joe Nuxoll, John Yeary
+ * created using the specified value expression.
  */
 @Component(isTag = false)
-public class ValueExpressionSortCriteria extends SortCriteria {
+public final class ValueExpressionSortCriteria extends SortCriteria {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -1400195724479592404L;
 
     /**
-     * Constructs a ValueExpressionSortCriteria with no value expression
+     * The value expression.
+     */
+    @Property(displayName = "Value Expression")
+    private String valueExpression;
+
+    /**
+     * The request map key.
+     */
+    @Property(displayName = "Request Map Key")
+    private String requestMapKey = "currentRow";
+
+    /**
+     * Row provider.
+     */
+    private transient TableRowDataProvider rowProvider;
+
+    /**
+     * This is a monitor lock for rowProvider.
+     */
+    private final String rowProviderLock = "rowProviderLock";
+
+    /**
+     * Constructs a ValueExpressionSortCriteria with no value expression.
      */
     public ValueExpressionSortCriteria() {
     }
@@ -48,22 +71,24 @@ public class ValueExpressionSortCriteria extends SortCriteria {
      * Constructs a ValueExpressionSortCriteria with the specified value
      * expression.
      *
-     * @param valueExpression The desired value expression
+     * @param newValueExpression The desired value expression
      */
-    public ValueExpressionSortCriteria(String valueExpression) {
-        this.valueExpression = valueExpression;
+    public ValueExpressionSortCriteria(final String newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
      * Constructs a ValueExpressionSortCriteria with the specified value
      * expression and ascending state.
      *
-     * @param valueExpression The desired value expression
-     * @param ascending The desired boolean state for the ascending property
+     * @param newValueExpression The desired value expression
+     * @param newAscending The desired boolean state for the ascending property
      */
-    public ValueExpressionSortCriteria(String valueExpression, boolean ascending) {
-        this.valueExpression = valueExpression;
-        this.setAscending(ascending);
+    public ValueExpressionSortCriteria(final String newValueExpression,
+            final boolean newAscending) {
+
+        this.valueExpression = newValueExpression;
+        this.setAscending(newAscending);
     }
 
     /**
@@ -78,10 +103,11 @@ public class ValueExpressionSortCriteria extends SortCriteria {
     /**
      * Sets the value expression for this sort criteria.
      *
-     * @param valueExpression The desired value expression for this sort criteria
+     * @param newValueExpression The desired value expression for this sort
+     * criteria
      */
-    public void setValueExpression(String valueExpression) {
-        this.valueExpression = valueExpression;
+    public void setValueExpression(final String newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
@@ -98,62 +124,65 @@ public class ValueExpressionSortCriteria extends SortCriteria {
 
     /**
      * Sets the request map variable key that will be used to store the
-     * {@link TableRowDataProvider} for the current row being sorted.  This
+     * {@link TableRowDataProvider} for the current row being sorted. This
      * allows value expressions to refer to the "current" row during the sort
      * operation.
      *
-     * @param requestMapKey String key to use for the {@link TableRowDataProvider}
+     * @param newRequestMapKey String key to use for the
+     * {@link TableRowDataProvider}
      */
-    public void setRequestMapKey(String requestMapKey) {
-        this.requestMapKey = requestMapKey;
+    public void setRequestMapKey(final String newRequestMapKey) {
+        this.requestMapKey = newRequestMapKey;
     }
 
     /**
-     * <p>If no display name is set, this returns the value expression.</p>
+     * If no display name is set, this returns the value expression.
      *
      * {@inheritDoc}
      */
     @Override
     public String getDisplayName() {
         String name = super.getDisplayName();
-        if ((name == null || "".equals(name)) && valueExpression != null && !"".equals(valueExpression)) {
+        if ((name == null || "".equals(name))
+                && valueExpression != null
+                && !"".equals(valueExpression)) {
             return valueExpression;
         }
         return name;
     }
 
-    /**
-     * Returns the value expression.
-     *
-     * {@inheritDoc}
-     */
+    @Override
     public String getCriteriaKey() {
-        return valueExpression != null ? valueExpression : ""; // NOI18N
+        if (valueExpression != null) {
+            return valueExpression;
+        }
+        return "";
     }
 
-    /**
-     * <p>Returns the value from a {@link ValueExpression} created using the value
-     * expression.  The passed arguments are ignored.</p>
-     *
-     * {@inheritDoc}
-     */
-    public Object getSortValue(TableDataProvider provider, RowKey row) {
+    @Override
+    public Object getSortValue(final TableDataProvider provider,
+            final RowKey row) {
+
         if (valueExpression == null || "".equals(valueExpression)) {
             return null;
         }
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        ValueExpression valueBinding = facesContext.getApplication().getExpressionFactory().createValueExpression(
-                facesContext.getELContext(), valueExpression, Object.class);
+        ValueExpression valueBinding = facesContext
+                .getApplication()
+                .getExpressionFactory()
+                .createValueExpression(facesContext.getELContext(),
+                        valueExpression, Object.class);
 
         if (valueBinding == null) {
             return null;
         }
 
-        Map<String, Object> requestMap = facesContext.getExternalContext().getRequestMap();
-        Object value = null;
+        Map<String, Object> requestMap = facesContext
+                .getExternalContext()
+                .getRequestMap();
+        Object value;
 
-        //FIXME synchronization on a non-final field
         synchronized (rowProviderLock) {
 
             Object storedRequestMapValue = null;
@@ -168,7 +197,6 @@ public class ValueExpressionSortCriteria extends SortCriteria {
             }
 
             value = valueBinding.getValue(facesContext.getELContext());
-
             if (requestMapKey != null && !"".equals(requestMapKey)) {
                 if (rowProvider != null) {
                     rowProvider.setTableDataProvider(null);
@@ -177,13 +205,6 @@ public class ValueExpressionSortCriteria extends SortCriteria {
                 requestMap.put(requestMapKey, storedRequestMapValue);
             }
         }
-
         return value;
     }
-    @Property(displayName = "Value Expression")
-    private String valueExpression;
-    @Property(displayName = "Request Map Key")
-    private String requestMapKey = "currentRow"; // NOI18N
-    private transient TableRowDataProvider rowProvider;
-    private String rowProviderLock = "rowProviderLock"; // this is a monitor lock for rowProvider
 }

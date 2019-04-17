@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,12 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
- /*
- * NonDefaultPropertyTest.java
- * JUnit based test
- *
- * Created on 24 juin 2006, 20:18
- */
 package org.example;
 
 import com.sun.rave.designtime.CategoryDescriptor;
@@ -38,14 +32,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- * @author gjmurphy
+ * Non default property test.
  */
 public class NonDefaultPropertyTest {
 
     private static BeanInfo beanInfo;
-    private static final Map<String, PropertyDescriptor> PROPERTIES =
-            new HashMap<String, PropertyDescriptor>();
+    private static final Map<String, PropertyDescriptor> PROPERTIES
+            = new HashMap<String, PropertyDescriptor>();
 
     @BeforeClass
     public static void setUp() throws Exception {

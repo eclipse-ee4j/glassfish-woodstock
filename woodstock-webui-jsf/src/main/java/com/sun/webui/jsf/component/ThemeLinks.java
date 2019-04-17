@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -23,14 +22,89 @@ import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 
 /**
- * The ThemeLicnks component is used to create references to theme resources on 
+ * The ThemeLicnks component is used to create references to theme resources on
  * a page in a portlet environment, where the Head component cannot be used.
  */
-@Component(type = "com.sun.webui.jsf.ThemeLinks", family = "com.sun.webui.jsf.ThemeLinks",
-displayName = "ThemeLinks", tagName = "themeLinks",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_theme_links",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_theme_links_props")
-public class ThemeLinks extends UIComponentBase {
+@Component(type = "com.sun.webui.jsf.ThemeLinks",
+        family = "com.sun.webui.jsf.ThemeLinks",
+        displayName = "ThemeLinks",
+        tagName = "themeLinks",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_theme_links",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_theme_links_props")
+        //CHECKSTYLE:OFF
+public final class ThemeLinks extends UIComponentBase {
+
+    /**
+     * Flag (true or false) indicating that DOJO debugging is enabled. The
+     * default value is false.
+     */
+    @Property(name = "debug",
+            displayName = "Enable Dojo Debugging",
+            category = "Advanced")
+    private boolean debug = false;
+
+    /**
+     * debug set flag.
+     */
+    private boolean debugSet = false;
+
+    /**
+     * Flag (true or false) indicating that component JavaScript should be
+     * output in page. The default value is true.
+     */
+    @Property(name = "javaScript",
+            displayName = "Include Component JavaScript",
+            category = "Advanced")
+    private boolean javaScript = true;
+
+    /**
+     * javaScript set flag.
+     */
+    private boolean javaScriptSet = false;
+
+    /**
+     * Flag (true or false) indicating that DOJO should search for dojoType
+     * widget tags. Page load time is proportional to the number of nodes on the
+     * page. The default value is false.
+     */
+    @Property(name = "parseWidgets",
+            displayName = "Parse Dojo Widgets",
+            category = "Advanced")
+    private boolean parseWidgets = false;
+
+    /**
+     * parseWidgets set flag.
+     */
+    private boolean parseWidgetsSet = false;
+
+    /**
+     * If set to true, a link element with a reference to the theme style-sheet
+     * resource is rendered.
+     */
+    @Property(name = "styleSheet",
+            displayName = "Include StyleSheet Link",
+            category = "Advanced")
+    private boolean styleSheet = false;
+
+    /**
+     * styleSheet set flag.
+     */
+    private boolean styleSheetSet = false;
+
+    /**
+     * If set to true, the theme style-sheet contents will be rendered inline
+     * instead of being linked to.
+     */
+    @Property(name = "styleSheetInline",
+            displayName = "Include StyleSheet Definitions Inline",
+            category = "Advanced")
+    private boolean styleSheetInline = false;
+
+    /**
+     * styleSheetInline set flag.
+     */
+    private boolean styleSheetInlineSet = false;
 
     /**
      * Holds value of property styleSheetLink.
@@ -45,15 +119,14 @@ public class ThemeLinks extends UIComponentBase {
         setRendererType("com.sun.webui.jsf.ThemeLinks");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.ThemeLinks";
     }
 
     /**
      * Getter for property styleSheetLink.
+     *
      * @return Value of property styleSheetLink.
      */
     public boolean isStyleSheetLink() {
@@ -62,22 +135,21 @@ public class ThemeLinks extends UIComponentBase {
 
     /**
      * Setter for property styleSheetLink.
-     * @param styleSheetLink New value of property styleSheetLink.
+     *
+     * @param newStyleSheetLink New value of property styleSheetLink.
      */
-    public void setStyleSheetLink(boolean styleSheetLink) {
-        this.styleSheetLink = styleSheetLink;
+    public void setStyleSheetLink(final boolean newStyleSheetLink) {
+        this.styleSheetLink = newStyleSheetLink;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -87,68 +159,58 @@ public class ThemeLinks extends UIComponentBase {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * Flag (true or false) indicating that Dojo debugging is enabled. The 
-     * default value is false.
-     */
-    @Property(name = "debug", displayName = "Enable Dojo Debugging", category = "Advanced")
-    private boolean debug = false;
-    private boolean debug_set = false;
 
     /**
-     * Test flag indicating that Dojo debugging is enabled.
+     * Test flag indicating that DOJO debugging is enabled.
+     * @return {@code boolean}
      */
     public boolean isDebug() {
-        if (this.debug_set) {
+        if (this.debugSet) {
             return this.debug;
         }
-        ValueExpression _vb = getValueExpression("debug");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("debug");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * Set flag indicating that Dojo debugging is enabled.
+     * Set flag indicating that DOJO debugging is enabled.
+     * @param newDebug debug
      */
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-        this.debug_set = true;
+    public void setDebug(final boolean newDebug) {
+        this.debug = newDebug;
+        this.debugSet = true;
     }
-    /**
-     * Flag (true or false) indicating that component JavaScript should be 
-     * output in page. The default value is true.
-     */
-    @Property(name = "javaScript", displayName = "Include Component JavaScript", category = "Advanced")
-    private boolean javaScript = true;
-    private boolean javaScript_set = false;
 
     /**
      * Test flag indicating that component JavaScript should be output in page.
+     * @return {@code boolean}
      */
     public boolean isJavaScript() {
-        if (this.javaScript_set) {
+        if (this.javaScriptSet) {
             return this.javaScript;
         }
-        ValueExpression _vb = getValueExpression("javaScript");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("javaScript");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
@@ -156,149 +218,157 @@ public class ThemeLinks extends UIComponentBase {
 
     /**
      * Set flag indicating that component JavaScript should be output in page.
+     * @param newSavaScript javaScript
      */
-    public void setJavaScript(boolean javaScript) {
-        this.javaScript = javaScript;
-        this.javaScript_set = true;
+    public void setJavaScript(final boolean newSavaScript) {
+        this.javaScript = newSavaScript;
+        this.javaScriptSet = true;
     }
-    /**
-     * Flag (true or false) indicating that Dojo should search for dojoType 
-     * widget tags. Page load time is proportional to the number of nodes on the
-     * page. The default value is false.
-     */
-    @Property(name = "parseWidgets", displayName = "Parse Dojo Widgets", category = "Advanced")
-    private boolean parseWidgets = false;
-    private boolean parseWidgets_set = false;
 
     /**
-     * Test flag indicating that Dojo should search for dojoType widget tags.
+     * Test flag indicating that DOJO should search for dojoType widget tags.
+     * @return {@code boolean}
      */
     public boolean isParseWidgets() {
-        if (this.parseWidgets_set) {
+        if (this.parseWidgetsSet) {
             return this.parseWidgets;
         }
-        ValueExpression _vb = getValueExpression("parseWidgets");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("parseWidgets");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * Set flag indicating that Dojo should search for dojoType widget tags.
+     * Set flag indicating that DOJO should search for dojoType widget tags.
+     * @param newParseWidgets parseWidgets
      */
-    public void setParseWidgets(boolean parseWidgets) {
-        this.parseWidgets = parseWidgets;
-        this.parseWidgets_set = true;
+    public void setParseWidgets(final boolean newParseWidgets) {
+        this.parseWidgets = newParseWidgets;
+        this.parseWidgetsSet = true;
     }
-    /**
-     * <p>If set to true, a link element with a reference to the theme
-     * stylesheet resource is rendered.</p>
-     */
-    @Property(name = "styleSheet", displayName = "Include StyleSheet Link", category = "Advanced")
-    private boolean styleSheet = false;
-    private boolean styleSheet_set = false;
 
     /**
-     * <p>If set to true, a link element with a reference to the theme
-     * stylesheet resource is rendered.</p>
+     * If set to true, a link element with a reference to the theme style-sheet
+     * resource is rendered.
+     * @return {@code boolean}
      */
     public boolean isStyleSheet() {
-        if (this.styleSheet_set) {
+        if (this.styleSheetSet) {
             return this.styleSheet;
         }
-        ValueExpression _vb = getValueExpression("styleSheet");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("styleSheet");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>If set to true, a link element with a reference to the theme
-     * stylesheet resource is rendered.</p>
+     * If set to true, a link element with a reference to the theme style-sheet
+     * resource is rendered.
+     *
      * @see #isStyleSheet()
+     * @param newStyleSheet styleSheet
      */
-    public void setStyleSheet(boolean styleSheet) {
-        this.styleSheet = styleSheet;
-        this.styleSheet_set = true;
+    public void setStyleSheet(final boolean newStyleSheet) {
+        this.styleSheet = newStyleSheet;
+        this.styleSheetSet = true;
     }
-    /**
-     * <p>If set to true, the theme stylesheet contents will be rendered inline 
-     * instead of being linked to.</p>
-     */
-    @Property(name = "styleSheetInline", displayName = "Include StyleSheet Definitions Inline", category = "Advanced")
-    private boolean styleSheetInline = false;
-    private boolean styleSheetInline_set = false;
 
     /**
-     * <p>If set to true, the theme stylesheet contents will be rendered inline 
-     * instead of being linked to.</p>
+     * If set to true, the theme style-sheet contents will be rendered inline
+     * instead of being linked to.
+     *
+     * @return {@code boolean}
      */
     public boolean isStyleSheetInline() {
-        if (this.styleSheetInline_set) {
+        if (this.styleSheetInlineSet) {
             return this.styleSheetInline;
         }
-        ValueExpression _vb = getValueExpression("styleSheetInline");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("styleSheetInline");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>If set to true, the theme stylesheet contents will be rendered inline 
-     * instead of being linked to.</p>
+     * If set to true, the theme style-sheet contents will be rendered inline
+     * instead of being linked to.
+     *
      * @see #isStyleSheetInline()
+     * @param newStyleSheetInline styleSheetInline
      */
-    public void setStyleSheetInline(boolean styleSheetInline) {
-        this.styleSheetInline = styleSheetInline;
-        this.styleSheetInline_set = true;
+    public void setStyleSheetInline(final boolean newStyleSheetInline) {
+        this.styleSheetInline = newStyleSheetInline;
+        this.styleSheetInlineSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.javaScript = ((Boolean) _values[1]).booleanValue();
-        this.javaScript_set = ((Boolean) _values[2]).booleanValue();
-        this.styleSheet = ((Boolean) _values[3]).booleanValue();
-        this.styleSheet_set = ((Boolean) _values[4]).booleanValue();
-        this.styleSheetInline = ((Boolean) _values[5]).booleanValue();
-        this.styleSheetInline_set = ((Boolean) _values[6]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object _values[] = (Object[]) state;
+        super.restoreState(context, _values[0]);
+        this.javaScript = ((Boolean) _values[1]);
+        this.javaScriptSet = ((Boolean) _values[2]);
+        this.styleSheet = ((Boolean) _values[3]);
+        this.styleSheetSet = ((Boolean) _values[4]);
+        this.styleSheetInline = ((Boolean) _values[5]);
+        this.styleSheetInlineSet = ((Boolean) _values[6]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[7];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.javaScript ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.javaScript_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.styleSheet ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = this.styleSheet_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.styleSheetInline ? Boolean.TRUE : Boolean.FALSE;
-        _values[6] = this.styleSheetInline_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object values[] = new Object[7];
+        values[0] = super.saveState(context);
+        if (this.javaScript) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.javaScriptSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.styleSheet) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        if (this.styleSheetSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.styleSheetInline) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        if (this.styleSheetInlineSet) {
+            values[6] = Boolean.TRUE;
+        } else {
+            values[6] = Boolean.FALSE;
+        }
+        return values;
     }
 }

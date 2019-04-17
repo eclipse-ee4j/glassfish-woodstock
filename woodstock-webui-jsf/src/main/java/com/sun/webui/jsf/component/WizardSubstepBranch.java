@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * $Id: WizardSubstepBranch.java,v 1.1.20.1 2009-12-29 03:06:26 jyeary Exp $
  */
 package com.sun.webui.jsf.component;
@@ -27,44 +27,56 @@ import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.event.WizardEventListener;
 
 /**
- * The WizardSubstepBranch component represents a conditional branch in a
- * wizard step sequence. The steps that comprise a substep branch are always
- * followed by the same sequence of steps, in the main sequence, whether
- * the substep branch is taken or not. The steps in a substep branch
- * are numbered differently that the steps in the main sequence.
- * For example if the substep branch occurs at step 2, then the
- * substeps are numbered as 2.1, 2.2, etc..
+ * The WizardSubstepBranch component represents a conditional branch in a wizard
+ * step sequence. The steps that comprise a sub step branch are always followed
+ * by the same sequence of steps, in the main sequence, whether the sub step
+ * branch is taken or not. The steps in a sub step branch are numbered
+ * differently that the steps in the main sequence. For example if the sub step
+ * branch occurs at step 2, then the sub steps are numbered as 2.1, 2.2, etc..
  */
 @Component(type = "com.sun.webui.jsf.WizardSubstepBranch",
-family = "com.sun.webui.jsf.WizardSubstepBranch",
-displayName = "WizardSubstepBranch", tagName = "wizardSubstepBranch",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_wizard_substep_branch",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_wizard_substep_branch_props")
-public class WizardSubstepBranch extends WizardStep implements NamingContainer {
+        family = "com.sun.webui.jsf.WizardSubstepBranch",
+        displayName = "WizardSubstepBranch",
+        tagName = "wizardSubstepBranch",
+        //CHECKSTYLE:OFF
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_wizard_substep_branch",
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_wizard_substep_branch_props")
+        //CHECKSTYLE:ON
+public final class WizardSubstepBranch extends WizardStep
+        implements NamingContainer {
 
     /**
-     * Construct a new <code>WizardSubstepBranchBase</code>.
+     * The taken attribute is used to evaluate whether the steps of this branch
+     * sequence are displayed. If taken is true, the child components included
+     * in the {@code webuijsf:wizardStep} tags within this
+     * {@code webuijsf:wizardSubstepBranch} tag are rendered. The taken
+     * attribute should be a JavaServer Faces EL expression that uses the user's
+     * response in a previous step to determine whether the branch sequence
+     * should be rendered.
+     */
+    @Property(name = "taken")
+    private boolean taken = false;
+
+    /**
+     * Taken set flag.
+     */
+    private boolean takenSet = false;
+
+    /**
+     * Construct a new {@code WizardSubstepBranchBase}.
      */
     public WizardSubstepBranch() {
         super();
     }
 
-    /**
-     * Return the family for this component, <code>
-     * com.sun.webui.jsf.WizardSubstepBranch</code>.
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.WizardSubstepBranch";
     }
 
-    /**
-     * The component identifier for this component. This value must be unique 
-     * within the closest parent component that is a naming container.
-     */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -173,83 +185,74 @@ public class WizardSubstepBranch extends WizardStep implements NamingContainer {
         return super.getTitle();
     }
 
-    // taken
     /**
-     * The taken attribute is used to evaluate whether the
-     * steps of this branch sequence are displayed. If taken is true, 
-     * the child components included in the <code>webuijsf:wizardStep</code> 
-     * tags within this <code>webuijsf:wizardSubstepBranch</code>
-     * tag are rendered. The taken attribute should be
-     * a JavaServer Faces EL expression that uses the user's response in
-     * a previous step to determine whether the branch sequence should be
-     * rendered.
-     */
-    @Property(name = "taken")
-    private boolean taken = false;
-    private boolean taken_set = false;
-
-    /**
-     * The taken attribute is used to evaluate whether the
-     * steps of this branch sequence are displayed. If taken is true, 
-     * the child components included in the <code>webuijsf:wizardStep</code> 
-     * tags within this <code>webuijsf:wizardSubstepBranch</code>
-     * tag are rendered. The taken attribute should be
-     * a JavaServer Faces EL expression that uses the user's response in
-     * a previous step to determine whether the branch sequence should be
-     * rendered.
+     * The taken attribute is used to evaluate whether the steps of this branch
+     * sequence are displayed.If taken is true, the child components included in
+     * the {@code webuijsf:wizardStep} tags within this
+     * {@code webuijsf:wizardSubstepBranch} tag are rendered. The taken
+     * attribute should be a JavaServer Faces EL expression that uses the user's
+     * response in a previous step to determine whether the branch sequence
+     * should be rendered.
+     *
+     * @return {@code boolean}
      */
     public boolean isTaken() {
-        if (this.taken_set) {
+        if (this.takenSet) {
             return this.taken;
         }
-        ValueExpression _vb = getValueExpression("taken");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("taken");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * The taken attribute is used to evaluate whether the
-     * steps of this branch sequence are displayed. If taken is true, 
-     * the child components included in the <code>webuijsf:wizardStep</code> 
-     * tags within this <code>webuijsf:wizardSubstepBranch</code>
-     * tag are rendered. The taken attribute should be
-     * a JavaServer Faces EL expression that uses the user's response in
-     * a previous step to determine whether the branch sequence should be
-     * rendered.
+     * The taken attribute is used to evaluate whether the steps of this branch
+     * sequence are displayed.If taken is true, the child components included in
+     * the {@code webuijsf:wizardStep} tags within this
+     * {@code webuijsf:wizardSubstepBranch} tag are rendered. The taken
+     * attribute should be a JavaServer Faces EL expression that uses the user's
+     * response in a previous step to determine whether the branch sequence
+     * should be rendered.
+     *
+     * @param newTaken taken
      * @see #isTaken()
      */
-    public void setTaken(boolean taken) {
-        this.taken = taken;
-        this.taken_set = true;
+    public void setTaken(final boolean newTaken) {
+        this.taken = newTaken;
+        this.takenSet = true;
     }
 
-    /**
-     * Restore the state of this component.
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.taken = ((Boolean) _values[1]).booleanValue();
-        this.taken_set = ((Boolean) _values[2]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.taken = ((Boolean) values[1]);
+        this.takenSet = ((Boolean) values[2]);
     }
 
-    /**
-     * Save the state of this component.
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[3];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.taken ? Boolean.TRUE : Boolean.FALSE;
-        _values[2] = this.taken_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[3];
+        values[0] = super.saveState(context);
+        if (this.taken) {
+            values[1] = Boolean.TRUE;
+        } else {
+            values[1] = Boolean.FALSE;
+        }
+        if (this.takenSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        return values;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,30 +26,63 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * <p>
  * This <code>InputStream</code> looks for lines beginning with "#include
  * '<em>filename</em>'" where filename is the name of a file to include. It
  * replaces the "#include" line with contents of the specified file. Any other
- * line beginning with '#' is illegal.</p>
+ * line beginning with '#' is illegal.
  */
-public class IncludeInputStream extends FilterInputStream {
+public final class IncludeInputStream extends FilterInputStream {
 
     /**
-     * <p>
-     * Constructor.</p>
+     * EOL flag.
      */
-    public IncludeInputStream(InputStream input) {
+    private boolean eol = true;
+
+    /**
+     * Redirected stream.
+     */
+    private IncludeInputStream redirStream = null;
+
+    /**
+     * Get real path parameter classes.
+     */
+    private static final Class[] GET_REAL_PATH_ARGS = new Class[]{
+        String.class
+    };
+
+    /**
+     * Constant for {@code include}/.
+     */
+    private static final String INCLUDE = "include";
+
+    /**
+     * Constant for {@code "include".length}.
+     */
+    private static final int INCLUDE_LEN = INCLUDE.length();
+
+    /**
+     * Faces context class.
+     */
+    private static final Class FACES_CONTEXT = getFacesContextClass();
+
+    /**
+     * Create a new instance.
+     * @param input raw input stream
+     */
+    public IncludeInputStream(final InputStream input) {
         super(input);
     }
 
     /**
-     * <p>
-     * This overriden method implements the include feature.</p>
+     * This overridden method implements the include feature.
      *
      * @return The next character.
+     * @throws java.io.IOException if an IO error occurs
      */
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
     public int read() throws IOException {
-        int intChar = -1;
+        int intChar;
         if (redirStream != null) {
             // We are already redirecting, delegate
             intChar = redirStream.read();
@@ -83,15 +116,20 @@ public class IncludeInputStream extends FilterInputStream {
         return intChar;
     }
 
+    @Override
     public int available() throws IOException {
         return 0;
     }
 
+    @Override
     public boolean markSupported() {
         return false;
     }
 
-    public int read(byte[] bytes, int off, int len) throws IOException {
+    @Override
+    public int read(final byte[] bytes, final int off, final int len)
+            throws IOException {
+
         if (bytes == null) {
             throw new NullPointerException();
         } else if ((off < 0) || (off > bytes.length) || (len < 0)
@@ -114,19 +152,20 @@ public class IncludeInputStream extends FilterInputStream {
                 if (c == -1) {
                     break;
                 }
-                if (bytes != null) {
-                    bytes[off + i] = (byte) c;
-                }
+                bytes[off + i] = (byte) c;
             }
-        } catch (IOException ee) {
-            ee.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
         return i;
     }
 
     /**
-     *
+     * Process start include.
+     * @return the next character
+     * @throws IOException if an IO error occurs
      */
+    @SuppressWarnings("checkstyle:magicnumber")
     private int startInclude() throws IOException {
         // We have a line beginning w/ '#', verify we have "#include"
         char ch;
@@ -151,8 +190,10 @@ public class IncludeInputStream extends FilterInputStream {
         }
 
         // Read the file name
-        StringBuffer buf = new StringBuffer("");
-        while ((ch != '"') && (ch != '\'') && (ch != 0x0A) && (ch != 0x0D) && (ch != -1)) {
+        StringBuilder buf = new StringBuilder("");
+        while ((ch != '"') && (ch != '\'')
+                && (ch != 0x0A)
+                && (ch != 0x0D) && (ch != -1)) {
             buf.append(ch);
             ch = (char) super.read();
         }
@@ -178,9 +219,13 @@ public class IncludeInputStream extends FilterInputStream {
                     new BufferedInputStream(new FileInputStream(file)));
         } else {
             // Check Classpath?
-            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+            InputStream stream = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream(filename);
             if (stream == null) {
-                stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("/" + filename);
+                stream = Thread.currentThread()
+                        .getContextClassLoader()
+                        .getResourceAsStream("/" + filename);
             }
             if (stream == null) {
                 throw new FileNotFoundException(filename);
@@ -206,14 +251,14 @@ public class IncludeInputStream extends FilterInputStream {
      * @return The full path based on the app's context root.
      */
     @SuppressWarnings("unchecked")
-    protected String convertRelativePath(String filename) {
+    protected String convertRelativePath(final String filename) {
         // NOTE: This method uses reflection to avoid build/runtime
         // NOTE: dependencies on JSF, this method is only used if the
         // NOTE: FacesContext class is found in the classpath.
 
         // Check for the file in docroot
-        Method method = null;
-        Object ctx = null;
+        Method method;
+        Object ctx;
         String newFilename = null;
         try {
             // The following should work w/ a ServletContext or PortletContext
@@ -251,10 +296,10 @@ public class IncludeInputStream extends FilterInputStream {
     }
 
     /**
-     * <p>
-     * Simple test case (requires a test file).</p>
+     * Simple test case (requires a test file).
+     * @param args command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(final String[] args) {
         try {
             IncludeInputStream stream
                     = new IncludeInputStream(new FileInputStream(args[0]));
@@ -263,24 +308,21 @@ public class IncludeInputStream extends FilterInputStream {
                 System.out.print((char) ch);
                 ch = stream.read();
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-    private boolean eol = true;
-    private IncludeInputStream redirStream = null;
-    private static final Class[] GET_REAL_PATH_ARGS
-            = new Class[]{String.class};
-    private static final String INCLUDE = "include";
-    private static final int INCLUDE_LEN = INCLUDE.length();
-    private static Class FACES_CONTEXT;
 
-    static {
+    /**
+     * Get the {@code FacesContext} class.
+     * @return Class or {@code null} if not in a JSF environment.
+     */
+    private static Class getFacesContextClass() {
         try {
-            FACES_CONTEXT = Class.forName("javax.faces.context.FacesContext");
-        } catch (Exception ex) {
+            return Class.forName("javax.faces.context.FacesContext");
+        } catch (ClassNotFoundException ex) {
             // Ignore, this just means we're not in a JSF environment
-            FACES_CONTEXT = null;
+            return null;
         }
     }
 }

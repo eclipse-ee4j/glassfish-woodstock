@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,197 +13,183 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.model;
 
 /**
- *
- * @author deep
+ * Resource model.
  */
 public interface ResourceModel {
 
     /**
-     * Returns the root value of the file system in question.
-     * For example, in the default implementation of this interface for local
-     * filesystems the root value would be "/" in Unix and "C:\" on Windows.
+     * Returns the root value of the file system in question. For example, in
+     * the default implementation of this interface for local file systems the
+     * root value would be "/" in Unix and "C:\" on Windows.
      *
      * @return returns the absolute root (directory for files and folders).
      */
-    public String getAbsoluteRoot();
+    String getAbsoluteRoot();
 
     /**
-     * Sets the root value of the resource system in question.
-     * For example, in the default implementation of this interface for local
-     * filesystems the root value could be set to "/" in Unix and "C:\" on Windows.
+     * Sets the root value of the resource system in question. For example, in
+     * the default implementation of this interface for local file systems the
+     * root value could be set to "/" in Unix and "C:\" on Windows.
      *
      * @param absRoot - the value to be used as the root of this resource system
      */
-    public void setAbsoluteRoot(String absRoot);
+    void setAbsoluteRoot(String absRoot);
 
     /**
-     * Return the separator String for this resource system. For a 
-     * file system chooser this would be File.separator.
+     * Return the separator String for this resource system. For a file system
+     * chooser this would be File.separator.
      *
      * @return returns the separator String.
      */
-    public String getSeparatorString();
+    String getSeparatorString();
 
     /**
-     * Get the Server namefrom where the resources are being loaded.
+     * Get the Server name from where the resources are being loaded.
      *
-     * @returns the server name
-     * 
+     * @return the server name
      */
-    public String getServerName();
+    String getServerName();
 
     /**
      * Set the server name from where the resources are being loaded.
      *
      * @param serverName - the server name to be set
-     * 
      */
-    public void setServerName(String serverName);
+    void setServerName(String serverName);
 
     /**
      * Return the filter String currently in use.
      *
      * @return returns the filter String.
      */
-    public String getFilterValue();
+    String getFilterValue();
 
     /**
      * Set the filter String entered by the user in the Filter text field.
      *
      * @param filterString - the filter string to be used subsequently.
-     * 
      */
-    public void setFilterValue(String filterString);
+    void setFilterValue(String filterString);
 
     /**
      * Return the sort field that is currently active.
-     * 
+     *
      * @return returns the sort field in use.
      */
-    public String getSortValue();
+    String getSortValue();
 
     /**
      * Set the sort field chosen by the user from the drop down menu.
-     * 
+     *
      * @param sortField - string representing sortField selected by the user.
-     * 
+     *
      */
-    public void setSortValue(String sortField);
+    void setSortValue(String sortField);
 
     /**
-     * This method is called to get the current directory of
-     * the resuource list being displayed in the filechooser's listbox
+     * This method is called to get the current directory of the resource list
+     * being displayed in the file chooser list-box.
      *
      * @return returns the current root (directory for files and folders).
      */
-    public String getCurrentDir();
+    String getCurrentDir();
 
     /**
-     * This method is called to set the current directory of
-     * the resuource list that would be displayed in the next
-     * display cycle.
+     * This method is called to set the current directory of the resource list
+     * that would be displayed in the next display cycle.
      *
      * @param dir - the value to be set the new current root node.
-     * 
      */
-    public void setCurrentDir(String dir);
+    void setCurrentDir(String dir);
 
     /**
-     * Returns the list of objects in the container represented by the
-     * current directory. This method returns an Array of ResourecItem objects
+     * Returns the list of objects in the container represented by the current
+     * directory.This method returns an Array of ResourecItem objects.
+     *
+     * @param folder folder
+     * @param disableFiles flag
+     * @param disableFolders flag
+     * @return ResourceItem[]
      */
-    public ResourceItem[] getFolderContent(String folder,
+    ResourceItem[] getFolderContent(String folder,
             boolean disableFiles, boolean disableFolders);
 
     /**
      * Given a ResourceItem key return the ResourceItem.
      *
-     * @param - the resource item key which is the same as the value of the 
-     *   Option element in the listbox.
-     * @return - the ResourceItem object
+     * @param itemKey the resource item key which is the same as the value of
+     * the Option element in the list-box.
+     * @return the ResourceItem object
      */
-    public ResourceItem getResourceItem(String itemKey);
+    ResourceItem getResourceItem(String itemKey);
 
     /**
      * Returns true if the supplied absolute path is a folder type.
-     * 
-     * @param  path - the absolute path to the resource
+     *
+     * @param path the absolute path to the resource
      * @return returns the current root (directory for files and folders).
      */
-    public boolean isFolderType(String path);
+    boolean isFolderType(String path);
 
     /**
-     * This methods checks if the resource path in question can be accessed
-     * by the user trying to select or view it.
+     * This methods checks if the resource path in question can be accessed by
+     * the user trying to select or view it.
      *
      * @param resourceName - the resource name to check for read access
-     * @return true if the user can select the resource specified
-     *  by the resource name.
+     * @return true if the user can select the resource specified by the
+     * resource name.
      */
-    public boolean canRead(String resourceName);
+    boolean canRead(String resourceName);
 
     /**
-     * This methods checks if the resource path in question can be accessed
-     * for writes by the user.
+     * This methods checks if the resource path in question can be accessed for
+     * writes by the user.
      *
      * @param resourceName - the resource name to check for write access
-     * @return true if the user can select the resource specified
-     *  by the resource name for write.
-     * 
+     * @return true if the user can select the resource specified by the
+     * resource name for write.
      */
-    public boolean canWrite(String resourceName);
+    boolean canWrite(String resourceName);
 
-    /* *
-     * Create a resource of the given name in the node specified.
-     * In the context of the filechooser this would mean creating a file
-     * or folder in the directory specified. The default filechooser does
-     * not have this feature yet.
+    /**
+     * Get the parent folder.
      *
-     * @param resourceName the resourceName to be created.
-     * @param rootDir the node where this resource shoul dbe created.
-     * @return boolen value indicating success or failure.
-     *
-    public boolean createResource(String resourceName, String rootDir);
+     * @return String
      */
-    /* *
-     * Returns true if the user has set if component is to function as
-     * a file or directory chooser.
-     * 
-     * @return boolen value indicating if chooser type has been set
-     *
-    public boolean isChooserTypeSet();
-     */
-    /* *
-     * Set the component to function as a folder chooser. This will 
-     * cause all files or non container items to be disabled in the 
-     * listbox.
-     * 
-     * @param flag - set to true if component should function as a 
-     *      folder chooser. 
-     *
-    public void setFolderChooser(boolean flag);
-     */
-    /* *
-     * This method returns true if the component is a folder chooser. This will 
-     * cause all files or non container items to be disabled in the 
-     * listbox.
-     * 
-     * @returns true if the component is a folder chooser, false otherwise.
-     * 
-    public boolean isFolderChooser();
-     */
-    public String getParentFolder();
+    String getParentFolder();
 
-    public String getEscapeChar();
+    /**
+     * Get the escape character.
+     *
+     * @return String
+     */
+    String getEscapeChar();
 
-    public String getDelimiterChar();
+    /**
+     * Get the delimiter character.
+     *
+     * @return String
+     */
+    String getDelimiterChar();
 
-    public Object[] getSelectedContent(String[] content, boolean selectFolders)
+    /**
+     * Get the selected content.
+     *
+     * @param content content
+     * @param selectFolders flag
+     * @return Object[]
+     * @throws ResourceModelException if an error occurs
+     */
+    Object[] getSelectedContent(String[] content, boolean selectFolders)
             throws ResourceModelException;
 
-    public String[] getRoots();
+    /**
+     * Get the file system roots.
+     *
+     * @return String[]
+     */
+    String[] getRoots();
 }

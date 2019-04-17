@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,17 +19,31 @@ import java.beans.EventSetDescriptor;
 import java.lang.reflect.Method;
 
 /**
- *
- * @author gjmurphy
+ * Introspected event info.
  */
-public class IntrospectedEventInfo extends EventInfo {
+public final class IntrospectedEventInfo extends EventInfo {
 
-    EventSetDescriptor eventDescriptor;
-    String listenerMethodSignature;
-    String[] listenerMethodParameterClassNames;
+    /**
+     * Event descriptor.
+     */
+    private final EventSetDescriptor eventDescriptor;
 
-    IntrospectedEventInfo(EventSetDescriptor eventDescriptor) {
-        this.eventDescriptor = eventDescriptor;
+    /**
+     * Listener method signature.
+     */
+    private String listenerMethodSignature;
+
+    /**
+     * Listener method parameter class names.
+     */
+    private String[] listenerMethodParameterClassNames;
+
+    /**
+     * Create a new instance.
+     * @param evtDescriptor event descriptor
+     */
+    IntrospectedEventInfo(final EventSetDescriptor evtDescriptor) {
+        this.eventDescriptor = evtDescriptor;
     }
 
     @Override
@@ -75,7 +89,8 @@ public class IntrospectedEventInfo extends EventInfo {
     public String getListenerMethodSignature() {
         if (this.listenerMethodSignature == null) {
             StringBuilder buffer = new StringBuilder();
-            Method listenerMethod = this.eventDescriptor.getListenerMethods()[0];
+            Method listenerMethod = this.eventDescriptor
+                    .getListenerMethods()[0];
             buffer.append(listenerMethod.getReturnType().toString());
             buffer.append(" ");
             buffer.append(listenerMethod.getName());
@@ -99,11 +114,14 @@ public class IntrospectedEventInfo extends EventInfo {
     @Override
     public String[] getListenerMethodParameterClassNames() {
         if (listenerMethodParameterClassNames == null) {
-            Class[] paramClasses
-                    = this.eventDescriptor.getListenerMethods()[0].getParameterTypes();
-            listenerMethodParameterClassNames = new String[paramClasses.length];
+            Class[] paramClasses = this.eventDescriptor
+                            .getListenerMethods()[0]
+                            .getParameterTypes();
+            listenerMethodParameterClassNames =
+                    new String[paramClasses.length];
             for (int i = 0; i < paramClasses.length; i++) {
-                listenerMethodParameterClassNames[i] = paramClasses[i].getName();
+                listenerMethodParameterClassNames[i] =
+                        paramClasses[i].getName();
             }
         }
         return listenerMethodParameterClassNames;
@@ -122,7 +140,7 @@ public class IntrospectedEventInfo extends EventInfo {
     @Override
     EventInfo copy() {
         IntrospectedEventInfo copy = new IntrospectedEventInfo(eventDescriptor);
-        copy.original = this;
+        copy.setOriginal(this);
         copy.setDeclaringClassInfo(getDeclaringClassInfo());
         copy.setPropertyInfo(getPropertyInfo());
         copy.listenerMethodParameterClassNames =
@@ -130,5 +148,4 @@ public class IntrospectedEventInfo extends EventInfo {
         copy.listenerMethodSignature = this.listenerMethodSignature;
         return copy;
     }
-
 }

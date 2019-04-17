@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -28,10 +27,11 @@ import javax.faces.context.FacesContext;
  * Component that represents a table.
  */
 @Component(type = "com.sun.webui.jsf.Table2",
-family = "com.sun.webui.jsf.Table2",
-tagRendererType = "com.sun.webui.jsf.widget.Table2",
-displayName = "Table2", tagName = "table2", isTag = false) // Remove isTag to run
-public class Table2 extends Table implements NamingContainer, Widget {
+        family = "com.sun.webui.jsf.Table2",
+        tagRendererType = "com.sun.webui.jsf.widget.Table2",
+        // Remove isTag to run
+        displayName = "Table2", tagName = "table2", isTag = false)
+public final class Table2 extends Table implements NamingContainer, Widget {
 
     /**
      * The facet name for the actions area.
@@ -44,15 +44,22 @@ public class Table2 extends Table implements NamingContainer, Widget {
     public static final String TABLE2_TITLE_FACET = "title";
 
     /**
-     * A List containing Table2RowGroup children. 
+     * A List containing Table2RowGroup children.
      */
     private List<Table2RowGroup> table2RowGroupChildren = null;
 
+    /**
+     * Default constructor.
+     */
     public Table2() {
         super();
         setRendererType("com.sun.webui.jsf.widget.Table2");
     }
 
+    /**
+     * Get the faces context.
+     * @return FacesContext
+     */
     public FacesContext getContext() {
         return getFacesContext();
     }
@@ -67,19 +74,19 @@ public class Table2 extends Table implements NamingContainer, Widget {
         return "table2";
     }
 
-    /** 
+    /**
      * Get an Iterator over the Table2RowGroup children found for this
-     * component. 
-     * 
-     * @return An Iterator over the Table2RowGroup children. 
+     * component.
+     *
+     * @return An Iterator over the Table2RowGroup children.
      */
     public Iterator getTable2RowGroupChildren() {
-        // Get TableRowGroup children. 
+        // Get TableRowGroup children.
         if (table2RowGroupChildren == null) {
             table2RowGroupChildren = new ArrayList<Table2RowGroup>();
             for (UIComponent kid : getChildren()) {
                 if ((kid instanceof Table2RowGroup)) {
-                    table2RowGroupChildren.add((Table2RowGroup)kid);
+                    table2RowGroupChildren.add((Table2RowGroup) kid);
                 }
             }
         }

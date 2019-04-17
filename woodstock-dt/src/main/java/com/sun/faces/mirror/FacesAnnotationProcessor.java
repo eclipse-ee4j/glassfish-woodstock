@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -15,12 +15,23 @@
  */
 package com.sun.faces.mirror;
 
-import com.sun.faces.annotation.*;
+import com.sun.faces.annotation.Component;
+import com.sun.faces.annotation.Event;
+import com.sun.faces.annotation.Property;
+import com.sun.faces.annotation.PropertyCategory;
+import com.sun.faces.annotation.Renderer;
+import com.sun.faces.annotation.Resolver;
+import com.sun.faces.annotation.Tag;
 import com.sun.faces.mirror.DeclaredRendererInfo.RendersInfo;
-import com.sun.faces.mirror.generator.*;
+import com.sun.faces.mirror.generator.BeanInfoSourceGenerator;
+import com.sun.faces.mirror.generator.DebugGenerator;
+import com.sun.faces.mirror.generator.FacesConfigFileGenerator;
+import com.sun.faces.mirror.generator.GeneratorException;
+import com.sun.faces.mirror.generator.GeneratorFactory;
+import com.sun.faces.mirror.generator.TagLibFileGenerator;
+import com.sun.faces.mirror.generator.TagSourceGenerator;
 import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
-import static com.sun.rave.designtime.Constants.EventSetDescriptor.BINDING_PROPERTY;
 import java.beans.BeanInfo;
 import java.beans.EventSetDescriptor;
 import java.beans.IntrospectionException;
@@ -72,14 +83,15 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static com.sun.rave.designtime.Constants.EventSetDescriptor.BINDING_PROPERTY;
+
 /**
  * An annotation processor that generates JSF source and configuration files for
  * the current compilation unit, as reported by the annotation processor
  * environment.
- *
- * @author gjmurphy
  */
-// TODO - Handle localization of property metadata inherited from external libraries
+// TODO - Handle localization of property metadata inherited from external
+// libraries
 // TODO - Make all XxxInfo classes immutable when seen by generators
 // TODO - Handle different versions of JSF (1.1 and 1.2)
 // TODO - Handle attribute annotations within a tag class
@@ -95,7 +107,8 @@ import org.xml.sax.helpers.DefaultHandler;
     "com.sun.faces.annotation.Tag"
 })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class FacesAnnotationProcessor extends AbstractProcessor {
+@SuppressWarnings("checkstyle:filelength")
+public final class FacesAnnotationProcessor extends AbstractProcessor {
 
     /**
      * Constant for the localize option.
@@ -108,14 +121,15 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
     private static final String JAVAEE_VERSION_OPTION = "javaee.version";
 
     /**
-     * Constant for the generate runtime option.
+     * Constant for the generate run-time option.
      */
     private static final String GENERATE_RUNTIME_OPTION = "generate.runtime";
 
     /**
      * Constant for the generate design time option.
      */
-    private static final String GENERATE_DESIGNTIME_OPTION = "generate.designtime";
+    private static final String GENERATE_DESIGNTIME_OPTION =
+            "generate.designtime";
 
     /**
      * Constant for the namespace URI option.
@@ -138,7 +152,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
     private static final String TAGLIB_DOC_OUT_OPTION = "taglibdoc.out";
 
     /**
-     * Constant for the runtime out option.
+     * Constant for the run-time out option.
      */
     private static final String RUNTIME_OUT_OPTION = "runtime.out";
 
@@ -260,10 +274,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
     private volatile boolean done = false;
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations,
-            RoundEnvironment roundEnv) {
+    public boolean process(final Set<? extends TypeElement> annotations,
+            final RoundEnvironment roundEnv) {
 
-        if(done){
+        if (done) {
             return true;
         }
 
@@ -306,7 +320,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                 } else {
                     localize = Boolean.valueOf(value);
                 }
-            } else if (name.equals(JAVAEE_VERSION_OPTION)) {
+            //} else if (name.equals(JAVAEE_VERSION_OPTION)) {
                 // TODO - Add support for different versions of JavaEE
             } else if (name.equals(GENERATE_RUNTIME_OPTION)) {
                 if (value == null || value.isEmpty()) {
@@ -377,13 +391,13 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * @return DeclaredTypeInfo or {@code null} if the type was already
      * processed
      */
-    private DeclaredTypeInfo processComponent(TypeElement elt) {
+    private DeclaredTypeInfo processComponent(final TypeElement elt) {
         Map<String, Object> valueMap = getAnnotationValues(elt,
                 Component.class.getName());
         String qualifiedName = elt.getQualifiedName().toString();
         DeclaredClassInfo classInfo = declaredClasses.get(qualifiedName);
         DeclaredComponentInfo compInfo;
-        if(classInfo == null){
+        if (classInfo == null) {
             compInfo = new DeclaredComponentInfo(processingEnv, valueMap, elt);
             declaredClasses.put(qualifiedName, compInfo);
             declaredComps.add(compInfo);
@@ -396,7 +410,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * Process a rendered class.
      * @param elt element to process
      */
-    private void processRenderer(TypeElement elt) {
+    private void processRenderer(final TypeElement elt) {
         Map<String, Object> valueMap = getAnnotationValues(elt,
                 Renderer.class.getName());
         DeclaredRendererInfo rendererInfo = new DeclaredRendererInfo(valueMap,
@@ -412,7 +426,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * Process a hand authored tag.
      * @param elt element to process
      */
-    private void processTag(TypeElement elt) {
+    private void processTag(final TypeElement elt) {
         Map<String, Object> annotationValues = getAnnotationValues(elt,
                 Tag.class.getName());
         String componentType = (String) annotationValues.get("componentType");
@@ -425,18 +439,18 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * This is a JSF property or variable resolver, or a JavaEE EL resolver.
      * @param elt element to process
      */
-    private void processResolver(TypeElement elt) {
+    private void processResolver(final TypeElement elt) {
         TypeMirror superClass = elt.getSuperclass();
         while (!superClass.getKind().equals(TypeKind.NONE)) {
             TypeElement superClassType = (TypeElement) processingEnv
                     .getTypeUtils().asElement(superClass);
-            String superClassName = superClassType.getQualifiedName()
+            String superCName = superClassType.getQualifiedName()
                     .toString();
-            if (superClassName.equals(PropertyResolver.class.getName())) {
+            if (superCName.equals(PropertyResolver.class.getName())) {
                 propResolverNames.add(elt.getQualifiedName().toString());
-            } else if (superClassName.equals(VariableResolver.class.getName())) {
+            } else if (superCName.equals(VariableResolver.class.getName())) {
                 variableResolverNames.add(elt.getQualifiedName().toString());
-            } else if (superClassName.equals(ELResolver.class.getName())) {
+            } else if (superCName.equals(ELResolver.class.getName())) {
                 javaeeResolverNames.add(elt.getQualifiedName().toString());
             }
             superClass = superClassType.getSuperclass();
@@ -451,16 +465,16 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * @return DeclaredTypeInfo or {@code null} if the type was already
      * processed or has a BeanInfo class available
      */
-    private DeclaredTypeInfo processBaseClass(TypeElement elt) {
+    private DeclaredTypeInfo processBaseClass(final TypeElement elt) {
         String qualifiedName = elt.getQualifiedName().toString();
         DeclaredClassInfo classInfo = declaredClasses.get(qualifiedName);
-        if(classInfo == null) {
+        if (classInfo == null) {
             // test if there is an existing BeanInfo class available
             // for the given element
-            String BeanInfoClassFile = qualifiedName
+            String beanInfoClassFile = qualifiedName
                     .replaceAll("\\.", "/") + "BeanInfo.class";
-            if(this.getClass().getClassLoader()
-                    .getResource(BeanInfoClassFile) != null){
+            if (this.getClass().getClassLoader()
+                    .getResource(beanInfoClassFile) != null) {
                 // skip this type, it needs to be introspected
                 return null;
             } else {
@@ -480,10 +494,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * @return DeclaredTypeInfo or {@code null} if the type was already
      * processed
      */
-    private DeclaredTypeInfo processInterface(TypeElement elt) {
+    private DeclaredTypeInfo processInterface(final TypeElement elt) {
         String qualifiedName = elt.getQualifiedName().toString();
         DeclaredInterfaceInfo ifaceInfo = declaredIfaces.get(qualifiedName);
-        if(ifaceInfo == null) {
+        if (ifaceInfo == null) {
             ifaceInfo = new DeclaredInterfaceInfo(processingEnv, elt);
             declaredIfaces.put(elt.getQualifiedName().toString(), ifaceInfo);
             return ifaceInfo;
@@ -494,23 +508,27 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
     /**
      * Introspect a class using existing bean info from the class-path.
      * @param className name of the class to introspect
+     * @return IntrospectedClassInfo
      */
-    private IntrospectedClassInfo introspectClassInfo(String className) {
+    private IntrospectedClassInfo introspectClassInfo(final String className) {
 
         try {
             Class superClass = Class.forName(className);
             BeanInfo beanInfo = Introspector.getBeanInfo(superClass);
-            IntrospectedClassInfo classInfo = new IntrospectedClassInfo(beanInfo);
+            IntrospectedClassInfo classInfo =
+                    new IntrospectedClassInfo(beanInfo);
             Map<String, PropertyInfo> propInfos
                     = new HashMap<String, PropertyInfo>();
             Set<CategoryDescriptor> categoryDescriptors
                     = new HashSet<CategoryDescriptor>();
-            for (PropertyDescriptor propDesc : beanInfo.getPropertyDescriptors()) {
+            for (PropertyDescriptor propDesc
+                    : beanInfo.getPropertyDescriptors()) {
                 String name = propDesc.getName();
                 IntrospectedPropertyInfo propInfo
                         = new IntrospectedPropertyInfo(propDesc);
                 CategoryDescriptor categoryDescriptor = (CategoryDescriptor)
-                        propDesc.getValue(Constants.PropertyDescriptor.CATEGORY);
+                        propDesc.getValue(Constants
+                                .PropertyDescriptor.CATEGORY);
                 if (categoryDescriptor != null) {
                     String catName = categoryDescriptor.getName();
                     if (categories.containsKey(catName)) {
@@ -535,9 +553,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                     IntrospectedEventInfo eventInfo
                             = new IntrospectedEventInfo(eventDesc);
                     Object propDesc = eventDesc.getValue(BINDING_PROPERTY);
-                    if(propDesc != null
-                            && (propDesc instanceof PropertyDescriptor)){
-                        String propName =  ((PropertyDescriptor) propDesc).getName();
+                    if (propDesc != null
+                            && (propDesc instanceof PropertyDescriptor)) {
+                        String propName =
+                                ((PropertyDescriptor) propDesc).getName();
                         PropertyInfo propInfo = propInfos.get(propName);
                         if (propInfo == null) {
                             throw new IllegalStateException(
@@ -565,7 +584,9 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * @param visitor visitor
      */
     @SuppressWarnings("unchecked")
-    private void processType(TypeElement elt, MemberDeclarationVisitor visitor) {
+    private void processType(final TypeElement elt,
+            final MemberDeclarationVisitor visitor) {
+
         DeclaredTypeInfo typeInfo = null;
         visitor.reset();
         elt.accept(visitor, null);
@@ -590,7 +611,12 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private static TypeElement findEnclosingClassOrIface(Element elt){
+    /**
+     * Find the enclosing class or interface for the given element.
+     * @param elt element to find the enclosing class or interface of
+     * @return TypeElement
+     */
+    private static TypeElement findEnclosingClassOrIface(final Element elt) {
         Element e = elt;
         while (e != null
                 && !((e.getKind().equals(ElementKind.CLASS)
@@ -610,20 +636,23 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * @param elt element to process
      * @param visitor visitor
      */
-    private void processElement(Element elt, MemberDeclarationVisitor visitor) {
+    private void processElement(final Element elt,
+            final MemberDeclarationVisitor visitor) {
+
         // get enclosing class or interface
         TypeElement type = findEnclosingClassOrIface(elt);
         // process the class
         processType(type, visitor);
 
         // recurse on the super types
-        for(TypeMirror superTypeMirror : processingEnv.getTypeUtils()
-                .directSupertypes(type.asType())){
+        for (TypeMirror superTypeMirror : processingEnv.getTypeUtils()
+                .directSupertypes(type.asType())) {
 
              TypeElement superType = (TypeElement) processingEnv.getTypeUtils()
                     .asElement(superTypeMirror);
              // skip the java. namespace
-             if(superType.getQualifiedName().toString().startsWith(("java."))){
+             if (superType.getQualifiedName().toString()
+                     .startsWith(("java."))) {
                  continue;
              }
              processElement(superType, visitor);
@@ -636,9 +665,9 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * @param annotClass annotation class
      * @param visitor visitor
      */
-    private void processElements(RoundEnvironment roundEnv,
-            Class<? extends Annotation> annotClass,
-            MemberDeclarationVisitor visitor) {
+    private void processElements(final RoundEnvironment roundEnv,
+            final Class<? extends Annotation> annotClass,
+            final MemberDeclarationVisitor visitor) {
 
         for (Element elt : roundEnv.getElementsAnnotatedWith(annotClass)) {
             processElement(elt, visitor);
@@ -653,7 +682,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      *
      * @param roundEnv roundEnvironment
      */
-    private void processAllElements(RoundEnvironment roundEnv) {
+    private void processAllElements(final RoundEnvironment roundEnv) {
         MemberDeclarationVisitor memberVisitor = new MemberDeclarationVisitor();
         memberVisitor.setCategoryMap(categories);
 
@@ -734,8 +763,9 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * overriding property. Finally, any properties inherited from a class not
      * in the current compilation unit are copied into this class's property
      * map.
+     * @param cInfo class info
      */
-    private void updateInheritedInfo(DeclaredClassInfo cInfo) {
+    private void updateInheritedInfo(final DeclaredClassInfo cInfo) {
         // A map of all inherited properties, whether inherited from a super
         // class or from a super interface
         Map<String, PropertyInfo> sPInfos = new HashMap<String, PropertyInfo>();
@@ -761,7 +791,8 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
             if (declaredIfaces.containsKey(ifaceTypeMirror.toString())) {
                 DeclaredInterfaceInfo iInfo = declaredIfaces
                         .get(ifaceTypeMirror.toString());
-                for (PropertyInfo propInfo : iInfo.getPropertyInfos().values()) {
+                for (PropertyInfo propInfo
+                        : iInfo.getPropertyInfos().values()) {
                     if (sPInfos.containsKey(propInfo.getName())) {
                         printError(cInfo.getDeclaration(),
                                 cInfo.getQualifiedName()
@@ -797,7 +828,8 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                                 sPInfo.getReadMethodName())) {
                     printError(thisPropInfo.getDeclaration(),
                             "Read method of property in sub class must"
-                            + " have same name as the method that it overrides");
+                            + " have same name as the method that it"
+                            + " overrides");
                     updateInheritedValues = false;
                 }
                 if (pInfo.getWriteMethodName() != null
@@ -844,8 +876,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    // Verify that all declared tag classes correspond to a component class
-    // in this compilation unit
+    /**
+     * Verify that all declared tag classes correspond to a component class
+     * in this compilation unit.
+     */
     private void verifyTagClasses() {
         for (String componentType : declaredTagClasses.keySet()) {
             boolean found = false;
@@ -863,32 +897,52 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private static String elementDesc(Element elt){
-        if((elt.getKind().equals(ElementKind.CLASS)
+    /**
+     * Create a description for the given element.
+     * @param elt element to describe
+     * @return String
+     */
+    private static String elementDesc(final Element elt) {
+        if ((elt.getKind().equals(ElementKind.CLASS)
                 || elt.getKind().equals(ElementKind.INTERFACE))
-                && elt instanceof TypeElement){
+                && elt instanceof TypeElement) {
             return ((TypeElement) elt).getQualifiedName().toString();
         }
         TypeElement parentElt = findEnclosingClassOrIface(elt);
         return parentElt.getQualifiedName() + "#" + elt.toString();
     }
 
-    private void printError(Element decl, String message) {
+    /**
+     * Print an error for the given element and message.
+     * @param decl element to print an error for
+     * @param message error message
+     */
+    private void printError(final Element decl, final String message) {
         printError(elementDesc(decl) + " - " + message);
     }
 
-    private void printError(PropertyInfo pInfo, String msg) {
-        if(pInfo == null){
+    /**
+     * Print an error for the given property and message.
+     * @param pInfo property to print an error for
+     * @param msg error message
+     */
+    private void printError(final PropertyInfo pInfo, final String msg) {
+        if (pInfo == null) {
             printError(msg);
         } else if (pInfo instanceof DeclaredPropertyInfo) {
-            printError(((DeclaredPropertyInfo)pInfo).getDeclaration(), msg);
+            printError(((DeclaredPropertyInfo) pInfo).getDeclaration(), msg);
         } else {
-            printError(((IntrospectedPropertyInfo)pInfo).getName() + " - "
+            printError(((IntrospectedPropertyInfo) pInfo).getName() + " - "
                     + msg);
         }
     }
 
-    private void printError(EventInfo eInfo, String msg) {
+    /**
+     * Print an error for the given event and message.
+     * @param eInfo event to print an error for
+     * @param msg error message
+     */
+    private void printError(final EventInfo eInfo, final String msg) {
         if (eInfo == null) {
             printError(msg);
         } else if (eInfo instanceof DeclaredEventInfo) {
@@ -899,20 +953,39 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private void printError(String msg) {
+    /**
+     * Print an error message.
+     * @param msg message
+     */
+    private void printError(final String msg) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg);
     }
 
-    private void printWarning(Element decl, String message) {
+    /**
+     * Print a warning for the given element and message.
+     * @param decl element to print the warning for
+     * @param message warning message
+     */
+    private void printWarning(final Element decl, final String message) {
         printWarning(elementDesc(decl) + " - " + message);
     }
 
-    private void printWarning(String msg) {
+    /**
+     * Print an warning message.
+     * @param msg message
+     */
+    private void printWarning(final String msg) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, msg);
     }
 
-    private void validateProperty(PropertyInfo propInfo,
-            DeclaredClassInfo classInfo) {
+    /**
+     * Validate the given property.
+     * @param propInfo property info
+     * @param classInfo class being visited.
+     */
+    @SuppressWarnings("checkstyle:methodlength")
+    private void validateProperty(final PropertyInfo propInfo,
+            final DeclaredClassInfo classInfo) {
 
         Set<String> methodNameSet = classInfo.getMethodNames();
 
@@ -965,7 +1038,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                     }
                 }
             }
-            if(!methodFound){
+            if (!methodFound) {
                 printError(propInfo, "Method " + readMethodName + " not found");
             }
         }
@@ -1000,15 +1073,17 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                     }
                 }
             }
-            if(!methodFound) {
-                printError(propInfo, "Method " + writeMethodName + " not found");
+            if (!methodFound) {
+                printError(propInfo, "Method " + writeMethodName
+                        + " not found");
             }
         }
         if (readMethodName == null && writeMethodName == null) {
             printError(propInfo, "No get or set method found for property");
         }
         if (writeMethodName == null && propInfo.getAttributeInfo() != null) {
-            printError(propInfo, "A read-only method cannot be associated with a"
+            printError(propInfo,
+                    "A read-only method cannot be associated with a"
                     + " JSP tag attribute");
         }
 
@@ -1049,7 +1124,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                         EventInfo inheritedEventInfo = classInfo
                                 .getInheritedEventInfos()
                                 .get(eventName);
-                        if(inheritedEventInfo != null){
+                        if (inheritedEventInfo != null) {
                             eventInfo = inheritedEventInfo.copy();
                             classInfo.getEventInfos().put(eventName, eventInfo);
                         }
@@ -1074,15 +1149,20 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private void validateEvent(EventInfo eventInfo,
-            DeclaredClassInfo classInfo) {
+    /**
+     * Validate the given event.
+     * @param eventInfo event info
+     * @param classInfo class being visited
+     */
+    private void validateEvent(final EventInfo eventInfo,
+            final DeclaredClassInfo classInfo) {
 
         Set<String> methodNameSet = classInfo.getMethodNames();
         String addListenerName = eventInfo.getAddListenerMethodName();
         if (addListenerName == null) {
             addListenerName = genAddListenerMethodName(eventInfo);
             if (eventInfo instanceof DeclaredEventInfo) {
-                if(methodNameSet.contains(addListenerName)) {
+                if (methodNameSet.contains(addListenerName)) {
                     ((DeclaredEventInfo) eventInfo)
                         .setAddListenerMethodName(addListenerName);
                 } else {
@@ -1116,23 +1196,27 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         String getListenersName = eventInfo.getGetListenersMethodName();
         if (getListenersName == null) {
             getListenersName = genGetListenersMethodName(eventInfo);
-            if (eventInfo instanceof DeclaredEventInfo &&
-                    methodNameSet.contains(getListenersName)) {
+            if (eventInfo instanceof DeclaredEventInfo
+                    && methodNameSet.contains(getListenersName)) {
                 ((DeclaredEventInfo) eventInfo)
                         .setGetListenersMethodName(getListenersName);
             }
         }
     }
 
-    private void determineRenderer(DeclaredClassInfo classInfo) {
-        String rendererType = ((DeclaredComponentInfo) classInfo)
-                .getTagRendererType();
+    /**
+     * Determine the renderer for the given class.
+     * @param classInfo class to determine the renderer for
+     */
+    private void determineRenderer(final DeclaredClassInfo classInfo) {
+        String rendererType =
+                ((DeclaredComponentInfo) classInfo).getTagRendererType();
         boolean rendererFound = false;
         if (rendererType == null) {
-            String componentFamily = ((DeclaredComponentInfo) classInfo)
-                    .getFamily();
+            String componentFamily =
+                    ((DeclaredComponentInfo) classInfo).getFamily();
             for (DeclaredRendererInfo rendererInfo : declaredRenderers) {
-                for (RendersInfo rendersInfo : rendererInfo.renderings) {
+                for (RendersInfo rendersInfo : rendererInfo.getRenderings()) {
                     for (String rendererComponentFamily
                             : rendersInfo.getComponentFamilies()) {
                         if (componentFamily.equals(rendererComponentFamily)) {
@@ -1146,7 +1230,7 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
             }
         } else {
             for (DeclaredRendererInfo rendererInfo : declaredRenderers) {
-                for (RendersInfo rendersInfo : rendererInfo.renderings) {
+                for (RendersInfo rendersInfo : rendererInfo.getRenderings()) {
                     if (rendererType.equals(rendersInfo.getRendererType())) {
                         rendererFound = true;
                     }
@@ -1160,7 +1244,13 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private void generateFacesConfig(GeneratorFactory factory)
+    /**
+     * Generate the faces config file.
+     * @param factory generator factory
+     * @throws IOException if an I/O error occurs
+     * @throws GeneratorException if a generation error occurs
+     */
+    private void generateFacesConfig(final GeneratorFactory factory)
             throws IOException, GeneratorException {
 
         Filer filer = processingEnv.getFiler();
@@ -1178,8 +1268,14 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         generator.generate();
     }
 
-    private void generateJspTagClasses(GeneratorFactory factory)
-            throws IOException, GeneratorException{
+    /**
+     * Generate the JSP tag classes.
+     * @param factory generator factory
+     * @throws IOException if an I/O error occurs
+     * @throws GeneratorException if a generation error occurs
+     */
+    private void generateJspTagClasses(final GeneratorFactory factory)
+            throws IOException, GeneratorException {
 
         // Generate JSP tag class files, unless a hand-authored tag class
         // exists
@@ -1201,8 +1297,14 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
     }
 
+    /**
+     * Generate the JSP tag lib.
+     * @param factory generator factory
+     * @throws IOException if an I/O error occurs
+     * @throws GeneratorException if a generation error occurs
+     */
     @SuppressWarnings("unchecked")
-    private void generateJspTagLib(GeneratorFactory factory)
+    private void generateJspTagLib(final GeneratorFactory factory)
             throws IOException, GeneratorException {
 
         if (taglibDoc != null) {
@@ -1222,9 +1324,11 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                         Map<String, String> attrDescs = tagAttrs.get(tagName);
                         for (PropertyInfo propInfo
                                 : comp.getPropertyInfos().values()) {
-                            AttributeInfo attrInfo = propInfo.getAttributeInfo();
+                            AttributeInfo attrInfo =
+                                    propInfo.getAttributeInfo();
                             if (attrInfo instanceof DeclaredAttributeInfo
-                                    && attrDescs.containsKey(attrInfo.getName())) {
+                                    && attrDescs.containsKey(
+                                            attrInfo.getName())) {
                                 ((DeclaredAttributeInfo) attrInfo)
                                         .setDescription(attrDescs.get(
                                                 attrInfo.getName()));
@@ -1257,7 +1361,13 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         generator.generate();
     }
 
-    private void generateBeanInfoClasses(GeneratorFactory factory)
+    /**
+     * Generate the bean info classes.
+     * @param factory generator factory
+     * @throws IOException if an I/O error occurs
+     * @throws GeneratorException if a generation error occurs
+     */
+    private void generateBeanInfoClasses(final GeneratorFactory factory)
             throws IOException, GeneratorException {
 
         Filer filer = processingEnv.getFiler();
@@ -1308,6 +1418,11 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
          }
     }
 
+    /**
+     * Generate all files.
+     * @throws IOException if an I/O error occurs
+     * @throws GeneratorException if a generation error occurs
+     */
     private void generateFiles() throws IOException, GeneratorException {
 
         GeneratorFactory factory = new GeneratorFactory();
@@ -1349,9 +1464,12 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * map will contain entries only for those elements and value supplied
      * explicitly in the declaration. Elements that are implicitly assuming
      * their default value will not be present.
+     * @param decl enclosing class element
+     * @param className class name
+     * @return {@code Map<String, Object>}
      */
-    private Map<String, Object> getAnnotationValues(Element decl,
-            String className) {
+    private Map<String, Object> getAnnotationValues(final Element decl,
+            final String className) {
 
         for (AnnotationMirror mirror : decl.getAnnotationMirrors()) {
             Element elt = mirror.getAnnotationType().asElement();
@@ -1368,9 +1486,12 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
     /**
      * A utility method for creating a simple map of attrName-value pairs for
      * all annotation elements and values found in the annotation specified.
+     * @param mirror annotation mirror
+     * @return {@code Map<String, Object>}
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> getAnnotationValues(AnnotationMirror mirror) {
+    private Map<String, Object> getAnnotationValues(
+            final AnnotationMirror mirror) {
 
         Map<String, Object> valuesMap = new HashMap<String, Object>();
         Map<? extends ExecutableElement, ? extends AnnotationValue> mirrorValues
@@ -1413,19 +1534,39 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * Visitor implementation used to visit field and method declarations in a
      * class.
      */
-    private class MemberDeclarationVisitor
-            extends SimpleElementVisitor6 {
+    private class MemberDeclarationVisitor extends SimpleElementVisitor6 {
 
+        /**
+         * Properties.
+         */
         private Map<String, PropertyInfo> propInfos =
                 new HashMap<String, PropertyInfo>();
+
+        /**
+         * Events.
+         */
         private Map<String, EventInfo> eventInfos =
                 new HashMap<String, EventInfo>();
+
+        /**
+         * Default property name.
+         */
         private String defaultPropName = null;
+
+        /**
+         * Default event name.
+         */
         private String defaultEventName = null;
+
+        /**
+         * Categories.
+         */
         private Map<String, CategoryInfo> categories;
 
         @Override
-        public Element visitVariable(VariableElement elt, Object p) {
+        public Element visitVariable(final VariableElement elt,
+                final Object p) {
+
             if (elt.getAnnotation(Property.class) != null) {
                 visitPropertyField(elt);
             } else if (elt.getAnnotation(PropertyCategory.class) != null) {
@@ -1435,9 +1576,11 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
 
         @Override
-        public Element visitExecutable(ExecutableElement elt, Object p) {
+        public Element visitExecutable(final ExecutableElement elt,
+                final Object p) {
+
             if (elt.getAnnotation(Property.class) != null) {
-                visitPropertyGetteOrSetter(elt);
+                visitPropertyGetterOrSetter(elt);
             } else if (elt.getAnnotation(Event.class) != null) {
                 visitEventMethod(elt);
             }
@@ -1446,32 +1589,53 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
 
         @Override
         @SuppressWarnings("unchecked")
-        public Object visitType(TypeElement elt, Object p) {
-            for(Element e : elt.getEnclosedElements()){
+        public Object visitType(final TypeElement elt, final Object p) {
+            for (Element e : elt.getEnclosedElements()) {
                 e.accept(this, p);
             }
             return elt;
         }
 
+        /**
+         * Get the visited properties.
+         * @return {@code Map<String, PropertyInfo>}
+         */
         public Map<String, PropertyInfo> getPropertyInfos() {
             return propInfos;
         }
 
+        /**
+         * Get the visited events.
+         * @return {@code Map<String, EventInfo>}
+         */
         public Map<String, EventInfo> getEventInfos() {
             return eventInfos;
         }
 
-        public void setCategoryMap(Map<String, CategoryInfo> newCategories) {
+        /**
+         * Set the categories.
+         * @param newCategories new categories
+         */
+        public void setCategoryMap(
+                final Map<String, CategoryInfo> newCategories) {
+
             this.categories = newCategories;
         }
 
+        /**
+         * Reset this visitor.
+         */
         public void reset() {
             propInfos = new HashMap<String, PropertyInfo>();
             eventInfos = new HashMap<String, EventInfo>();
             defaultPropName = null;
         }
 
-        private void visitPropertyField(VariableElement elt) {
+        /**
+         * Visit a property field.
+         * @param elt field element to visit
+         */
+        private void visitPropertyField(final VariableElement elt) {
             Map<String, Object> annotationMap = getAnnotationValues(elt,
                     Property.class.getName());
             DeclaredPropertyInfo propertyInfo = new DeclaredPropertyInfo(
@@ -1496,7 +1660,11 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
             propInfos.put(name, propertyInfo);
         }
 
-        private void visitPropertyCategoryField(VariableElement elt){
+        /**
+         * Visit a property category field.
+         * @param elt field element to visit
+         */
+        private void visitPropertyCategoryField(final VariableElement elt) {
             boolean categoryIsValid = true;
             Set<Modifier> modifiers = elt.getModifiers();
             if (!elt.asType().toString().equals(
@@ -1527,7 +1695,12 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
             }
         }
 
-        private void visitPropertyGetteOrSetter(ExecutableElement elt) {
+        /**
+         * Visit property getter or setter.
+         * @param elt element to visit
+         */
+        @SuppressWarnings("checkstyle:magicnumber")
+        private void visitPropertyGetterOrSetter(final ExecutableElement elt) {
             Map<String, Object> valueMap = getAnnotationValues(elt,
                     Property.class.getName());
             DeclaredPropertyInfo propertyInfo = new DeclaredPropertyInfo(
@@ -1585,7 +1758,11 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
             }
         }
 
-        private void visitEventMethod(ExecutableElement elt) {
+        /**
+         * Visit event method.
+         * @param elt element to visit
+         */
+        private void visitEventMethod(final ExecutableElement elt) {
             Map<String, Object> values =
                     getAnnotationValues(elt, Event.class.getName());
             DeclaredEventInfo eventInfo = new DeclaredEventInfo(values, elt);
@@ -1609,8 +1786,8 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
                 } else {
                     if (!methodName.equals(values.get(
                             DeclaredEventInfo.ADD_LISTENER_METHOD_NAME))
-                            && !methodName.equals(values.get(
-                                    DeclaredEventInfo.REMOVE_LISTENER_METHOD_NAME))) {
+                            && !methodName.equals(values.get(DeclaredEventInfo
+                                            .REMOVE_LISTENER_METHOD_NAME))) {
                         printError(elt, "Indeterminate event listener method"
                                 + " (may be 'add' or 'remove' method)");
                     }
@@ -1673,15 +1850,51 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      */
     private static class TaglibDocHandler extends DefaultHandler {
 
+        /**
+         * Tag attribute name.
+         */
         private String attrName;
+
+        /**
+         * Tag attribute description.
+         */
         private String attrDesc;
+
+        /**
+         * Tag name.
+         */
         private String tagName;
+
+        /**
+         * Tag description.
+         */
         private String tagDesc;
+
+        /**
+         * Attribute descriptions.
+         */
         private Map<String, String> attrDescMap;
+
+        /**
+         * Buffer.
+         */
         private final StringBuffer buffer = new StringBuffer();
+
+        /**
+         * Element stack.
+         */
         private final Stack<String> elementStack = new Stack<String>();
+
+        /**
+         * Tag attribute map.
+         */
         private final Map<String, Map> tagAttrMap = new HashMap<String, Map>();
-        private final Map<String, String> tagDescMap = new HashMap<String, String>();
+
+        /**
+         * Tag description map.
+         */
+        private final Map<String, String> tagDescMap =
+                new HashMap<String, String>();
 
         @Override
         public void startDocument() throws SAXException {
@@ -1691,24 +1904,29 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
 
         @Override
-        public void characters(char[] chars, int start, int length)
+        public void characters(final char[] chars, final int start,
+                final int length)
                 throws SAXException {
 
             buffer.append(chars, start, length);
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName,
-                Attributes attributes) throws SAXException {
+        public void startElement(final String uri, final String localName,
+                final String qName, final Attributes attributes)
+                throws SAXException {
 
+            String lName;
             if (localName == null || localName.length() == 0) {
-                localName = qName;
+                lName = qName;
+            } else {
+                lName = localName;
             }
-            if (localName.equals("tag")) {
+            if (lName.equals("tag")) {
                 attrDescMap = new HashMap<String, String>();
                 tagName = null;
                 tagDesc = null;
-            } else if (localName.equals("attribute")) {
+            } else if (lName.equals("attribute")) {
                 attrName = null;
                 attrDesc = null;
             }
@@ -1716,30 +1934,33 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName)
-                throws SAXException {
+        public void endElement(final String uri, final String localName,
+                final String qName) throws SAXException {
 
             elementStack.pop();
+            String lName;
             if (localName == null || localName.length() == 0) {
-                localName = qName;
+                lName = qName;
+            } else {
+                lName = localName;
             }
-            if (localName.equals("name")) {
+            if (lName.equals("name")) {
                 if (elementStack.peek().equals("tag")) {
                     tagName = buffer.toString().trim();
                 } else {
                     attrName = buffer.toString().trim();
                 }
-            } else if (localName.equals("description")) {
+            } else if (lName.equals("description")) {
                 if (elementStack.peek().equals("tag")) {
                     tagDesc = buffer.toString().trim();
                 } else {
                     attrDesc = buffer.toString().trim();
                 }
-            } else if (localName.equals("attribute")) {
+            } else if (lName.equals("attribute")) {
                 if (attrDesc != null) {
                     attrDescMap.put(attrName, attrDesc);
                 }
-            } else if (localName.equals("tag")) {
+            } else if (lName.equals("tag")) {
                 if (tagDesc != null) {
                     tagDescMap.put(tagName, tagDesc);
                 }
@@ -1748,10 +1969,18 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
             buffer.setLength(0);
         }
 
+        /**
+         * Get the tag description map.
+         * @return {@code Map<String, String>}
+         */
         public Map<String, String> getTagDescriptionMap() {
             return tagDescMap;
         }
 
+        /**
+         * Get the tag attribute map.
+         * @return {@code Map<String, Map>}
+         */
         public Map<String, Map> getTagAttributeMap() {
             return tagAttrMap;
         }
@@ -1761,8 +1990,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
      * Validate the attrName specified, to ensure that it can serve as an
      * instance attrName in Java source or as an XML element or attribute
      * attrName in JSP source.
+     * @param name name to validate
+     * @return {@code true} if the name is valid, {@code false} otherwise
      */
-    private static boolean isNameValid(String name) {
+    private static boolean isNameValid(final String name) {
         if (name == null || name.length() == 0) {
             return false;
         }
@@ -1779,8 +2010,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
 
     /**
      * Create a default read method attrName for the property specified.
+     * @param propInfo property to process
+     * @return String
      */
-    private static String genReadMethodName(PropertyInfo propInfo) {
+    private static String genReadMethodName(final PropertyInfo propInfo) {
         String name = propInfo.getName();
         String prefix;
         if (propInfo.getType().equals("boolean")) {
@@ -1794,8 +2027,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
 
     /**
      * Create a default write method attrName for the property specified.
+     * @param propInfo property to process
+     * @return String
      */
-    private static String genWriteMethodName(PropertyInfo propInfo) {
+    private static String genWriteMethodName(final PropertyInfo propInfo) {
         String name = propInfo.getName();
         return "set" + name.substring(0, 1).toUpperCase()
                 + name.substring(1);
@@ -1803,8 +2038,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
 
     /**
      * Create a default add listener method attrName for the event specified.
+     * @param eventInfo event to process
+     * @return String
      */
-    private static String genAddListenerMethodName(EventInfo eventInfo) {
+    private static String genAddListenerMethodName(final EventInfo eventInfo) {
         String name = eventInfo.getName();
         return "add" + name.substring(0, 1).toUpperCase()
                 + name.substring(1) + "Listener";
@@ -1812,8 +2049,12 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
 
     /**
      * Create a default remove listener method attrName for the event specified.
+     * @param eventInfo event to process
+     * @return String
      */
-    private static String genRemoveListenerMethodName(EventInfo eventInfo) {
+    private static String genRemoveListenerMethodName(
+            final EventInfo eventInfo) {
+
         String name = eventInfo.getName();
         return "remove" + name.substring(0, 1).toUpperCase()
                 + name.substring(1) + "Listener";
@@ -1821,8 +2062,10 @@ public class FacesAnnotationProcessor extends AbstractProcessor {
 
     /**
      * Create a default get listeners method attrName for the event specified.
+     * @param eventInfo event to process
+     * @return String
      */
-    private static String genGetListenersMethodName(EventInfo eventInfo) {
+    private static String genGetListenersMethodName(final EventInfo eventInfo) {
         String name = eventInfo.getName();
         return "get" + name.substring(0, 1).toUpperCase()
                 + name.substring(1) + "Listeners";

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -28,27 +27,401 @@ import javax.faces.context.FacesContext;
  * Represents an input field whose content will be included when the surrounding
  * form is submitted.
  */
-@Component(type = "com.sun.webui.jsf.Field", family = "com.sun.webui.jsf.Field", displayName = "Field", isTag = false,
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_field",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_field_props")
-public class Field extends HiddenField implements ComplexComponent,
-        NamingContainer {
+@Component(type = "com.sun.webui.jsf.Field",
+        family = "com.sun.webui.jsf.Field",
+        displayName = "Field", isTag = false,
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_field",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_field_props")
+        //CHECKSTYLE:ON
+public class Field extends HiddenField
+        implements ComplexComponent, NamingContainer {
 
-    public static final String READONLY_ID = "_readOnly"; //NOI18N
-    public static final String LABEL_ID = "_label"; //NOI18N
-    public static final String INPUT_ID = "_field"; //NOI18N
-    public static final String READONLY_FACET = "readOnly"; //NOI18N
+    /**
+     * Read-only id.
+     */
+    public static final String READONLY_ID = "_readOnly";
+
+    /**
+     * Label id.
+     */
+    public static final String LABEL_ID = "_label";
+
+    /**
+     * Input id.
+     */
+    public static final String INPUT_ID = "_field";
+
+    /**
+     * Read-only facet.
+     */
+    public static final String READONLY_FACET = "readOnly";
+
+    /**
+     * Label facet.
+     */
     public static final String LABEL_FACET = "label";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
-    /** Creates a new instance of FieldBase */
+    /**
+     * Number of character columns used to render this field. The default is 20.
+     */
+    @Property(name = "columns",
+            displayName = "Columns",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int columns = Integer.MIN_VALUE;
+
+    /**
+     * columnsSet flag.
+     */
+    private boolean columnsSet = false;
+
+    /**
+     * Flag indicating that the user is not permitted to activate this
+     * component, and that the component's value will not be submitted with the
+     * form.
+     */
+    @Property(name = "disabled",
+            displayName = "Disabled",
+            category = "Behavior")
+    private boolean disabled = false;
+
+    /**
+     * disabled set flag.
+     */
+    private boolean disabledSet = false;
+
+    /**
+     * If set, a label is rendered adjacent to the component with the value of
+     * this attribute as the label text.
+     */
+    @Property(name = "label",
+            displayName = "Label",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String label = null;
+
+    /**
+     * Sets the style level for the generated label, provided the label
+     * attribute has been set. Valid values are 1 (largest), 2 and 3 (smallest).
+     * The default value is 2.
+     */
+    @Property(name = "labelLevel",
+            displayName = "Label Level",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.LabelLevelsEditor")
+            //CHECKSTYLE:ON
+    private int labelLevel = Integer.MIN_VALUE;
+
+    /**
+     * labelLevel set flag.
+     */
+    private boolean labelLevelSet = false;
+
+    /**
+     * The maximum number of characters that can be entered for this field.
+     */
+    @Property(name = "maxLength",
+            displayName = "Maximum Length",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int maxLength = Integer.MIN_VALUE;
+
+    /**
+     * maxLength set flag.
+     */
+    private boolean maxLengthSet = false;
+
+    /**
+     * Scripting code executed when this element loses focus.
+     */
+    @Property(name = "onBlur",
+            displayName = "Blur Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onBlur = null;
+
+    /**
+     * Scripting code executed when the element value of this component is
+     * changed.
+     */
+    @Property(name = "onChange",
+            displayName = "Value Change Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onChange = null;
+
+    /**
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     */
+    @Property(name = "onClick",
+            displayName = "Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onClick = null;
+
+    /**
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     */
+    @Property(name = "onDblClick",
+            displayName = "Double Click Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onDblClick = null;
+
+    /**
+     * Scripting code executed when this component receives focus. An element
+     * receives focus when the user selects the element by pressing the tab key
+     * or clicking the mouse.
+     */
+    @Property(name = "onFocus",
+            displayName = "Focus Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onFocus = null;
+
+    /**
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     */
+    @Property(name = "onKeyDown",
+            displayName = "Key Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyDown = null;
+
+    /**
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     */
+    @Property(name = "onKeyPress",
+            displayName = "Key Press Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyPress = null;
+
+    /**
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     */
+    @Property(name = "onKeyUp",
+            displayName = "Key Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onKeyUp = null;
+
+    /**
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseDown",
+            displayName = "Mouse Down Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseDown = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     */
+    @Property(name = "onMouseMove",
+            displayName = "Mouse Move Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseMove = null;
+
+    /**
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     */
+    @Property(name = "onMouseOut",
+            displayName = "Mouse Out Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOut = null;
+
+    /**
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     */
+    @Property(name = "onMouseOver",
+            displayName = "Mouse In Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseOver = null;
+
+    /**
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     */
+    @Property(name = "onMouseUp",
+            displayName = "Mouse Up Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onMouseUp = null;
+
+    /**
+     * Scripting code executed when some text in this component value is
+     * selected.
+     */
+    @Property(name = "onSelect",
+            displayName = "Text Selected Script",
+            category = "Javascript",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
+            //CHECKSTYLE:ON
+    private String onSelect = null;
+
+    /**
+     * Flag indicating that modification of this component by the user is not
+     * currently permitted, but that it will be included when the form is
+     * submitted.
+     */
+    @Property(name = "readOnly",
+            displayName = "Read Only",
+            category = "Behavior")
+    private boolean readOnly = false;
+
+    /**
+     * readOnly set flag.
+     */
+    private boolean readOnlySet = false;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+            //CHECKSTYLE:ON
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     */
+    @Property(name = "tabIndex",
+            displayName = "Tab Index",
+            category = "Accessibility",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int tabIndex = Integer.MIN_VALUE;
+
+    /**
+     * tabIndex set flag.
+     */
+    private boolean tabIndexSet = false;
+
+    /**
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     */
+    @Property(name = "toolTip",
+            displayName = "Tool Tip",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String toolTip = null;
+
+    /**
+     * Flag indicating that any leading and trailing blanks will be trimmed
+     * prior to conversion to the destination data type. Default value is true.
+     */
+    @Property(name = "trim",
+            displayName = "Trim",
+            category = "Behavior")
+    private boolean trim = false;
+
+    /**
+     * trim set flag.
+     */
+    private boolean trimSet = false;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Creates a new instance of FieldBase.
+     */
     public Field() {
         super();
         setRendererType("com.sun.webui.jsf.Field");
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * This implementation returns {@code "com.sun.webui.jsf.Field"}.
+     * @return String.
      */
     @Override
     public String getFamily() {
@@ -56,78 +429,123 @@ public class Field extends HiddenField implements ComplexComponent,
     }
 
     /**
-     * Return a component that implements a label for this <code>Field</code>.
-     * If a facet named <code>label</code> is found
-     * that component is returned.</br>
-     * If a facet is not found a <code>Label</code>
-     * component instance is created and returned with the id</br>
-     * <code>getId() + "_label"</code>. The <code>Label</code>
-     * instance is intialized with the following values
+     * Flag indicating that an input value for this field is mandatory, and
+     * failure to provide one will trigger a validation error.
+     * This implementation invokes {@code super.isRequired}
+     * @return {@code boolean}
+     */
+    @Property(name = "required",
+            isHidden = false,
+            isAttribute = true,
+            category = "Data")
+    @Override
+    public boolean isRequired() {
+        return super.isRequired();
+    }
+
+    // Hide value
+    /**
+     * This implementation invokes {@code super.getValue}.
+     * @return Object
+     */
+    @Property(name = "value",
+            isHidden = true,
+            isAttribute = false)
+    @Override
+    public Object getValue() {
+        return super.getValue();
+    }
+
+    /**
+     * Literal value to be rendered in this input field. If this property is
+     * specified by a value binding expression, the corresponding value will be
+     * updated if validation succeeds.
+     *
+     * @return Object
+     */
+    @Property(name = "text",
+            displayName = "Text",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+    //CHECKSTYLE:ON
+    @Override
+    public Object getText() {
+        return getValue();
+    }
+
+    /**
+     * Return a component that implements a label for this {@code Field}. If a
+     * facet named {@code label} is found that component is returned. If a facet
+     * is not found a {@code Label} component instance is created and returned
+     * with the id {@code getId() + "_label"}. The {@code Label} instance is
+     * initialized with the following values
      * <p>
      * <ul>
-     * <li><code>getLabelLevel()</code></li>
-     * <li><code>style</code> parameter</li>
-     * <li><code>getLabel()</code></li>
-     * <li><code>setLabeledComponent(this)</code></li>
+     * <li>{@code getLabelLevel()}</li>
+     * <li>{@code style} parameter</li>
+     * <li>{@code getLabel()}</li>
+     * <li>{@code setLabeledComponent(this)}</li>
      * </ul>
      * </p>
      * <p>
-     * If a facet is not defined then the returned <code>Label</code>
-     * component is created every time this method is called.
+     * If a facet is not defined then the returned {@code Label} component is
+     * created every time this method is called.
      * </p>
-     * @return - label facet or a Label instance
+     *
+     * @param context faces context
+     * @param labelStyle style
+     * @return label facet or a Label instance
      */
-    public UIComponent getLabelComponent(FacesContext context, String style) {
+    public UIComponent getLabelComponent(final FacesContext context,
+            final String labelStyle) {
 
         if (DEBUG) {
             log("getLabelComponent()");
         }
 
         // Check if the page author has defined a label facet
-        UIComponent labelComponent = getFacet(LABEL_FACET); //NOI18N
+        UIComponent labelComponent = getFacet(LABEL_FACET);
         if (labelComponent != null) {
             if (DEBUG) {
-                log("\tFound facet."); //NOI18N
+                log("\tFound facet.");
             }
             return labelComponent;
         }
 
         // If the page author has not defined a label facet,
         // Create one every time.
-        //
-        String label = getLabel();
-        labelComponent = createLabel(label, style, context); //NOI18N\
-
+        String fieldLabel = getLabel();
+        labelComponent = createLabel(fieldLabel, labelStyle, context);
         return labelComponent;
     }
 
     /**
-     * Return a component that implements a read only version of
-     * of this <code>Field</code>.
-     * If a facet named <code>readOnly</code> is found
-     * that component is returned.</br>
-     * If a facet is not found a <code>StaticText</code>
-     * component instance is created and returned with the id</br>
-     * <code>getId() + "_alertImage"</code>. The <code>StaticText</code>
-     * instance is intialized with the component's value as a
-     * <code>String</code>.
+     * Return a component that implements a read only version of of this
+     * {@code Field}. If a facet named {@code readOnly} is found that component
+     * is returned. If a facet is not found a {@code StaticText} component
+     * instance is created and returned with the id
+     * {@code getId() + "_alertImage"}. The {@code StaticText} instance is
+     * initialized with the component's value as a {@code String}.
      * <p>
-     * If a facet is not defined then the returned <code>StaticText</code>
-     * component is created every time this method is called.
+     * If a facet is not defined then the returned {@code StaticText} component
+     * is created every time this method is called.
      * </p>
-     * @return - alertImage facet or an Icon instance
+     *
+     * @param context faces context
+     * @return alertImage facet or an Icon instance
      */
-    public UIComponent getReadOnlyComponent(FacesContext context) {
+    public UIComponent getReadOnlyComponent(final FacesContext context) {
 
         if (DEBUG) {
             log("getReadOnlyComponent()");
         }
 
         // Check if the page author has defined a label facet
-        UIComponent textComponent = getFacet(READONLY_FACET); //NOI18N
+        UIComponent textComponent = getFacet(READONLY_FACET);
         if (textComponent != null) {
             if (DEBUG) {
-                log("\tFound facet."); //NOI18N
+                log("\tFound facet.");
             }
             return textComponent;
         }
@@ -135,78 +553,82 @@ public class Field extends HiddenField implements ComplexComponent,
         // If the page author has not defined a readOnly facet,
         // create a static text component
         textComponent = createText(getReadOnlyValueString(context));
-
         return textComponent;
     }
 
     /**
-     * Create a Label component every time unless labelString is null
-     * or the empty string.
+     * Create a Label component every time unless labelString is null or the
+     * empty string.
+     *
+     * @param labelString label
+     * @param labelStyle style
+     * @param context faces context
+     * @return UIComponent
      */
-    private UIComponent createLabel(String labelString, String style,
-            FacesContext context) {
+    private UIComponent createLabel(final String labelString,
+            final String labelStyle, final FacesContext context) {
 
         if (DEBUG) {
             log("createLabel()");
         }
 
-        // If we find a label, define a component and add it as a 
+        // If we find a label, define a component and add it as a
         // private facet
-        // 
-
+        //
         // We need to allow an empty string label since this
         // could mean that there is value binding and a
         // message bundle hasn't loaded yet, but there
         // is a value binding since the javax.el never returns
         // null for a String binding.
-        //
         if (labelString == null /*|| labelString.length() < 1*/) {
             if (DEBUG) {
                 log("\tNo label");
             }
             // Remove any previously created one.
-            //
             ComponentUtilities.removePrivateFacet(this, LABEL_FACET);
             return null;
         }
 
-        Label label = (Label) ComponentUtilities.getPrivateFacet(this, LABEL_FACET, true);
-        if (label == null) {
-            label = new Label();
-            label.setId(
-                    ComponentUtilities.createPrivateFacetId(this, LABEL_FACET));
-            ComponentUtilities.putPrivateFacet(this, LABEL_FACET, label);
+        Label fieldLabel = (Label) ComponentUtilities
+                .getPrivateFacet(this, LABEL_FACET, true);
+        if (fieldLabel == null) {
+            fieldLabel = new Label();
+            fieldLabel.setId(ComponentUtilities
+                    .createPrivateFacetId(this, LABEL_FACET));
+            ComponentUtilities.putPrivateFacet(this, LABEL_FACET, fieldLabel);
         }
-        label.setLabelLevel(getLabelLevel());
-        label.setStyleClass(style);
-        label.setText(labelString);
+        fieldLabel.setLabelLevel(getLabelLevel());
+        fieldLabel.setStyleClass(labelStyle);
+        fieldLabel.setText(labelString);
         if (!isReadOnly()) {
-            label.setFor(getClientId(context));
+            fieldLabel.setFor(getClientId(context));
         }
-
-        return label;
+        return fieldLabel;
     }
 
     /**
-     * Create a StaticText component every time and do not
-     * save it in the facet map.
+     * Create a StaticText component every time and do not save it in the facet
+     * map.
+     * @param content text content
+     * @return UIComponent
      */
-    private UIComponent createText(String string) {
+    private UIComponent createText(final String content) {
 
         if (DEBUG) {
             log("createText()");
         }
 
+        StaticText text = new StaticText();
+
         // If we find a label, define a component and add it to the
         // children, unless it has been added in a previous cycle
         // (the component is being redisplayed).
-
-        if (string == null || string.length() < 1) {
+        if (content == null || content.length() < 1) {
             // TODO - maybe print a default?
-            string = new String();
+            text.setText("");
+        } else {
+            text.setText(content);
         }
-        StaticText text = new StaticText();
-        text.setText(string);
         text.setId(
                 ComponentUtilities.createPrivateFacetId(this, READONLY_FACET));
         text.setParent(this);
@@ -216,31 +638,33 @@ public class Field extends HiddenField implements ComplexComponent,
 
     /**
      * Log an error - only used during development time.
+     *
+     * @param msg message to log
      */
     @Override
-    protected void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
+    protected void log(final String msg) {
+        System.out.println(Field.class.getName() + "::" + msg);
     }
 
     /**
-     * Returns the absolute ID of an HTML element suitable for use as
-     * the value of an HTML LABEL element's <code>for</code> attribute.
-     * If the <code>ComplexComponent</code> has sub-compoents, and one of 
-     * the sub-components is the target of a label, if that sub-component
-     * is a <code>ComplexComponent</code>, then
-     * <code>getLabeledElementId</code> must called on the sub-component and
-     * the value returned. The value returned by this 
+     * Returns the absolute ID of an HTML element suitable for use as the value
+     * of an HTML LABEL element's {@code for} attribute. If the
+     * {@code ComplexComponent} has sub-components, and one of the
+     * sub-components is the target of a label, if that sub-component is a
+     * {@code ComplexComponent}, then {@code getLabeledElementId} must called on
+     * the sub-component and the value returned. The value returned by this
      * method call may or may not resolve to a component instance.
      * <p>
-     * If <code>isReadOnly</code> returns true, <code>null</code> is
-     * returned.
+     * This implementation returns {@code null} if {@code isReadOnly} returns
+     * true.
      * </p>
      *
      * @param context The FacesContext used for the request
-     * @return An abolute id suitable for the value of an HTML LABEL element's
-     * <code>for</code> attribute.
+     * @return An absolute id suitable for the value of an HTML LABEL element's
+     * {@code for} attribute.
      */
-    public String getLabeledElementId(FacesContext context) {
+    @Override
+    public String getLabeledElementId(final FacesContext context) {
 
         // If this component has a label either as a facet or
         // an attribute, return the id of the input element
@@ -249,7 +673,6 @@ public class Field extends HiddenField implements ComplexComponent,
         // client id.
         //
         // If it is read only then return null
-        //
         if (isReadOnly()) {
             return null;
         }
@@ -259,7 +682,6 @@ public class Field extends HiddenField implements ComplexComponent,
         // It also checks the label attribute. This is better than
         // relying on "getLabeledComponent" having been called
         // like this method used to do.
-        //
         String clntId = this.getClientId(context);
         UIComponent labelComp = getLabelComponent(context, null);
         if (labelComp == null) {
@@ -270,30 +692,29 @@ public class Field extends HiddenField implements ComplexComponent,
     }
 
     /**
-     * Returns the id of an HTML element suitable to
-     * receive the focus.
-     * If the <code>ComplexComponent</code> has sub-compoents, and one of 
-     * the sub-components is to reveive the focus, if that sub-component
-     * is a <code>ComplexComponent</code>, then
-     * <code>getFocusElementId</code> must called on the sub-component and
-     * the value returned. The value returned by this 
+     * Returns the id of an HTML element suitable to receive the focus. If the
+     * {@code ComplexComponent} has sub-components, and one of the
+     * sub-components is to reveive the focus, if that sub-component is a
+     * {@code ComplexComponent}, then {@code getFocusElementId} must called on
+     * the sub-component and the value returned. The value returned by this
      * method call may or may not resolve to a component instance.
      * <p>
-     * This implementation returns the value <code>getLabeledElementId</code>
+     * This implementation returns the value {@code getLabeledElementId}
      * </p>
      *
      * @param context The FacesContext used for the request
      */
-    public String getFocusElementId(FacesContext context) {
+    @Override
+    public String getFocusElementId(final FacesContext context) {
         return getLabeledElementId(context);
     }
 
     /**
-     * Implement this method so that it returns the DOM ID of the 
-     * HTML element which should receive focus when the component 
-     * receives focus, and to which a component label should apply. 
-     * Usually, this is the first element that accepts input. 
-     * 
+     * This implementaiton returns the DOM ID of the HTML element
+     * which should receive focus when the component receives focus, and to
+     * which a component label should apply. Usually, this is the first element
+     * that accepts input.
+     *
      * @param context The FacesContext for the request
      * @return The client id, also the JavaScript element id
      *
@@ -301,10 +722,10 @@ public class Field extends HiddenField implements ComplexComponent,
      * @see #getLabeledElementId
      * @see #getFocusElementId
      */
-    public String getPrimaryElementID(FacesContext context) {
+    @Override
+    public String getPrimaryElementID(final FacesContext context) {
         // In case callers can't handle null when this component
         // is read only. don't return getLabeledElementId here.
-        //
         String clntId = this.getClientId(context);
         UIComponent labelComp = getLabelComponent(context, null);
         if (labelComp == null) {
@@ -314,17 +735,17 @@ public class Field extends HiddenField implements ComplexComponent,
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
+     * Return the {@code ValueExpression} stored for the specified name (if
+     * any), respecting any property aliases.
+     * This implementation aliases {@code "text"} with {@code "value"}
+     * and delegates the call to {@code UIInput.getValueExpression}.
      *
      * @param name Name of value binding expression to retrieve
+     * @return ValueExpression
      */
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("text")) {
             return super.getValueExpression("value");
         }
@@ -332,15 +753,16 @@ public class Field extends HiddenField implements ComplexComponent,
     }
 
     /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
+     * Set the {@code ValueExpression} stored for the specified name (if any),
+     * respecting any property aliases.
      *
-     * @param name    Name of value binding to set
+     * @param name Name of value binding to set
      * @param binding ValueExpression to set, or null to remove
      */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("text")) {
             super.setValueExpression("value", binding);
             return;
@@ -349,46 +771,23 @@ public class Field extends HiddenField implements ComplexComponent,
     }
 
     /**
-     * Flag indicating that an input value for this field is mandatory, and 
-     * failure to provide one will trigger a validation error.
+     * Number of character columns used to render this field. The default is
+     * 20.
+     * @return int
      */
-    @Property(name = "required", isHidden = false, isAttribute = true, category = "Data")
-    @Override
-    public boolean isRequired() {
-        return super.isRequired();
-    }
-
-    // Hide value
-    @Property(name = "value", isHidden = true, isAttribute = false)
-    @Override
-    public Object getValue() {
-        return super.getValue();
-    }
-    /**
-     * <p>Number of character columns used to render this
-     * field. The default is 20.</p>
-     */
-    @Property(name = "columns", displayName = "Columns", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int columns = Integer.MIN_VALUE;
-    private boolean columns_set = false;
-
-    /**
-     * <p>Number of character columns used to render this
-     * field. The default is 20.</p>
-     */
+    @SuppressWarnings("checkstyle:magicnumber")
     public int getColumns() {
         int cols = 20;
-        if (this.columns_set) {
+        if (this.columnsSet) {
             cols = this.columns;
         } else {
-            ValueExpression _vb = getValueExpression("columns");
-            if (_vb != null) {
-                Object _result = _vb.getValue(getFacesContext().getELContext());
-                if (_result == null) {
+            ValueExpression vb = getValueExpression("columns");
+            if (vb != null) {
+                Object result = vb.getValue(getFacesContext().getELContext());
+                if (result == null) {
                     cols = Integer.MIN_VALUE;
                 } else {
-                    cols = ((Integer) _result).intValue();
+                    cols = ((Integer) result);
                 }
             }
         }
@@ -400,964 +799,901 @@ public class Field extends HiddenField implements ComplexComponent,
     }
 
     /**
-     * <p>Number of character columns used to render this
-     * field. The default is 20.</p>
+     * Number of character columns used to render this field. The default is
+     * 20.
+     *
      * @see #getColumns()
+     * @param newColumns columns
      */
-    public void setColumns(int columns) {
-        this.columns = columns;
-        this.columns_set = true;
+    public void setColumns(final int newColumns) {
+        this.columns = newColumns;
+        this.columnsSet = true;
     }
-    /**
-     * <p>Flag indicating that the user is not permitted to activate this
-     * component, and that the component's value will not be submitted with the
-     * form.</p>
-     */
-    @Property(name = "disabled", displayName = "Disabled", category = "Behavior")
-    private boolean disabled = false;
-    private boolean disabled_set = false;
 
     /**
-     * <p>Flag indicating that the user is not permitted to activate this
+     * Flag indicating that the user is not permitted to activate this
      * component, and that the component's value will not be submitted with the
-     * form.</p>
+     * form.
+     * This implementation evaluates the expression for {@code "disabled"}.
+     * @return {@code boolean}
      */
     @Override
     public boolean isDisabled() {
-        if (this.disabled_set) {
+        if (this.disabledSet) {
             return this.disabled;
         }
-        ValueExpression _vb = getValueExpression("disabled");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("disabled");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag indicating that the user is not permitted to activate this
+     * Flag indicating that the user is not permitted to activate this
      * component, and that the component's value will not be submitted with the
-     * form.</p>
+     * form.
+     *
      * @see #isDisabled()
+     * @param newDisabled disabled
      */
     @Override
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-        this.disabled_set = true;
+    public void setDisabled(final boolean newDisabled) {
+        this.disabled = newDisabled;
+        this.disabledSet = true;
     }
-    /**
-     * <p>If set, a label is rendered adjacent to the component with the
-     * value of this attribute as the label text.</p>
-     */
-    @Property(name = "label", displayName = "Label", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String label = null;
 
     /**
-     * <p>If set, a label is rendered adjacent to the component with the
-     * value of this attribute as the label text.</p>
+     * If set, a label is rendered adjacent to the component with the value of
+     * this attribute as the label text.
+     * @return String
      */
     public String getLabel() {
         if (this.label != null) {
             return this.label;
         }
-        ValueExpression _vb = getValueExpression("label");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("label");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>If set, a label is rendered adjacent to the component with the
-     * value of this attribute as the label text.</p>
+     * If set, a label is rendered adjacent to the component with the value of
+     * this attribute as the label text.
+     *
      * @see #getLabel()
+     * @param newLabel label
      */
-    public void setLabel(String label) {
-        this.label = label;
+    public void setLabel(final String newLabel) {
+        this.label = newLabel;
     }
-    /**
-     * <p>Sets the style level for the generated label, provided the
-     * label attribute has been set. Valid values are 1 (largest), 2 and
-     * 3 (smallest). The default value is 2.</p>
-     */
-    @Property(name = "labelLevel", displayName = "Label Level", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.LabelLevelsEditor")
-    private int labelLevel = Integer.MIN_VALUE;
-    private boolean labelLevel_set = false;
 
     /**
-     * <p>Sets the style level for the generated label, provided the
-     * label attribute has been set. Valid values are 1 (largest), 2 and
-     * 3 (smallest). The default value is 2.</p>
+     * Sets the style level for the generated label, provided the label
+     * attribute has been set. Valid values are 1 (largest), 2 and 3 (smallest).
+     * The default value is 2.
+     * @return int
      */
     public int getLabelLevel() {
-        if (this.labelLevel_set) {
+        if (this.labelLevelSet) {
             return this.labelLevel;
         }
-        ValueExpression _vb = getValueExpression("labelLevel");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("labelLevel");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 2;
     }
 
     /**
-     * <p>Sets the style level for the generated label, provided the
-     * label attribute has been set. Valid values are 1 (largest), 2 and
-     * 3 (smallest). The default value is 2.</p>
+     * Sets the style level for the generated label, provided the label
+     * attribute has been set. Valid values are 1 (largest), 2 and 3 (smallest).
+     * The default value is 2.
+     *
      * @see #getLabelLevel()
+     * @param newLabelLevel labelLevel
      */
-    public void setLabelLevel(int labelLevel) {
-        this.labelLevel = labelLevel;
-        this.labelLevel_set = true;
+    public void setLabelLevel(final int newLabelLevel) {
+        this.labelLevel = newLabelLevel;
+        this.labelLevelSet = true;
     }
-    /**
-     * <p>The maximum number of characters that can be entered for this field.</p>
-     */
-    @Property(name = "maxLength", displayName = "Maximum Length", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int maxLength = Integer.MIN_VALUE;
-    private boolean maxLength_set = false;
 
     /**
-     * <p>The maximum number of characters that can be entered for this field.</p>
+     * The maximum number of characters that can be entered for this field.
+     * @return int
      */
     public int getMaxLength() {
-        if (this.maxLength_set) {
+        if (this.maxLengthSet) {
             return this.maxLength;
         }
-        ValueExpression _vb = getValueExpression("maxLength");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("maxLength");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The maximum number of characters that can be entered for this field.</p>
+     * The maximum number of characters that can be entered for this field.
+     *
      * @see #getMaxLength()
+     * @param newMaxLength maxLength
      */
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
-        this.maxLength_set = true;
+    public void setMaxLength(final int newMaxLength) {
+        this.maxLength = newMaxLength;
+        this.maxLengthSet = true;
     }
-    /**
-     * <p>Scripting code executed when this element loses focus.</p>
-     */
-    @Property(name = "onBlur", displayName = "Blur Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onBlur = null;
 
     /**
-     * <p>Scripting code executed when this element loses focus.</p>
+     * Scripting code executed when this element loses focus.
+     * @return String
      */
     public String getOnBlur() {
         if (this.onBlur != null) {
             return this.onBlur;
         }
-        ValueExpression _vb = getValueExpression("onBlur");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onBlur");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when this element loses focus.</p>
+     * Scripting code executed when this element loses focus.
+     *
      * @see #getOnBlur()
+     * @param newOnBlur onBlur
      */
-    public void setOnBlur(String onBlur) {
-        this.onBlur = onBlur;
+    public void setOnBlur(final String newOnBlur) {
+        this.onBlur = newOnBlur;
     }
-    /**
-     * <p>Scripting code executed when the element
-     * value of this component is changed.</p>
-     */
-    @Property(name = "onChange", displayName = "Value Change Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onChange = null;
 
     /**
-     * <p>Scripting code executed when the element
-     * value of this component is changed.</p>
+     * Scripting code executed when the element value of this component is
+     * changed.
+     * @return String
      */
     public String getOnChange() {
         if (this.onChange != null) {
             return this.onChange;
         }
-        ValueExpression _vb = getValueExpression("onChange");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onChange");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the element
-     * value of this component is changed.</p>
+     * Scripting code executed when the element value of this component is
+     * changed.
+     *
      * @see #getOnChange()
+     * @param newOnChange onChange
      */
-    public void setOnChange(String onChange) {
-        this.onChange = onChange;
+    public void setOnChange(final String newOnChange) {
+        this.onChange = newOnChange;
     }
-    /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onClick", displayName = "Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     * @return String
      */
     public String getOnClick() {
         if (this.onClick != null) {
             return this.onClick;
         }
-        ValueExpression _vb = getValueExpression("onClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse click occurs over this
+     * component.
+     *
      * @see #getOnClick()
+     * @param newOnClick onClick
      */
-    public void setOnClick(String onClick) {
-        this.onClick = onClick;
+    public void setOnClick(final String newOnClick) {
+        this.onClick = newOnClick;
     }
-    /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
-     */
-    @Property(name = "onDblClick", displayName = "Double Click Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onDblClick = null;
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     * @return String
      */
     public String getOnDblClick() {
         if (this.onDblClick != null) {
             return this.onDblClick;
         }
-        ValueExpression _vb = getValueExpression("onDblClick");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onDblClick");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse double click
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse double click occurs over this
+     * component.
+     *
      * @see #getOnDblClick()
+     * @param newOnDblClick onDblClick
      */
-    public void setOnDblClick(String onDblClick) {
-        this.onDblClick = onDblClick;
+    public void setOnDblClick(final String newOnDblClick) {
+        this.onDblClick = newOnDblClick;
     }
-    /**
-     * <p>Scripting code executed when this component  receives focus. An
-     * element receives focus when the user selects the element by pressing
-     * the tab key or clicking the mouse.</p>
-     */
-    @Property(name = "onFocus", displayName = "Focus Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onFocus = null;
 
     /**
-     * <p>Scripting code executed when this component  receives focus. An
-     * element receives focus when the user selects the element by pressing
-     * the tab key or clicking the mouse.</p>
+     * Scripting code executed when this component receives focus. An element
+     * receives focus when the user selects the element by pressing the tab key
+     * or clicking the mouse.
+     * @return String
      */
     public String getOnFocus() {
         if (this.onFocus != null) {
             return this.onFocus;
         }
-        ValueExpression _vb = getValueExpression("onFocus");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onFocus");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when this component  receives focus. An
-     * element receives focus when the user selects the element by pressing
-     * the tab key or clicking the mouse.</p>
+     * Scripting code executed when this component receives focus. An element
+     * receives focus when the user selects the element by pressing the tab key
+     * or clicking the mouse.
+     *
      * @see #getOnFocus()
+     * @param newOnFocus onFocus
      */
-    public void setOnFocus(String onFocus) {
-        this.onFocus = onFocus;
+    public void setOnFocus(final String newOnFocus) {
+        this.onFocus = newOnFocus;
     }
-    /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
-     */
-    @Property(name = "onKeyDown", displayName = "Key Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     * @return String
      */
     public String getOnKeyDown() {
         if (this.onKeyDown != null) {
             return this.onKeyDown;
         }
-        ValueExpression _vb = getValueExpression("onKeyDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses down on a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user presses down on a key while the
+     * component has focus.
+     *
      * @see #getOnKeyDown()
+     * @param newOnKeyDown onKeyDown
      */
-    public void setOnKeyDown(String onKeyDown) {
-        this.onKeyDown = onKeyDown;
+    public void setOnKeyDown(final String newOnKeyDown) {
+        this.onKeyDown = newOnKeyDown;
     }
-    /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
-     */
-    @Property(name = "onKeyPress", displayName = "Key Press Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyPress = null;
 
     /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     * @return String
      */
     public String getOnKeyPress() {
         if (this.onKeyPress != null) {
             return this.onKeyPress;
         }
-        ValueExpression _vb = getValueExpression("onKeyPress");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyPress");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses and releases a key while
-     * the component has focus.</p>
+     * Scripting code executed when the user presses and releases a key while
+     * the component has focus.
+     *
      * @see #getOnKeyPress()
+     * @param newOnKeyPress onKeyPress
      */
-    public void setOnKeyPress(String onKeyPress) {
-        this.onKeyPress = onKeyPress;
+    public void setOnKeyPress(final String newOnKeyPress) {
+        this.onKeyPress = newOnKeyPress;
     }
-    /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
-     */
-    @Property(name = "onKeyUp", displayName = "Key Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onKeyUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     * @return String
      */
     public String getOnKeyUp() {
         if (this.onKeyUp != null) {
             return this.onKeyUp;
         }
-        ValueExpression _vb = getValueExpression("onKeyUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onKeyUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a key while the
-     * component has focus.</p>
+     * Scripting code executed when the user releases a key while the component
+     * has focus.
+     *
      * @see #getOnKeyUp()
+     * @param newOnKeyUp onKeyUp
      */
-    public void setOnKeyUp(String onKeyUp) {
-        this.onKeyUp = onKeyUp;
+    public void setOnKeyUp(final String newOnKeyUp) {
+        this.onKeyUp = newOnKeyUp;
     }
-    /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseDown", displayName = "Mouse Down Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseDown = null;
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseDown() {
         if (this.onMouseDown != null) {
             return this.onMouseDown;
         }
-        ValueExpression _vb = getValueExpression("onMouseDown");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseDown");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user presses a mouse button while the
-     * mouse pointer is on the component.</p>
+     * Scripting code executed when the user presses a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseDown()
+     * @param newOnMouseDown onMouseDown
      */
-    public void setOnMouseDown(String onMouseDown) {
-        this.onMouseDown = onMouseDown;
+    public void setOnMouseDown(final String newOnMouseDown) {
+        this.onMouseDown = newOnMouseDown;
     }
-    /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
-     */
-    @Property(name = "onMouseMove", displayName = "Mouse Move Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseMove = null;
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     * @return String
      */
     public String getOnMouseMove() {
         if (this.onMouseMove != null) {
             return this.onMouseMove;
         }
-        ValueExpression _vb = getValueExpression("onMouseMove");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseMove");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the mouse pointer while
-     * over the component.</p>
+     * Scripting code executed when the user moves the mouse pointer while over
+     * the component.
+     *
      * @see #getOnMouseMove()
+     * @param newOnMouseMove onMouseMove
      */
-    public void setOnMouseMove(String onMouseMove) {
-        this.onMouseMove = onMouseMove;
+    public void setOnMouseMove(final String newOnMouseMove) {
+        this.onMouseMove = newOnMouseMove;
     }
-    /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
-     */
-    @Property(name = "onMouseOut", displayName = "Mouse Out Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOut = null;
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     * @return String
      */
     public String getOnMouseOut() {
         if (this.onMouseOut != null) {
             return this.onMouseOut;
         }
-        ValueExpression _vb = getValueExpression("onMouseOut");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOut");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when a mouse out movement
-     * occurs over this component.</p>
+     * Scripting code executed when a mouse out movement occurs over this
+     * component.
+     *
      * @see #getOnMouseOut()
+     * @param newOnMouseOut onMouseOut
      */
-    public void setOnMouseOut(String onMouseOut) {
-        this.onMouseOut = onMouseOut;
+    public void setOnMouseOut(final String newOnMouseOut) {
+        this.onMouseOut = newOnMouseOut;
     }
-    /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
-     */
-    @Property(name = "onMouseOver", displayName = "Mouse In Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseOver = null;
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     * @return String
      */
     public String getOnMouseOver() {
         if (this.onMouseOver != null) {
             return this.onMouseOver;
         }
-        ValueExpression _vb = getValueExpression("onMouseOver");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseOver");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user moves the  mouse pointer into
-     * the boundary of this component.</p>
+     * Scripting code executed when the user moves the mouse pointer into the
+     * boundary of this component.
+     * @param newOnMouseOver onMouseOver
+     *
      * @see #getOnMouseOver()
      */
-    public void setOnMouseOver(String onMouseOver) {
-        this.onMouseOver = onMouseOver;
+    public void setOnMouseOver(final String newOnMouseOver) {
+        this.onMouseOver = newOnMouseOver;
     }
-    /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
-     */
-    @Property(name = "onMouseUp", displayName = "Mouse Up Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onMouseUp = null;
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     * @return String
      */
     public String getOnMouseUp() {
         if (this.onMouseUp != null) {
             return this.onMouseUp;
         }
-        ValueExpression _vb = getValueExpression("onMouseUp");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onMouseUp");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when the user releases a mouse button while
-     * the mouse pointer is on the component.</p>
+     * Scripting code executed when the user releases a mouse button while the
+     * mouse pointer is on the component.
+     *
      * @see #getOnMouseUp()
+     * @param newOnMouseUp onMouseUp
      */
-    public void setOnMouseUp(String onMouseUp) {
-        this.onMouseUp = onMouseUp;
+    public void setOnMouseUp(final String newOnMouseUp) {
+        this.onMouseUp = newOnMouseUp;
     }
-    /**
-     * <p>Scripting code executed when some text in this
-     * component value is selected.</p>
-     */
-    @Property(name = "onSelect", displayName = "Text Selected Script", category = "Javascript",
-    editorClassName = "com.sun.rave.propertyeditors.JavaScriptPropertyEditor")
-    private String onSelect = null;
 
     /**
-     * <p>Scripting code executed when some text in this
-     * component value is selected.</p>
+     * Scripting code executed when some text in this component value is
+     * selected.
+     * @return String
      */
     public String getOnSelect() {
         if (this.onSelect != null) {
             return this.onSelect;
         }
-        ValueExpression _vb = getValueExpression("onSelect");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("onSelect");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Scripting code executed when some text in this
-     * component value is selected.</p>
+     * Scripting code executed when some text in this component value is
+     * selected.
+     *
      * @see #getOnSelect()
+     * @param newOnSelect onSelect
      */
-    public void setOnSelect(String onSelect) {
-        this.onSelect = onSelect;
+    public void setOnSelect(final String newOnSelect) {
+        this.onSelect = newOnSelect;
     }
-    /**
-     * <p>Flag indicating that modification of this component by the
-     * user is not currently permitted, but that it will be
-     * included when the form is submitted.</p>
-     */
-    @Property(name = "readOnly", displayName = "Read Only", category = "Behavior")
-    private boolean readOnly = false;
-    private boolean readOnly_set = false;
 
     /**
-     * <p>Flag indicating that modification of this component by the
-     * user is not currently permitted, but that it will be
-     * included when the form is submitted.</p>
+     * Flag indicating that modification of this component by the user is not
+     * currently permitted, but that it will be included when the form is
+     * submitted.
+     * @return {@code boolean}
      */
     public boolean isReadOnly() {
-        if (this.readOnly_set) {
+        if (this.readOnlySet) {
             return this.readOnly;
         }
-        ValueExpression _vb = getValueExpression("readOnly");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("readOnly");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Flag indicating that modification of this component by the
-     * user is not currently permitted, but that it will be
-     * included when the form is submitted.</p>
+     * Flag indicating that modification of this component by the user is not
+     * currently permitted, but that it will be included when the form is
+     * submitted.
+     *
      * @see #isReadOnly()
+     * @param newReadOnly readOnly
      */
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-        this.readOnly_set = true;
+    public void setReadOnly(final boolean newReadOnly) {
+        this.readOnly = newReadOnly;
+        this.readOnlySet = true;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Position of this element in the tabbing order of the current document.
-     * Tabbing order determines the sequence in which elements receive
-     * focus when the tab key is pressed. The value must be an integer
-     * between 0 and 32767.</p>
-     */
-    @Property(name = "tabIndex", displayName = "Tab Index", category = "Accessibility",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int tabIndex = Integer.MIN_VALUE;
-    private boolean tabIndex_set = false;
 
     /**
-     * <p>Position of this element in the tabbing order of the current document.
-     * Tabbing order determines the sequence in which elements receive
-     * focus when the tab key is pressed. The value must be an integer
-     * between 0 and 32767.</p>
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     * @return int
      */
     public int getTabIndex() {
-        if (this.tabIndex_set) {
+        if (this.tabIndexSet) {
             return this.tabIndex;
         }
-        ValueExpression _vb = getValueExpression("tabIndex");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("tabIndex");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>Position of this element in the tabbing order of the current document. 
-     * Tabbing order determines the sequence in which elements receive 
-     * focus when the tab key is pressed. The value must be an integer 
-     * between 0 and 32767.</p>
+     * Position of this element in the tabbing order of the current document.
+     * Tabbing order determines the sequence in which elements receive focus
+     * when the tab key is pressed. The value must be an integer between 0 and
+     * 32767.
+     *
      * @see #getTabIndex()
+     * @param newTabIndex tabIndex
      */
-    public void setTabIndex(int tabIndex) {
-        this.tabIndex = tabIndex;
-        this.tabIndex_set = true;
+    public void setTabIndex(final int newTabIndex) {
+        this.tabIndex = newTabIndex;
+        this.tabIndexSet = true;
     }
 
     /**
-     * <p>Literal value to be rendered in this input field.
-     * If this property is specified by a value binding
-     * expression, the corresponding value will be updated
-     * if validation succeeds.</p>
-     */
-    @Property(name = "text", displayName = "Text", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    @Override
-    public Object getText() {
-        return getValue();
-    }
-
-    /**
-     * <p>Literal value to be rendered in this input field.
-     * If this property is specified by a value binding
-     * expression, the corresponding value will be updated
-     * if validation succeeds.</p>
+     * Literal value to be rendered in this input field. If this property is
+     * specified by a value binding expression, the corresponding value will be
+     * updated if validation succeeds.
+     * This implementation invokes {@code setValue(newText)}.
+     *
      * @see #getText()
+     * @param newText text
      */
     @Override
-    public void setText(Object text) {
-        setValue(text);
+    public void setText(final Object newText) {
+        setValue(newText);
     }
-    /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers
-     * over the HTML element.</p>
-     */
-    @Property(name = "toolTip", displayName = "Tool Tip", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String toolTip = null;
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     * @return String
      */
     public String getToolTip() {
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueExpression _vb = getValueExpression("toolTip");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("toolTip");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Sets the value of the title attribute for the HTML element.
-     * The specified text will display as a tooltip if the mouse cursor hovers 
-     * over the HTML element.</p>
+     * Sets the value of the title attribute for the HTML element. The specified
+     * text will display as a tool tip if the mouse cursor hovers over the HTML
+     * element.
+     *
      * @see #getToolTip()
+     * @param newToolTip tool tip
      */
-    public void setToolTip(String toolTip) {
-        this.toolTip = toolTip;
+    public void setToolTip(final String newToolTip) {
+        this.toolTip = newToolTip;
     }
-    /**
-     * <p>Flag indicating that any leading and trailing blanks will be
-     * trimmed prior to conversion to the destination data type.
-     * Default value is true.</p>
-     */
-    @Property(name = "trim", displayName = "Trim", category = "Behavior")
-    private boolean trim = false;
-    private boolean trim_set = false;
 
     /**
-     * <p>Flag indicating that any leading and trailing blanks will be
-     * trimmed prior to conversion to the destination data type.
-     * Default value is true.</p>
+     * Flag indicating that any leading and trailing blanks will be trimmed
+     * prior to conversion to the destination data type. Default value is
+     * true.
+     * @return {@code boolean}
      */
     public boolean isTrim() {
-        if (this.trim_set) {
+        if (this.trimSet) {
             return this.trim;
         }
-        ValueExpression _vb = getValueExpression("trim");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("trim");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Flag indicating that any leading and trailing blanks will be
-     * trimmed prior to conversion to the destination data type.
-     * Default value is true.</p>
+     * Flag indicating that any leading and trailing blanks will be trimmed
+     * prior to conversion to the destination data type. Default value is
+     * true.
+     *
      * @see #isTrim()
+     * @param newTrim trim
      */
-    public void setTrim(boolean trim) {
-        this.trim = trim;
-        this.trim_set = true;
+    public void setTrim(final boolean newTrim) {
+        this.trim = newTrim;
+        this.trimSet = true;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page.</p>
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be 
-     * viewable by the user in the rendered HTML page.</p>
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.columns = ((Integer) _values[1]).intValue();
-        this.columns_set = ((Boolean) _values[2]).booleanValue();
-        this.disabled = ((Boolean) _values[3]).booleanValue();
-        this.disabled_set = ((Boolean) _values[4]).booleanValue();
-        this.label = (String) _values[5];
-        this.labelLevel = ((Integer) _values[6]).intValue();
-        this.labelLevel_set = ((Boolean) _values[7]).booleanValue();
-        this.maxLength = ((Integer) _values[8]).intValue();
-        this.maxLength_set = ((Boolean) _values[9]).booleanValue();
-        this.onBlur = (String) _values[10];
-        this.onChange = (String) _values[11];
-        this.onClick = (String) _values[12];
-        this.onDblClick = (String) _values[13];
-        this.onFocus = (String) _values[14];
-        this.onKeyDown = (String) _values[15];
-        this.onKeyPress = (String) _values[16];
-        this.onKeyUp = (String) _values[17];
-        this.onMouseDown = (String) _values[18];
-        this.onMouseMove = (String) _values[19];
-        this.onMouseOut = (String) _values[20];
-        this.onMouseOver = (String) _values[21];
-        this.onMouseUp = (String) _values[22];
-        this.onSelect = (String) _values[23];
-        this.readOnly = ((Boolean) _values[24]).booleanValue();
-        this.readOnly_set = ((Boolean) _values[25]).booleanValue();
-        this.style = (String) _values[26];
-        this.styleClass = (String) _values[27];
-        this.tabIndex = ((Integer) _values[28]).intValue();
-        this.tabIndex_set = ((Boolean) _values[29]).booleanValue();
-        this.toolTip = (String) _values[30];
-        this.trim = ((Boolean) _values[31]).booleanValue();
-        this.trim_set = ((Boolean) _values[32]).booleanValue();
-        this.visible = ((Boolean) _values[33]).booleanValue();
-        this.visible_set = ((Boolean) _values[34]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.columns = ((Integer) values[1]);
+        this.columnsSet = ((Boolean) values[2]);
+        this.disabled = ((Boolean) values[3]);
+        this.disabledSet = ((Boolean) values[4]);
+        this.label = (String) values[5];
+        this.labelLevel = ((Integer) values[6]);
+        this.labelLevelSet = ((Boolean) values[7]);
+        this.maxLength = ((Integer) values[8]);
+        this.maxLengthSet = ((Boolean) values[9]);
+        this.onBlur = (String) values[10];
+        this.onChange = (String) values[11];
+        this.onClick = (String) values[12];
+        this.onDblClick = (String) values[13];
+        this.onFocus = (String) values[14];
+        this.onKeyDown = (String) values[15];
+        this.onKeyPress = (String) values[16];
+        this.onKeyUp = (String) values[17];
+        this.onMouseDown = (String) values[18];
+        this.onMouseMove = (String) values[19];
+        this.onMouseOut = (String) values[20];
+        this.onMouseOver = (String) values[21];
+        this.onMouseUp = (String) values[22];
+        this.onSelect = (String) values[23];
+        this.readOnly = ((Boolean) values[24]);
+        this.readOnlySet = ((Boolean) values[25]);
+        this.style = (String) values[26];
+        this.styleClass = (String) values[27];
+        this.tabIndex = ((Integer) values[28]);
+        this.tabIndexSet = ((Boolean) values[29]);
+        this.toolTip = (String) values[30];
+        this.trim = ((Boolean) values[31]);
+        this.trimSet = ((Boolean) values[32]);
+        this.visible = ((Boolean) values[33]);
+        this.visibleSet = ((Boolean) values[34]);
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[35];
-        _values[0] = super.saveState(_context);
-        _values[1] = new Integer(this.columns);
-        _values[2] = this.columns_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.disabled ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = this.disabled_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.label;
-        _values[6] = new Integer(this.labelLevel);
-        _values[7] = this.labelLevel_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[8] = new Integer(this.maxLength);
-        _values[9] = this.maxLength_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[10] = this.onBlur;
-        _values[11] = this.onChange;
-        _values[12] = this.onClick;
-        _values[13] = this.onDblClick;
-        _values[14] = this.onFocus;
-        _values[15] = this.onKeyDown;
-        _values[16] = this.onKeyPress;
-        _values[17] = this.onKeyUp;
-        _values[18] = this.onMouseDown;
-        _values[19] = this.onMouseMove;
-        _values[20] = this.onMouseOut;
-        _values[21] = this.onMouseOver;
-        _values[22] = this.onMouseUp;
-        _values[23] = this.onSelect;
-        _values[24] = this.readOnly ? Boolean.TRUE : Boolean.FALSE;
-        _values[25] = this.readOnly_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[26] = this.style;
-        _values[27] = this.styleClass;
-        _values[28] = new Integer(this.tabIndex);
-        _values[29] = this.tabIndex_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[30] = this.toolTip;
-        _values[31] = this.trim ? Boolean.TRUE : Boolean.FALSE;
-        _values[32] = this.trim_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[33] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[34] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[35];
+        values[0] = super.saveState(context);
+        values[1] = this.columns;
+        if (this.columnsSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.disabled) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        if (this.disabledSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        values[5] = this.label;
+        values[6] = this.labelLevel;
+        if (this.labelLevelSet) {
+            values[7] = Boolean.TRUE;
+        } else {
+            values[7] = Boolean.FALSE;
+        }
+        values[8] = this.maxLength;
+        if (this.maxLengthSet) {
+            values[9] = Boolean.TRUE;
+        } else {
+            values[9] = Boolean.FALSE;
+        }
+        values[10] = this.onBlur;
+        values[11] = this.onChange;
+        values[12] = this.onClick;
+        values[13] = this.onDblClick;
+        values[14] = this.onFocus;
+        values[15] = this.onKeyDown;
+        values[16] = this.onKeyPress;
+        values[17] = this.onKeyUp;
+        values[18] = this.onMouseDown;
+        values[19] = this.onMouseMove;
+        values[20] = this.onMouseOut;
+        values[21] = this.onMouseOver;
+        values[22] = this.onMouseUp;
+        values[23] = this.onSelect;
+        if (this.readOnly) {
+            values[24] = Boolean.TRUE;
+        } else {
+            values[24] = Boolean.FALSE;
+        }
+        if (this.readOnlySet) {
+            values[25] = Boolean.TRUE;
+        } else {
+            values[25] = Boolean.FALSE;
+        }
+        values[26] = this.style;
+        values[27] = this.styleClass;
+        values[28] = this.tabIndex;
+        if (this.tabIndexSet) {
+            values[29] = Boolean.TRUE;
+        } else {
+            values[29] = Boolean.FALSE;
+        }
+        values[30] = this.toolTip;
+        if (this.trim) {
+            values[31] = Boolean.TRUE;
+        } else {
+            values[31] = Boolean.FALSE;
+        }
+        if (this.trimSet) {
+            values[32] = Boolean.TRUE;
+        } else {
+            values[32] = Boolean.FALSE;
+        }
+        if (this.visible) {
+            values[33] = Boolean.TRUE;
+        } else {
+            values[33] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[34] = Boolean.TRUE;
+        } else {
+            values[34] = Boolean.FALSE;
+        }
+        return values;
     }
 }

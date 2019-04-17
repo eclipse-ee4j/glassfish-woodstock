@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -36,21 +36,19 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
-import javax.faces.application.ApplicationFactory;
 import javax.faces.context.FacesContext;
 
 /**
  * Factory class responsible for setting up the Sun Web Component
  * application's ThemeManager.
  */
-public class JarThemeFactory implements ThemeFactory {
+public final class JarThemeFactory implements ThemeFactory {
 
     /**
      * Warning message for not being able to load any themes.
      */
-    private final static String WARNING_LOAD =
+    private static final String WARNING_LOAD =
             "WARNING: the Sun Web Components could not load any themes.";
 
     /**
@@ -74,14 +72,12 @@ public class JarThemeFactory implements ThemeFactory {
      * @param classLoader class-loader to use
      * @return theme attributes iterator.
      */
-    private Iterator getThemeAttributes(ClassLoader classLoader) {
+    private Iterator getThemeAttributes(final ClassLoader classLoader) {
 
         if (DEBUG) {
             log("getThemeAttributes()");
         }
-
         Collection<URL> manifests = getManifests(classLoader);
-
         if (manifests.isEmpty()) {
             String msg = "No Themes in the classpath!";
             throw new ThemeConfigurationException(msg);
@@ -93,12 +89,9 @@ public class JarThemeFactory implements ThemeFactory {
         Manifest manifest;
         Attributes themeAttributes;
         ArrayList<Attributes> themeProps = new ArrayList<Attributes>();
-
         Iterator<URL> it = manifests.iterator();
         while (it.hasNext()) {
-
             url = it.next();
-
             try {
                 if (DEBUG) {
                     log("\tExamine " + url.toString());
@@ -118,22 +111,29 @@ public class JarThemeFactory implements ThemeFactory {
                 // do nothing
             } finally {
                 try {
-                    in.close();
-                } catch (Throwable t) {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException t) {
                 }
             }
         }
         return themeProps.iterator();
     }
 
-    private String readAttribute(Attributes themeAttributes, String propName) {
+    /**
+     * Read an attribute.
+     * @param themeAttributes attributes to read from
+     * @param propName name of the attribute to get
+     * @return String
+     */
+    private String readAttribute(final Attributes themeAttributes,
+            final String propName) {
+
         String name = themeAttributes.getValue(propName);
-
         if (name == null || name.length() == 0) {
-
             String propFile = themeAttributes.getValue(FILENAME);
-
-            StringBuilder msgBuffer = new StringBuilder(300);
+            StringBuilder msgBuffer = new StringBuilder();
             msgBuffer.append("ThemeConfiguration file ");
             if (propFile != null) {
                 msgBuffer.append(propFile);
@@ -147,10 +147,16 @@ public class JarThemeFactory implements ThemeFactory {
         return name;
     }
 
-    private void throwVersionException(String name, String version,
-            String requiredThemeVersion) {
+    /**
+     * Throw a version exception.
+     * @param name theme name
+     * @param version theme version
+     * @param requiredThemeVersion required theme version
+     */
+    private void throwVersionException(final String name, final String version,
+            final String requiredThemeVersion) {
 
-        StringBuilder msgBuffer = new StringBuilder(300);
+        StringBuilder msgBuffer = new StringBuilder();
         msgBuffer.append("\n\nTheme \"");
         msgBuffer.append(name);
         msgBuffer.append("\" is not up to date with the component library.\n");
@@ -162,16 +168,12 @@ public class JarThemeFactory implements ThemeFactory {
         throw new ThemeConfigurationException(msgBuffer.toString());
     }
 
-    private static Application getApplication() {
-        ApplicationFactory factory = (ApplicationFactory) FactoryFinder
-                .getFactory(FactoryFinder.APPLICATION_FACTORY);
-        if (factory == null) {
-            return null;
-        }
-        return factory.getApplication();
-    }
-
-    private static Set getLocales(Application application) {
+    /**
+     * Get application locales.
+     * @param application application to get the locales of
+     * @return {@code Set<Locale>}
+     */
+    private static Set<Locale> getLocales(final Application application) {
 
         if (DEBUG) {
             log("getLocales()");
@@ -219,31 +221,13 @@ public class JarThemeFactory implements ThemeFactory {
         return localeSet;
     }
 
-    private String missingResourceBundleMessage(Attributes themeAttributes,
-            String bundleName) {
-
-        String propFile = themeAttributes.getValue(FILENAME);
-        StringBuilder msgBuffer =
-                new StringBuilder("Invalid theme configuration file for theme ");
-        msgBuffer.append(themeAttributes.getValue(NAME));
-
-        if (propFile != null) {
-            msgBuffer.append(" configured by property file ");
-            msgBuffer.append(propFile);
-            msgBuffer.append(".");
-        }
-        msgBuffer.append("JarThemeFactory could not locate resource bundle at ");
-        msgBuffer.append(bundleName);
-        msgBuffer.append(".");
-        return msgBuffer.toString();
-    }
-
     /**
-     * Get the require theme version.
+     * Get the required theme version.
      * @param classLoader class-loader to use
      * @return String
      */
-    private String getRequiredThemeVersion(ClassLoader classLoader) {
+    private static String getRequiredThemeVersion(
+            final ClassLoader classLoader) {
 
         if (DEBUG) {
             log("getRequiredThemeVersion()");
@@ -264,16 +248,13 @@ public class JarThemeFactory implements ThemeFactory {
 
         Iterator<URL> it = manifests.iterator();
         while (themeVersion == null && it.hasNext()) {
-
             url = it.next();
             if (!url.toString().contains("webui")) {
                 continue;
             }
-
             if (DEBUG) {
                 log("\tNow processing " + url.toString());
             }
-
             try {
                 in = url.openConnection().getInputStream();
                 manifest = new Manifest(in);
@@ -284,29 +265,32 @@ public class JarThemeFactory implements ThemeFactory {
                         log("\tFound attribute " + themeVersion);
                     }
                 }
-            } catch (IOException ioex) {
-                ioex.printStackTrace();
-                // do nothing
+            } catch (IOException ex) {
+                ex.printStackTrace();
             } finally {
                 try {
-                    in.close();
-                } catch (Throwable t) {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException t) {
                 }
             }
         }
         return themeVersion;
     }
 
-    private Collection<URL> getManifests(ClassLoader classLoader) {
+    /**
+     * Get the manifest resource of a class-loader.
+     *
+     * @param classLoader classLoader to use
+     * @return {@code Collection<URL>}
+     */
+    private static Collection<URL> getManifests(final ClassLoader classLoader) {
 
+        if (classLoader == null) {
+            return Collections.emptyList();
+        }
         Enumeration<URL> manifests = null;
-        /*
-        ClassLoader loader = 
-        ClassLoaderFinder.getCurrentLoader(JarThemeFactory.class);
-         */
-
-        // Temporary workaround for a Creator issue; direct questions on this
-        // to tor.norbye@sun.com
         if (Beans.isDesignTime() && classLoader instanceof URLClassLoader) {
             // This is a temporary hack to limit our manifest search for themes
             // to the URLs in the ClassLoader, if it's a URLClassLoader.
@@ -314,8 +298,7 @@ public class JarThemeFactory implements ThemeFactory {
             // are multiple simultaneous open projects in Creator.
             Set<URL> v = new HashSet<URL>();
             URL[] urls = ((URLClassLoader) classLoader).getURLs();
-            for (int i = 0; i < urls.length; i++) {
-                URL url = urls[i];
+            for (URL url : urls) {
                 try {
                     URL manifest = new URL(url, MANIFEST);
                     // See if the manifest file exists
@@ -336,6 +319,9 @@ public class JarThemeFactory implements ThemeFactory {
                 log("\tIOException using the Context ClassLoader");
             }
         }
+        if (manifests == null) {
+            return Collections.emptyList();
+        }
         if (!manifests.hasMoreElements()) {
             try {
                 manifests = classLoader.getResources(MANIFEST);
@@ -344,12 +330,19 @@ public class JarThemeFactory implements ThemeFactory {
                     log("\tIOException using JarThemeFactory's ClassLoader");
                 }
             }
+            if (manifests == null) {
+                return Collections.emptyList();
+            }
         }
         return Collections.list(manifests);
     }
 
-    private static void log(String s) {
-        System.out.println("JarThemeFactory::" + s);
+    /**
+     * Log a message to the standard output.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(JarThemeFactory.class.getName() + "::" + msg);
     }
 
     /**
@@ -357,7 +350,10 @@ public class JarThemeFactory implements ThemeFactory {
      * {@code locale} within the theme run-time environment of
      * {@code themeContext}.
      */
-    public Theme getTheme(Locale locale, ThemeContext themeContext) {
+    @Override
+    public Theme getTheme(final Locale locale,
+            final ThemeContext themeContext) {
+
         return getTheme(null, locale, themeContext);
     }
 
@@ -367,8 +363,8 @@ public class JarThemeFactory implements ThemeFactory {
      * {@code themeContext}.
      */
     @Override
-    public Theme getTheme(String themeName, Locale locale,
-            ThemeContext themeContext) {
+    public Theme getTheme(final String themeName, final Locale locale,
+            final ThemeContext themeContext) {
 
         // First, get the ThemeManager
         if (themeManager == null) {
@@ -380,15 +376,20 @@ public class JarThemeFactory implements ThemeFactory {
     }
 
     @Override
-    public String getDefaultThemeName(ThemeContext themeContext) {
+    public String getDefaultThemeName(final ThemeContext themeContext) {
         if (themeManager == null) {
             themeManager = createThemeManager(themeContext);
         }
         return themeManager.getDefaultThemeName();
     }
 
+    /**
+     * Create a theme manager.
+     * @param themeContext theme context
+     * @return ThemeManager
+     */
     @SuppressWarnings("unchecked")
-    private ThemeManager createThemeManager(ThemeContext themeContext) {
+    private ThemeManager createThemeManager(final ThemeContext themeContext) {
 
         // If the context doesn't have a default theme name
         // let the first theme jar that says default win.
@@ -410,10 +411,11 @@ public class JarThemeFactory implements ThemeFactory {
             throw new ThemeConfigurationException(WARNING_LOAD);
         }
 
-        ThemeManager themeManager = new ThemeManager();
+        ThemeManager manager = new ThemeManager();
         while (themeAttributesIterator.hasNext()) {
 
-            Attributes themeAttributes = (Attributes) themeAttributesIterator.next();
+            Attributes themeAttributes = (Attributes)
+                    themeAttributesIterator.next();
 
             // Better not see the same theme name twice
             //
@@ -422,8 +424,8 @@ public class JarThemeFactory implements ThemeFactory {
             // Probably should see if the there are more themes.
             //
             String version = readAttribute(themeAttributes, THEME_VERSION);
-            if (requiredThemeVersion != null &&
-                    requiredThemeVersion.compareTo(version) > 0) {
+            if (requiredThemeVersion != null
+                    && requiredThemeVersion.compareTo(version) > 0) {
                 throwVersionException(name, version, requiredThemeVersion);
             }
 
@@ -453,24 +455,33 @@ public class JarThemeFactory implements ThemeFactory {
                 map.put(locale, createTheme(themeAttributes, locale,
                         themeContext));
             }
-            themeManager.addThemeMap(name, map);
+            manager.addThemeMap(name, map);
 
             // If the theme context does not define a default theme name
             // make the first default theme jar the default theme.
             if (defaultThemeName == null) {
                 String isDefault = themeAttributes.getValue(DEFAULT);
-                if (isDefault != null &&
-                        isDefault.toLowerCase().equals("true")) {
+                if (isDefault != null
+                        && isDefault.toLowerCase().equals("true")) {
                     defaultThemeName = name;
                 }
             }
         }
-        themeManager.setDefaultThemeName(defaultThemeName);
-        return themeManager;
+        manager.setDefaultThemeName(defaultThemeName);
+        return manager;
     }
 
-    private Theme createTheme(Attributes themeAttributes, Locale locale,
-            ThemeContext themeContext) throws ThemeConfigurationException {
+    /**
+     * Create a theme.
+     * @param themeAttributes theme attributes
+     * @param locale locale to use
+     * @param themeContext theme context
+     * @return Theme
+     * @throws ThemeConfigurationException if an error occurs
+     */
+    private Theme createTheme(final Attributes themeAttributes,
+            final Locale locale, final ThemeContext themeContext)
+            throws ThemeConfigurationException {
 
         if (themeContext.getThemeServletContext() == null) {
             String prefix = readAttribute(themeAttributes, PREFIX);
@@ -537,14 +548,23 @@ public class JarThemeFactory implements ThemeFactory {
         return theme;
     }
 
-    private ResourceBundle createResourceBundle(Attributes themeAttributes,
-            String propName, Locale locale, ClassLoader classLoader) {
+    /**
+     * Create a resource bundle.
+     * @param themeAttributes theme attributes
+     * @param propName bundle name property
+     * @param locale locale to use
+     * @param classLoader class-loader to use
+     * @return ResourceBundle
+     */
+    private ResourceBundle createResourceBundle(
+            final Attributes themeAttributes, final String propName,
+            final Locale locale, final ClassLoader classLoader) {
 
         String bundleName = readAttribute(themeAttributes, propName);
         try {
             return ResourceBundle.getBundle(bundleName, locale, classLoader);
         } catch (MissingResourceException mre) {
-            StringBuffer msgBuffer = new StringBuffer(300);
+            StringBuilder msgBuffer = new StringBuilder();
             msgBuffer.append("Invalid theme configuration file for theme ");
             msgBuffer.append(themeAttributes.getValue(NAME));
             msgBuffer.append(

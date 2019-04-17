@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -50,12 +50,6 @@
                                                 toolTip="#{msgs.chooserUploader_title}" />
                             <webuijsf:hyperlink id="uploaderLink" text="#{msgs.fileUploader_title}"/>
                         </webuijsf:breadcrumbs>
-
-                        <!-- Alert for validator exception. -->
-                        <webuijsf:alert id="uploaderAlert" rendered="#{FileUploaderBean.errorsOnPage}" type="error" 
-                                        summary="#{FileUploaderBean.summaryMsg}"> 
-                            <webuijsf:message for=":uploaderForm:upload" showDetail="true"/>
-                        </webuijsf:alert>
 
                         <!-- Page Title -->
                         <webuijsf:contentPageTitle id="uploaderContentPage" title="#{msgs.fileUploader_title}" />
@@ -107,6 +101,11 @@
                             </table>
                         </webuijsf:markup>
 
+                        <!-- Alert for validator exception. -->
+                        <webuijsf:alert id="uploaderAlert" rendered="#{FileUploaderBean.errorsOnPage}" type="error"
+                                        summary="#{FileUploaderBean.summaryMsg}">
+                            <webuijsf:message for=":uploaderForm:upload" showDetail="true"/>
+                        </webuijsf:alert>
                     </webuijsf:form>
                 </webuijsf:body>
             </webuijsf:html>

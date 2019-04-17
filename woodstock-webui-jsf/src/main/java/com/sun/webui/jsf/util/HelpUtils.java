@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -15,6 +15,7 @@
  */
 package com.sun.webui.jsf.util;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,58 +46,135 @@ import javax.help.search.SearchEvent;
 import javax.help.search.SearchItem;
 import javax.help.search.SearchListener;
 import javax.help.search.SearchQuery;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is a set of utilities used for accessing JavaHelp content.
  */
-public class HelpUtils implements SearchListener {
+public final class HelpUtils implements SearchListener {
 
+    /**
+     * URL separator character.
+     */
     public static final String URL_SEPARATOR = "/";
+
+    /**
+     * TOC view name.
+     */
     public static final String TOC_VIEW_NAME = "TOC";
+
+    /**
+     * Index view name.
+     */
     public static final String INDEX_VIEW_NAME = "Index";
+
+    /**
+     * Search view name.
+     */
     public static final String SEARCH_VIEW_NAME = "Search";
 
+    /**
+     * Helper broker.
+     */
     private ServletHelpBroker helpBroker;
 
-    // TOC variables.
+    /**
+     * TOC view.
+     */
     private TOCView tocView;
+
+    /**
+     * TOC tree enumeration.
+     */
     private Enumeration tocTreeEnum;
+
+    /**
+     * TOC tree list.
+     */
     private ArrayList<Object> tocTreeList;
+
+    /**
+     * TOC top node.
+     */
     private DefaultMutableTreeNode tocTopNode;
 
-    // Index (tab) variables.
+    /**
+     * Index view.
+     */
     private IndexView indexView;
+
+    /**
+     * Index tree enumeration.
+     */
     private Enumeration indexTreeEnum;
+
+    /**
+     * Index tree list.
+     */
     private ArrayList<Object> indexTreeList;
+
+    /**
+     * Index top node.
+     */
     private DefaultMutableTreeNode indexTopNode;
 
-    // Search variables.
+    /**
+     * Search view.
+     */
     private SearchView searchView;
+
+    /**
+     * Help search.
+     */
     private MergingSearchEngine helpSearch;
+
+    /**
+     * Search query.
+     */
     private SearchQuery searchQuery;
+
+    /**
+     * Search nodes.
+     */
     private List<SearchTOCItem> searchNodes;
+
+    /**
+     * Search enumeration.
+     */
     private Enumeration searchEnum;
+
+    /**
+     * Flag to track if the search is finished.
+     */
     private boolean searchFinished;
 
+    /**
+     * Current request scheme.
+     */
     private String currentRequestScheme = null;
 
-    // The application name (context name).
+    /**
+     * The application name (context name).
+     */
     private final String appName;
 
-    // Help path prefix
+    /**
+     * Help path prefix.
+     */
     private static String pathPrefix;
 
-    // unsecure http port to use for help requests
-    int httpPort = -1;
+    /**
+     * Http port to use for help requests.
+     */
+    private int httpPort = -1;
 
-    // Locale object for the tags.
+    /**
+     * Locale object for the tags.
+     */
     private Locale currentLocale;
 
     /**
@@ -108,20 +186,40 @@ public class HelpUtils implements SearchListener {
      * Tips on searching path.
      */
     protected static final String REQUEST_SCHEME = "http";
+
+    /**
+     * HTML directory name.
+     */
     protected static final String HTML_DIR = "html";
+
+    /**
+     * Help directory name.
+     */
     protected static final String HELP_DIR = "help";
+
+    /**
+     * Default help set name.
+     */
     protected static final String DEFAULT_HELPSET_NAME = "app.hs";
+
+    /**
+     * HTML page file name with tips on searching.
+     */
     protected static final String TIPS_ON_SEARCHING_FILE
             = "tips_on_searching.html";
 
     /**
-     * Constructor.
+     * Create a new instance.
+     * @param request servlet request
+     * @param newAppName application name
+     * @param newHttpPort application port
      */
-    public HelpUtils(HttpServletRequest request, String appName, int httpPort) {
-        // Debug.initTrace();
-        this.appName = appName;
+    public HelpUtils(final HttpServletRequest request, final String newAppName,
+            final int newHttpPort) {
 
-        this.httpPort = httpPort;
+        // Debug.initTrace();
+        this.appName = newAppName;
+        this.httpPort = newHttpPort;
 
         // Set up the currentLocale object.
         currentLocale = getLocale();
@@ -130,14 +228,21 @@ public class HelpUtils implements SearchListener {
         initHelp(request);
     }
 
-    public HelpUtils(HttpServletRequest request, String appName, int httpPort,
-            String requestScheme) {
-        this.appName = appName;
-        this.httpPort = httpPort;
+    /**
+     * Create a new instance.
+     * @param request servlet request
+     * @param newAppName application name
+     * @param newHttpPort application port
+     * @param requestScheme request scheme
+     */
+    public HelpUtils(final HttpServletRequest request, final String newAppName,
+            final int newHttpPort, final String requestScheme) {
+
+        this.appName = newAppName;
+        this.httpPort = newHttpPort;
 
         // Set up the currentLocale object.
         currentLocale = getLocale();
-
         currentRequestScheme = requestScheme;
 
         // Initialize the helpBroker and create/validate the helpset.
@@ -145,16 +250,20 @@ public class HelpUtils implements SearchListener {
     }
 
     /**
-     * Constructor.
+     * Create a new instance.
+     * @param request servlet request
+     * @param newAppName application name
+     * @param newPathPrefix context path prefix
      */
-    public HelpUtils(HttpServletRequest request, String appName,
-            String pathPrefix) {
-        // Debug.initTrace();
-        this.appName = appName;
+    public HelpUtils(final HttpServletRequest request, final String newAppName,
+            final String newPathPrefix) {
 
-        if ((pathPrefix != null) && (pathPrefix.length() != 0)) {
-            if (pathPrefix.trim().length() != 0) {
-                this.pathPrefix = pathPrefix.trim();
+        // Debug.initTrace();
+        this.appName = newAppName;
+
+        if ((newPathPrefix != null) && (newPathPrefix.length() != 0)) {
+            if (newPathPrefix.trim().length() != 0) {
+                pathPrefix = newPathPrefix.trim();
             }
         }
 
@@ -165,6 +274,10 @@ public class HelpUtils implements SearchListener {
         initHelp(request);
     }
 
+    /**
+     * Get the current request scheme.
+     * @return String
+     */
     public String getCurrentRequestScheme() {
         if (currentRequestScheme != null) {
             return currentRequestScheme;
@@ -174,23 +287,33 @@ public class HelpUtils implements SearchListener {
         return REQUEST_SCHEME;
     }
 
-    public void setCurrentRequestScheme(String scheme) {
-        currentRequestScheme = scheme;
+    /**
+     * Set the current request scheme.
+     * @param newScheme new current request scheme
+     */
+    public void setCurrentRequestScheme(final String newScheme) {
+        currentRequestScheme = newScheme;
     }
 
-    private Locale getLocale() {
+    /**
+     * Get the current locale.
+     * @return Locale
+     */
+    private static Locale getLocale() {
         FacesContext context = FacesContext.getCurrentInstance();
         return context.getViewRoot().getLocale();
     }
 
     /**
      * Get the path to the localized tips_on_searching help file.
+     * @param context servlet context
+     * @return String
      */
-    public String getTipsOnSearchingPath(ServletContext context) {
+    public String getTipsOnSearchingPath(final ServletContext context) {
 
-        // first check if the file is in the app help directory, if 
+        // first check if the file is in the app help directory, if
         // not look for it in the resource context path.
-        StringBuffer buf = new StringBuffer(128);
+        StringBuilder buf = new StringBuilder();
 
         buf.append(getHelpPath(appName))
                 .append(URL_SEPARATOR)
@@ -203,25 +326,13 @@ public class HelpUtils implements SearchListener {
                 .append(TIPS_ON_SEARCHING_FILE);
 
         return buf.toString();
-
-        /*            
-        // file is in the resource context path
-        buf = new StringBuffer(CCSystem.getResourceContextPath() + 
-            URL_SEPARATOR + HTML_DIR
-            + URL_SEPARATOR + currentLocale.toString()
-            + URL_SEPARATOR + HELP_DIR
-            + URL_SEPARATOR + TIPS_ON_SEARCHING_FILE);
-        return buf.toString();
-         */
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Initialization methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * Initialize the Help helpset.
+     * Initialize the Help help set.
+     * @param request servlet request
      */
-    private void initHelp(HttpServletRequest request) {
+    private void initHelp(final HttpServletRequest request) {
 
         instantiateHelpBroker(request);
 
@@ -238,8 +349,9 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Instantiate the ServletHelpBroker bean.
+     * @param request servlet request
      */
-    private void instantiateHelpBroker(HttpServletRequest request) {
+    private void instantiateHelpBroker(final HttpServletRequest request) {
         try {
             helpBroker = (ServletHelpBroker) java.beans.Beans.instantiate(
                     this.getClass().getClassLoader(),
@@ -248,7 +360,7 @@ public class HelpUtils implements SearchListener {
             // XXX: Is this serious??
             System.out.println("Cannot instantiate ServletHelpBroker."
                     + exc.getMessage());
-        } catch (Exception exc) {
+        } catch (IOException exc) {
             // XXX: Is this serious??
             System.out.println("Cannot create bean of class ServletHelpBroker."
                     + exc.getMessage());
@@ -257,13 +369,19 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Return a handle to the ServletHelpBroker.
+     * @return ServletHelpBroker
      */
     public ServletHelpBroker getHelpBroker() {
         return helpBroker;
     }
 
+    /**
+     * Get localized help path.
+     * @return String
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
     public String getLocalizedHelpPath() {
-        StringBuffer buffer = new StringBuffer(1024);
+        StringBuilder buffer = new StringBuilder(1024);
 
         buffer.append(appName);
 
@@ -283,33 +401,16 @@ public class HelpUtils implements SearchListener {
     }
 
     /**
-     * Return the path to the default helpset file. The path will be formatted
-     * as follows:
-     * <p>
-     * <code>/<appName>/html/<locale>/help/app.hs</code>
-     * </p>
+     * Return the path to the default help set file. The path will be formatted
+     * as follows: {@code /<appName>/html/<locale>/help/app.hs}
+     *
+     * @return String
      */
+    @SuppressWarnings("checkstyle:magicnumber")
     public String getDefaultHelpSetPath() {
-        /*
-    if (appName == null) {
-        appName = request.getContextPath();
-        if (appName == null) {
-        // Debug("Unable to obtain app name from request.");
-        appName = "";
-        } else {
-        if (appName.startsWith(URL_SEPARATOR)) {
-            appName = appName.substring(1);
-        }
-        }
-    }
-         */
-
-        StringBuffer buffer = new StringBuffer(1024);
-
+        StringBuilder buffer = new StringBuilder(1024);
         buffer.append(getLocalizedHelpPath())
                 .append(DEFAULT_HELPSET_NAME);
-
-        // System.out.println("default hs path = " + buffer.toString());
         return buffer.toString();
     }
 
@@ -318,8 +419,10 @@ public class HelpUtils implements SearchListener {
      * application's pathPrefix is set to a given value then this method will
      * return a string of the form pathPrefix/html. If the appName is null or
      * empty or no path prefix has been set then "html" will be returned.
+     * @param appName application name
+     * @return String
      */
-    private static String getHelpPath(String appName) {
+    private static String getHelpPath(final String appName) {
 
         if ((appName == null) || (appName.length() == 0)) {
             return HTML_DIR;
@@ -338,7 +441,6 @@ public class HelpUtils implements SearchListener {
      */
     private void initNavigatorViews() {
         // Initialize TOC.
-        //
         HelpSet hs = helpBroker.getHelpSet();
         Locale locale = hs.getLocale();
 
@@ -356,7 +458,6 @@ public class HelpUtils implements SearchListener {
         }
 
         // Initialize Index.
-        //
         // Get the Index navigator view and index tree data.
         indexView = (IndexView) hs.getNavigatorView(INDEX_VIEW_NAME);
         if (indexView != null) {
@@ -368,23 +469,20 @@ public class HelpUtils implements SearchListener {
         }
 
         // Initialize Search.
-        //
         // Get the Search navigator view and index tree data.
         searchView = (SearchView) hs.getNavigatorView(SEARCH_VIEW_NAME);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Validation methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * This method validates the helpset.
+     * This method validates the help set.
      *
      * @param request The request for this page.
-     * @param hsName The helpset name.
-     * @param merge Indicates whether the helpset hsName should be merged.
+     * @param hsName The help set name.
+     * @param merge Indicates whether the help set hsName should be merged.
      */
-    public void validateHelpSet(HttpServletRequest request, String hsName,
-            boolean merge) {
+    public void validateHelpSet(final HttpServletRequest request,
+            final String hsName, final boolean merge) {
+
         HelpSet hs = helpBroker.getHelpSet();
 
         // The HelpSet exists.
@@ -421,7 +519,7 @@ public class HelpUtils implements SearchListener {
      *
      * @param helpID the current ID.
      */
-    public void validateID(String helpID) {
+    public void validateID(final String helpID) {
         if (helpID != null) {
             helpBroker.setCurrentID(helpID);
         } else if (helpBroker.getCurrentID() == null
@@ -434,43 +532,45 @@ public class HelpUtils implements SearchListener {
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // HelpSet methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Set the path to the "current" page.
+     * @param url new current URL
      */
-    public void setCurrentHelpPage(URL url) {
+    public void setCurrentHelpPage(final URL url) {
         helpBroker.setCurrentURL(url);
     }
 
     /**
-     * Creates a helpset.
+     * Creates a help set.
      *
      * @param request The request for this page
      * @param hsName the HelpSet name
      * @return the HelpSet created
      */
-    private HelpSet createHelpSet(HttpServletRequest request, String hsName) {
-        if (!hsName.startsWith(REQUEST_SCHEME)
-                && !hsName.startsWith(URL_SEPARATOR)) {
-            hsName = URL_SEPARATOR + hsName;
+    private HelpSet createHelpSet(final HttpServletRequest request,
+            final String hsName) {
+
+        String helpSetName = hsName;
+        if (!helpSetName.startsWith(REQUEST_SCHEME)
+                && !helpSetName.startsWith(URL_SEPARATOR)) {
+            helpSetName = URL_SEPARATOR + helpSetName;
         }
 
         HelpSet hs = null;
 
         int port = httpPort;
-
         if (port == -1) {
             port = request.getServerPort();
         }
 
         try {
-            URL url = (hsName.startsWith(REQUEST_SCHEME))
-                    ? new URL(hsName)
-                    : new URL(getCurrentRequestScheme(), request.getServerName(),
-                            port, hsName);
-
+            URL url;
+            if (helpSetName.startsWith(REQUEST_SCHEME)) {
+                url = new URL(helpSetName);
+            } else {
+                url = new URL(getCurrentRequestScheme(),
+                            request.getServerName(), port, hsName);
+            }
             hs = new HelpSet(null, url);
         } catch (MalformedURLException e) {
             // ignore
@@ -480,8 +580,7 @@ public class HelpUtils implements SearchListener {
             if (!currentLocale.equals(Locale.ENGLISH)) {
                 currentLocale = Locale.ENGLISH;
                 try {
-                    hs = createHelpSet(request,
-                            getDefaultHelpSetPath());
+                    hs = createHelpSet(request, getDefaultHelpSetPath());
                 } catch (Exception ex) {
                     LogUtil.warning("Can not create helpset for en locale: "
                             + ex.getMessage());
@@ -500,11 +599,11 @@ public class HelpUtils implements SearchListener {
     }
 
     /**
-     * Adds sub-helpsets to the master merged helpset.
+     * Adds sub-help sets to the master merged help set.
      *
-     * @param hs The HelpSet to which subhelpsets will be added
+     * @param hs The HelpSet to which sub help sets will be added
      */
-    private void addSubHelpSets(HelpSet hs) {
+    private void addSubHelpSets(final HelpSet hs) {
         for (Enumeration e = hs.getHelpSets(); e.hasMoreElements();) {
             HelpSet ehs = (HelpSet) e.nextElement();
             if (ehs == null) {
@@ -513,10 +612,10 @@ public class HelpUtils implements SearchListener {
 
             // Merge views
             NavigatorView[] views = ehs.getNavigatorViews();
-            for (int i = 0; i < views.length; i++) {
-                if (views[i] instanceof TOCView) {
-                    Merge mergeObject = Merge.DefaultMergeFactory.getMerge(
-                            tocView, views[i]);
+            for (NavigatorView view : views) {
+                if (view instanceof TOCView) {
+                    Merge mergeObject = Merge.DefaultMergeFactory
+                            .getMerge(tocView, view);
                     if (mergeObject != null) {
                         mergeObject.processMerge(tocTopNode);
                     }
@@ -528,8 +627,10 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Return the ID of the given node.
+     * @param node tree node
+     * @return String
      */
-    public String getID(TreeNode node) {
+    public String getID(final TreeNode node) {
         if (node == tocTopNode) {
             return BASE_ID;
         }
@@ -546,8 +647,10 @@ public class HelpUtils implements SearchListener {
     /**
      * Return the content URL in String form for a given TreeItem, or an empty
      * String if no content exists.
+     * @param item tree item
+     * @return String
      */
-    public String getContentURL(TreeItem item) {
+    public String getContentURL(final TreeItem item) {
         URL url = null;
         ID id = item.getID();
         if (id != null) {
@@ -559,7 +662,10 @@ public class HelpUtils implements SearchListener {
                 // Ignore
             }
         }
-        return (url != null) ? url.toExternalForm() : "";
+        if (url != null) {
+            return url.toExternalForm();
+        }
+        return "";
     }
 
     /**
@@ -575,6 +681,7 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Return the TOC tree enumeration as an ArrayList object.
+     * @return ArrayList
      */
     public ArrayList getTOCTreeList() {
         if (tocTreeList == null) {
@@ -595,6 +702,7 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Return the Index tree enumeration as an ArrayList object.
+     * @return ArrayList
      */
     public ArrayList getIndexTreeList() {
         if (indexTreeList == null) {
@@ -605,8 +713,10 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Do a search on the query passed in.
+     * @param query search query
+     * @return Enumeration
      */
-    public synchronized Enumeration doSearch(String query) {
+    public synchronized Enumeration doSearch(final String query) {
         if (query == null) {
             return null;
         }
@@ -648,16 +758,20 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Tells the listener that the search has started.
+     * @param evt search event
      */
-    public synchronized void searchStarted(SearchEvent e) {
+    @Override
+    public synchronized void searchStarted(final SearchEvent evt) {
         searchNodes = new ArrayList<SearchTOCItem>();
         searchFinished = false;
     }
 
     /**
      * Tells the listener that the search has finished.
+     * @param evt search event
      */
-    public synchronized void searchFinished(SearchEvent e) {
+    @Override
+    public synchronized void searchFinished(final SearchEvent evt) {
         searchFinished = true;
         searchEnum = Collections.enumeration(searchNodes);
         notifyAll();
@@ -665,8 +779,10 @@ public class HelpUtils implements SearchListener {
 
     /**
      * Tells the listener that matching SearchItems have been found.
+     * @param e
      */
-    public synchronized void itemsFound(SearchEvent e) {
+    @Override
+    public synchronized void itemsFound(final SearchEvent e) {
         SearchTOCItem tocitem;
         Enumeration itemEnum = e.getSearchItems();
 
@@ -689,7 +805,7 @@ public class HelpUtils implements SearchListener {
             while (nodesIt.hasNext()) {
                 tocitem = nodesIt.next();
                 URL testURL = tocitem.getURL();
-                if (testURL != null && url != null && url.sameFile(testURL)) {
+                if (testURL != null && url.sameFile(testURL)) {
                     tocitem.addSearchHit(new SearchHit(item.getConfidence(),
                             item.getBegin(), item.getEnd()));
                     foundNode = true;
@@ -697,7 +813,7 @@ public class HelpUtils implements SearchListener {
                 }
             }
 
-            // No match. 
+            // No match.
             // OK then add a new one.
             if (!foundNode) {
                 tocitem = new SearchTOCItem(item);
@@ -707,36 +823,36 @@ public class HelpUtils implements SearchListener {
     }
 
     /**
-     * For debug - print the attributes of each node in the TOC and index trees.
+     * For debug print the attributes of each node in the TOC and index trees.
      */
     public void printDebug() {
         // Print TOC tree.
-        ArrayList tocTreeList = getTOCTreeList();
-        if (tocTreeList == null) {
+        ArrayList tocTree = getTOCTreeList();
+        if (tocTree == null) {
             // Debug.trace1("tocTreeList null.");
             return;
         }
 
         StringBuffer buf
                 = new StringBuffer("tocTreeList dump:\n");
-        DefaultMutableTreeNode node = null;
-        int nTreeNodes = tocTreeList.size();
+        DefaultMutableTreeNode node;
+        int nTreeNodes = tocTree.size();
         for (int i = 0; i < nTreeNodes; i++) {
-            node = (DefaultMutableTreeNode) tocTreeList.get(i);
+            node = (DefaultMutableTreeNode) tocTree.get(i);
             buf.append(tocTreeToString(node)).append("\n");
         }
 
         // Print Index tree.
-        ArrayList indexTreeList = getIndexTreeList();
-        if (indexTreeList == null) {
+        ArrayList indexTree = getIndexTreeList();
+        if (indexTree == null) {
             // Debug.trace1("indexTreeList null.");
             return;
         }
 
         buf = new StringBuffer("indexTreeList dump:\n");
-        nTreeNodes = indexTreeList.size();
+        nTreeNodes = indexTree.size();
         for (int i = 0; i < nTreeNodes; i++) {
-            node = (DefaultMutableTreeNode) indexTreeList.get(i);
+            node = (DefaultMutableTreeNode) indexTree.get(i);
             buf.append(indexTreeToString(node)).append("\n");
         }
     }
@@ -746,7 +862,7 @@ public class HelpUtils implements SearchListener {
      * @param node tree node
      * @return string containing the contents of the given TOC tree node.
      */
-    public String tocTreeToString(DefaultMutableTreeNode node) {
+    public String tocTreeToString(final DefaultMutableTreeNode node) {
         // Add TOC tree to buffer.
         if (node == null) {
             return ("\n\tTOC tree node is null.");
@@ -762,12 +878,18 @@ public class HelpUtils implements SearchListener {
         StringBuilder buf = new StringBuilder();
         buf.append("\n\tname:          ")
                 .append(item.getName());
-        buf.append("\n\thelpID:        ")
-                .append((item.getID() != null)
-                ? item.getID().id : "");
-        buf.append("\n\tparentID:        ")
-                .append((parent != null)
-                ? Integer.toHexString(parent.hashCode()) : "");
+        buf.append("\n\thelpID:        ");
+        if (item.getID() != null) {
+            buf.append(item.getID());
+        } else {
+            buf.append("");
+        }
+        buf.append("\n\tparentID:        ");
+        if (parent != null) {
+            buf.append(Integer.toHexString(parent.hashCode()));
+        } else {
+            buf.append("");
+        }
         buf.append("\n\tparentID 2:      ")
                 .append(getID(parent));
         buf.append("\n\tnode:          ")
@@ -786,7 +908,7 @@ public class HelpUtils implements SearchListener {
      * @param node tree node
      * @return String
      */
-    public String indexTreeToString(DefaultMutableTreeNode node) {
+    public String indexTreeToString(final DefaultMutableTreeNode node) {
         // Add Index tree to buffer.
         if (node == null) {
             return ("\n\tTree node is null.");
@@ -799,18 +921,25 @@ public class HelpUtils implements SearchListener {
 
         DefaultMutableTreeNode parent
                 = (DefaultMutableTreeNode) node.getParent();
-        StringBuffer buf = new StringBuffer();
-        buf.append("\n\tname:          " + item.getName());
-        buf.append("\n\thelpID:        " + ((item.getID() != null)
-                ? item.getID().id : ""));
-        buf.append("\n\tparentID:        " + ((parent != null)
-                ? Integer.toHexString(parent.hashCode()) : ""));
-        buf.append("\n\tparentID 2:      " + getID(parent));
-        buf.append("\n\tnode:          "
-                + Integer.toHexString(node.hashCode()));
-        buf.append("\n\tnodeID:        " + getID(node));
-        buf.append("\n\texpansionType: "
-                + Integer.toString(item.getExpansionType()));
+        StringBuilder buf = new StringBuilder();
+        buf.append("\n\tname:          ")
+                .append(item.getName())
+                .append("\n\thelpID:        ");
+        if (item.getID() != null) {
+            buf.append(item.getID());
+        }
+        buf.append("\n\tparentID:        ");
+        if (parent != null) {
+            buf.append(Integer.toHexString(parent.hashCode()));
+        }
+        buf.append("\n\tparentID 2:      ")
+                .append(getID(parent))
+                .append("\n\tnode:          ")
+                .append(Integer.toHexString(node.hashCode()))
+                .append("\n\tnodeID:        ")
+                .append(getID(node))
+                .append("\n\texpansionType: ")
+                .append(Integer.toString(item.getExpansionType()));
 
         return buf.toString();
     }

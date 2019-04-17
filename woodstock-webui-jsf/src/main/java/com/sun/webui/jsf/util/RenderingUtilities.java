@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -48,12 +47,12 @@ import javax.faces.component.UINamingContainer;
 /**
  * This class provides common methods for renderers.
  */
-public class RenderingUtilities {
+public final class RenderingUtilities {
 
     /**
-     * Creates a new instance of RenderingUtilities.
+     * Cannot be instanciated.
      */
-    public RenderingUtilities() {
+    private RenderingUtilities() {
     }
 
     /**
@@ -63,8 +62,8 @@ public class RenderingUtilities {
      * @param context The FacesContext of the request
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderComponent(UIComponent component,
-            FacesContext context) throws IOException {
+    public static void renderComponent(final UIComponent component,
+            final FacesContext context) throws IOException {
 
         if (!component.isRendered()) {
             return;
@@ -82,9 +81,7 @@ public class RenderingUtilities {
         if (component.getRendersChildren()) {
             component.encodeChildren(context);
         } else {
-            Iterator kids = component.getChildren().iterator();
-            while (kids.hasNext()) {
-                UIComponent kid = (UIComponent) kids.next();
+            for (UIComponent kid : component.getChildren()) {
                 renderComponent(kid, context);
             }
         }
@@ -102,8 +99,8 @@ public class RenderingUtilities {
      * pass through for this component
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void writeStringAttributes(UIComponent component,
-            ResponseWriter writer, String[] possibleAttributes)
+    public static void writeStringAttributes(final UIComponent component,
+            final ResponseWriter writer, final String[] possibleAttributes)
             throws IOException {
 
         // Get the rest of the component attributes and display them
@@ -141,9 +138,9 @@ public class RenderingUtilities {
      *
      * @exception IOException if an input/output error occurs
      */
-    public static void writeStringAttributes(UIComponent component,
-            ResponseWriter writer, String names[], String extraHtml)
-            throws IOException {
+    public static void writeStringAttributes(final UIComponent component,
+            final ResponseWriter writer, final String[] names,
+            final String extraHtml) throws IOException {
 
         if (component == null || names == null) {
             return;
@@ -157,9 +154,11 @@ public class RenderingUtilities {
                 value = attributes.get(name);
                 if (value != null) {
                     if (value instanceof String) {
-                        writer.writeAttribute(name.toLowerCase(), (String) value, name);
+                        writer.writeAttribute(name.toLowerCase(),
+                                (String) value, name);
                     } else {
-                        writer.writeAttribute(name.toLowerCase(), value.toString(), name);
+                        writer.writeAttribute(name.toLowerCase(),
+                                value.toString(), name);
                     }
                 }
             }
@@ -169,10 +168,10 @@ public class RenderingUtilities {
     }
 
     /**
-     * This method will output a hidden field for use with Params and components
-     * that need to submit a value through a hidden field.Note: The name of the
-     * hidden field will be written as is.For Params no encoding inside the form
-     * is done.This is intentional.
+     * This method will output a hidden field for use with parameters and
+     * components that need to submit a value through a hidden field.Note: The
+     * name of the hidden field will be written as is. For parameters no
+     * encoding inside the form is done.This is intentional.
      *
      * @param component UI component
      * @param writer The writer to use to write the attributes
@@ -181,16 +180,17 @@ public class RenderingUtilities {
      * @param value field value
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderHiddenField(UIComponent component,
-            ResponseWriter writer, String id, String value) throws IOException {
+    public static void renderHiddenField(final UIComponent component,
+            final ResponseWriter writer, final String id, final String value)
+            throws IOException {
 
         if (id == null) {
-            // TODO: when we figure out our exception string strategy, fix this
+            // FIXME: when we figure out our exception string strategy, fix this
             throw new IllegalArgumentException(
                     "An f:param tag had a null name attribute");
         }
 
-        writer.startElement("input", component);  //NOI18N
+        writer.startElement("input", component);
         writer.writeAttribute("id", id, null);
         writer.writeAttribute("name", id, null);
         if (value != null) {
@@ -207,8 +207,8 @@ public class RenderingUtilities {
      * @param parameterMapId Identifies the value in the parameters map
      * @return String
      */
-    public static String decodeHiddenField(FacesContext context,
-            String parameterMapId) {
+    public static String decodeHiddenField(final FacesContext context,
+            final String parameterMapId) {
 
         Map params = context.getExternalContext().getRequestParameterMap();
         Object valueObject = params.get(parameterMapId);
@@ -224,10 +224,11 @@ public class RenderingUtilities {
      * @param styles Additional styles specified by the renderer
      * @return String
      */
-    public static String getStyleClasses(FacesContext context,
-            UIComponent component, String styles) {
+    public static String getStyleClasses(final FacesContext context,
+            final UIComponent component, final String styles) {
 
-        String styleClass = (String) component.getAttributes().get("styleClass");
+        String styleClass = (String) component.getAttributes()
+                .get("styleClass");
 
         boolean componentNotVisible = !isVisible(component);
 
@@ -264,9 +265,9 @@ public class RenderingUtilities {
      * @param extraStyles additional styles
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderStyleClass(FacesContext context,
-            ResponseWriter writer, UIComponent component, String extraStyles)
-            throws IOException {
+    public static void renderStyleClass(final FacesContext context,
+            final ResponseWriter writer, final UIComponent component,
+            final String extraStyles) throws IOException {
 
         String classes = getStyleClasses(context, component, extraStyles);
         if (classes != null) {
@@ -292,36 +293,42 @@ public class RenderingUtilities {
      * @return String
      * @throws java.io.IOException if an IO error occurs
      */
-    public static String renderStyleClass(FacesContext context,
-            ResponseWriter writer, UIComponent component, String styleClass,
-            String extraHtml) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    public static String renderStyleClass(final FacesContext context,
+            final ResponseWriter writer, final UIComponent component,
+            final String styleClass, final String extraHtml)
+            throws IOException {
 
-        if (styleClass != null) {
+        String cssClass = styleClass;
+        String xtraHtml = extraHtml;
+        if (cssClass != null) {
             int first = -1;
-            if (extraHtml != null
-                    && (first = extraHtml.indexOf("class=")) != -1) {
-                try {
-                    // Concat given class value with styleClass attribute.
-                    // Quote char index.
-                    int quote = first + 6;
-                    // Get quote char.
-                    char ch = extraHtml.charAt(quote);
-                    // Last index.
-                    int last = extraHtml.indexOf(ch, quote + 1);
-                    // Get name/value pair
-                    String s = extraHtml.substring(first, last + 1);
-                    // Remove substring.
-                    extraHtml = extraHtml.replaceAll(s, "");
-                    // Remove quote chars.
-                    s = s.substring(7, s.length() - 1);
-                    // Append styleClass.
-                    styleClass = s + " " + styleClass;
-                } catch (IndexOutOfBoundsException e) {
+            if (extraHtml != null) {
+                first = extraHtml.indexOf("class=");
+                if (first != -1) {
+                    try {
+                        // Concat given class value with styleClass attribute.
+                        // Quote char index.
+                        int quote = first + 6;
+                        // Get quote char.
+                        char ch = extraHtml.charAt(quote);
+                        // Last index.
+                        int last = extraHtml.indexOf(ch, quote + 1);
+                        // Get name/value pair
+                        String s = extraHtml.substring(first, last + 1);
+                        // Remove substring.
+                        xtraHtml = xtraHtml.replaceAll(s, "");
+                        // Remove quote chars.
+                        s = s.substring(7, s.length() - 1);
+                        // Append styleClass.
+                        cssClass = s + " " + cssClass;
+                    } catch (IndexOutOfBoundsException e) {
+                    }
                 }
             }
-            renderStyleClass(context, writer, component, styleClass);
+            renderStyleClass(context, writer, component, cssClass);
         }
-        return extraHtml;
+        return xtraHtml;
     }
 
     /**
@@ -331,7 +338,7 @@ public class RenderingUtilities {
      * @param context {@code FacesContext} for the current request
      * @return {@code true} if in a portlet environment, {@code false} otherwise
      */
-    public static boolean isPortlet(FacesContext context) {
+    public static boolean isPortlet(final FacesContext context) {
         return !(context.getExternalContext().getContext()
                 instanceof ServletContext);
     }
@@ -345,7 +352,7 @@ public class RenderingUtilities {
      * com.sun.webui.jsf.component.Body.getRequestFocusElementId(FacesContext)
      * @return String
      */
-    public static String getLastClientID(FacesContext context) {
+    public static String getLastClientID(final FacesContext context) {
         return FocusManager.getRequestFocusElementId(context);
     }
 
@@ -353,13 +360,12 @@ public class RenderingUtilities {
      * Set the client ID of the last component to have focus.
      *
      * @param context faces context
-     * @param clientId
+     * @param clientId client id
      * @deprecated
-     * @see
-     * com.sun.webui.jsf.component.Body.setRequestFocusElementId(FacesContext,String)
+     * @see com.sun.webui.jsf.component.Body.setRequestFocusElementId()
      */
-    public static void setLastClientID(FacesContext context,
-            String clientId) {
+    public static void setLastClientID(final FacesContext context,
+            final String clientId) {
         FocusManager.setRequestFocusElementId(context, clientId);
     }
 
@@ -374,8 +380,8 @@ public class RenderingUtilities {
      * @param component component
      * @return String or {@code null} if component is null
      */
-    public static String getFocusElementId(FacesContext context,
-            UIComponent component) {
+    public static String getFocusElementId(final FacesContext context,
+            final UIComponent component) {
 
         if (component == null) {
             return null;
@@ -392,14 +398,14 @@ public class RenderingUtilities {
      *
      * @param writer The current ResponseWriter
      * @param component The UI component
-     * @param dotSrc
+     * @param dotSrc image source
      * @param height The value to use for the image height attribute
      * @param width The value to use for the image width attribute
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an error occurs
      */
-    public static void renderSpacer(ResponseWriter writer,
-            UIComponent component, String dotSrc, int height, int width)
-            throws IOException {
+    public static void renderSpacer(final ResponseWriter writer,
+            final UIComponent component, final String dotSrc, final int height,
+            final int width) throws IOException {
 
         if (height == 0 && width == 0) {
             return;
@@ -421,10 +427,11 @@ public class RenderingUtilities {
      * @param component The UI component
      * @param height The value to use for the image height attribute
      * @param width The value to use for the image width attribute
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an error occurs
      */
-    public static void renderSpacer(FacesContext context,
-            ResponseWriter writer, UIComponent component, int height, int width)
+    public static void renderSpacer(final FacesContext context,
+            final ResponseWriter writer, final UIComponent component,
+            final int height, final int width)
             throws IOException {
 
         if (height == 0 && width == 0) {
@@ -441,15 +448,15 @@ public class RenderingUtilities {
      * <p>
      * <ul>
      * <li>The value of "id" is expected to be an absolute id and not a relative
-     * id and will be prepended with {@code NamingContainer.SEPARATOR_CHAR} and resolved
-     * to a component instance from the ViewRoot.
+     * id and will be prepended with {@code NamingContainer.SEPARATOR_CHAR} and
+     * resolved to a component instance from the ViewRoot.
      * </li>
      * <li>If the id cannot be resolved, return the id argument.
      * </li>
      * <li>If the id can be resolved to a component instance, and it is an
      * instance of ComplexComponent, then the instance method
-     * {@code getLebeledElementId} is called and the value returned, else
-     * the value of {@code getClientId} is returned.
+     * {@code getLebeledElementId} is called and the value returned, else the
+     * value of {@code getClientId} is returned.
      * </li>
      * </ul>
      * </p>
@@ -458,22 +465,23 @@ public class RenderingUtilities {
      * @param id The absolute client id of the component to be labeled.
      * @return An id suitable for an HTML LABEL element's "for" attribute.
      */
-    public static String getLabeledElementId(FacesContext context, String id) {
+    public static String getLabeledElementId(final FacesContext context,
+            final String id) {
 
         if (id == null || context == null) {
             return null;
         }
 
-        String _id = id;
+        String zId = id;
 
         char separatorChar = UINamingContainer.getSeparatorChar(context);
         if (id.charAt(0) != separatorChar) {
-            _id = String.valueOf(separatorChar).concat(id);
+            zId = String.valueOf(separatorChar).concat(id);
         }
 
         UIComponent component = null;
         try {
-            component = context.getViewRoot().findComponent(_id);
+            component = context.getViewRoot().findComponent(zId);
         } catch (Exception e) {
             if (LogUtil.fineEnabled()) {
                 LogUtil.fine("Component with that particular id "
@@ -491,27 +499,26 @@ public class RenderingUtilities {
     }
 
     /**
-     * Helper function to render theme style sheet link(s)
+     * Helper function to render theme style sheet link(s).
      *
      *
      * @param context containing theme
-     * @param theme
+     * @param theme theme to use
      * @param component The UI component
      * @param writer writer to use
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderStyleSheetLink(UIComponent component, Theme theme,
-            FacesContext context, ResponseWriter writer)
-            throws IOException {
+    public static void renderStyleSheetLink(final UIComponent component,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         //Master.
-        //String master = theme.getPathToMasterStylesheet(); 
+        //String master = theme.getPathToMasterStylesheet();
         String[] files = theme.getMasterStylesheets();
         if (files != null && files.length != 0) {
             renderStylesheetLinks(files, component, writer);
         }
         // browser specific stylesheets
-        //
         ClientType clientType = ClientSniffer.getClientType(context);
         files = theme.getStylesheets(clientType.toString());
         if (files != null && files.length != 0) {
@@ -533,8 +540,9 @@ public class RenderingUtilities {
      * @param writer write to use
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderStylesheetLinks(String[] css,
-            UIComponent component, ResponseWriter writer) throws IOException {
+    public static void renderStylesheetLinks(final String[] css,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         for (String cs : css) {
             writer.startElement(HTMLElements.LINK, component);
@@ -549,17 +557,17 @@ public class RenderingUtilities {
     }
 
     /**
-     * Helper function to render theme style sheet definitions inline
+     * Helper function to render theme style sheet definitions inline.
      *
      * @param context containing theme
-     * @param theme
+     * @param theme theme to use
      * @param writer The current ResponseWriter
      * @param component The UI component
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderStyleSheetInline(UIComponent component,
-            Theme theme, FacesContext context, ResponseWriter writer)
-            throws IOException {
+    public static void renderStyleSheetInline(final UIComponent component,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(HTMLElements.STYLE, component);
         writer.writeAttribute(HTMLAttributes.TYPE, "text/css", null);
@@ -571,7 +579,6 @@ public class RenderingUtilities {
         }
 
         // browser specific stylesheets
-        //
         ClientType clientType = ClientSniffer.getClientType(context);
         files = theme.getStylesheets(clientType.toString());
         if (files != null && files.length != 0) {
@@ -592,8 +599,8 @@ public class RenderingUtilities {
      * @param writer writer to use
      * @throws java.io.IOException if an IO error occurs
      */
-    public static void renderImports(String[] imports, ResponseWriter writer)
-            throws IOException {
+    public static void renderImports(final String[] imports,
+            final ResponseWriter writer) throws IOException {
 
         for (String import1 : imports) {
             writer.write("@import(\"");
@@ -625,15 +632,28 @@ public class RenderingUtilities {
      * @throws IOException if response can't be written or {@code jspURI}
      * cannot be included. Real cause is chained.
      */
-    public static void includeJsp(FacesContext context, ResponseWriter writer,
-            String jspURI) throws IOException {
+    public static void includeJsp(final FacesContext context,
+            final ResponseWriter writer, final String jspURI)
+            throws IOException {
 
+        /**
+         * Response wrapper.
+         */
         class ResponseWrapper extends HttpServletResponseWrapper {
 
+            /**
+             * Printer.
+             */
             private final PrintWriter printWriter;
 
-            public ResponseWrapper(HttpServletResponse response,
-                    Writer writer) {
+            /**
+             * Create a new instance.
+             * @param response wrapped response
+             * @param writer writer to use
+             */
+            ResponseWrapper(final HttpServletResponse response,
+                    final Writer writer) {
+
                 super((HttpServletResponse) response);
                 this.printWriter = new PrintWriter(writer);
             }
@@ -656,6 +676,7 @@ public class RenderingUtilities {
         if (jspURI == null) {
             return;
         }
+        String zJspURI = jspURI;
 
         // prepend the request path if there is one in this path is not
         // a relative path. It appears that the servlet context algorithm
@@ -663,23 +684,24 @@ public class RenderingUtilities {
         // path in the lockhart wizard.
         //
         try {
-            if (!jspURI.startsWith("/")) { //NOI18N
+            if (!zJspURI.startsWith("/")) {
                 String contextPath
                         = context.getExternalContext().getRequestContextPath();
-                jspURI = contextPath.concat("/").concat(jspURI);
+                zJspURI = contextPath.concat("/").concat(zJspURI);
             }
 
             ServletRequest request
-                    = (ServletRequest) context.getExternalContext().getRequest();
+                    = (ServletRequest) context.getExternalContext()
+                            .getRequest();
             ServletResponse response
-                    = (ServletResponse) context.getExternalContext().getResponse();
+                    = (ServletResponse) context.getExternalContext()
+                            .getResponse();
 
-            RequestDispatcher rd = request.getRequestDispatcher(jspURI);
+            RequestDispatcher rd = request.getRequestDispatcher(zJspURI);
 
             // JSF is already buffering and suppressing output.
-            // 
-            rd.include(request,
-                    new ResponseWrapper((HttpServletResponse) response, writer));
+            rd.include(request, new ResponseWrapper((HttpServletResponse)
+                    response, writer));
 
         } catch (Exception e) {
             throw new IOException(e);
@@ -695,8 +717,9 @@ public class RenderingUtilities {
      *
      * @exception IOException if an input/output error occurs
      */
-    public static void renderExtraHtmlAttributes(ResponseWriter writer,
-            String extraHtml) throws IOException {
+    public static void renderExtraHtmlAttributes(final ResponseWriter writer,
+            final String extraHtml) throws IOException {
+
         if (extraHtml == null) {
             return;
         }
@@ -712,21 +735,29 @@ public class RenderingUtilities {
                 i++;
             }
 
-            // Find name.
+            OUTER:
             for (; i < n; i++) {
                 char c = extraHtml.charAt(i);
-                if (c == '\'' || c == '"') {
-                    return; // Not well formed.
-                } else if (c == '=') {
-                    break;
-                } else {
-                    name.append(c);
+                switch (c) {
+                    case '\'':
+                    case '"':
+                        return; // Not well formed.
+                    case '=':
+                        break OUTER;
+                    default:
+                        name.append(c);
+                        break;
                 }
             }
             i++; // Skip =
 
             // Process quote character.
-            char quote = (i < n) ? extraHtml.charAt(i) : '\0';
+            char quote;
+            if (i < n) {
+                quote = extraHtml.charAt(i);
+            } else {
+                quote = '\0';
+            }
             if (!(quote == '\'' || quote == '"')) {
                 return; // Not well formed.
             }
@@ -763,17 +794,17 @@ public class RenderingUtilities {
      * @throws java.io.IOException if an IO error occurs
      *
      */
-    public static void renderURLAttribute(FacesContext context,
-            ResponseWriter writer, UIComponent component, String name,
-            String url, String compPropName) throws IOException {
+    public static void renderURLAttribute(final FacesContext context,
+            final ResponseWriter writer, final UIComponent component,
+            final String name, final String url, final String compPropName)
+            throws IOException {
 
         if (url == null) {
             return;
         }
 
-        Param paramList[] = getParamList(context, component);
+        Param[] paramList = getParamList(context, component);
         StringBuilder sb = new StringBuilder();
-        int i = 0;
         int len = paramList.length;
 
         // Don't append context path here as themed images already include it.
@@ -781,7 +812,7 @@ public class RenderingUtilities {
         if (0 < len) {
             sb.append("?");
         }
-        for (i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             if (0 != i) {
                 sb.append("&");
             }
@@ -792,55 +823,99 @@ public class RenderingUtilities {
 
         String newName = null;
         if (compPropName != null) {
-            newName = (compPropName.equals(name))
-                    ? null
-                    : compPropName;
+            if (compPropName.equals(name)) {
+                newName = null;
+            } else {
+                newName = compPropName;
+            }
         }
 
-        // Note: Path must be a valid absolute URL or full path URI -- see
-        // bugtraq #6306848 & #6322887.
-        writer.writeURIAttribute(name, (url.trim().length() != 0)
-                ? context.getExternalContext().encodeResourceURL(sb.toString())
-                : "", newName);
+        Object value;
+        if (url.trim().length() != 0) {
+            // Note: Path must be a valid absolute URL or full path URI -- see
+            // bugtraq #6306848 & #6322887.
+            value = context.getExternalContext()
+                    .encodeResourceURL(sb.toString());
+        } else {
+            value = "";
+        }
+        writer.writeURIAttribute(name, value, newName);
     }
 
-    static protected Param[] getParamList(FacesContext context,
-            UIComponent command) {
+    /**
+     * Get the command parameter list.
+     * @param context faces context
+     * @param command UI component
+     * @return Param[]
+     */
+    protected static Param[] getParamList(final FacesContext context,
+            final UIComponent command) {
+
         ArrayList<Param> parameterList = new ArrayList<Param>();
 
         for (UIComponent kid : command.getChildren()) {
             if (kid instanceof UIParameter) {
                 UIParameter uiParam = (UIParameter) kid;
                 Object value = uiParam.getValue();
-                Param param = new Param(uiParam.getName(),
-                        (value == null ? null
-                                : value.toString()));
+                String strValue;
+                if (value == null) {
+                    strValue = null;
+                } else {
+                    strValue = value.toString();
+                }
+                Param param = new Param(uiParam.getName(), strValue);
                 parameterList.add(param);
             }
         }
-
         return (Param[]) parameterList.toArray(new Param[parameterList.size()]);
     }
 
-    // inner class to store parameter name and value pairs
-    static protected class Param {
+    /**
+     * Inner class to store parameter name and value pairs.
+     */
+    protected static final class Param {
 
-        public Param(String name, String value) {
-            set(name, value);
-        }
-
+        /**
+         * Parameter name.
+         */
         private String name;
+
+        /**
+         * Parameter value.
+         */
         private String value;
 
-        public void set(String name, String value) {
-            this.name = name;
-            this.value = value;
+        /**
+         * Create a new instance.
+         * @param pName parameter name
+         * @param pValue parameter value
+         */
+        public Param(final String pName, final String pValue) {
+            set(pName, pValue);
         }
 
+        /**
+         * Set the parameter name and value.
+         * @param pName parameter name
+         * @param pValue parameter value
+         */
+        public void set(final String pName, final String pValue) {
+            this.name = pName;
+            this.value = pValue;
+        }
+
+        /**
+         * Get the parameter name.
+         * @return String
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Get the parameter value.
+         * @return String
+         */
         public String getValue() {
             return value;
         }
@@ -862,10 +937,10 @@ public class RenderingUtilities {
      * @param component UI component
      * @throws java.io.IOException if an ERROR occurs
      */
-    public static void renderSkipLink(String anchorName, String styleClass,
-            String style, String toolTip, Integer tabIndex,
-            UIComponent component, FacesContext context)
-            throws IOException {
+    public static void renderSkipLink(final String anchorName,
+            final String styleClass, final String style, final String toolTip,
+            final Integer tabIndex, final UIComponent component,
+            final FacesContext context) throws IOException {
 
         ResponseWriter writer = context.getResponseWriter();
 
@@ -880,7 +955,7 @@ public class RenderingUtilities {
             writer.writeAttribute("style", styleClass, null);
         }
 
-        StringBuilder buffer = new StringBuilder(128);
+        StringBuilder buffer = new StringBuilder();
         // Use this for the href and for the icon id
         buffer.append("#").
                 append(component.getClientId(context)).
@@ -909,8 +984,11 @@ public class RenderingUtilities {
         icon.setWidth(1);
         icon.setHeight(1);
         icon.setBorder(0);
-        icon.setToolTip((toolTip == null) ? defaultAlt : toolTip);
-
+        if (toolTip == null) {
+            icon.setToolTip(defaultAlt);
+        } else {
+            icon.setToolTip(toolTip);
+        }
         buffer.setLength(0);
         buffer.append(anchorName).append("_icon");
         icon.setId(buffer.toString());
@@ -921,10 +999,18 @@ public class RenderingUtilities {
         writer.endElement("div");
     }
 
-    // This method is written in such a way that you can use it without
-    // using the component.
-    static public void renderAnchor(String anchorName, UIComponent component,
-            FacesContext context) throws IOException {
+    /**
+     * This method is written in such a way that you can use it without using
+     * the component.
+     * @param anchorName anchor name
+     * @param component UI component
+     * @param context faces context
+     * @throws IOException if an IO error occurs
+     */
+    public static void renderAnchor(final String anchorName,
+            final UIComponent component, final FacesContext context)
+            throws IOException {
+
         ResponseWriter writer = context.getResponseWriter();
 
         StringBuilder buffer = new StringBuilder();
@@ -942,16 +1028,15 @@ public class RenderingUtilities {
     }
 
     /**
-     * <p>
      * Return whether the given  {@code UIComponent} is "visible". If the
      * property is null, it will return true. Otherwise the value of the
-     * property is returned.</p>
+     * property is returned.
      *
      * @param component The {@code UIComponent} to check
      *
      * @return True if the property is null or true, false otherwise.
      */
-    public static boolean isVisible(UIComponent component) {
+    public static boolean isVisible(final UIComponent component) {
         Object visible = component.getAttributes().get("visible");
         if (visible == null) {
             return true;

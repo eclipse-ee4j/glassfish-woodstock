@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -34,72 +33,60 @@ import javax.faces.context.ResponseWriter;
 /**
  * This class renders TableFooter components.
  * <p>
- * Note: To see the messages logged by this class, set the following global
- * defaults in your JDK's "jre/lib/logging.properties" file.
- * </p><p><pre>
+ * <pre>
  * java.util.logging.ConsoleHandler.level = FINE
  * com.sun.webui.jsf.renderkit.html.TableFooterRenderer.level = FINE
- * </pre></p>
+ * </pre>
+ * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableFooter"))
-public class TableFooterRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableFooter"))
+public final class TableFooterRenderer extends javax.faces.render.Renderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      * <p>
      * Note: The WIDTH, HEIGHT, and BGCOLOR attributes are all deprecated (in
-     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and 
-     * LANG attributes are not cuurently supported.
+     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and
+     * LANG attributes are not currently supported.
      * </p>
      */
-    private static final String stringAttributes[] = {
-        "abbr", //NOI18N
-        "align", //NOI18N
-        "axis", //NOI18N
-        "bgColor", //NOI18N
-        "char", //NOI18N
-        "charOff", //NOI18N
-        "dir", //NOI18N
-        "headers", //NOI18N
-        "height", //NOI18N
-        "lang", //NOI18N
-        "onClick", //NOI18N
-        "onDblClick", //NOI18N
-        "onKeyDown", //NOI18N
-        "onKeyPress", //NOI18N
-        "onKeyUp", //NOI18N
-        "onMouseDown", //NOI18N
-        "onMouseUp", //NOI18N
-        "onMouseMove", //NOI18N
-        "onMouseOut", //NOI18N
-        "onMouseOver", //NOI18N
-        "style", //NOI18N
-        "valign", //NOI18N
-        "width"}; //NOI18N
+    private static final String[] STRING_ATTRIBUTES = {
+        "abbr",
+        "align",
+        "axis",
+        "bgColor",
+        "char",
+        "charOff",
+        "dir",
+        "headers",
+        "height",
+        "lang",
+        "onClick",
+        "onDblClick",
+        "onKeyDown",
+        "onKeyPress",
+        "onKeyUp",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver",
+        "style",
+        "valign",
+        "width"};
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Render the beginning of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeBegin", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeBegin",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeBegin", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeBegin", "Component not rendered, nothing to display");
             return;
         }
 
@@ -108,26 +95,17 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
         renderEnclosingTagStart(context, footer, writer);
     }
 
-    /**
-     * Render the children of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be decoded.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeChildren", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeChildren",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeChildren", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeChildren", "Component not rendered, nothing to display");
             return;
         }
 
@@ -146,26 +124,17 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
         }
     }
 
-    /**
-     * Render the ending of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeChildren", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeChildren",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeChildren", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeChildren", "Component not rendered, nothing to display");
             return;
         }
 
@@ -174,19 +143,11 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
         renderEnclosingTagEnd(context, footer, writer);
     }
 
-    /**
-     * Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns false.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Footer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render column footer for TableFooter components.
      *
@@ -196,31 +157,38 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderColumnFooter(FacesContext context,
-            TableFooter component, ResponseWriter writer) throws IOException {
+    protected void renderColumnFooter(final FacesContext context,
+            final TableFooter component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderColumnFooter", //NOI18N
-                    "Cannot render column footer, TableFooter is null"); //NOI18N
+            log("renderColumnFooter",
+                    "Cannot render column footer, TableFooter is null");
             return;
         }
 
         // Render facet.
         TableColumn col = component.getTableColumnAncestor();
-        UIComponent facet = (col != null)
-                ? col.getFacet(TableColumn.FOOTER_FACET) : null;
+        UIComponent facet;
+        if (col != null) {
+            facet = col.getFacet(TableColumn.FOOTER_FACET);
+        } else {
+            facet = null;
+        }
         if (facet != null && facet.isRendered()) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
-            writer.startElement("span", component); //NOI18N
-            writer.writeAttribute("class", //NOI18N
-                    getTheme().getStyleClass(ThemeStyles.TABLE_GROUP_COL_FOOTER_TEXT),
+            writer.startElement("span", component);
+            writer.writeAttribute("class",
+                    getTheme().getStyleClass(
+                            ThemeStyles.TABLE_GROUP_COL_FOOTER_TEXT),
                     null);
 
             // Render footer text.
             if (col != null && col.getFooterText() != null) {
                 writer.writeText(col.getFooterText(), null);
             }
-            writer.endElement("span"); //NOI18N
+            writer.endElement("span");
         }
     }
 
@@ -233,31 +201,38 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderGroupFooter(FacesContext context,
-            TableFooter component, ResponseWriter writer) throws IOException {
+    protected void renderGroupFooter(final FacesContext context,
+            final TableFooter component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderGroupFooter", //NOI18N
-                    "Cannot render group footer, TableFooter is null"); //NOI18N
+            log("renderGroupFooter",
+                    "Cannot render group footer, TableFooter is null");
             return;
         }
 
         // Render facet.
         TableRowGroup group = component.getTableRowGroupAncestor();
-        UIComponent facet = (group != null)
-                ? group.getFacet(TableRowGroup.FOOTER_FACET) : null;
+        UIComponent facet;
+        if (group != null) {
+            facet = group.getFacet(TableRowGroup.FOOTER_FACET);
+        } else {
+            facet = null;
+        }
         if (facet != null && facet.isRendered()) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
-            writer.startElement("span", component); //NOI18N
-            writer.writeAttribute("class", //NOI18N
-                    getTheme().getStyleClass(ThemeStyles.TABLE_GROUP_FOOTER_TEXT),
+            writer.startElement("span", component);
+            writer.writeAttribute("class",
+                    getTheme().getStyleClass(
+                            ThemeStyles.TABLE_GROUP_FOOTER_TEXT),
                     null);
 
             // Render text.
             if (group.getFooterText() != null) {
                 writer.writeText(group.getFooterText(), null);
             }
-            writer.endElement("span"); //NOI18N
+            writer.endElement("span");
         }
     }
 
@@ -270,23 +245,29 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderTableColumnFooter(FacesContext context,
-            TableFooter component, ResponseWriter writer) throws IOException {
+    protected void renderTableColumnFooter(final FacesContext context,
+            final TableFooter component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderTableColumnFooter", //NOI18N
-                    "Cannot render table column footer, TableFooter is null"); //NOI18N
+            log("renderTableColumnFooter",
+                    "Cannot render table column footer, TableFooter is null");
             return;
         }
 
         // Render facet.
         TableColumn col = component.getTableColumnAncestor();
-        UIComponent facet = (col != null)
-                ? col.getFacet(TableColumn.TABLE_FOOTER_FACET) : null;
+        UIComponent facet;
+        if (col != null) {
+            facet = col.getFacet(TableColumn.TABLE_FOOTER_FACET);
+        } else {
+            facet = null;
+        }
         if (facet != null && facet.isRendered()) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
-            writer.startElement("span", component); //NOI18N
-            writer.writeAttribute("class", //NOI18N
+            writer.startElement("span", component);
+            writer.writeAttribute("class",
                     getTheme().getStyleClass(ThemeStyles.TABLE_COL_FOOTER_TEXT),
                     null);
 
@@ -294,7 +275,7 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
             if (col != null && col.getTableFooterText() != null) {
                 writer.writeText(col.getTableFooterText(), null);
             }
-            writer.endElement("span"); //NOI18N
+            writer.endElement("span");
         }
     }
 
@@ -307,18 +288,20 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderTableFooter(FacesContext context,
-            TableFooter component, ResponseWriter writer) throws IOException {
+    protected void renderTableFooter(final FacesContext context,
+            final TableFooter component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderTableFooter", //NOI18N
-                    "Cannot render table footer, TableFooter is null"); //NOI18N
+            log("renderTableFooter",
+                    "Cannot render table footer, TableFooter is null");
             return;
         }
 
         Table table = component.getTableAncestor();
         if (table == null) {
-            log("renderTableFooter", //NOI18N
-                    "Cannot render table footer, Table is null"); //NOI18N
+            log("renderTableFooter",
+                    "Cannot render table footer, Table is null");
             return;
         }
 
@@ -330,40 +313,51 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
             Theme theme = getTheme();
 
             // Get hidden selected rows text.
-            String hiddenSelectionsText = table.isHiddenSelectedRows()
-                    ? theme.getMessage("table.hiddenSelections", //NOI18N
-                    new String[]{Integer.toString(table.getHiddenSelectedRowsCount())})
-                    : null;
+            String hiddenSelectionsText;
+            if (table.isHiddenSelectedRows()) {
+                hiddenSelectionsText = theme.getMessage(
+                        "table.hiddenSelections",
+                            new String[]{
+                                Integer.toString(
+                                        table.getHiddenSelectedRowsCount())
+                            });
+            } else {
+                hiddenSelectionsText = null;
+            }
 
             // If both footer and hidden selected rows are not null, the
             // table footer is left aigned and hidden selected rows is right
             // aligned. Otherwise, text should appear centered.
-            if (hiddenSelectionsText != null && table.getFooterText() != null) {
-                writer.startElement("span", component); //NOI18N
-                writer.writeAttribute("class", //NOI18N
-                        theme.getStyleClass(ThemeStyles.TABLE_FOOTER_LEFT), null);
+            if (hiddenSelectionsText != null
+                    && table.getFooterText() != null) {
+                writer.startElement("span", component);
+                writer.writeAttribute("class",
+                        theme.getStyleClass(ThemeStyles.TABLE_FOOTER_LEFT),
+                        null);
                 writer.writeText(table.getFooterText(), null);
-                writer.endElement("span"); //NOI18N
-                writer.startElement("span", component); //NOI18N
-                writer.writeAttribute("class", //NOI18N
-                        theme.getStyleClass(ThemeStyles.TABLE_FOOTER_MESSAGE_SPAN),
+                writer.endElement("span");
+                writer.startElement("span", component);
+                writer.writeAttribute("class",
+                        theme.getStyleClass(
+                                ThemeStyles.TABLE_FOOTER_MESSAGE_SPAN),
                         null);
                 writer.writeText(hiddenSelectionsText, null);
-                writer.endElement("span"); //NOI18N
+                writer.endElement("span");
             } else {
-                writer.startElement("span", component); //NOI18N
-                writer.writeAttribute("class", //NOI18N
-                        theme.getStyleClass(ThemeStyles.TABLE_FOOTER_TEXT), null);
-                writer.writeText((table.getFooterText() != null)
-                        ? table.getFooterText() : hiddenSelectionsText, null);
-                writer.endElement("span"); //NOI18N
+                writer.startElement("span", component);
+                writer.writeAttribute("class",
+                        theme.getStyleClass(ThemeStyles.TABLE_FOOTER_TEXT),
+                        null);
+                if (table.getFooterText() != null) {
+                    writer.writeText(table.getFooterText(), null);
+                } else {
+                    writer.writeText(hiddenSelectionsText, null);
+                }
+                writer.endElement("span");
             }
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Enclosing tag methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render enclosing tag for TableFooter components.
      *
@@ -373,47 +367,53 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagStart(FacesContext context,
-            TableFooter component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagStart(final FacesContext context,
+            final TableFooter component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagStart", //NOI18N
-                    "Cannot render enclosing tag, TableFooter is null"); //NOI18N
+            log("renderEnclosingTagStart",
+                    "Cannot render enclosing tag, TableFooter is null");
             return;
         }
 
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
-        writer.writeAttribute("id", component.getClientId(context), null); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
+        writer.writeAttribute("id", component.getClientId(context), null);
 
         // Render style class.
         String extraHtml = RenderingUtilities.renderStyleClass(context, writer,
                 component, getStyleClass(component), component.getExtraHtml());
 
         // Render colspan.
-        if (component.getColSpan() > -1 && (extraHtml == null || extraHtml.indexOf("colspan=") == -1)) { //NOI18N
-            writer.writeAttribute("colspan", //NOI18N
-                    Integer.toString(component.getColSpan()), null); //NOI18N
+        if (component.getColSpan() > -1
+                && (extraHtml == null || !extraHtml.contains("colspan="))) {
+            writer.writeAttribute("colspan",
+                    Integer.toString(component.getColSpan()), null);
         }
 
         // Render rowspan.
-        if (component.getRowSpan() > -1 && (extraHtml == null || extraHtml.indexOf("rowspan=") == -1)) { //NOI18N
-            writer.writeAttribute("rowspan", //NOI18N
-                    Integer.toString(component.getRowSpan()), null); //NOI18N
+        if (component.getRowSpan() > -1
+                && (extraHtml == null || !extraHtml.contains("rowspan="))) {
+            writer.writeAttribute("rowspan",
+                    Integer.toString(component.getRowSpan()), null);
         }
 
         // Render nowrap.
-        if (component.isNoWrap() && (extraHtml == null || extraHtml.indexOf("nowrap=") == -1)) { //NOI18N
-            writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
+        if (component.isNoWrap()
+                && (extraHtml == null || !extraHtml.contains("nowrap="))) {
+            writer.writeAttribute("nowrap", "nowrap", null);
         }
 
         // Render tooltip.
-        if (component.getToolTip() != null && (extraHtml == null || extraHtml.indexOf("title=") == -1)) { //NOI18N
-            writer.writeAttribute("title", component.getToolTip(), "toolTip"); //NOI18N
+        if (component.getToolTip() != null
+                && (extraHtml == null || !extraHtml.contains("title="))) {
+            writer.writeAttribute("title", component.getToolTip(), "toolTip");
         }
 
         // Render pass through attributes.
         RenderingUtilities.writeStringAttributes(component, writer,
-                stringAttributes, extraHtml);
+                STRING_ATTRIBUTES, extraHtml);
     }
 
     /**
@@ -425,30 +425,29 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagEnd(FacesContext context,
-            TableFooter component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagEnd(final FacesContext context,
+            final TableFooter component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagEnd", //NOI18N
-                    "Cannot render enclosing tag, TableFooter is null"); //NOI18N
+            log("renderEnclosingTagEnd",
+                    "Cannot render enclosing tag, TableFooter is null");
             return;
         }
-        writer.endElement("td"); //NOI18N
+        writer.endElement("td");
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Helper method to get style class for TableFooter components.
      *
      * @param component TableFooter to be rendered
      * @return The style class.
      */
-    private String getStyleClass(TableFooter component) {
+    private String getStyleClass(final TableFooter component) {
         String styleClass = null;
         if (component == null) {
-            log("getStyleClass", //NOI18N
-                    "Cannot obtain style class, TableFooter is null"); //NOI18N
+            log("getStyleClass",
+                    "Cannot obtain style class, TableFooter is null");
             return styleClass;
         }
 
@@ -460,36 +459,47 @@ public class TableFooterRenderer extends javax.faces.render.Renderer {
         } else {
             TableColumn col = component.getTableColumnAncestor();
             if (col != null && col.isSpacerColumn()) {
-                styleClass = (component.isTableColumnFooter())
-                        ? ThemeStyles.TABLE_COL_FOOTER_SPACER
-                        : ThemeStyles.TABLE_TD_SPACER;
+                if (component.isTableColumnFooter()) {
+                    styleClass = ThemeStyles.TABLE_COL_FOOTER_SPACER;
+                } else {
+                    styleClass = ThemeStyles.TABLE_TD_SPACER;
+                }
             } else if (component.getSortLevel() == 1) {
-                styleClass = (component.isTableColumnFooter())
-                        ? ThemeStyles.TABLE_COL_FOOTER_SORT
-                        : ThemeStyles.TABLE_GROUP_COL_FOOTER_SORT;
+                if (component.isTableColumnFooter()) {
+                    styleClass = ThemeStyles.TABLE_COL_FOOTER_SORT;
+                } else {
+                    styleClass = ThemeStyles.TABLE_GROUP_COL_FOOTER_SORT;
+                }
             } else {
-                styleClass = (component.isTableColumnFooter())
-                        ? ThemeStyles.TABLE_COL_FOOTER
-                        : ThemeStyles.TABLE_GROUP_COL_FOOTER;
+                if (component.isTableColumnFooter()) {
+                    styleClass = ThemeStyles.TABLE_COL_FOOTER;
+                } else {
+                    styleClass = ThemeStyles.TABLE_GROUP_COL_FOOTER;
+                }
             }
         }
         return getTheme().getStyleClass(styleClass);
     }
 
-    /** Helper method to get Theme objects. */
+    /**
+     * Helper method to get Theme objects.
+     * @return Theme
+     */
     private Theme getTheme() {
         return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
     }
 
     /**
      * Log fine messages.
+     * @param method method to log
+     * @param msg message to log
      */
-    private void log(String method, String message) {
+    private static void log(final String method, final String msg) {
         // Get class.
-        Class clazz = this.getClass();
+        Class clazz = TableFooterRenderer.class;
         if (LogUtil.fineEnabled(clazz)) {
             // Log method name and message.
-            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + message); //NOI18N
+            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + msg);
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -35,57 +35,79 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
- *
- * @author gjmurphy
+ * BeanInfo source generator.
  */
-class BeanInfoSourceGeneratorImpl extends BeanInfoSourceGenerator {
+final class BeanInfoSourceGeneratorImpl extends BeanInfoSourceGenerator {
 
-    final static String TEMPLATE = "com/sun/faces/mirror/generator/BeanInfoSource.template";
+    /**
+     * Template resource path.
+     */
+    private static final String TEMPLATE =
+            "com/sun/faces/mirror/generator/BeanInfoSource.template";
 
-    VelocityEngine velocityEngine;
+    /**
+     * Template engine.
+     */
+    private final VelocityEngine velocityEngine;
 
-    public BeanInfoSourceGeneratorImpl(VelocityEngine velocityEngine) {
-        this.velocityEngine = velocityEngine;
+    /**
+     * Create a new instance.
+     * @param velocity template engine
+     */
+    BeanInfoSourceGeneratorImpl(final VelocityEngine velocity) {
+        this.velocityEngine = velocity;
     }
 
     @Override
     public void generate() throws GeneratorException {
         try {
-            DeclaredComponentInfo componentInfo = this.getDeclaredComponentInfo();
+            DeclaredComponentInfo componentInfo =
+                    this.getDeclaredComponentInfo();
             String namespace = this.getNamespace();
             String namespacePrefix = this.getNamespacePrefix();
             VelocityContext velocityContext = new VelocityContext();
             ClassInfo superClassInfo = componentInfo.getSuperClassInfo();
-            Collection<PropertyInfo> propertyInfos = new ArrayList<PropertyInfo>();
+            Collection<PropertyInfo> propertyInfos =
+                    new ArrayList<PropertyInfo>();
             propertyInfos.addAll(componentInfo.getPropertyInfos().values());
             Set<EventInfo> eventInfos = new HashSet<EventInfo>();
             eventInfos.addAll(componentInfo.getEventInfos().values());
             if (superClassInfo != null) {
-                if (DeclaredComponentInfo.class.isAssignableFrom(superClassInfo.getClass())) {
-                    DeclaredComponentInfo declaredSuperClassInfo = (DeclaredComponentInfo) superClassInfo;
-                    // If super class is a component in this compilation unit, instruct
-                    // template to add a call to fetch properties and events from the parent
-                    // BeanInfo
+                if (DeclaredComponentInfo.class.isAssignableFrom(
+                        superClassInfo.getClass())) {
+                    DeclaredComponentInfo declaredSuperClassInfo =
+                            (DeclaredComponentInfo) superClassInfo;
+                    // If super class is a component in this compilation unit,
+                    // instruct template to add a call to fetch properties and
+                    // events from the parent BeanInfo
                     if (declaredSuperClassInfo.getPropertyInfos().size() > 0
-                            || declaredSuperClassInfo.getInheritedPropertyInfos().size() > 0) {
-                        velocityContext.put("fetchSuperClassPropertyInfo", Boolean.TRUE);
+                            || declaredSuperClassInfo
+                                    .getInheritedPropertyInfos().size() > 0) {
+                        velocityContext.put("fetchSuperClassPropertyInfo",
+                                Boolean.TRUE);
                     }
                     if (declaredSuperClassInfo.getEventInfos().size() > 0
-                            || declaredSuperClassInfo.getInheritedEventInfos().size() > 0) {
-                        velocityContext.put("fetchSuperClassEventInfo", Boolean.TRUE);
+                            || declaredSuperClassInfo.getInheritedEventInfos()
+                                    .size() > 0) {
+                        velocityContext.put("fetchSuperClassEventInfo",
+                                Boolean.TRUE);
                     }
                 } else {
-                    // If super class is in an external library or is not a component,
-                    // make sure inherited properties and events are declared along side the
-                    // properties delared in this class
-                    propertyInfos.addAll(componentInfo.getInheritedPropertyInfos().values());
-                    eventInfos.addAll(componentInfo.getInheritedEventInfos().values());
+                    // If super class is in an external library or is not a
+                    // component, make sure inherited properties and events are
+                    // declared along side the properties delared in this class
+                    propertyInfos.addAll(componentInfo
+                            .getInheritedPropertyInfos().values());
+                    eventInfos.addAll(componentInfo.getInheritedEventInfos()
+                            .values());
                 }
             }
-            SortedSet<CategoryInfo> categoryInfoSet = new TreeSet<CategoryInfo>();
+            SortedSet<CategoryInfo> categoryInfoSet =
+                    new TreeSet<CategoryInfo>();
             ClassInfo classInfo = componentInfo;
             while (classInfo != null) {
-                for (PropertyInfo propertyInfo : classInfo.getPropertyInfos().values()) {
+                for (PropertyInfo propertyInfo : classInfo.getPropertyInfos()
+                        .values()) {
                     CategoryInfo categoryInfo = propertyInfo.getCategoryInfo();
                     if (categoryInfo != null) {
                         categoryInfoSet.add(categoryInfo);
@@ -94,31 +116,55 @@ class BeanInfoSourceGeneratorImpl extends BeanInfoSourceGenerator {
                 classInfo = classInfo.getSuperClassInfo();
             }
             if (this.getPropertyBundleMap() != null) {
-                // This generator has been passed a propertyBundleMap in which to put localizable properties
-                PropertyBundleMap propertyBundleMap = this.getPropertyBundleMap();
-                propertyBundleMap.put(componentInfo.getKey("displayName"), componentInfo.getDisplayName());
-                propertyBundleMap.put(componentInfo.getKey("shortDescription"), componentInfo.getShortDescription());
-                for (PropertyInfo propertyInfo : componentInfo.getPropertyInfos().values()) {
-                    propertyBundleMap.put(propertyInfo.getKey("displayName"), propertyInfo.getDisplayName());
-                    propertyBundleMap.put(propertyInfo.getKey("shortDescription"), propertyInfo.getShortDescription());
+                // This generator has been passed a propertyBundleMap in which
+                // to put localizable properties
+                PropertyBundleMap propertyBundleMap =
+                        this.getPropertyBundleMap();
+                propertyBundleMap.put(componentInfo.getKey("displayName"),
+                        componentInfo.getDisplayName());
+                propertyBundleMap.put(componentInfo.getKey("shortDescription"),
+                        componentInfo.getShortDescription());
+                for (PropertyInfo propertyInfo
+                        : componentInfo.getPropertyInfos().values()) {
+                    propertyBundleMap.put(propertyInfo.getKey("displayName"),
+                            propertyInfo.getDisplayName());
+                    propertyBundleMap.put(
+                            propertyInfo.getKey("shortDescription"),
+                            propertyInfo.getShortDescription());
                 }
-                for (PropertyInfo propertyInfo : componentInfo.getInheritedPropertyInfos().values()) {
-                    if (!(propertyInfo.getDeclaringClassInfo() instanceof DeclaredComponentInfo)) {
-                        propertyBundleMap.put(propertyInfo.getKey("displayName"), propertyInfo.getDisplayName());
-                        propertyBundleMap.put(propertyInfo.getKey("shortDescription"), propertyInfo.getShortDescription());
+                for (PropertyInfo propertyInfo
+                        : componentInfo.getInheritedPropertyInfos().values()) {
+                    if (!(propertyInfo.getDeclaringClassInfo()
+                            instanceof DeclaredComponentInfo)) {
+                        propertyBundleMap.put(
+                                propertyInfo.getKey("displayName"),
+                                propertyInfo.getDisplayName());
+                        propertyBundleMap.put(
+                                propertyInfo.getKey("shortDescription"),
+                                propertyInfo.getShortDescription());
                     }
                 }
-                velocityContext.put("resourceBundle", propertyBundleMap.getQualifiedName());
+                velocityContext.put("resourceBundle",
+                        propertyBundleMap.getQualifiedName());
             }
-            velocityContext.put("date", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
+            velocityContext.put("date", DateFormat
+                    .getDateInstance(DateFormat.MEDIUM).format(new Date()));
             velocityContext.put("beanInfoPackage", getPackageName());
             velocityContext.put("beanInfoClass", getClassName());
             velocityContext.put("componentInfo", componentInfo);
             velocityContext.put("propertyInfoSet", propertyInfos);
             velocityContext.put("categoryInfoSet", categoryInfoSet);
             velocityContext.put("eventInfoSet", eventInfos);
-            velocityContext.put("namespace", namespace == null ? "" : namespace);
-            velocityContext.put("namespacePrefix", namespacePrefix == null ? "" : namespacePrefix);
+            if (namespace == null) {
+                velocityContext.put("namespace", "");
+            } else {
+                velocityContext.put("namespace", namespace);
+            }
+            if (namespacePrefix == null) {
+                velocityContext.put("namespacePrefix", "");
+            } else {
+                velocityContext.put("namespacePrefix", namespacePrefix);
+            }
             Template template = velocityEngine.getTemplate(TEMPLATE);
             PrintWriter printWriter = this.getPrintWriter();
             template.merge(velocityContext, printWriter);
@@ -139,5 +185,4 @@ class BeanInfoSourceGeneratorImpl extends BeanInfoSourceGenerator {
     public String getClassName() {
         return this.getDeclaredComponentInfo().getClassName() + "BeanInfoBase";
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,15 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * TimeRenderer.java
- *
- * Created on July 6, 2005, 4:04 PM
- *
- * To change this template, choose Tools | Options and locate the template under
- * the Source Creation and Management node. Right-click the template and choose
- * Open. You can then make changes to the template in the Source Editor.
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -40,28 +31,34 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- *
- * @author avk
+ * Time renderer.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Time"))
-public class TimeRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Time"))
+public final class TimeRenderer extends javax.faces.render.Renderer {
 
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (DEBUG) {
             log("encodeEnd() START");
         }
 
         if (!(component instanceof Time)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                Time.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                Time.class.getName()
+            };
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
         Theme theme = ThemeUtilities.getTheme(context);
@@ -71,52 +68,51 @@ public class TimeRenderer extends javax.faces.render.Renderer {
 
         ResponseWriter writer = context.getResponseWriter();
 
-        writer.startElement("table", time); //NOI18N
-        writer.writeAttribute("cellspacing", "0", null); // NOI18N
-        writer.writeAttribute("cellpadding", "0", null); // NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", time); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("table", time);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeText("\n", null);
+        writer.startElement("tr", time);
+        writer.writeText("\n", null);
 
         // hour menu
-        writer.startElement("td", time);    //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("td", time);
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(hourMenu, context);
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("td");   //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
+        writer.endElement("td");
+        writer.writeText("\n", null);
 
         // colon
         writer.startElement("td", time);
         writer.write(":");
         writer.endElement("td");
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
         // minutes menu
-        writer.startElement("td", time); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.startElement("td", time);
+        writer.writeText("\n", null);
         RenderingUtilities.renderComponent(minuteMenu, context);
-        writer.writeText("\n", null); //NOI18N
+        writer.writeText("\n", null);
 
-        // Should use another cell for this, and a width attribute instad
+        // Should use another cell for this, and a width attribute instead
         //writer.write("&nbsp;");
+        writer.startElement("span", time);
 
-        writer.startElement("span", time); //NOI18N
-
-        String string =
-                theme.getStyleClass(ThemeStyles.DATE_TIME_ZONE_TEXT);
-        writer.writeAttribute("class", string, null); // NOI18N    
+        String string
+                = theme.getStyleClass(ThemeStyles.DATE_TIME_ZONE_TEXT);
+        writer.writeAttribute("class", string, null);
         writer.writeText(theme.getMessage("Time.gmt"), null);
         writer.writeText(time.getOffset(), null);
-        writer.endElement("span"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("span");
+        writer.writeText("\n", null);
 
-        writer.endElement("td");   //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("tr");   //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        writer.endElement("table");
+        writer.writeText("\n", null);
 
         if (DEBUG) {
             log("encodeEnd() END");
@@ -124,13 +120,13 @@ public class TimeRenderer extends javax.faces.render.Renderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component) {
-        return;
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) {
     }
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) {
-        return;
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) {
     }
 
     @Override
@@ -143,7 +139,11 @@ public class TimeRenderer extends javax.faces.render.Renderer {
         return true;
     }
 
-    private void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s);
+    /**
+     * Log a message to the standard out.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(TimeRenderer.class.getName() + "::" + msg);
     }
 }

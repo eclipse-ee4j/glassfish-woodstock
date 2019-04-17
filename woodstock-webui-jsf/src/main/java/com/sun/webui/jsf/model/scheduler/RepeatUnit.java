@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,70 +22,140 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 
 import javax.faces.context.FacesContext;
 
-// Delete the setters once you have reimplemented this not to 
-// use the default Serializable mechanism, but the same as 
-// in the converter....
-//TODO add hashcode
-public class RepeatUnit implements Serializable {
+/**
+ * Repeat unit.
+ */
+public final class RepeatUnit implements Serializable {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -8055799403044778734L;
-    public final static String HOURS = "HOURS";
-    public final static String DAYS = "DAYS";
-    public final static String WEEKS = "WEEKS";
-    public final static String MONTHS = "MONTHS";
+
+    /**
+     * Constant for {@code HOURS}.
+     */
+    public static final String HOURS = "HOURS";
+
+    /**
+     * Constant for {@code DAYS}.
+     */
+    public static final String DAYS = "DAYS";
+
+    /**
+     * Constant for {@code WEEKS}.
+     */
+    public static final String WEEKS = "WEEKS";
+
+    /**
+     * Constant for {@code MONTHS}.
+     */
+    public static final String MONTHS = "MONTHS";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
-    private static RepeatUnit HOURS_RI = null;
-    private static RepeatUnit DAYS_RI = null;
-    private static RepeatUnit WEEKS_RI = null;
-    private static RepeatUnit MONTHS_RI = null;
+
+    /**
+     * Hours repeat unit.
+     */
+    private static RepeatUnit hoursRi = null;
+
+    /**
+     * Days repeat unit.
+     */
+    private static RepeatUnit daysRi = null;
+
+    /**
+     * Weeks repeat unit.
+     */
+    private static RepeatUnit weeksRi = null;
+
+    /**
+     * Months repeat unit.
+     */
+    private static RepeatUnit monthsRi = null;
+
+    /**
+     * Calendar field.
+     */
     private Integer calField = null;
+
+    /**
+     * Calendar key.
+     */
     private String key = null;
+
+    /**
+     * Calendar representation.
+     */
     private String representation = null;
 
+    /**
+     * Create a new instance.
+     */
     public RepeatUnit() {
     }
 
-    public RepeatUnit(int calFieldInt, String key, String rep) {
+    /**
+     * Create a new instance.
+     * @param newCalField calendar field
+     * @param newKey calendar key
+     * @param newRepresentation calendar representation
+     */
+    private RepeatUnit(final int newCalField, final String newKey,
+            final String newRepresentation) {
+
         if (DEBUG) {
             log("Create new RU");
         }
-        this.calField = new Integer(calFieldInt);
-        this.key = key;
-        this.representation = rep;
+        this.calField = newCalField;
+        this.key = newKey;
+        this.representation = newRepresentation;
         if (DEBUG) {
             log("Representation is " + this.representation);
         }
     }
 
-    public static RepeatUnit getInstance(String representation) {
+    /**
+     * Get a repeat unit.
+     * @param newRepresentation representation
+     * @return RepeatUnit
+     */
+    public static RepeatUnit getInstance(final String newRepresentation) {
 
         if (DEBUG) {
-            log("getInstance(" + representation + ")");
+            log("getInstance(" + newRepresentation + ")");
         }
 
-        if (representation.equals(HOURS)) {
-            if (HOURS_RI == null) {
-                HOURS_RI = new RepeatUnit(Calendar.HOUR_OF_DAY, "Scheduler.hours", HOURS);
+        if (newRepresentation.equals(HOURS)) {
+            if (hoursRi == null) {
+                hoursRi = new RepeatUnit(Calendar.HOUR_OF_DAY,
+                        "Scheduler.hours", HOURS);
             }
-            return HOURS_RI;
+            return hoursRi;
         }
-        if (representation.equals(DAYS)) {
-            if (DAYS_RI == null) {
-                DAYS_RI = new RepeatUnit(Calendar.DATE, "Scheduler.days", DAYS);
+        if (newRepresentation.equals(DAYS)) {
+            if (daysRi == null) {
+                daysRi = new RepeatUnit(Calendar.DATE,
+                        "Scheduler.days", DAYS);
             }
-            return DAYS_RI;
+            return daysRi;
         }
-        if (representation.equals(WEEKS)) {
-            if (WEEKS_RI == null) {
-                WEEKS_RI = new RepeatUnit(Calendar.WEEK_OF_YEAR, "Scheduler.weeks", WEEKS);
+        if (newRepresentation.equals(WEEKS)) {
+            if (weeksRi == null) {
+                weeksRi = new RepeatUnit(Calendar.WEEK_OF_YEAR,
+                        "Scheduler.weeks", WEEKS);
             }
-            return WEEKS_RI;
+            return weeksRi;
         }
-        if (representation.equals(MONTHS)) {
-            if (MONTHS_RI == null) {
-                MONTHS_RI = new RepeatUnit(Calendar.MONTH, "Scheduler.months", MONTHS);
+        if (newRepresentation.equals(MONTHS)) {
+            if (monthsRi == null) {
+                monthsRi = new RepeatUnit(Calendar.MONTH,
+                        "Scheduler.months", MONTHS);
             }
-            return MONTHS_RI;
+            return monthsRi;
         }
         return null;
     }
@@ -100,37 +170,55 @@ public class RepeatUnit implements Serializable {
 
     /**
      * Setter for property calendarField.
+     * @param newCalField new calendar field
      */
-    public void setCalendarField(Integer calField) {
-        this.calField = calField;
+    public void setCalendarField(final Integer newCalField) {
+        this.calField = newCalField;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    /**
+     * Set the key.
+     * @param newKey key
+     */
+    public void setKey(final String newKey) {
+        this.key = newKey;
     }
 
+    /**
+     * Get the key.
+     * @return String
+     */
     public String getKey() {
         return key;
     }
 
-    public void setRepresentation(String representation) {
-        this.representation = representation;
+    /**
+     * Set the representation.
+     * @param newRepresentation representation
+     */
+    public void setRepresentation(final String newRepresentation) {
+        this.representation = newRepresentation;
     }
 
+    /**
+     * Get the representation.
+     * @return String
+     */
     public String getRepresentation() {
         return representation;
     }
 
     /**
      * Getter for property labelKey.
+     * @param context faces context
      * @return Value of property labelKey.
      */
-    public String getLabel(FacesContext context) {
+    public String getLabel(final FacesContext context) {
         return ThemeUtilities.getTheme(context).getMessage(key);
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == null) {
             return false;
         }
@@ -163,12 +251,33 @@ public class RepeatUnit implements Serializable {
         } else if (!getCalendarField().equals(ru.getCalendarField())) {
             return false;
         }
-
         return true;
     }
 
-    private static void log(String s) {
-        System.out.println("RepeatUnit::" + s);
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash;
+        if (this.calField != null) {
+            hash = hash + this.calField.hashCode();
+        }
+        hash = 29 * hash;
+        if (this.key != null) {
+            hash = hash + this.key.hashCode();
+        }
+        hash = 29 * hash;
+        if (this.representation != null) {
+            hash = hash + this.representation.hashCode();
+        }
+        return hash;
+    }
+
+    /**
+     * Log a message to the standard output.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(RepeatUnit.class.getName() + "::" + msg);
     }
 }
-

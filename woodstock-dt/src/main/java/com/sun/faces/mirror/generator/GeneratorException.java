@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,21 +18,31 @@ package com.sun.faces.mirror.generator;
 
 /**
  * Exception thrown during file generation.
- *
- * @author gjmurphy
  */
-public class GeneratorException extends Exception{
-    
-    public GeneratorException(String message) {
+public class GeneratorException extends Exception {
+
+    /**
+     * Create a new instance.
+     * @param message exception message
+     */
+    public GeneratorException(final String message) {
         super(message);
     }
-    
-    public GeneratorException(String message, Throwable cause) {
+
+    /**
+     * Create a new instance.
+     * @param message exception message
+     * @param cause exception cause
+     */
+    public GeneratorException(final String message, final Throwable cause) {
         super(message, cause);
     }
-    
-    public GeneratorException(Throwable cause) {
+
+    /**
+     * Create a new instance.
+     * @param cause exception cause
+     */
+    public GeneratorException(final Throwable cause) {
         super(cause);
     }
-    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.event;
 
 import javax.el.ELContext;
@@ -26,36 +25,47 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.event.ValueChangeListener;
 
 /**
- * <p><strong>MethodExprValueChangeListener</strong> is a {@link ValueChangeListener} that
- * wraps a {@link MethodExpression}. When it receives a {@link ValueChangeEvent}, it executes
- * a method on an object identified by the {@link MethodExpression}.</p>
- * @author mbohm
+ * <strong>MethodExprValueChangeListener</strong> is a
+ * {@link ValueChangeListener} that wraps a {@link MethodExpression}. When it
+ * receives a {@link ValueChangeEvent}, it executes a method on an object
+ * identified by the {@link MethodExpression}.
  */
-//FIXME add hashcode
-public class MethodExprValueChangeListener implements ValueChangeListener, StateHolder {
+public final class MethodExprValueChangeListener
+        implements ValueChangeListener, StateHolder {
 
-    // ------------------------------------------------------ Instance Variables
+    /**
+     * Method expression.
+     */
     private MethodExpression methodExpression = null;
+
+    /**
+     * Transient flag.
+     */
     private boolean isTransient;
 
+    /**
+     * Create a new instance.
+     */
     public MethodExprValueChangeListener() {
     }
 
     /**
-     * <p>Construct a {@link ValueChangeListener} that contains a {@link MethodExpression}.</p>
+     * Construct a {@link ValueChangeListener} that contains a
+     * {@link MethodExpression}.
+     *
+     * @param newMethodExpression method expression
      */
-    public MethodExprValueChangeListener(MethodExpression methodExpression) {
+    public MethodExprValueChangeListener(
+            final MethodExpression newMethodExpression) {
 
         super();
-        this.methodExpression = methodExpression;
+        this.methodExpression = newMethodExpression;
 
     }
 
-    /**
-     * @throws NullPointerException {@inheritDoc}
-     * @throws AbortProcessingException {@inheritDoc}
-     */
-    public void processValueChange(ValueChangeEvent valueChangeEvent) throws AbortProcessingException {
+    @Override
+    public void processValueChange(final ValueChangeEvent valueChangeEvent)
+            throws AbortProcessingException {
 
         if (valueChangeEvent == null) {
             throw new NullPointerException();
@@ -69,36 +79,59 @@ public class MethodExprValueChangeListener implements ValueChangeListener, State
         }
     }
 
-    public Object saveState(FacesContext context) {
+    @Override
+    public Object saveState(final FacesContext context) {
         return new Object[]{methodExpression};
     }
 
-    public void restoreState(FacesContext context, Object state) {
+    @Override
+    public void restoreState(final FacesContext context, final Object state) {
         methodExpression = (MethodExpression) ((Object[]) state)[0];
     }
 
+    @Override
     public boolean isTransient() {
         return isTransient;
     }
 
-    public void setTransient(boolean newTransientValue) {
+    @Override
+    public void setTransient(final boolean newTransientValue) {
         isTransient = newTransientValue;
     }
 
+    /**
+     * Get the method expression.
+     * @return MethodExpression
+     */
     public MethodExpression getMethodExpression() {
         return methodExpression;
     }
 
     @Override
-    public boolean equals(Object otherObject) {
+    public boolean equals(final Object otherObject) {
         if (!(otherObject instanceof MethodExprValueChangeListener)) {
             return false;
         }
 
-        MethodExprValueChangeListener other = (MethodExprValueChangeListener) otherObject;
+        MethodExprValueChangeListener other =
+                (MethodExprValueChangeListener) otherObject;
         MethodExpression otherMe = other.getMethodExpression();
         //methodExpression should not be null
         return methodExpression.equals(otherMe);
     }
-}
 
+    @Override
+    @SuppressWarnings("checkstyle:magicnumber")
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash;
+        if (this.methodExpression != null) {
+            hash = hash + this.methodExpression.hashCode();
+        }
+        hash = 47 * hash;
+        if (this.isTransient) {
+            hash = hash + 1;
+        }
+        return hash;
+    }
+}

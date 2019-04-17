@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -26,23 +25,26 @@ import javax.faces.context.ResponseWriter;
 
 /**
  * Renderer for a {@link com.sun.webui.jsf.component.PanelLayout} component.
- *
- * @author gjmurphy
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.PanelLayout"))
-public class PanelLayoutRenderer extends AbstractRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.PanelLayout"))
+public final class PanelLayoutRenderer extends AbstractRenderer {
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component, ResponseWriter writer)
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
-        writer.startElement("div", component); //NOI18N
+
+        writer.startElement("div", component);
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component, ResponseWriter writer)
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
+
         PanelLayout panelLayout = (PanelLayout) component;
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         // Write id attribute
         String id = component.getId();
@@ -50,7 +52,7 @@ public class PanelLayoutRenderer extends AbstractRenderer {
 
         // Write style attribute
         if (PanelLayout.GRID_LAYOUT.equals(panelLayout.getPanelLayout())) {
-            buffer.append("position: relative; -rave-layout: grid;"); //NOI18N
+            buffer.append("position: relative; -rave-layout: grid;");
         }
         String style = panelLayout.getStyle();
         if (style != null && style.length() > 0) {
@@ -64,9 +66,11 @@ public class PanelLayoutRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component, ResponseWriter writer)
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
-        writer.endElement("div"); //NOI18N
+
+        writer.endElement("div");
     }
 
     @Override

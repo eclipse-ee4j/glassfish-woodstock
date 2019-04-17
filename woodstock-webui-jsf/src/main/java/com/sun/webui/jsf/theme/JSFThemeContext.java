@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,14 +25,14 @@ import com.sun.webui.theme.ServletThemeContext;
 import com.sun.webui.theme.ThemeContext;
 
 /**
- * {@code JSFThemeContext} encapsulates the theme JSF runtime environment.
+ * {@code JSFThemeContext} encapsulates the theme JSF run-time environment.
  * It is different from other potential run-time environments
  * in that JSF encapsulates run-time contexts in a {@code FacesContext}.
  * This context could encapsulate a servlet context or a portlet context.
  * As such application information affecting a theme may be obtained
  * differently. This class encapsulates that behavior.
  */
-public class JSFThemeContext extends ServletThemeContext {
+public final class JSFThemeContext extends ServletThemeContext {
 
     /**
      * An object to synchronize with.
@@ -41,9 +41,9 @@ public class JSFThemeContext extends ServletThemeContext {
 
     /**
      * Construction is controlled by {@code getInstance}.
-     * @param context
+     * @param context faces context
      */
-    protected JSFThemeContext(FacesContext context) {
+    private JSFThemeContext(final FacesContext context) {
         super(context.getExternalContext().getInitParameterMap());
     }
 
@@ -54,11 +54,11 @@ public class JSFThemeContext extends ServletThemeContext {
      * Note that since a ThemeServlet <b>MUST</b> be defined then getInstance
      * should never have to create a ThemeContext instance.
      *
-     * @param context
-     * @return
+     * @param context faces context
+     * @return ThemeContext
      */
     @SuppressWarnings("unchecked")
-    public static ThemeContext getInstance(FacesContext context) {
+    public static ThemeContext getInstance(final FacesContext context) {
 
         // Does it make sense call a "super.getInstance()" ?
         //
@@ -91,7 +91,7 @@ public class JSFThemeContext extends ServletThemeContext {
     }
 
     @Override
-    public void setDefaultClassLoader(ClassLoader classLoader) {
+    public void setDefaultClassLoader(final ClassLoader classLoader) {
     }
 
     @Override
@@ -101,11 +101,11 @@ public class JSFThemeContext extends ServletThemeContext {
     }
 
     @Override
-    public void setRequestContextPath(String path) {
+    public void setRequestContextPath(final String path) {
     }
 
     @Override
-    public String getResourcePath(String path) {
+    public String getResourcePath(final String path) {
         String resourcePath = path;
         if (Beans.isDesignTime()) {
             ClassLoader cl = getDefaultClassLoader();
@@ -116,7 +116,7 @@ public class JSFThemeContext extends ServletThemeContext {
         } else if (path != null) {
             FacesContext context = FacesContext.getCurrentInstance();
             String servletContext = getThemeServletContext();
-            StringBuilder sb = new StringBuilder(128);
+            StringBuilder sb = new StringBuilder();
             // Just to make sure
             //
             if (!servletContext.startsWith("/")) {

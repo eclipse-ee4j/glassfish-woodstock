@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -97,8 +97,6 @@ import java.lang.annotation.Target;
  *    public void insertBlamListener(KerBlamListener blamListener) {...}
  *    public void deleteBlamListener(KerBlamListener blamListener) {...}
  * </pre>
- *
- * @author gjmurphy
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.FIELD, ElementType.METHOD})
@@ -110,7 +108,7 @@ public @interface Event {
      *
      * @return String
      */
-    public String name() default "";
+    String name() default "";
 
     /**
      * The display name, typically used at design-time. If no value is provided,
@@ -119,7 +117,7 @@ public @interface Event {
      * @return String
      */
     @Localizable
-    public String displayName() default "";
+    String displayName() default "";
 
     /**
      * An optional short description of this event, typically used as a tool tip
@@ -128,7 +126,7 @@ public @interface Event {
      * @return String
      */
     @Localizable
-    public String shortDescription() default "";
+    String shortDescription() default "";
 
     /**
      * The name of the "add" method for this event. A value need be specified
@@ -136,7 +134,7 @@ public @interface Event {
      *
      * @return String
      */
-    public String addListenerMethodName() default "";
+    String addListenerMethodName() default "";
 
     /**
      * The name of the "remove" method for this event. A value need be specified
@@ -145,7 +143,7 @@ public @interface Event {
      *
      * @return String
      */
-    public String removeListenerMethodName() default "";
+    String removeListenerMethodName() default "";
 
     /**
      * The name of the "get" method for this event. A value need be specified
@@ -154,7 +152,7 @@ public @interface Event {
      *
      * @return String
      */
-    public String getListenersMethodName() default "";
+    String getListenersMethodName() default "";
 
     /**
      * Indicates whether this event is the default event for its component. Only
@@ -167,5 +165,5 @@ public @interface Event {
      *
      * @return {@code true} if default, {@code false} otherwise
      */
-    public boolean isDefault() default false;
+    boolean isDefault() default false;
 }

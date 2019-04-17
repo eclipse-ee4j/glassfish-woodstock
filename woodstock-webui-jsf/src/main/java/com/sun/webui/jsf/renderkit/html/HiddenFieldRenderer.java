@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * HiddenFieldRenderer.java
  */
 package com.sun.webui.jsf.renderkit.html;
@@ -34,32 +34,40 @@ import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.MessageUtil;
 
 /**
- * <p>Renderer for HiddenFieldRenderer {@link HiddenField} component.</p>
+ * Renderer for HiddenFieldRenderer {@link HiddenField} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.HiddenField"))
-public class HiddenFieldRenderer extends javax.faces.render.Renderer {
+@Renderer(@Renderer.Renders(
+        componentFamily = "com.sun.webui.jsf.HiddenField"))
+public final class HiddenFieldRenderer extends javax.faces.render.Renderer {
 
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (!(component instanceof HiddenField)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                HiddenField.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                HiddenField.class.getName()
+            };
+            String message = MessageUtil.getMessage(
+                    "com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
         HiddenField field = (HiddenField) component;
         ResponseWriter writer = context.getResponseWriter();
-        writer.startElement("input", field); //NOI18N
-        writer.writeAttribute("type", "hidden", null); //NOI18N
+        writer.startElement("input", field);
+        writer.writeAttribute("type", "hidden", null);
         String id = field.getClientId(context);
-        writer.writeAttribute("id", id, null); //NOI18N
-        writer.writeAttribute("name", id, null); //NOI18N
+        writer.writeAttribute("id", id, null);
+        writer.writeAttribute("name", id, null);
 
         // Record the value that is rendered.
         // Note that getValueAsString conforms to JSF conventions
@@ -88,27 +96,30 @@ public class HiddenFieldRenderer extends javax.faces.render.Renderer {
 
         // Still call the component's getValueAsString method
         // in order to render it.
-        //
         String value = field.getValueAsString(context);
-        writer.writeAttribute("value", value, "value"); //NOI18N
+        writer.writeAttribute("value", value, "value");
 
         if (field.isDisabled()) {
-            writer.writeAttribute("disabled", "disabled", null); //NOI18N
+            writer.writeAttribute("disabled", "disabled", null);
         }
         writer.endElement("input");
     }
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         decodeInput(context, component);
     }
 
     /**
-     * Decode the component component
+     * Decode the component component.
+     *
      * @param context The FacesContext associated with this request
      * @param component The TextField component to decode
      */
-    static void decodeInput(FacesContext context, UIComponent component) {
+    static void decodeInput(final FacesContext context,
+            final UIComponent component) {
 
         if (DEBUG) {
             log("decodeInput()");
@@ -147,7 +158,11 @@ public class HiddenFieldRenderer extends javax.faces.render.Renderer {
         ((EditableValueHolder) component).setSubmittedValue(value);
     }
 
-    static protected void log(String s) {
-        System.out.println(s);
+    /**
+     * Log a message to the standard output.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(msg);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import javax.el.ValueExpression;
@@ -23,272 +22,306 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
 /**
- * The Link component is iused to insert information into the &lt;head&gt; 
- * element, such as links to external stylesheets.
+ * The Link component is used to insert information into the &lt;head&gt;
+ * element, such as links to external style sheets.
  */
-@Component(type = "com.sun.webui.jsf.Link", family = "com.sun.webui.jsf.Link",
-displayName = "Link", tagName = "link",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_link",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_link_props")
-public class Link extends UIComponentBase {
+@Component(type = "com.sun.webui.jsf.Link",
+        family = "com.sun.webui.jsf.Link",
+        displayName = "Link", tagName = "link",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_link",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_link_props")
+        //CHECKSTYLE:ON
+public final class Link extends UIComponentBase {
 
     /**
-     * <p>Construct a new <code>Link</code>.</p>
+     * Defines the character (charset) encoding of the target URL. Default value
+     * is {@code "ISO-8859-1"}.
+     */
+    @Property(name = "charset",
+            displayName = "Charset",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.CharacterSetsEditor")
+            //CHECKSTYLE:ON
+    private String charset = null;
+
+    /**
+     * Specifies the type of display device for which the referenced document is
+     * designed. The media attribute is useful for specifying different style
+     * sheets for print and viewing on a screen. The default value is "screen".
+     */
+    @Property(name = "media",
+            displayName = "Media Type",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String media = null;
+
+    /**
+     * Defines the relationship between the current document and the targeted
+     * document. Default is {@code "stylesheet"}. Other possible values are
+     * described at w3.org.
+     */
+    @Property(name = "rel",
+            displayName = "Rel",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlLinkTypesEditor")
+            //CHECKSTYLE:ON
+    private String rel = null;
+
+    /**
+     * Specifies the MIME type of the target URL. Default is: {@code "text/css"}
+     */
+    @Property(name = "type",
+            displayName = "Mime type",
+            category = "Appearance")
+    private String type = null;
+
+    /**
+     * The absolute or relative target URL of the resource.
+     */
+    @Property(name = "url",
+            displayName = "URL",
+            category = "Appearance",
+            isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
+            //CHECKSTYLE:OFF
+    private String url = null;
+
+    /**
+     * Defines the ISO language code of the human language used in the target
+     * URL file. For example, valid values might be en, fr, es.
+     */
+    @Property(name = "urlLang",
+            displayName = "URL Language",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.LanguagesEditor")
+            //CHECKSTYLE:ON
+    private String urlLang = null;
+
+    /**
+     * Construct a new {@code Link}.
      */
     public Link() {
         super();
         setRendererType("com.sun.webui.jsf.Link");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Link";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
-    /**
-     * Use the rendered attribute to indicate whether the HTML code for the
-     * component should be included in the rendered HTML page. If set to false,
-     * the rendered HTML page does not include the HTML for the component. If
-     * the component is not rendered, it is also not processed on any subsequent
-     * form submission.
-     */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * <p>Defines the character (charset) encoding of the target URL. Default 
-     * value is "ISO-8859-1".</p>
-     */
-    @Property(name = "charset", displayName = "Charset", category = "Advanced",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.CharacterSetsEditor")
-    private String charset = null;
 
     /**
-     * <p>Defines the character (charset) encoding of the target URL. Default 
-     * value is "ISO-8859-1".</p>
+     * Defines the character (charset) encoding of the target URL. Default value
+     * is {@code "ISO-8859-1"}.
+     * @return String
      */
     public String getCharset() {
         if (this.charset != null) {
             return this.charset;
         }
-        ValueExpression _vb = getValueExpression("charset");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("charset");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Defines the character (charset) encoding of the target URL. Default 
-     * value is "ISO-8859-1".</p>
+     * Defines the character (charset) encoding of the target URL. Default value
+     * is {@code "ISO-8859-1"}.
+     *
      * @see #getCharset()
+     * @param newCharset charset
      */
-    public void setCharset(String charset) {
-        this.charset = charset;
+    public void setCharset(final String newCharset) {
+        this.charset = newCharset;
     }
-    /**
-     * <p>Specifies the type of display device for which the referenced document 
-     * is designed.  The media attribute is useful for specifying different 
-     * stylesheets for print and viewing on a screen.  The default value is 
-     * "screen".</p>
-     */
-    @Property(name = "media", displayName = "Media Type", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String media = null;
 
     /**
-     * <p>Specifies the type of display device for which the referenced document 
-     * is designed.  The media attribute is useful for specifying different 
-     * stylesheets for print and viewing on a screen.  The default value is 
-     * "screen".</p>
+     * Specifies the type of display device for which the referenced document is
+     * designed. The media attribute is useful for specifying different
+     * style sheets for print and viewing on a screen. The default value is
+     * {@code "screen"}.
+     * @return String
      */
     public String getMedia() {
         if (this.media != null) {
             return this.media;
         }
-        ValueExpression _vb = getValueExpression("media");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("media");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies the type of display device for which the referenced document 
-     * is designed.  The media attribute is useful for specifying different 
-     * stylesheets for print and viewing on a screen.  The default value is 
-     * "screen".</p>
+     * Specifies the type of display device for which the referenced document is
+     * designed. The media attribute is useful for specifying different
+     * style sheets for print and viewing on a screen. The default value is
+     * {@code "screen"}.
+     *
      * @see #getMedia()
+     * @param newMedia media
      */
-    public void setMedia(String media) {
-        this.media = media;
+    public void setMedia(final String newMedia) {
+        this.media = newMedia;
     }
-    /**
-     * <p>Defines the relationship between the current document and the 
-     * targeted document. Default is "stylesheet". Other possible values 
-     * are described at w3.org.</p>
-     */
-    @Property(name = "rel", displayName = "Rel", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.HtmlLinkTypesEditor")
-    private String rel = null;
 
     /**
-     * <p>Defines the relationship between the current document and the 
-     * targeted document. Default is "stylesheet". Other possible values 
-     * are described at w3.org.</p>
+     * Defines the relationship between the current document and the targeted
+     * document. Default is {@code "stylesheet"}. Other possible values are
+     * described at w3.org.
+     *
+     * @return String
      */
     public String getRel() {
         if (this.rel != null) {
             return this.rel;
         }
-        ValueExpression _vb = getValueExpression("rel");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("rel");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return "stylesheet";
     }
 
     /**
-     * <p>Defines the relationship between the current document and the 
-     * targeted document. Default is "stylesheet". Other possible values 
-     * are described at w3.org.</p>
+     * Defines the relationship between the current document and the targeted
+     * document. Default is {@code "stylesheet"}. Other possible values are
+     * described at w3.org.
+     *
      * @see #getRel()
+     * @param newRel rel
      */
-    public void setRel(String rel) {
-        this.rel = rel;
+    public void setRel(final String newRel) {
+        this.rel = newRel;
     }
-    /**
-     * <p>Specifies the MIME type of the target URL.  Default is: "text/css"</p>
-     */
-    @Property(name = "type", displayName = "Mime type", category = "Appearance")
-    private String type = null;
 
     /**
-     * <p>Specifies the MIME type of the target URL.  Default is: "text/css"</p>
+     * Specifies the MIME type of the target URL. Default is: {@code "text/css"}
+     * @return String
      */
     public String getType() {
         if (this.type != null) {
             return this.type;
         }
-        ValueExpression _vb = getValueExpression("type");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("type");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return "text/css";
     }
 
     /**
-     * <p>Specifies the MIME type of the target URL.  Default is: "text/css"</p>
+     * Specifies the MIME type of the target URL. Default is: {@code "text/css"}
+     *
      * @see #getType()
+     * @param newType type
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setType(final String newType) {
+        this.type = newType;
     }
-    /**
-     * <p>The absolute or relative target URL of the resource.</p>
-     */
-    @Property(name = "url", displayName = "URL", category = "Appearance", isDefault = true,
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
-    private String url = null;
 
     /**
-     * <p>The absolute or relative target URL of the resource.</p>
+     * The absolute or relative target URL of the resource.
+     * @return String
      */
     public String getUrl() {
         if (this.url != null) {
             return this.url;
         }
-        ValueExpression _vb = getValueExpression("url");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("url");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The absolute or relative target URL of the resource.</p>
+     * The absolute or relative target URL of the resource.
+     *
      * @see #getUrl()
+     * @param newUrl url
      */
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUrl(final String newUrl) {
+        this.url = newUrl;
     }
-    /**
-     * <p>Defines the ISO language code of the human language used in the target 
-     * URL file. For example, valid values might be en, fr, es.</p>
-     */
-    @Property(name = "urlLang", displayName = "URL Language", category = "Advanced",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.LanguagesEditor")
-    private String urlLang = null;
 
     /**
-     * <p>Defines the ISO language code of the human language used in the target 
-     * URL file. For example, valid values might be en, fr, es.</p>
+     * Defines the ISO language code of the human language used in the target
+     * URL file. For example, valid values might be en, fr, es.
+     * @return String
      */
     public String getUrlLang() {
         if (this.urlLang != null) {
             return this.urlLang;
         }
-        ValueExpression _vb = getValueExpression("urlLang");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("urlLang");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Defines the ISO language code of the human language used in the target 
-     * URL file. For example, valid values might be en, fr, es.</p>
+     * Defines the ISO language code of the human language used in the target
+     * URL file. For example, valid values might be en, fr, es.
+     *
      * @see #getUrlLang()
+     * @param newUrlLang urlLang
      */
-    public void setUrlLang(String urlLang) {
-        this.urlLang = urlLang;
+    public void setUrlLang(final String newUrlLang) {
+        this.urlLang = newUrlLang;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.charset = (String) _values[1];
-        this.media = (String) _values[2];
-        this.rel = (String) _values[3];
-        this.type = (String) _values[4];
-        this.url = (String) _values[5];
-        this.urlLang = (String) _values[6];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.charset = (String) values[1];
+        this.media = (String) values[2];
+        this.rel = (String) values[3];
+        this.type = (String) values[4];
+        this.url = (String) values[5];
+        this.urlLang = (String) values[6];
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[7];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.charset;
-        _values[2] = this.media;
-        _values[3] = this.rel;
-        _values[4] = this.type;
-        _values[5] = this.url;
-        _values[6] = this.urlLang;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[7];
+        values[0] = super.saveState(context);
+        values[1] = this.charset;
+        values[2] = this.media;
+        values[3] = this.rel;
+        values[4] = this.type;
+        values[5] = this.url;
+        values[6] = this.urlLang;
+        return values;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,14 +22,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that identifies a class as being the JSP tag class for a component.
- *
- * @author gjmurphy
+ * Annotation that identifies a class as being the JSP tag class for a
+ * component.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Tag {
-    
+
     /**
      * The type of the component to which this tag corresponds. The value must
      * correspond to the {@link Component#type} value of a component class in

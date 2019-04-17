@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: FileChooserFilterValidator.java,v 1.1.20.1 2009-12-29 05:00:37 jyeary Exp $
- */
 package com.sun.webui.jsf.validator;
 
 import javax.faces.component.UIComponent;
@@ -31,26 +28,25 @@ import com.sun.webui.jsf.component.FileChooser;
 // to be a native type of the FileChooserModel we should be ok.
 //
 /**
- * There has to be validator on the Filter component because it
- * may be a developer defined facet. This is the only place where
- * the FileChooser policy can be enforced in order to not
- * have the local value set to an invalid value.
+ * There has to be validator on the Filter component because it may be a
+ * developer defined facet. This is the only place where the FileChooser policy
+ * can be enforced in order to not have the local value set to an invalid value.
  *
- * Since all validators are given a chance to validate even if
- * one fails, other validators should not attempt to validate
- * if the component is invalid at the time a validator is called.
+ * Since all validators are given a chance to validate even if one fails, other
+ * validators should not attempt to validate if the component is invalid at the
+ * time a validator is called.
  *
- * This validator, if it determines the value invalid, will clear
- * the submitted value in order to ensure the last known
- * valid value is rendered.
+ * This validator, if it determines the value invalid, will clear the submitted
+ * value in order to ensure the last known valid value is rendered.
  */
 // Note that typing this by referencing FileChooser
 // prevents using this in a general Chooser paradigm.
-public class FileChooserFilterValidator implements Validator {
+public final class FileChooserFilterValidator implements Validator {
 
     @Override
-    public void validate(FacesContext context, UIComponent component,
-            Object value) throws ValidatorException {
+    public void validate(final FacesContext context,
+            final UIComponent component, final Object value)
+            throws ValidatorException {
 
         FileChooser chooser = (FileChooser) component.getParent();
         chooser.validateFilterComponent(context, component, value);

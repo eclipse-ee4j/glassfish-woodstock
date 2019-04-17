@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,7 +25,6 @@ import javax.faces.context.FacesContext;
 import javax.el.ValueExpression;
 import com.sun.data.provider.FilterCriteria;
 import com.sun.data.provider.RowKey;
-import com.sun.data.provider.TableDataFilter;
 import com.sun.data.provider.TableDataProvider;
 import com.sun.data.provider.impl.CompareFilterCriteria;
 import com.sun.data.provider.impl.TableRowDataProvider;
@@ -37,69 +36,126 @@ import com.sun.faces.annotation.Property;
  * that compares the value of a {@link ValueExpression} with a predefined
  * <code>compareValue</code>.  A user may specify matches to include less than
  * (<), equal to (==), or greater than (>) the <code>compareValue</code> Object,
- * or any combination of the above.</p>
+ * or any combination of the above.
  *
  * <p>Use the <code>requestMapKey</code> property
  *
  * @see TableDataProvider
  * @see TableDataFilter
- *
- * @author Joe Nuxoll, John Yeary
  */
 @Component(isTag = false)
-public class ValueBindingFilterCriteria extends FilterCriteria {
+public final class ValueBindingFilterCriteria extends FilterCriteria {
+
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 7979125228842716689L;
 
+    /**
+     * Match equal to flag.
+     */
+    private boolean matchEqualTo = true;
+
+    /**
+     * Match less than flag.
+     */
+    private boolean matchLessThan = false;
+
+    /**
+     * Match greater than flag.
+     */
+    private boolean matchGreaterThan = false;
+
+    /**
+     * Value expression.
+     */
+    @Property(displayName = "Value Binding", isAttribute = false)
+    private transient ValueExpression valueExpression;
+
+    /**
+     * Compare value.
+     */
+    @Property(displayName = "Compare Value")
+    private Object compareValue;
+
+    /**
+     * Request map key.
+     */
+    @Property(displayName = "Request Map Key")
+    private String requestMapKey = "currentRow";
+
+    /**
+     * Row provider.
+     */
+    private transient TableRowDataProvider rowProvider;
+
+    /**
+     * This is a monitor lock for rowProvider.
+     */
+    private String rowProviderLock = "rowProviderLock";
+
+    /**
+     * Storage for the compare locale.
+     */
+    private Locale compareLocale;
+
+    /**
+     * Create a new instance with no value expression.
+     */
     public ValueBindingFilterCriteria() {
     }
 
     /**
-     *
-     * @param valueExpression ValueExpression
+     * Create a new instance with the specified value expression.
+     * @param newValueExpression ValueExpression
      */
-    public ValueBindingFilterCriteria(ValueExpression valueExpression) {
-        this.valueExpression = valueExpression;
+    public ValueBindingFilterCriteria(
+            final ValueExpression newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
-     *
-     * @param compareValue The desired compare value
+     * Create a new instance with the no value expression and the specified
+     * compare value.
+     * @param newCompareValue The desired compare value
      */
-    public ValueBindingFilterCriteria(Object compareValue) {
-        this.compareValue = compareValue;
+    public ValueBindingFilterCriteria(final Object newCompareValue) {
+        this.compareValue = newCompareValue;
     }
 
     /**
-     *
-     * @param valueExpression ValueExpression
-     * @param compareValue The desired compare value
+     * Create a new instance with the specified expression and compare value.
+     * @param newValueExpression ValueExpression
+     * @param newCompareValue The desired compare value
      */
-    public ValueBindingFilterCriteria(ValueExpression valueExpression, Object compareValue) {
-        this.valueExpression = valueExpression;
-        this.compareValue = compareValue;
+    public ValueBindingFilterCriteria(final ValueExpression newValueExpression,
+            final Object newCompareValue) {
+
+        this.valueExpression = newValueExpression;
+        this.compareValue = newCompareValue;
     }
 
     /**
-     *
-     * @param valueExpression ValueExpression
-     * @param compareValue Object
-     * @param matchLessThan boolean
-     * @param matchEqualTo boolean
-     * @param matchGreaterThan boolean
+     * Create a new instance with the specified value expression, compare value
+     * and matching rules.
+     * @param newValueExpression ValueExpression
+     * @param newCompareValue Object
+     * @param newMatchLessThan boolean
+     * @param newMatchEqualTo boolean
+     * @param newMatchGreaterThan boolean
      */
-    public ValueBindingFilterCriteria(ValueExpression valueExpression, Object compareValue,
-            boolean matchLessThan, boolean matchEqualTo, boolean matchGreaterThan) {
+    public ValueBindingFilterCriteria(final ValueExpression newValueExpression,
+            final Object newCompareValue, final boolean newMatchLessThan,
+            final boolean newMatchEqualTo, final boolean newMatchGreaterThan) {
 
-        this.valueExpression = valueExpression;
-        this.compareValue = compareValue;
-        this.matchLessThan = matchLessThan;
-        this.matchEqualTo = matchEqualTo;
-        this.matchGreaterThan = matchGreaterThan;
+        this.valueExpression = newValueExpression;
+        this.compareValue = newCompareValue;
+        this.matchLessThan = newMatchLessThan;
+        this.matchEqualTo = newMatchEqualTo;
+        this.matchGreaterThan = newMatchGreaterThan;
     }
 
-    /**
-     *
-     */
+    @Override
     public String getDisplayName() {
         String name = super.getDisplayName();
         if (name != null && !"".equals(name)) {
@@ -108,9 +164,17 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
 
         // if there's no display name, make one...
         Object val = getCompareValue();
-        StringBuffer sb = new StringBuffer();
-        sb.append(isInclude() ? "Include [" : "Exclude [");
-        sb.append(valueExpression != null ? valueExpression.getExpressionString() : "<no value binding>");
+        StringBuilder sb = new StringBuilder();
+        if (isInclude()) {
+            sb.append("Include [");
+        } else {
+            sb.append("Exclude [");
+        }
+        if (valueExpression != null) {
+            sb.append(valueExpression.getExpressionString());
+        } else {
+            sb.append("<no value binding>");
+        }
         sb.append("] ");
         boolean anyMatches = false;
         if (matchLessThan) {
@@ -130,20 +194,20 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
             }
             sb.append("is greater than ");
         }
-        sb.append("[" + val + "]");
+        sb.append("[").append(val).append("]");
         return sb.toString();
     }
 
     /**
-     *
-     * @param valueExpression ValueExpression
+     * Set the value expression.
+     * @param newValueExpression ValueExpression
      */
-    public void setValueExpression(ValueExpression valueExpression) {
-        this.valueExpression = valueExpression;
+    public void setValueExpression(final ValueExpression newValueExpression) {
+        this.valueExpression = newValueExpression;
     }
 
     /**
-     *
+     * Get the value expression.
      * @return ValueExpression
      */
     public ValueExpression getValueExpression() {
@@ -164,62 +228,55 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
 
     /**
      * Sets the request map variable key that will be used to store the
-     * {@link TableRowDataProvider} for the current row being match tested.
-     * This allows value expressions to refer to the "current" row during the
-     * filter operation.
+     * {@link TableRowDataProvider} for the current row being match tested. This
+     * allows value expressions to refer to the "current" row during the filter
+     * operation.
      *
-     * @param requestMapKey String key to use for the {@link TableRowDataProvider}
+     * @param newRequestMapKey String key to use for the
+     * {@link TableRowDataProvider}
      */
-    public void setRequestMapKey(String requestMapKey) {
-        this.requestMapKey = requestMapKey;
+    public void setRequestMapKey(final String newRequestMapKey) {
+        this.requestMapKey = newRequestMapKey;
     }
 
     /**
-     *
-     * @param value Object
+     * Set the compare value.
+     * @param newCompareValue Object
      */
-    public void setCompareValue(Object value) {
-        this.compareValue = value;
+    public void setCompareValue(final Object newCompareValue) {
+        this.compareValue = newCompareValue;
     }
 
     /**
-     *
+     * Get the compare value.
      * @return Object
      */
     public Object getCompareValue() {
         return compareValue;
     }
-    /**
-     * Storage for the compare locale
-     */
-    protected Locale compareLocale;
 
     /**
-     *
-     * @param compareLocale Locale
+     * Set the compare locale.
+     * @param newCompareLocale Locale
      */
-    public void setCompareLocale(Locale compareLocale) {
-        this.compareLocale = compareLocale;
+    public void setCompareLocale(final Locale newCompareLocale) {
+        this.compareLocale = newCompareLocale;
     }
 
     /**
-     *
+     * Get the compare locale.
      * @return Locale
      */
     public Locale getCompareLocale() {
         return compareLocale;
     }
-    /**
-     *
-     */
-    protected boolean matchEqualTo = true;
 
     /**
      *
-     * @param matchEqualTo boolean
+     * @param newMatchEqualTo boolean
      */
-    public void setMatchEqualTo(boolean matchEqualTo) {
-        this.matchEqualTo = matchEqualTo;
+    public void setMatchEqualTo(final boolean newMatchEqualTo) {
+        this.matchEqualTo = newMatchEqualTo;
     }
 
     /**
@@ -229,17 +286,13 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
     public boolean isMatchEqualTo() {
         return matchEqualTo;
     }
-    /**
-     *
-     */
-    protected boolean matchLessThan = false;
 
     /**
      *
-     * @param matchLessThan boolean
+     * @param newMatchLessThan boolean
      */
-    public void setMatchLessThan(boolean matchLessThan) {
-        this.matchLessThan = matchLessThan;
+    public void setMatchLessThan(final boolean newMatchLessThan) {
+        this.matchLessThan = newMatchLessThan;
     }
 
     /**
@@ -249,17 +302,13 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
     public boolean isMatchLessThan() {
         return matchLessThan;
     }
-    /**
-     *
-     */
-    protected boolean matchGreaterThan = false;
 
     /**
      *
-     * @param matchGreaterThan boolean
+     * @param newMatchGreaterThan boolean
      */
-    public void setMatchGreaterThan(boolean matchGreaterThan) {
-        this.matchGreaterThan = matchGreaterThan;
+    public void setMatchGreaterThan(final boolean newMatchGreaterThan) {
+        this.matchGreaterThan = newMatchGreaterThan;
     }
 
     /**
@@ -281,15 +330,17 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
      *
      * {@inheritDoc}
      */
-    public boolean match(TableDataProvider provider, RowKey row) {
+    @Override
+    public boolean match(final TableDataProvider provider, final RowKey row) {
 
         if (valueExpression == null) {
             return true;
         }
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        Map<String, Object> requestMap = facesContext.getExternalContext().getRequestMap();
-        Object value = null;
+        Map<String, Object> requestMap = facesContext.getExternalContext()
+                .getRequestMap();
+        Object value;
 
         //FIXME synchronization on a non-final field
         synchronized (rowProviderLock) {
@@ -316,7 +367,8 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
             }
         }
 
-        int compare = CompareFilterCriteria.compare(value, compareValue, compareLocale);
+        int compare = CompareFilterCriteria.compare(value, compareValue,
+                compareLocale);
         switch (compare) {
             case -1: // Less Than
                 return matchLessThan;
@@ -324,19 +376,17 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
                 return matchEqualTo;
             case 1: // Greater Than
                 return matchGreaterThan;
+            default:
+                return false;
         }
-        return false; // This should never be reached
     }
-    @Property(displayName = "Value Binding", isAttribute = false)
-    private transient ValueExpression valueExpression;
-    @Property(displayName = "Compare Value")
-    private Object compareValue;
-    @Property(displayName = "Request Map Key")
-    private String requestMapKey = "currentRow"; // NOI18N
-    private transient TableRowDataProvider rowProvider;
-    private String rowProviderLock = "rowProviderLock"; // this is a monitor lock for rowProvider
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    /**
+     * Serialize this instance to the specified output stream.
+     * @param out ouput stream
+     * @throws IOException if an IO error occurs
+     */
+    private void writeObject(final ObjectOutputStream out) throws IOException {
 
         // Serialize simple objects first
         out.writeObject(compareValue);
@@ -352,15 +402,19 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
 
         // NOTE - rowProvider is reconstituted on demand,
         // so we don't need to serialize it
-
-
-
         if (valueExpression != null) {
             out.writeObject(valueExpression.getExpressionString());
         }
     }
 
-    private void readObject(ObjectInputStream in)
+    /**
+     * De-serialize from the specified input stream.
+     * @param in input stream
+     * @throws IOException if an IO error occurs
+     * @throws ClassNotFoundException if a class is not found during
+     * de-serialization
+     */
+    private void readObject(final ObjectInputStream in)
             throws IOException, ClassNotFoundException {
 
         // Deserialize simple objects first
@@ -372,7 +426,10 @@ public class ValueBindingFilterCriteria extends FilterCriteria {
         String s = (String) in.readObject();
         if (s != null) {
             FacesContext facesContext = FacesContext.getCurrentInstance();
-            valueExpression = facesContext.getApplication().getExpressionFactory().createValueExpression(facesContext.getELContext(), s, Object.class);
+            valueExpression = facesContext.getApplication()
+                    .getExpressionFactory()
+                    .createValueExpression(facesContext.getELContext(), s,
+                            Object.class);
         } else {
             valueExpression = null;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,25 +13,66 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import javax.el.ValueExpression;
 import javax.faces.component.NamingContainer;
+import javax.faces.component.UINamingContainer;
 import javax.faces.context.FacesContext;
 
 /**
  * The RadioButtonGroup component is used to display two or more radio buttons
  * in a grid layout in the rendered HTML page.
  */
-@Component(type = "com.sun.webui.jsf.RadioButtonGroup", family = "com.sun.webui.jsf.RadioButtonGroup",
-displayName = "Radio Button Group", tagName = "radioButtonGroup",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_radiobutton_group",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_radio_button_group_props")
-public class RadioButtonGroup extends Selector implements NamingContainer,
-        ComplexComponent {
+@Component(type = "com.sun.webui.jsf.RadioButtonGroup",
+        family = "com.sun.webui.jsf.RadioButtonGroup",
+        displayName = "Radio Button Group",
+        tagName = "radioButtonGroup",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_radiobutton_group",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_radio_button_group_props")
+        //CHECKSTYLE:ON
+public final class RadioButtonGroup extends Selector
+        implements NamingContainer, ComplexComponent {
+
+    /**
+     * Defines how many columns may be used to layout the radio buttons. The
+     * value must be greater than or equal to one. The default value is one.
+     * Invalid values are ignored and the value is set to one.
+     */
+    @Property(name = "columns",
+            displayName = "Columns",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int columns = Integer.MIN_VALUE;
+
+    /**
+     * Columns set flag.
+     */
+    private boolean columnsSet = false;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
 
     /**
      * Default constructor.
@@ -42,45 +83,28 @@ public class RadioButtonGroup extends Selector implements NamingContainer,
         setRendererType("com.sun.webui.jsf.RadioButtonGroup");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.RadioButtonGroup";
     }
 
-    /**
-     * Implement this method so that it returns the DOM ID of the 
-     * HTML element which should receive focus when the component 
-     * receives focus, and to which a component label should apply. 
-     * Usually, this is the first element that accepts input. 
-     * 
-     * @param context The FacesContext for the request
-     * @return The client id, also the JavaScript element id
-     * @deprecated
-     * @see #getLabeledElementId
-     * @see #getFocusElementId
-     */
-    public String getPrimaryElementID(FacesContext context) {
+    @Override
+    public String getPrimaryElementID(final FacesContext context) {
         return this.getClientId(context);
     }
 
-    /**
-     * Returns the absolute ID of an HTML element suitable for use as
-     * the value of an HTML LABEL element's <code>for</code> attribute.
-     * If the <code>ComplexComponent</code> has sub-compoents, and one of 
-     * the sub-components is the target of a label, if that sub-component
-     * is a <code>ComplexComponent</code>, then
-     * <code>getLabeledElementId</code> must called on the sub-component and
-     * the value returned. The value returned by this 
-     * method call may or may not resolve to a component instance.
-     *
-     * @param context The FacesContext used for the request
-     * @return An abolute id suitable for the value of an HTML LABEL element's
-     * <code>for</code> attribute.
-     */
-    public String getLabeledElementId(FacesContext context) {
+    @Override
+    public String getLabeledElementId(final FacesContext context) {
+        // Return the first radio button id. We don't support children
+        // yet and the Renderer creates the radio buttons on the fly
+        // But we know what the id  that the renderer creates
+        // for the first radio button, hack, certainly.
+        //
+        return getFirstRbId(context);
+    }
+
+    @Override
+    public String getFocusElementId(final FacesContext context) {
         // Return the first radio button id. We don't support children
         // yet and the Renderer creates the radio buttons on the fly
         // But we know what the id  that the renderer creates
@@ -90,34 +114,17 @@ public class RadioButtonGroup extends Selector implements NamingContainer,
     }
 
     /**
-     * Returns the id of an HTML element suitable to
-     * receive the focus.
-     * If the <code>ComplexComponent</code> has sub-compoents, and one of 
-     * the sub-components is to reveive the focus, if that sub-component
-     * is a <code>ComplexComponent</code>, then
-     * <code>getFocusElementId</code> must called on the sub-component and
-     * the value returned. The value returned by this 
-     * method call may or may not resolve to a component instance.
-     *
-     * @param context The FacesContext used for the request
+     * Get the first radio button id.
+     * @param context faces context
+     * @return String
      */
-    public String getFocusElementId(FacesContext context) {
-        // Return the first radio button id. We don't support children
-        // yet and the Renderer creates the radio buttons on the fly
-        // But we know what the id  that the renderer creates
-        // for the first radio button, hack, certainly.
-        //
-        return getFirstRbId(context);
+    private String getFirstRbId(final FacesContext context) {
+        String sb = getClientId(context)
+                + String.valueOf(UINamingContainer.getSeparatorChar(context))
+                + getId() + "_0";
+        return sb;
     }
 
-    private String getFirstRbId(FacesContext context) {
-        StringBuilder sb = new StringBuilder(getClientId(context)).append(String.valueOf(NamingContainer.SEPARATOR_CHAR)).append(getId()).append("_0"); //NOI18N
-        return sb.toString();
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Hide onBlur
     @Property(name = "onBlur", isHidden = true, isAttribute = false)
     @Override
@@ -152,121 +159,97 @@ public class RadioButtonGroup extends Selector implements NamingContainer,
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * Defines how many columns may be used to layout the radio buttons. The
-     * value must be greater than or equal to one. The default value is one. 
-     * Invalid values are ignored and the value is set to one.
-     */
-    @Property(name = "columns", displayName = "Columns", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int columns = Integer.MIN_VALUE;
-    private boolean columns_set = false;
 
     /**
-     * <p>Defines how many columns may be used to layout the radio buttons.
-     * 	The value must be greater than or equal to one. The
-     * 	default value is one. Invalid values are ignored and the value
-     * 	is set to one.</p>
+     * Defines how many columns may be used to layout the radio buttons. The
+     * value must be greater than or equal to one. The default value is one.
+     * Invalid values are ignored and the value is set to one.
+     * @return int
      */
     public int getColumns() {
-        if (this.columns_set) {
+        if (this.columnsSet) {
             return this.columns;
         }
-        ValueExpression _vb = getValueExpression("columns");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("columns");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return 1;
     }
 
     /**
-     * <p>Defines how many columns may be used to layout the radio buttons.
-     * 	The value must be greater than or equal to one. The
-     * 	default value is one. Invalid values are ignored and the value
-     * 	is set to one.</p>
+     * Defines how many columns may be used to layout the radio buttons. The
+     * value must be greater than or equal to one. The default value is one.
+     * Invalid values are ignored and the value is set to one.
+     *
      * @see #getColumns()
+     * @param newColumns columns
      */
-    public void setColumns(int columns) {
-        this.columns = columns;
-        this.columns_set = true;
+    public void setColumns(final int newColumns) {
+        this.columns = newColumns;
+        this.columnsSet = true;
     }
 
-    // visible
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
-
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
     @Override
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     * @see #isVisible()
-     */
     @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.columns = ((Integer) _values[1]).intValue();
-        this.columns_set = ((Boolean) _values[2]).booleanValue();
-        this.visible = ((Boolean) _values[3]).booleanValue();
-        this.visible_set = ((Boolean) _values[4]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.columns = ((Integer) values[1]);
+        this.columnsSet = ((Boolean) values[2]);
+        this.visible = ((Boolean) values[3]);
+        this.visibleSet = ((Boolean) values[4]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[5];
-        _values[0] = super.saveState(_context);
-        _values[1] = new Integer(this.columns);
-        _values[2] = this.columns_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[3] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[4] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[5];
+        values[0] = super.saveState(context);
+        values[1] = this.columns;
+        if (this.columnsSet) {
+            values[2] = Boolean.TRUE;
+        } else {
+            values[2] = Boolean.FALSE;
+        }
+        if (this.visible) {
+            values[3] = Boolean.TRUE;
+        } else {
+            values[3] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        return values;
     }
 }

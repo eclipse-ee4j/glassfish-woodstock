@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -320,14 +320,14 @@ define([
     };
 
     fireInitCallBacks = function (obj) {
-        if(obj=== null || obj === 'undefined'){
+        if(obj=== null || obj === undefined){
             return false;
         }
         if (isInitialized(obj)) {
             // fire onInit callbacks
-            if(obj.__onInitCallbacks !== 'undefined'){
+            if(obj.__onInitCallbacks !== undefined){
                 var onInitCallback = obj.__onInitCallbacks.pop();
-                while(onInitCallback !== 'undefined'){
+                while(onInitCallback !== undefined){
                     if (isFunction(onInitCallback)) {
                         onInitCallback(obj);
                     }
@@ -340,7 +340,7 @@ define([
     };
 
     isInitialized = function (elt) {
-        if(elt=== null || elt === 'undefined'){
+        if(elt=== null || elt === undefined){
             return false;
         }
         if (elt.__initialized === true) {
@@ -350,7 +350,7 @@ define([
     };
 
     setInitialized = function (elt) {
-        if(elt === null || elt === 'undefined'){
+        if(elt === null || elt === undefined){
             return;
         }
         elt.__initialized = true;
@@ -358,13 +358,13 @@ define([
 
     addOnInitCallback = function (elt, cb) {
         // check argument types
-        if (elt === null || elt === 'undefined' || !isFunction(cb)) {
+        if (elt === null || elt === undefined || !isFunction(cb)) {
             return;
         }
 
         // add init callback if elt is not initialized
         if (!isInitialized(elt)) {
-            if (elt.__onInitCallbacks === 'undefined') {
+            if (elt.__onInitCallbacks === undefined) {
                 elt.__onInitCallbacks = [];
             }
             elt.__onInitCallbacks.push(cb);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
+ /*
  * $Id: ThemeServlet.java,v 1.1.4.2.2.2 2009-12-29 05:05:17 jyeary Exp $
  */
 package com.sun.webui.theme;
@@ -64,7 +64,9 @@ import javax.servlet.http.HttpServletResponse;
  * <pre>
  *     &lt;servlet&gt;
  *         &lt;servlet-name&gt;ThemeServlet&lt;/servlet-name&gt;
- *         &lt;servlet-class&gt;com.sun.webui.jsf.theme.ThemeServlet&lt;/servlet-class&gt;
+ *         &lt;servlet-class&gt;
+ *              com.sun.webui.jsf.theme.ThemeServlet
+ *         &lt;/servlet-class&gt;
  *      &lt;/servlet&gt;
  *
  *     &lt;servlet-mapping&gt;
@@ -74,12 +76,14 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * </p>
  * <p>
- * Note that the {@code url-pattern} must be specifed in a slightly different
+ * Note that the {@code url-pattern} must be specified in a slightly different
  * manner for the {@code ThemeContext} {@code context-param}
  * {@code com.sun.webui.theme.THEME_SERVLET_CONTEXT}
  * <pre>
  *     &lt;context-param&gt;
- *  &lt;param-name&gt;com.sun.webui.theme.THEME_SERVLET_CONTEXT&lt;param-name&gt;
+ *  &lt;param-name&gt;
+ *      com.sun.webui.theme.THEME_SERVLET_CONTEXT
+ *  &lt;param-name&gt;
  *  &lt;param-value&gt;theme&lt;param-value&gt;
  *    &lt;context-param&gt;
  * </pre> The actual value of the url-pattern is does not have to be
@@ -91,7 +95,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see com.sun.webui.theme.Theme
  * @see com.sun.webui.theme.ThemeFactory
  */
-public class ThemeServlet extends HttpServlet {
+public final class ThemeServlet extends HttpServlet {
 
     /**
      * Serialization UID.
@@ -101,10 +105,21 @@ public class ThemeServlet extends HttpServlet {
     /**
      * Debug flag.
      */
-    private final static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
-    private final static Map<String, String> CONTENT_TYPES =
-            new HashMap<String, String>();
+    /**
+     * The "last modified" timestamp we should broadcast for all resources
+     * provided by this servlet. This will enable browsers that cache static
+     * resources to send an "If-Modified-Since" header, which will allow us to
+     * return a "Not Modified" response.
+     */
+    private final long lastModified = (new Date()).getTime();
+
+    /**
+     * Content types.
+     */
+    private static final Map<String, String> CONTENT_TYPES
+            = new HashMap<String, String>();
 
     // Some mime-types... by extension
     static {
@@ -182,14 +197,17 @@ public class ThemeServlet extends HttpServlet {
 
     /**
      * This method handles the requests for the Theme files.
+     *
      * @param request The Servlet Request for the theme file
      * @param response The Servlet Response
      * @throws ServletException If the Servlet fails to serve the resource file
-     * @throws IOException If the Servlet cannot locate and read a requested ThemeFile
+     * @throws IOException If the Servlet cannot locate and read a requested
+     * ThemeFile
      */
     @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response)
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected void doGet(final HttpServletRequest request,
+            final HttpServletResponse response)
             throws ServletException, IOException {
 
         if (DEBUG) {
@@ -207,7 +225,7 @@ public class ThemeServlet extends HttpServlet {
             // Get InputStream
             inStream = this.getClass().getResourceAsStream(resourceName);
             if (inStream == null) {
-                //Send 404 (without the original URI for XSS security reasons)
+                // Send 404 (without the original URI for XSS security reasons)
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -240,21 +258,26 @@ public class ThemeServlet extends HttpServlet {
                 outStream.write(character);
             }
         } catch (IOException ioex) {
-            //Log an error
+            // Log an error
         } finally {
             try {
-                inStream.close();
-            } catch (Throwable t) {
+                if (inStream != null) {
+                    inStream.close();
+                }
+            } catch (IOException t) {
             }
             try {
-                outStream.close();
-            } catch (Throwable t) {
+                if (outStream != null) {
+                    outStream.close();
+                }
+            } catch (IOException t) {
             }
         }
     }
 
     /**
      * Returns a short description of the servlet.
+     *
      * @return A String that names the Servlet
      */
     @Override
@@ -263,12 +286,13 @@ public class ThemeServlet extends HttpServlet {
     }
 
     /**
-     * Initializes the ThemeServlet
+     * Initializes the ThemeServlet.
+     *
      * @param config The ServletConfig object
      * @throws javax.servlet.ServletException if an error occurs
      */
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
         super.init(config);
 
         // Note that there is no control exerted here to direct a
@@ -305,24 +329,18 @@ public class ThemeServlet extends HttpServlet {
     }
 
     /**
-     * <p>The "last modified" timestamp we should broadcast for all resources
-     * provided by this servlet.  This will enable browsers that cache static
-     * resources to send an "If-Modified-Since" header, which will allow us to
-     * return a "Not Modified" response.</p>
-     */
-    private final long lastModified = (new Date()).getTime();
-
-    /**
-     * <p>Return the timestamp for when resources provided by this servlet
-     * were last modified.  By default, this will be the timestamp when this
-     * servlet was first loaded at the deployment of the containing webapp,
-     * so that any changes in the resources will be automatically sent to
-     * the clients who might have cached earlier versions.</p>
+     * <p>
+     * Return the timestamp for when resources provided by this servlet were
+     * last modified. By default, this will be the timestamp when this servlet
+     * was first loaded at the deployment of the containing web-app, so that any
+     * changes in the resources will be automatically sent to the clients who
+     * might have cached earlier versions.</p>
+     *
      * @param request The HttpServletRequest being processed
      * @return The date when the resource was last modified
      */
     @Override
-    public long getLastModified(HttpServletRequest request) {
+    public long getLastModified(final HttpServletRequest request) {
         return this.lastModified;
     }
 }

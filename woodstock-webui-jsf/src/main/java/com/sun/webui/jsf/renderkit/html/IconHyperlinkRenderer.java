@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,20 +13,21 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
-import com.sun.webui.jsf.component.IconHyperlink;
+import com.sun.faces.annotation.Renderer;
 
 /**
- * <p>This class is responsible for rendering the {@link IconHyperlink} component for the
- * HTML Render Kit.</p> <p> The {@link IconHyperlink} component can be used as an anchor, a
- * plain hyperlink or a hyperlink that submits the form depending on how the
- * properites are filled out for the component </p>
+ * This class is responsible for rendering the {@link IconHyperlink} component
+ * for the HTML Render Kit.
+ * <p>
+ * The {@link IconHyperlink} component can be used as an anchor, a plain
+ * hyperlink or a hyperlink that submits the form depending on how the
+ * properties are filled out for the component.
+ * </p>
  */
-@com.sun.faces.annotation.Renderer(@com.sun.faces.annotation.Renderer.Renders(componentFamily = "com.sun.webui.jsf.IconHyperlink"))
-public class IconHyperlinkRenderer extends ImageHyperlinkRenderer {
-    // -------------------------------------------------------- Static Variables
-    // -------------------------------------------------------- Renderer Methods
-    // --------------------------------------------------------- Private Methods
+@Renderer(
+        @Renderer.Renders(
+                componentFamily = "com.sun.webui.jsf.IconHyperlink"))
+public final class IconHyperlinkRenderer extends ImageHyperlinkRenderer {
 }

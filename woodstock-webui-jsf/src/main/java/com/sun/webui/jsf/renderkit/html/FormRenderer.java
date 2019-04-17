@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -30,12 +30,12 @@ import javax.faces.context.ResponseWriter;
  * Renderer for a {@link Form} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Form"))
-public class FormRenderer extends AbstractRenderer {
+public final class FormRenderer extends AbstractRenderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "enctype",
         "accessKey",
         "onReset",
@@ -56,8 +56,8 @@ public class FormRenderer extends AbstractRenderer {
 
     /**
      * Record a flag indicating whether this was the form (of the several
-     * forms on the current page) that was submitted. Also, if the submission 
-     * component id is known, then set the submitted virtual form if 
+     * forms on the current page) that was submitted. Also, if the submission
+     * component id is known, then set the submitted virtual form if
      * appropriate.
      *
      * @param context {@code FacesContext} for the current request
@@ -67,7 +67,7 @@ public class FormRenderer extends AbstractRenderer {
      *  {@code component} is {@code null}
      */
     @Override
-    public void decode(FacesContext context, UIComponent component)
+    public void decode(final FacesContext context, final UIComponent component)
         throws NullPointerException {
 
         if ((context == null) || (component == null)) {
@@ -80,15 +80,15 @@ public class FormRenderer extends AbstractRenderer {
                 + FORM_HIDDEN_FIELD);
         form.setSubmitted(b);
         if (LogUtil.fineEnabled()) {
-            LogUtil.fine("Form(id=" + form.getId() + ",submitted=" +
-                    form.isSubmitted() + ")");
+            LogUtil.fine("Form(id=" + form.getId() + ",submitted="
+                    + form.isSubmitted() + ")");
         }
 
         String hiddenFieldClientId = SUBMISSION_COMPONENT_HIDDEN_FIELD;
         String submissionComponentId = (String) map.get(hiddenFieldClientId);
         if (submissionComponentId != null) {
             Form.VirtualFormDescriptor vfd = form
-                    .getVirtualFormComponentSubmits(submissionComponentId);
+                    .getVFormCompSubmits(submissionComponentId);
             if (vfd != null) {
                 form.setSubmittedVirtualForm(vfd);
             }
@@ -97,8 +97,9 @@ public class FormRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         // Start the appropriate element
         Form form = (Form) component;
@@ -112,8 +113,9 @@ public class FormRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Form form = (Form) component;
 
@@ -133,8 +135,9 @@ public class FormRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Form form = (Form) component;
 
@@ -162,13 +165,13 @@ public class FormRenderer extends AbstractRenderer {
      * Return the URI to which this form should be submitted.
      *
      * @param context {@code FacesContext} for the current request
+     * @return String
      */
-    private String action(FacesContext context) {
-
+    private String action(final FacesContext context) {
         String viewId = context.getViewRoot().getViewId();
-        String url =
-                context.getApplication().getViewHandler().
-                getActionURL(context, viewId);
+        String url = context.getApplication()
+                .getViewHandler()
+                .getActionURL(context, viewId);
         return context.getExternalContext().encodeActionURL(url);
 
     }
@@ -180,8 +183,10 @@ public class FormRenderer extends AbstractRenderer {
      * @param context {@code FacesContext} for the current request
      * @param form {@link Form} being rendered
      * @param handler Name of the event handler that will call
+     * @return String
      */
-    private String function(FacesContext context, Form form, String handler) {
+    private String function(final FacesContext context, final Form form,
+            final String handler) {
 
         String clientId = form.getClientId(context);
         return handler + "_" + clientId.replace(':', '_');

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -82,7 +82,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * directory specified in the system property "java.io.tmpdir". </li>
  * </ul>  *
  */
-public class UploadFilter implements Filter {
+public final class UploadFilter implements Filter {
 
     /**
      * The name of the filter init parameter used to specify the maximum
@@ -102,32 +102,52 @@ public class UploadFilter implements Filter {
      */
     public static final String TMP_DIR = "tmpDir";
 
+    /**
+     * Max upload size in byte.
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
     private long maxSize = 1000000;
+
+    /**
+     * Size threshold before caching to disk.
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
     private int sizeThreshold = 4096;
+
+    /**
+     * Temp directory.
+     */
     private String tmpDir = System.getProperty("java.io.tmpdir");
-    private String messages = "com.sun.webui.jsf.resources.LogMessages";
+
+    /**
+     * Messages resource bundle id.
+     */
+    private static final String MESSAGES =
+            "com.sun.webui.jsf.resources.LogMessages";
+
+    /**
+     * Debug flag.
+     */
     private static final boolean DEBUG = false;
 
     /**
-     * <p>
      * The upload filter checks if the incoming request has multipart content.
      * If it doesn't, the request is passed on as is to the next filter in the
      * chain. If it does, the filter processes the request for form components.
      * If it finds input from an Upload component, the file contents are stored
-     * for access by the Upload component's decode method. </p>
-     * <p>
+     * for access by the Upload component's decode method.
+     *
      * For other form components, the input is processed and used to create a
      * request parameter map. The original incoming request is wrapped, and the
      * wrapped request is configured to use the created map. This means that
      * subsequent filters in the chain (and Servlets, and JSPs) see the input
-     * from the other components as request parameters.</p>
-     * <p>
+     * from the other components as request parameters.
+     *
      * For advanced users: the UploadFilter uses the Apache commons FileUpload
      * package to process the file upload. When it detects input from an Upload
-     * component, a {@code org.apache.commons.fileupload.FileItem} is
-     * placed in a request attribute whose name is the ID of the HTML input
-     * element written by the Upload component.</p>
-     *
+     * component, a {@code org.apache.commons.fileupload.FileItem} is placed in
+     * a request attribute whose name is the ID of the HTML input element
+     * written by the Upload component.
      *
      * @param response The servlet response
      * @param request The servlet request we are processing
@@ -137,8 +157,8 @@ public class UploadFilter implements Filter {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain)
+    public void doFilter(final ServletRequest request,
+            final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
@@ -153,12 +173,12 @@ public class UploadFilter implements Filter {
             // Enforce the maxSize. File larger than the maxSize will not be
             // uploaded (FileUploadExcetpion will be thrown instead)
             // Note: do not set the maxSize to -1, which means no size
-            // limitation is enforced. 
+            // limitation is enforced.
             // It is a big security hole to allow any file to be uploaded
             fu.setSizeMax(maxSize);
 
             // files with names in other languages (like Japanese) are not
-            // being uploaded with the proper names. Proper encoding has to 
+            // being uploaded with the proper names. Proper encoding has to
             // be set for this to happen.
             if (request.getCharacterEncoding() != null) {
                 fu.setHeaderEncoding(request.getCharacterEncoding());
@@ -166,10 +186,9 @@ public class UploadFilter implements Filter {
                 fu.setHeaderEncoding("UTF-8");
             }
             List fileItems = null;
-            HashMap<String, String[]> parameters = null;
+            HashMap<String, String[]> parameters;
             try {
                 fileItems = fu.parseRequest(req);
-
             } catch (FileUploadException fue) {
                 request.setAttribute(Upload.UPLOAD_ERROR_KEY, fue);
                 request.setAttribute(Upload.FILE_SIZE_KEY,
@@ -188,7 +207,6 @@ public class UploadFilter implements Filter {
             Enumeration<String> names = request.getParameterNames();
             while (names.hasMoreElements()) {
                 String param = names.nextElement();
-
                 String paramValue = request.getParameter(param);
                 if (!parameters.containsKey(param)) {
                     parameters.put(param, new String[]{paramValue});
@@ -203,7 +221,6 @@ public class UploadFilter implements Filter {
             }
 
             UploadRequest wrappedRequest = new UploadRequest(req, parameters);
-
             chain.doFilter(wrappedRequest, response);
 
             Enumeration e = request.getAttributeNames();
@@ -218,24 +235,30 @@ public class UploadFilter implements Filter {
         }
     }
 
-    private HashMap<String, String[]> parseRequest(List<FileItem> fileItems,
-            HttpServletRequest request) {
+    /**
+     * Parse a request.
+     * @param fileItems file items
+     * @param request incoming request
+     * @return Map
+     */
+    private HashMap<String, String[]> parseRequest(
+            final List<FileItem> fileItems, final HttpServletRequest request) {
 
         if (DEBUG) {
             log("parseRequest()");
         }
 
         // Iterate over the FileItems to see if any of them correspond
-        // to the ID of an input type="file" that is rendered inside a 
-        // a span. This happens if the component has a label attribute or 
-        // a label facet, and in this case, the DOM id of the input 
-        // element is created by the component in such a way that we 
-        // can match it directly. If there is a match, a request attribute 
-        // is added for the corresponding FileItem . If there is no match, 
-        // add the fileItem to a map, with the fieldID as the key. 
+        // to the ID of an input type="file" that is rendered inside a
+        // a span. This happens if the component has a label attribute or
+        // a label facet, and in this case, the DOM id of the input
+        // element is created by the component in such a way that we
+        // can match it directly. If there is a match, a request attribute
+        // is added for the corresponding FileItem . If there is no match,
+        // add the fileItem to a map, with the fieldID as the key.
         Iterator<FileItem> fileItemsIt = fileItems.iterator();
-        String fieldID = null;
-        FileItem fileItem = null;
+        String fieldID;
+        FileItem fileItem;
         Map<String, List<FileItem>> fileItemsMap =
                 new TreeMap<String, List<FileItem>>();
 
@@ -270,13 +293,13 @@ public class UploadFilter implements Filter {
 
         // Iterate over the FileItems to see if any of them correspond
         // to a hidden field used to identify a FileUpload which does
-        // not have an associated label. (In that case, the ID of the 
-        // input element is the same of the component ID, so we can't 
-        // tell by looking at the ID directly.) If so, we take the value 
-        // of the hidden ID, which is the ID of the input component and 
-        // get the corresponding file item. Both the ID of the hidden 
-        // component and that of the input itself are added to the 
-        // parameters to be ignored. 
+        // not have an associated label. (In that case, the ID of the
+        // input element is the same of the component ID, so we can't
+        // tell by looking at the ID directly.) If so, we take the value
+        // of the hidden ID, which is the ID of the input component and
+        // get the corresponding file item. Both the ID of the hidden
+        // component and that of the input itself are added to the
+        // parameters to be ignored.
         if (DEBUG) {
             log("\tSecond pass through the parameters");
         }
@@ -298,9 +321,9 @@ public class UploadFilter implements Filter {
             }
         }
 
-        // If we found IDs of any unlabeled Uploads, we create request 
+        // If we found IDs of any unlabeled Uploads, we create request
         // attributes for them too, and add their IDs to the list of IDs
-        // to remove. 
+        // to remove.
         if (!unlabeledUploads.isEmpty()) {
             if (DEBUG) {
                 log("\tFound unlabeledUploads ");
@@ -358,7 +381,7 @@ public class UploadFilter implements Filter {
 
                 parameters.put(id, params);
                 if (DEBUG) {
-                    log("\t\t " + id + ":" + params.toString());
+                    log("\t\t " + id + ":" + Arrays.toString(params));
                 }
             }
         }
@@ -366,15 +389,15 @@ public class UploadFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) {
-        StringBuilder errorMessageBuffer = new StringBuilder(300);
+    public void init(final FilterConfig filterConfig) {
+        StringBuilder errorMessageBuffer = new StringBuilder();
         String param = filterConfig.getInitParameter(MAX_SIZE);
         if (param != null) {
             try {
                 maxSize = Long.parseLong(param);
             } catch (NumberFormatException nfe) {
                 Object[] params = {MAX_SIZE, param};
-                String msg = MessageUtil.getMessage(messages,
+                String msg = MessageUtil.getMessage(MESSAGES,
                         "Upload.invalidLong", params);
                 errorMessageBuffer.append(msg);
             }
@@ -386,7 +409,7 @@ public class UploadFilter implements Filter {
             } catch (NumberFormatException nfe) {
                 Object[] params = {SIZE_THRESHOLD, param};
                 errorMessageBuffer.append(" ");
-                String msg = MessageUtil.getMessage(messages,
+                String msg = MessageUtil.getMessage(MESSAGES,
                         "Upload.invalidInt", params);
                 errorMessageBuffer.append(msg);
             }
@@ -398,7 +421,7 @@ public class UploadFilter implements Filter {
             if (!dir.canWrite()) {
                 Object[] params = {TMP_DIR, param};
                 errorMessageBuffer.append(" ");
-                String msg = MessageUtil.getMessage(messages,
+                String msg = MessageUtil.getMessage(MESSAGES,
                         "Upload.invalidDir",
                         params);
                 errorMessageBuffer.append(msg);
@@ -420,8 +443,12 @@ public class UploadFilter implements Filter {
         // do nothing
     }
 
-    private void log(String s) {
-        System.out.println(getClass().getName() + "::" + s);
+    /**
+     * Log a message to the standard output.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(UploadFilter.class.getName() + "::" + msg);
     }
 
     /**
@@ -431,22 +458,28 @@ public class UploadFilter implements Filter {
      * only need to override the methods that you need to change. You can get
      * access to the wrapped request using the method getRequest()
      */
-    class UploadRequest extends HttpServletRequestWrapper {
+    private static final class UploadRequest extends HttpServletRequestWrapper {
 
+        /**
+         * Request parameters.
+         */
         private final Map<String, String[]> parameters;
-        private static final boolean DEBUG = false;
 
-        public UploadRequest(HttpServletRequest request,
-                Map<String, String[]> params) {
+        /**
+         * Create a new instance.
+         * @param request servlet request
+         * @param params request parameters
+         */
+        UploadRequest(final HttpServletRequest request,
+                final Map<String, String[]> params) {
+
             super(request);
             this.parameters = params;
         }
 
         @Override
-        public String getParameter(String name) {
-            //Thread.currentThread().dumpStack();
+        public String getParameter(final String name) {
             Object param = parameters.get(name);
-
             if (param instanceof String) {
                 return (String) param;
             }
@@ -454,11 +487,14 @@ public class UploadFilter implements Filter {
                 String[] params = (String[]) param;
                 return params[0];
             }
-            return (param == null ? null : param.toString());
+            if (param == null) {
+                return null;
+            }
+            return param.toString();
         }
 
         @Override
-        public String[] getParameterValues(String name) {
+        public String[] getParameterValues(final String name) {
 
             Object value = parameters.get(name);
 

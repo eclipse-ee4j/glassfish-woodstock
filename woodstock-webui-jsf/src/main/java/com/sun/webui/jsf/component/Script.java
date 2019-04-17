@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import javax.el.ValueExpression;
@@ -23,14 +22,55 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
 /**
- * The Script component is can be used to refer to a Javascript file, by using 
- * the url attribute. The tag can also be used embed Javascript code within the 
+ * The Script component is can be used to refer to a JS file, by using
+ * the URL attribute. The tag can also be used embed JS code within the
  * rendered HTML page.
  */
-@Component(type = "com.sun.webui.jsf.Script", family = "com.sun.webui.jsf.Script",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_script",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_script_props")
-public class Script extends UIComponentBase {
+@Component(type = "com.sun.webui.jsf.Script",
+        family = "com.sun.webui.jsf.Script",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_script",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_script_props")
+        //CHECKSTYLE:ON
+public final class Script extends UIComponentBase {
+
+    /**
+     * Defines the character (charset) encoding of the target URL. See iana.org
+     * for a complete list of character encoding.
+     */
+    @Property(name = "charset",
+            displayName = "Charset",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String charset = null;
+
+    /**
+     * Indicates the MIME type of the script. Default is
+     * {@code "text/javascript"}.
+     */
+    @Property(name = "type",
+            displayName = "Type",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String type = null;
+
+    /**
+     * Defines the absolute or relative URL to a file that contains the script.
+     * Use this attribute to refer to a file instead of inserting the script
+     * into your HTML document.
+     */
+    @Property(name = "url",
+            displayName = "URL",
+            category = "Data",
+            isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String url = null;
 
     /**
      * Default constructor.
@@ -40,23 +80,19 @@ public class Script extends UIComponentBase {
         setRendererType("com.sun.webui.jsf.Script");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
+    @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Script";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -66,128 +102,116 @@ public class Script extends UIComponentBase {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
-    /**
-     * <p>Defines the character (charset) encoding of the target URL.
-     * See iana.org for a complete list of character encodings.</p>
-     */
-    @Property(name = "charset", displayName = "Charset", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String charset = null;
 
     /**
-     * <p>Defines the character (charset) encoding of the target URL.
-     * See iana.org for a complete list of character encodings.</p>
+     * Defines the character (charset) encoding of the target URL. See iana.org
+     * for a complete list of character encoding.
+     * @return String
      */
     public String getCharset() {
         if (this.charset != null) {
             return this.charset;
         }
-        ValueExpression _vb = getValueExpression("charset");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("charset");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Defines the character (charset) encoding of the target URL.
-     * See iana.org for a complete list of character encodings.</p>
+     * Defines the character (charset) encoding of the target URL. See iana.org
+     * for a complete list of character encoding.
+     *
      * @see #getCharset()
+     * @param newCharset charset
      */
-    public void setCharset(String charset) {
-        this.charset = charset;
+    public void setCharset(final String newCharset) {
+        this.charset = newCharset;
     }
-    /**
-     * <p>Indicates the MIME type of the script.  Default is "text/javascript"</p>
-     */
-    @Property(name = "type", displayName = "Type", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String type = null;
 
     /**
-     * <p>Indicates the MIME type of the script.  Default is "text/javascript"</p>
+     * Indicates the MIME type of the script. Default is
+     * {@code "text/javascript"}.
+     *
+     * @return String
      */
     public String getType() {
         if (this.type != null) {
             return this.type;
         }
-        ValueExpression _vb = getValueExpression("type");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("type");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return "text/javascript";
     }
 
     /**
-     * <p>Indicates the MIME type of the script.  Default is "text/javascript"</p>
+     * Indicates the MIME type of the script. Default is
+     * {@code "text/javascript"}.
+     *
      * @see #getType()
+     * @param newType type
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setType(final String newType) {
+        this.type = newType;
     }
-    /**
-     * <p>Defines the absolute or relative URL to a file that contains the 
-     * script.  Use this attribute to refer to a file instead of inserting the 
-     * script into your HTML document</p>
-     */
-    @Property(name = "url", displayName = "URL", category = "Data", isDefault = true,
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
-    private String url = null;
 
     /**
-     * <p>Defines the absolute or relative URL to a file that contains the 
-     * script.  Use this attribute to refer to a file instead of inserting the 
-     * script into your HTML document</p>
+     * Defines the absolute or relative URL to a file that contains the script.
+     * Use this attribute to refer to a file instead of inserting the script
+     * into your HTML document.
+     * @return String
      */
     public String getUrl() {
         if (this.url != null) {
             return this.url;
         }
-        ValueExpression _vb = getValueExpression("url");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("url");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Defines the absolute or relative URL to a file that contains the 
-     * script.  Use this attribute to refer to a file instead of inserting the 
-     * script into your HTML document</p>
+     * Defines the absolute or relative URL to a file that contains the script.
+     * Use this attribute to refer to a file instead of inserting the script
+     * into your HTML document
+     *
      * @see #getUrl()
+     * @param newUrl URL
      */
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUrl(final String newUrl) {
+        this.url = newUrl;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.charset = (String) _values[1];
-        this.type = (String) _values[2];
-        this.url = (String) _values[3];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.charset = (String) values[1];
+        this.type = (String) values[2];
+        this.url = (String) values[3];
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[4];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.charset;
-        _values[2] = this.type;
-        _values[3] = this.url;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[4];
+        values[0] = super.saveState(context);
+        values[1] = this.charset;
+        values[2] = this.type;
+        values[3] = this.url;
+        return values;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,17 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * package-info.java
- *
- * Created on 29 juin 2006, 13:34
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 /**
- * Provides basic BeanInfo implementations for the fundamental JSF 1.2 user interface
- * components.
+ * Provides basic BeanInfo implementations for the fundamental JSF 1.2 user
+ * interface components.
  */
 package javax.faces.component;

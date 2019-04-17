@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -46,14 +46,21 @@ import static com.sun.webui.jsf.util.RenderingUtilities.writeStringAttributes;
  * Renderer for a {@link com.sun.webui.jsf.component.AddRemove} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.AddRemove"))
-public class AddRemoveRenderer extends ListRendererBase {
+public final class AddRemoveRenderer extends ListRendererBase {
 
-    private final static boolean DEBUG = false;
-    private final static String ITEMS_ID = "_item_list";
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
+     * Items id.
+     */
+    private static final String ITEMS_ID = "_item_list";
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (DEBUG) {
             log("encodeEnd()");
@@ -81,11 +88,11 @@ public class AddRemoveRenderer extends ListRendererBase {
      * label that was defined as part of the component.
      *
      * <p>A label will be rendered if either of the following is
-     * true:</p> 
+     * true:</p>
      * <ul>
      * <li>The page author defined a label facet; or</li>
      * <li>The page author specified text in the label attribute.</li>
-     * </ul> 
+     * </ul>
      * @param component The component associated with the
      * renderer. Must be a subclass of ListSelector.
      * @param context The FacesContext of the request
@@ -100,15 +107,18 @@ public class AddRemoveRenderer extends ListRendererBase {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    void renderListComponent(AddRemove component, FacesContext context,
-            String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderListComponent(final AddRemove component,
+            final FacesContext context, final String[] styles)
+            throws IOException {
+
         if (DEBUG) {
             log("renderListComponent()");
         }
 
         if (component.isReadOnly()) {
             UIComponent label = component.getReadOnlyLabelComponent();
-            super.renderReadOnlyList(component, label, context, styles[19]);
+            renderReadOnlyList(component, label, context, styles[19]);
             return;
         }
 
@@ -156,11 +166,20 @@ public class AddRemoveRenderer extends ListRendererBase {
                     component.getClientId(context)));
     }
 
-    private void renderHorizontalAddRemove(AddRemove component,
-            FacesContext context, ResponseWriter writer,
-            String[] styles) throws IOException {
+    /**
+     * Render horizontal add remove.
+     * @param component UI component
+     * @param context faces context
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderHorizontalAddRemove(final AddRemove component,
+            final FacesContext context, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
-        // Put the columns into a table so that they can be 
+        // Put the columns into a table so that they can be
         // displayed horizontally
         // in a table cell as in portlet. See bug 6299233
 
@@ -178,7 +197,7 @@ public class AddRemoveRenderer extends ListRendererBase {
             } else {
                 writer.writeAttribute(HTMLAttributes.COLSPAN, "3", null);
             }
-            writer.writeText("\n", null);	
+            writer.writeText("\n", null);
             renderDivBegin(component, writer, styles[21]);
             renderComponent(headerComponent, context);
             renderDivEnd(writer);
@@ -221,7 +240,7 @@ public class AddRemoveRenderer extends ListRendererBase {
         renderDivEnd(writer);
         renderTableCellEnd(writer);
 
-        // Close the table 
+        // Close the table
         writer.endElement(HTMLElements.TR);
         writer.writeText("\n", null);
         writer.endElement(HTMLElements.TABLE);
@@ -232,38 +251,56 @@ public class AddRemoveRenderer extends ListRendererBase {
         writer.endElement(HTMLElements.DIV);
     }
 
-    private void renderTableCellStart(AddRemove component,
-            ResponseWriter writer) throws IOException {
+    /**
+     * Render table cell start.
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderTableCellStart(final AddRemove component,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(HTMLElements.TD, component);
         writer.writeAttribute(HTMLAttributes.VALIGN, "top", null);
         writer.writeText("\n", null);
     }
 
-    private void renderTableCellEnd(ResponseWriter writer)
+    /**
+     * Render table cell end.
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderTableCellEnd(final ResponseWriter writer)
             throws IOException {
 
         writer.endElement(HTMLElements.TD);
         writer.writeText("\n", null);
     }
 
-    private void renderVerticalAddRemove(AddRemove component,
-            FacesContext context,
-            ResponseWriter writer,
-            String[] styles)
-            throws IOException {
+    /**
+     * Render vertical add remove.
+     * @param component UI component
+     * @param context faces context
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderVerticalAddRemove(final AddRemove component,
+            final FacesContext context, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
         // Render the header and list for available items in a table
         writer.startElement(HTMLElements.TABLE, component);
         writer.writeText("\n", null);
         writer.startElement(HTMLElements.TR, component);
         writer.writeText("\n", null);
-        // If the component has a label, render it first... 
+        // If the component has a label, render it first...
         UIComponent headerComponent = component.getHeaderComponent();
         if (headerComponent != null) {
             writer.startElement(HTMLElements.TD, component);
 
-            writer.writeText("\n", null);	
+            writer.writeText("\n", null);
             renderDivBegin(component, writer, styles[21]);
             RenderingUtilities.renderComponent(headerComponent, context);
             renderDivEnd(writer);
@@ -328,28 +365,51 @@ public class AddRemoveRenderer extends ListRendererBase {
         writer.writeText("\n", null);
     }
 
-    private void renderDivBegin(AddRemove addRemove, ResponseWriter writer,
-            String style) throws IOException {
+    /**
+     * Render div begin.
+     * @param addRemove add remove component
+     * @param writer writer to use
+     * @param style CSS style
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderDivBegin(final AddRemove addRemove,
+            final ResponseWriter writer, final String style)
+            throws IOException {
 
         writer.startElement(HTMLElements.DIV, addRemove);
         writer.writeAttribute(HTMLAttributes.CLASS, style, null);
         writer.writeText("\n", null);
     }
 
-    private void renderDivEnd(ResponseWriter writer)
+    /**
+     * Render div end.
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderDivEnd(final ResponseWriter writer)
             throws IOException {
+
         writer.writeText("\n", null);
         writer.endElement(HTMLElements.DIV);
         writer.writeText("\n", null);
     }
 
-    private void renderButtons(AddRemove component, FacesContext context,
-            ResponseWriter writer, String[] styles)
-            throws IOException {
+    /**
+     * Render buttons.
+     * @param component UI component
+     * @param context faces context
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderButtons(final AddRemove component,
+            final FacesContext context, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
         writer.startElement(HTMLElements.TABLE, component);
         writer.writeAttribute(HTMLAttributes.CLASS, styles[10], null);
-        writer.writeText("\n", null); 
+        writer.writeText("\n", null);
         writer.startElement(HTMLElements.TR, component);
         writer.writeText("\n", null);
         writer.startElement(HTMLElements.TD, component);
@@ -366,7 +426,7 @@ public class AddRemoveRenderer extends ListRendererBase {
             renderButton(component, component.getAddAllButtonComponent(),
                     styles[14], writer, context);
         }
-        String buttonStyle = null;
+        String buttonStyle;
         if (component.isSelectAll()) {
             buttonStyle = styles[15];
         } else {
@@ -393,30 +453,50 @@ public class AddRemoveRenderer extends ListRendererBase {
         writer.endElement(HTMLElements.TABLE);
     }
 
-    private void renderAddButtonRow(AddRemove component,
-            FacesContext context,
-            ResponseWriter writer,
-            String[] styles)
-            throws IOException {
+    /**
+     * Render add button row.
+     * @param component UI component
+     * @param context faces context
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderAddButtonRow(final AddRemove component,
+            final FacesContext context, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
-        renderButtonVertical(component, component.getAddButtonComponent(context),
-                styles[11], writer, context);
+        renderButtonVertical(component,
+                component.getAddButtonComponent(context), styles[11], writer,
+                context);
 
         if (component.isSelectAll()) {
-            renderButtonVertical(component, component.getAddAllButtonComponent(),
-                    styles[12], writer, context);
+            renderButtonVertical(component,
+                    component.getAddAllButtonComponent(), styles[12], writer,
+                    context);
         }
         renderButtonVertical(component, component.getRemoveButtonComponent(),
                 styles[13], writer, context);
 
         if (component.isSelectAll()) {
-            renderButtonVertical(component, component.getRemoveAllButtonComponent(),
-                    styles[12], writer, context);
+            renderButtonVertical(component,
+                    component.getRemoveAllButtonComponent(), styles[12],
+                    writer, context);
         }
     }
 
-    private void renderMoveButtonRow(AddRemove component, FacesContext context,
-            ResponseWriter writer, String[] styles) throws IOException {
+    /**
+     * Render move button row.
+     * @param component UI component
+     * @param context faces context
+     * @param writer writer to use
+     * @param styles CSS styles
+     * @throws IOException if an IO error occurs
+     */
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderMoveButtonRow(final AddRemove component,
+            final FacesContext context, final ResponseWriter writer,
+            final String[] styles) throws IOException {
 
         renderButtonVertical(component, component.getMoveUpButtonComponent(),
                 styles[11], writer, context);
@@ -424,11 +504,18 @@ public class AddRemoveRenderer extends ListRendererBase {
                 styles[12], writer, context);
     }
 
-    private void renderButton(AddRemove addRemove,
-            UIComponent comp,
-            String style,
-            ResponseWriter writer,
-            FacesContext context)
+    /**
+     * Render button.
+     * @param addRemove add remove component
+     * @param comp UI component
+     * @param style CSS style
+     * @param writer writer to use
+     * @param context faces context
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderButton(final AddRemove addRemove,
+            final UIComponent comp, final String style,
+            final ResponseWriter writer, final FacesContext context)
             throws IOException {
 
         if (comp == null) {
@@ -441,8 +528,18 @@ public class AddRemoveRenderer extends ListRendererBase {
         renderDivEnd(writer);
     }
 
-    private void renderButtonVertical(AddRemove addRemove, UIComponent comp,
-            String style, ResponseWriter writer, FacesContext context)
+    /**
+     * Render button vertical.
+     * @param addRemove add remove component
+     * @param comp UI component
+     * @param style CSS style
+     * @param writer writer to use
+     * @param context faces context
+     * @throws IOException if an IO error occurs
+     */
+    private static void renderButtonVertical(final AddRemove addRemove,
+            final UIComponent comp, final String style,
+            final ResponseWriter writer, final FacesContext context)
             throws IOException {
 
         if (comp == null) {
@@ -466,7 +563,7 @@ public class AddRemoveRenderer extends ListRendererBase {
      * list item. I'm not sure whether it should be possible to use
      * SelectItem as well yet.
      * @param component The UI Component associated with the
-     * renderer. 
+     * renderer.
      * @param context The FacesContext of the request
      * @param styles A String array of styles used to render the
      * component. The first item of the array is the name of the
@@ -479,10 +576,12 @@ public class AddRemoveRenderer extends ListRendererBase {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    protected void renderAvailableList(AddRemove component, FacesContext context,
-            String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderAvailableList(final AddRemove component,
+            final FacesContext context, final String[] styles)
+            throws IOException {
 
-        if (component == null){
+        if (component == null) {
             return;
         }
 
@@ -500,26 +599,12 @@ public class AddRemoveRenderer extends ListRendererBase {
         }
 
         ResponseWriter writer = context.getResponseWriter();
-
-        // This stuff is from the RI...
-        //Util.doAssert(writer != null);
-
-        // This stuff is from the RI... Not sure what it is supposed to
-        // accomplish?
-        // String redisplay = "" + attributeMap.get("redisplay");
-
-        // (redisplay == null || !redisplay.equals("true")) {
-        //currentValue = "";
-        //}
-
-
         writer.startElement(HTMLElements.SELECT, component);
         writer.writeAttribute(HTMLAttributes.CLASS, styleClass, null);
         writer.writeAttribute(HTMLAttributes.ID, id, null);
         writer.writeAttribute(HTMLAttributes.NAME, id, null);
 
         String jsObject = getDomNode(context, component);
-
         StringBuffer jsBuffer = new StringBuffer(256);
         jsBuffer.append(jsObject)
                 .append(AddRemove.ADD_FUNCTION)
@@ -584,7 +669,7 @@ public class AddRemoveRenderer extends ListRendererBase {
      * list item. I'm not sure whether it should be possible to use
      * SelectItem as well yet.
      * @param component The UI Component associated with the
-     * renderer. 
+     * renderer.
      * @param context The FacesContext of the request
      * @param styles A String array of styles used to render the
      * component. The first item of the array is the name of the
@@ -597,8 +682,10 @@ public class AddRemoveRenderer extends ListRendererBase {
      * @throws java.io.IOException if the renderer fails to write to
      * the response
      */
-    protected void renderSelectedList(AddRemove component,
-            FacesContext context, String[] styles) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static void renderSelectedList(final AddRemove component,
+            final FacesContext context, final String[] styles)
+            throws IOException {
 
         String id =
                 component.getClientId(context).concat(AddRemove.SELECTED_ID);
@@ -610,18 +697,6 @@ public class AddRemoveRenderer extends ListRendererBase {
         }
 
         ResponseWriter writer = context.getResponseWriter();
-
-        // This stuff is from the RI...
-        //Util.doAssert(writer != null);
-
-        // This stuff is from the RI... Not sure what it is supposed to
-        // accomplish?
-        // String redisplay = "" + attributeMap.get("redisplay");
-
-        // (redisplay == null || !redisplay.equals("true")) {
-        //currentValue = "";
-        //}
-
         writer.startElement(HTMLElements.SELECT, component);
         writer.writeAttribute(HTMLAttributes.CLASS, styleClass, null);
         writer.writeAttribute(HTMLAttributes.ID, id, null);
@@ -647,29 +722,13 @@ public class AddRemoveRenderer extends ListRendererBase {
                 null);
 
         if (component.isDisabled()) {
-            writer.writeAttribute(HTMLAttributes.DISABLED,
-                    "disabled", //NOI18N
+            writer.writeAttribute(HTMLAttributes.DISABLED, "disabled",
                     "disabled");
         }
-
-        // TODO
-        /*
-        String tooltip = component.getToolTip();
-        if(tooltip != null) {
-        writer.writeAttribute("title", tooltip, null);
-        }
-         */
 
         if (DEBUG) {
             log("Setting onchange event handler");
         }
-        /*
-        String script = 
-        getJavaScript(component.getOnChange(),
-        styles[0],
-        id);
-        writer.writeAttribute("onchange", script, null);
-         */
 
         int tabindex = component.getTabIndex();
         if (tabindex > 0 && tabindex < 32767) {
@@ -687,24 +746,25 @@ public class AddRemoveRenderer extends ListRendererBase {
     }
 
     @Override
-    public void encodeChildren(javax.faces.context.FacesContext context,
-            javax.faces.component.UIComponent component)
-            throws java.io.IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws java.io.IOException {
     }
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         if (DEBUG) {
             log("decode()");
         }
 
-        if (component == null){
+        if (component == null) {
             return;
         }
 
-        super.decode(context, component, component.getClientId(context)
-                .concat(ListSelector.VALUE_ID));
+        decode(context, component,
+                component.getClientId(context)
+                        .concat(ListSelector.VALUE_ID));
     }
 
     /**
@@ -712,12 +772,12 @@ public class AddRemoveRenderer extends ListRendererBase {
      * {@code type} property.
      *
      * @param context {@code FacesContext} for the current request
-     * @param monospace {@code UIComponent} if true, use the mono space
      * styles to render the list.
-     *
+     * @return String[]
      * @exception IOException if an input/output error occurs
      */
-    private String[] getStyles(FacesContext context) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private static String[] getStyles(final FacesContext context) {
 
         if (DEBUG) {
             log("getStyles()");
@@ -739,11 +799,15 @@ public class AddRemoveRenderer extends ListRendererBase {
         styles[10] = theme.getStyleClass(ThemeStyles.ADDREMOVE_BUTTON_TABLE);
         styles[11] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_FIRST);
         styles[12] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_WITHIN);
-        styles[13] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_BETWEEN);
-        styles[14] = theme.getStyleClass(ThemeStyles.ADDREMOVE_HORIZONTAL_WITHIN);
-        styles[15] = theme.getStyleClass(ThemeStyles.ADDREMOVE_HORIZONTAL_BETWEEN);
+        styles[13] = theme.getStyleClass(
+                ThemeStyles.ADDREMOVE_VERTICAL_BETWEEN);
+        styles[14] = theme.getStyleClass(
+                ThemeStyles.ADDREMOVE_HORIZONTAL_WITHIN);
+        styles[15] = theme.getStyleClass(
+                ThemeStyles.ADDREMOVE_HORIZONTAL_BETWEEN);
         styles[16] = null;
-        styles[17] = theme.getStyleClass(ThemeStyles.ADDREMOVE_HORIZONTAL_ALIGN);
+        styles[17] = theme.getStyleClass(
+                ThemeStyles.ADDREMOVE_HORIZONTAL_ALIGN);
         styles[18] = theme.getStyleClass(ThemeStyles.ADDREMOVE_HORIZONTAL_LAST);
         styles[19] = theme.getStyleClass(ThemeStyles.HIDDEN);
         styles[20] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_BUTTON);
@@ -751,5 +815,12 @@ public class AddRemoveRenderer extends ListRendererBase {
         styles[22] = theme.getStyleClass(ThemeStyles.ADDREMOVE_VERTICAL_CLEAR);
         return styles;
     }
-}
 
+    /**
+     * Log an error - only used during development time.
+     * @param msg message to log
+     */
+    private static void log(final String msg) {
+        System.out.println(ListRendererBase.class.getName() + "::" + msg);
+    }
+}

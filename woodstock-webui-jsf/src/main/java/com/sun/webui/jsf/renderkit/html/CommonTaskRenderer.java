@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,7 +24,6 @@ import javax.faces.context.ResponseWriter;
 import javax.faces.component.UIParameter;
 import javax.faces.event.ActionEvent;
 import com.sun.faces.annotation.Renderer;
-import com.sun.webui.jsf.component.util.Util;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.JavaScriptUtilities;
@@ -40,6 +39,7 @@ import com.sun.webui.jsf.component.CommonTasksSection;
 import com.sun.webui.jsf.component.ImageHyperlink;
 import com.sun.webui.jsf.component.ImageComponent;
 import com.sun.webui.jsf.component.Icon;
+import com.sun.webui.jsf.util.ComponentUtilities;
 import java.io.StringWriter;
 import javax.json.JsonObject;
 import java.util.ArrayList;
@@ -47,6 +47,7 @@ import java.util.List;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
@@ -55,12 +56,12 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * Renderer for a {@link com.sun.webui.jsf.component.CommonTask} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.CommonTask"))
-public class CommonTaskRenderer extends AbstractRenderer {
+public final class CommonTaskRenderer extends AbstractRenderer {
 
     /**
      * The set of integer pass-through attributes to be rendered.
      */
-    private static final String INT_ATTRIBUTES[] = {
+    private static final String[] INT_ATTRIBUTES = {
         "tabIndex"
     };
 
@@ -85,7 +86,7 @@ public class CommonTaskRenderer extends AbstractRenderer {
     /**
      * The set of String pass-through attributes to be rendered.
      */
-    private static final String STRING_ATTRIBUTES[] = {
+    private static final String[] STRING_ATTRIBUTES = {
         "onBlur",
         "onFocus",
         "onDblClick",
@@ -103,7 +104,6 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * Append this string for the  id for "i" image.
      */
     private static final String TOGGLE_IMAGE = "_toggleImg";
-    
 
     /**
      * Append this string for the id for info panel close link.
@@ -141,14 +141,39 @@ public class CommonTaskRenderer extends AbstractRenderer {
     private static final String INFO_DIV_LINK = "_infoLinkDiv";
 
     /**
-     * Ids that are appended for the spans that are present inside the
+     * left bottom id that is appended for the spans that are present inside the
      * hyperlink.
      */
     private static final String LEFT_BOTTOM = "_leftBottom_";
+
+    /**
+     * left top id that is appended for the spans that are present inside the
+     * hyperlink.
+     */
     private static final String LEFT_TOP = "_leftTop_";
+
+    /**
+     * right bottom id that is appended for the spans that are present inside
+     * the hyperlink.
+     */
     private static final String RIGHT_BOTTOM = "_rightBottom_";
+
+    /**
+     * right top id that is appended for the spans that are present inside the
+     * hyperlink.
+     */
     private static final String RIGHT_TOP = "_rightTop_";
+
+    /**
+     * right border id that is appended for the spans that are present inside
+     * the hyperlink.
+     */
     private static final String RIGHT_BORDER = "_rightBorder_";
+
+    /**
+     * link text id that is appended for the spans that are present inside the
+     * hyperlink.
+     */
     private static final String LINK_TEXT = "_linkText_";
 
     /**
@@ -173,8 +198,9 @@ public class CommonTaskRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (context == null || component == null) {
             throw new NullPointerException();
@@ -186,10 +212,11 @@ public class CommonTaskRenderer extends AbstractRenderer {
             return;
         }
 
-        // The common task component should come inside either a common task group
+        // The common task component should come inside either a common task
+        // group
         // component or inside a common tasks section component.
-        if (!(task.getParent() instanceof CommonTasksGroup ||
-                task.getParent() instanceof CommonTasksSection)) {
+        if (!(task.getParent() instanceof CommonTasksGroup
+                || task.getParent() instanceof CommonTasksSection)) {
             return;
         }
 
@@ -233,8 +260,8 @@ public class CommonTaskRenderer extends AbstractRenderer {
         String infoTitle = task.getInfoTitle();
         UIComponent facet = task.getInfoPanel();
 
-        if (facet != null || infoText != null ||
-                infoTitle != null) {
+        if (facet != null || infoText != null
+                || infoTitle != null) {
             renderInfoIcon(task, theme, context, writer);
             renderInfoText(task, theme, context, writer, infoText, infoTitle,
                     facet);
@@ -247,17 +274,18 @@ public class CommonTaskRenderer extends AbstractRenderer {
     }
 
     /**
-     * Renders the action item for a task. 
-     * 
+     * Renders the action item for a task.
+     *
      * @param context The current FacesContext
      * @param task component
      * @param component The action object to render
      * @param writer The current ResponseWriter
-     * @param theme The theme used for the object 
+     * @param theme The theme used for the object
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderActionItem(UIComponent component, UIComponent task,
-            FacesContext context, Theme theme, ResponseWriter writer)
+    protected void renderActionItem(final UIComponent component,
+            final UIComponent task, final FacesContext context,
+            final Theme theme, final ResponseWriter writer)
             throws IOException {
 
         writer.startElement(HTMLElements.TD, component);
@@ -302,18 +330,18 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * @param theme The theme used for the object
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderPlaceHolderImage(UIComponent component, Theme theme,
-            FacesContext context, ResponseWriter writer)
-            throws IOException {
+    protected void renderPlaceHolderImage(final UIComponent component,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(HTMLElements.TD, component);
         writer.writeAttribute(HTMLAttributes.WIDTH, "3%",
                 HTMLAttributes.WIDTH);
         writer.writeAttribute(HTMLAttributes.ALIGN, "right",
-                HTMLAttributes.ALIGN);   
+                HTMLAttributes.ALIGN);
         writer.writeAttribute(HTMLAttributes.VALIGN, "top",
-                HTMLAttributes.VALIGN);    
-        writer.writeAttribute(HTMLAttributes.CLASS, 
+                HTMLAttributes.VALIGN);
+        writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.CTS_TASK_RIGHT),
                 HTMLAttributes.CLASS);
 
@@ -336,8 +364,9 @@ public class CommonTaskRenderer extends AbstractRenderer {
      * @param theme The theme used for the object
      * @throws java.io.IOException if an error occurs
      */
-    protected void renderInfoIcon(UIComponent component, Theme theme,
-            FacesContext context, ResponseWriter writer) throws IOException {
+    protected void renderInfoIcon(final UIComponent component,
+            final Theme theme, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         writer.startElement(HTMLElements.TD, component);
         writer.writeAttribute(HTMLAttributes.WIDTH, "3%",
@@ -365,20 +394,20 @@ public class CommonTaskRenderer extends AbstractRenderer {
     }
 
     /**
-     * Renders the info panel for the task
+     * Renders the info panel for the task.
      * @param context The current FacesContext
      * @param task The commonTask object
      * @param writer The current ResponseWriter
-     * @param theme The theme used for the object 
+     * @param theme The theme used for the object
      * @param infoText the info text
      * @param infoTitle the info title
      * @param facet component
      * @throws java.io.IOException if an IO error occurs
      */
-    protected void renderInfoText(CommonTask task, Theme theme,
-            FacesContext context, ResponseWriter writer,
-            String infoText, String infoTitle, UIComponent facet)
-            throws IOException {
+    protected void renderInfoText(final CommonTask task, final Theme theme,
+            final FacesContext context, final ResponseWriter writer,
+            final String infoText, final String infoTitle,
+            final UIComponent facet) throws IOException {
 
         ImageHyperlink close = new ImageHyperlink();
 
@@ -388,8 +417,8 @@ public class CommonTaskRenderer extends AbstractRenderer {
                 task.getClientId(context) + INFO_DIV, HTMLAttributes.ID);
 
         writer.writeAttribute(HTMLAttributes.CLASS,
-                theme.getStyleClass(ThemeStyles.CTS_TASK_INFOPANEL) + " " +
-                theme.getStyleClass(ThemeStyles.HIDDEN),
+                theme.getStyleClass(ThemeStyles.CTS_TASK_INFOPANEL) + " "
+                + theme.getStyleClass(ThemeStyles.HIDDEN),
                 HTMLAttributes.CLASS);
         writer.startElement(HTMLElements.DIV, task);
         writer.writeAttribute(HTMLAttributes.CLASS,
@@ -441,10 +470,10 @@ public class CommonTaskRenderer extends AbstractRenderer {
             RenderingUtilities.renderComponent(facet, context);
         }
         writer.endElement(HTMLElements.P);
-        facet = task.getInfoLink();
+        UIComponent infoLinkFacet = task.getInfoLink();
         // Check for the existence of an infoLink facet.
-        if (facet != null) {
-            renderBottomInfoPanel(task, facet, writer, theme, context);
+        if (infoLinkFacet != null) {
+            renderBottomInfoPanel(task, infoLinkFacet, writer, theme, context);
         }
         writer.endElement(HTMLElements.DIV);
 
@@ -454,29 +483,30 @@ public class CommonTaskRenderer extends AbstractRenderer {
             section = section.getParent();
         }
 
-        JsonObject json = getJSONProperties(
+        JsonObject jsonProps = getJSONProperties(
                 context, theme, task, close, section);
 
-        StringWriter buff = new StringWriter();
-        buff.append(JavaScriptUtilities.getDomNode(context, section))
-                .append(".addCommonTask(");
-        writeJsonObject(json, buff);
-        buff.append(");\n");
-        JavaScriptUtilities.renderScripTag(writer, buff.toString());
+        renderScripTag(writer,
+                // was_add_common_task
+                renderCall("add_common_task", section.getClientId(context),
+                        jsonProps));
         writer.write("\n");
     }
 
     /**
-     * Renders the bottom section of the infoPanel
+     * Renders the bottom section of the infoPanel.
+     *
      * @param task The common task component
-     * @param facet The component to be rendered at the bottom of the info panel.
+     * @param facet The component to be rendered at the bottom of the info
+     * panel.
      * @param writer The response writer
      * @param context Faces context
      * @param theme Theme used for the object
      * @throws java.io.IOException if an error occurs
      */
-    protected void renderBottomInfoPanel(UIComponent task, UIComponent facet,
-            ResponseWriter writer, Theme theme, FacesContext context)
+    protected void renderBottomInfoPanel(final UIComponent task,
+            final UIComponent facet, final ResponseWriter writer,
+            final Theme theme, final FacesContext context)
             throws IOException {
 
         writer.startElement(HTMLElements.P, task);
@@ -494,9 +524,20 @@ public class CommonTaskRenderer extends AbstractRenderer {
         writer.endElement(HTMLElements.P);
     }
 
-    protected JsonObject getJSONProperties(FacesContext context, Theme theme,
-            UIComponent component, ImageHyperlink close, UIComponent section)
-            throws IOException{
+    /**
+     * Get the JSON properties.
+     * @param context faces context
+     * @param theme theme
+     * @param component UI component
+     * @param close close link
+     * @param section section component
+     * @return JsonObject
+     * @throws IOException if an IO error occurs
+     */
+    protected JsonObject getJSONProperties(final FacesContext context,
+            final Theme theme, final UIComponent component,
+            final ImageHyperlink close, final UIComponent section)
+            throws IOException {
 
         JsonObject json = JSON_BUILDER_FACTORY.createObjectBuilder()
                 // common task id
@@ -522,14 +563,22 @@ public class CommonTaskRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
     }
 
-    protected void renderDefaultTaskAction(CommonTask task,
-            ResponseWriter writer, FacesContext context, Theme theme)
-            throws IOException {
+    /**
+     * Render the default task action.
+     * @param task task to render
+     * @param writer writer to use
+     * @param context faces context
+     * @param theme theme to use
+     * @throws IOException if an IO error occurs
+     */
+    protected void renderDefaultTaskAction(final CommonTask task,
+            final ResponseWriter writer, final FacesContext context,
+            final Theme theme) throws IOException {
 
         String target = task.getTarget();
         String tooltip = task.getToolTip();
@@ -539,7 +588,7 @@ public class CommonTaskRenderer extends AbstractRenderer {
                 task.getClientId(context)
                 + COMMONTASK_LINK, HTMLAttributes.ID);
 
-        UIComponent form = Util.getForm(context, task);
+        UIComponent form = ComponentUtilities.getForm(context, task);
         if (form != null) {
             String formClientId = form.getClientId(context);
 
@@ -552,7 +601,7 @@ public class CommonTaskRenderer extends AbstractRenderer {
                 params.add((String) kid.getAttributes().get("value"));
             }
 
-            StringBuilder onClickBuff = new StringBuilder(200);
+            StringBuilder onClickBuff = new StringBuilder();
             onClickBuff.append(renderCalls(task.getOnClick(),
                     // ws_hyperlink_submit
                     renderCall("hyperlink_submit", "this", formClientId,
@@ -628,8 +677,17 @@ public class CommonTaskRenderer extends AbstractRenderer {
         writer.endElement(HTMLElements.A);
     }
 
-    protected void renderStyles(CommonTask component, ResponseWriter writer,
-            Theme theme, FacesContext context) throws IOException {
+    /**
+     * Render the styles.
+     * @param component UI component
+     * @param writer writer to use
+     * @param theme theme to use
+     * @param context faces context
+     * @throws IOException if an IO error occurs
+     */
+    protected void renderStyles(final CommonTask component,
+            final ResponseWriter writer, final Theme theme,
+            final FacesContext context) throws IOException {
 
         String clientId = component.getClientId(context);
         writer.startElement(HTMLElements.SPAN, component);
@@ -664,7 +722,8 @@ public class CommonTaskRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         // Enforce NPE requirements in the Javadocs
         if ((context == null) || (component == null)) {
@@ -682,8 +741,7 @@ public class CommonTaskRenderer extends AbstractRenderer {
                 .getRequestParameterMap()
                 .get(paramId);
 
-        if ((value == null) || !value.equals(clientId +
-                COMMONTASK_LINK)) {
+        if ((value == null) || !value.equals(clientId + COMMONTASK_LINK)) {
             return;
         }
 

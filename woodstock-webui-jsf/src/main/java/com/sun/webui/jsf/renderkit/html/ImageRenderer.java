@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -12,12 +12,6 @@
  * https://www.gnu.org/software/classpath/license.html.
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
- */
-
-/*
- * ImageRenderer.java
- *
- * Created on November 16, 2004, 2:29 PM
  */
 package com.sun.webui.jsf.renderkit.html;
 
@@ -39,65 +33,80 @@ import javax.faces.context.ResponseWriter;
 import javax.faces.component.UIComponent;
 
 /**
- * Image renderer
- *
- * @author  Sean Comerford
+ * Image renderer.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Image"))
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Image"))
 public class ImageRenderer extends AbstractRenderer {
 
     /**
-     * <p>The set of integer pass-through attributes to be rendered.</p>
+     * The set of integer pass-through attributes to be rendered.
      */
-    private static final String integerAttributes[] = {"border", //NOI18N
-        "hspace", "vspace"}; //NOI18N
-    /**
-     * <p>The set of String pass-through attributes to be rendered.</p>
-     */
-    private static final String stringAttributes[] = {"align", //NOI18N
-        "onClick", "onDblClick", //NO18N
-        "onMouseDown", "onMouseMove", "onMouseOut", "onMouseOver"}; //NOI18N
+    private static final String[] INTEGER_ATTRIBUTES = {
+        "border",
+        "hspace",
+        "vspace"
+    };
 
-    /** Creates a new instance of ImageRenderer */
+    /**
+     * The set of String pass-through attributes to be rendered.
+     */
+    private static final String[] STRING_ATTRIBUTES = {
+        "align",
+        "onClick",
+        "onDblClick",
+        "onMouseDown",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver"
+    };
+
+    /**
+     * Creates a new instance of ImageRenderer.
+     */
     public ImageRenderer() {
         // default constructor
     }
 
     /**
-     * Render the start of the image element
+     * This implementation renders the start of the image element.
      *
      * @param context The current FacesContext
      * @param component The ImageComponent object to use
      * @param writer The current ResponseWriter
      *
-     * @exception IOException if an input/output error occurss
+     * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // render start of image
         ImageComponent image = (ImageComponent) component;
-        writer.startElement("img", image);  //NOI18N
+        writer.startElement("img", image);
     }
 
     /**
-     * Render the image element's attributes
+     * This implementation renders the image element's attributes.
      *
      * @param context The current FacesContext
      * @param component The ImageComponent object to use
      * @param writer The current ResponseWriter
      *
-     * @exception IOException if an input/output error occurss
+     * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderAttributes(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // render image attrs
         ImageComponent image = (ImageComponent) component;
 
         String clientId = image.getClientId(context);
         if (clientId != null) {
-            writer.writeAttribute("id", clientId, null);  //NOI18N
+            writer.writeAttribute("id", clientId, null);
         }
 
         String url = image.getUrl();
@@ -110,7 +119,6 @@ public class ImageRenderer extends AbstractRenderer {
             // We just want some defaults if not specified by
             // the component, call Theme.getImage directly instead
             // of creating another component.
-            //
             ThemeImage themeImage = theme.getImage(icon);
             url = themeImage.getPath();
             // height
@@ -125,7 +133,6 @@ public class ImageRenderer extends AbstractRenderer {
             }
 
             // alt, Here if the developer wants "" render "".
-            //
             String iconAlt = themeImage.getAlt();
             if (alt == null) {
                 alt = iconAlt;
@@ -135,32 +142,40 @@ public class ImageRenderer extends AbstractRenderer {
             if (!Beans.isDesignTime()) {
                 // log an error
                 if (LogUtil.warningEnabled(ImageRenderer.class)) {
-                    LogUtil.warning(ImageRenderer.class, "  URL  was not " +
-                            "specified and generally should be"); // NOI18N
+                    LogUtil.warning(ImageRenderer.class, "  URL  was not "
+                            + "specified and generally should be");
                 }
             }
         } else {
-            url = context.getApplication().getViewHandler().getResourceURL(context, url);
+            url = context.getApplication().getViewHandler()
+                    .getResourceURL(context, url);
         }
 
         // must encode the url (even though we call the function later)!
-        url = (url != null && url.trim().length() != 0)
-                ? context.getExternalContext().encodeResourceURL(url) : "";
-
+        if (url != null && url.trim().length() != 0) {
+            url = context.getExternalContext().encodeResourceURL(url);
+        } else {
+            url = "";
+        }
         String style = image.getStyle();
-        StringBuffer errorMsg = new StringBuffer("Image's {0} was not").append(" specified. Using a generic").append(" default value of {1}");
-        MessageFormat mf = new MessageFormat(errorMsg.toString());
+        String errorMsg = "Image's {0} was not specified."
+                + " Using a generic default value of {1}";
+        MessageFormat mf = new MessageFormat(errorMsg);
         if (isPngAndIE(context, url)) {
 
-            String imgHeight = null;
-            String imgWidth = null;
+            String imgHeight;
+            String imgWidth;
 
             if (width >= 0) {
                 imgWidth = Integer.toString(width);
             } else {
                 imgWidth = theme.getMessage("Image.defaultWidth");
                 if (LogUtil.fineEnabled(ImageRenderer.class)) {
-                    LogUtil.fine(ImageRenderer.class, mf.format(new String[]{"width", imgWidth}));  //NOI18N
+                    LogUtil.fine(ImageRenderer.class, mf.format(
+                            new String[]{
+                                "width",
+                                imgWidth
+                            }));
                 }
             }
 
@@ -169,100 +184,115 @@ public class ImageRenderer extends AbstractRenderer {
             } else {
                 imgHeight = theme.getMessage("Image.defaultHeight");
                 if (LogUtil.fineEnabled(ImageRenderer.class)) {
-                    LogUtil.fine(ImageRenderer.class, mf.format(new String[]{"height", imgHeight}));  //NOI18N
+                    LogUtil.fine(ImageRenderer.class, mf.format(
+                            new String[]{
+                                "height", imgHeight
+                            }));
                 }
             }
-            String IEStyle = theme.getMessage("Image.IEPngCSSStyleQuirk",
-                    new String[]{imgWidth, imgHeight, url});
+            String ieStyle = theme.getMessage("Image.IEPngCSSStyleQuirk",
+                    new String[]{
+                        imgWidth,
+                        imgHeight,
+                        url
+                    });
             url = theme.getImagePath(ThemeImages.DOT);
             if (style == null) {
-                style = IEStyle;
+                style = ieStyle;
             } else {
-                style = IEStyle + style;
+                style = ieStyle + style;
             }
         }
-
 
         //write style class and style info
         RenderingUtilities.renderStyleClass(context, writer, image, null);
         if (style != null) {
-            writer.writeAttribute("style", style, null); // NOI18N
+            writer.writeAttribute("style", style, null);
         }
 
-        RenderingUtilities.renderURLAttribute(context, writer, image, "src", //NO18N
-                url, "url"); //NO18N
+        RenderingUtilities.renderURLAttribute(context, writer, image, "src",
+                url, "url");
 
         // render alt
         if (alt != null) {
-            writer.writeAttribute("alt", alt, null); // NOI18N
+            writer.writeAttribute("alt", alt, null);
         } else {
             // alt is a required for XHTML compliance so output empty string
             // IS THIS ELSE NEEDED NOW THAT DESCRIPTION IS A REQUIRED PROPERTY?
-            writer.writeAttribute("alt", "", null);  //NOI18N
+            writer.writeAttribute("alt", "", null);
         }
 
         // render the tooltip property as the image title attribute
         String toolTip = image.getToolTip();
         if (toolTip != null) {
-            writer.writeAttribute("title", toolTip, null);   //NOI18N
+            writer.writeAttribute("title", toolTip, null);
         }
 
         // render the longDescription property as the image longdesc attribute
         String longDesc = image.getLongDesc();
         if (longDesc != null) {
-            writer.writeAttribute("longdesc", longDesc, null); // NOI18N
+            writer.writeAttribute("longdesc", longDesc, null);
         }
 
         // render height
         if (height >= 0) {
-            writer.writeAttribute("height", Integer.toString(height), null); // NOI18N
+            writer.writeAttribute("height", Integer.toString(height), null);
         }
 
         // render width
         if (width >= 0) {
-            writer.writeAttribute("width", Integer.toString(width), null); // NOI18N
+            writer.writeAttribute("width", Integer.toString(width), null);
         }
 
-        addIntegerAttributes(context, component, writer, integerAttributes);
-        addStringAttributes(context, component, writer, stringAttributes);
+        addIntegerAttributes(context, component, writer, INTEGER_ATTRIBUTES);
+        addStringAttributes(context, component, writer, STRING_ATTRIBUTES);
     }
 
     /**
-     * Render the end of the image element
+     * This implementation renders the end of the image element.
      *
      * @param context The current FacesContext
      * @param component The ImageComponent object to use
      * @param writer The current ResponseWriter
      *
-     * @exception IOException if an input/output error occurss
+     * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         // render end of image
         ImageComponent image = (ImageComponent) component;
-
-        writer.endElement("img"); //NOI18N
+        writer.endElement("img");
     }
 
-    private boolean isPngAndIE(FacesContext context, String url) {
+    /**
+     * Test if the image a PNG and browser IE.
+     * @param context faces context
+     * @param url URL
+     * @return {@code boolean}
+     */
+    private boolean isPngAndIE(final FacesContext context, final String url) {
 
         ClientSniffer cs = ClientSniffer.getInstance(context);
 
         //Some time encodeResourceURL(url) adds the sessiod to the
         // image URL, make sure to take that in to account
-        //
-        if (url.indexOf("sessionid") != -1) { //NOI18N
+        if (url.contains("sessionid")) {
             if (url.substring(0, url.indexOf(';')).
-                    endsWith(".png") && cs.isIe6up()) { //NOI18N
+                    endsWith(".png") && cs.isIe6up()) {
                 return false;
-            } else if (url.substring(0, url.indexOf(';')).
-                    endsWith(".png") && cs.isIe5up()) { //NOI18N
+            } else if (url.substring(0, url.indexOf(';')).endsWith(".png")
+                    && cs.isIe5up()) {
                 return true;
             }
-        } else { //</RAVE>
-            // IE 6 SP 2 and above seems to have fixed the problem with .png images
-            // But not SP1. For things to work on IE6 one needs to upgrade to SP2.
+        } else {
+            //</RAVE>
+            // IE 6 SP 2 and above seems to have fixed the problem with .png
+            // images
+            // But not SP1. For things to work on IE6 one needs to upgrade to
+            // SP2.
             if (url.endsWith(".png")) {
                 if (cs.isIe6up()) {
                     return false;
@@ -271,7 +301,6 @@ public class ImageRenderer extends AbstractRenderer {
                 }
             }
         }
-
         return false;
     }
 }

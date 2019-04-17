@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.event;
 
 import javax.faces.component.UIComponent;
@@ -23,168 +22,204 @@ import com.sun.webui.jsf.component.Wizard;
 import com.sun.webui.jsf.component.WizardStep;
 
 /**
- * <code>WizardEvent</code> is the event class broadcast by the 
- * {@link com.sun.webui.jsf.component.Wizard Wizard} to 
+ * {@code WizardEvent} is the event class broadcast by the
+ * {@link com.sun.webui.jsf.component.Wizard Wizard} to
  * {@link com.sun.webui.jsf.event.WizardEventListener WizardEventListeners}.
  */
-public class WizardEvent extends FacesEvent {
+public final class WizardEvent extends FacesEvent {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = 6398514451074650783L;
+
     /**
      * The cancel button was clicked.
      */
     public static final int CANCEL = 0;
+
     /**
      * The close button was clicked.
      */
     public static final int CLOSE = 1;
+
     /**
      * The finish button was clicked.
      */
     public static final int FINISH = 2;
+
     /**
      * A step link was clicked.
      */
     public static final int GOTOSTEP = 3;
+
     /**
      * The help tab was clicked.
      */
     public static final int HELPTAB = 4;
+
     /**
      * The next button was clicked.
      */
     public static final int NEXT = 6;
+
     /**
      * The previous button was clicked.
      */
     public static final int PREVIOUS = 7;
+
     /**
      * The steps tab was clicked.
      */
     public static final int STEPSTAB = 8;
+
     /**
-     * This event is broadcast by the Wizard in 
-     * {@link Wizard#encodeBegin(FacesContext) encodeBegin} to indicate
-     * that this wizard session is being rendered the first time.
+     * This event is broadcast by the Wizard in
+     * {@link Wizard#encodeBegin(FacesContext) encodeBegin} to indicate that
+     * this wizard session is being rendered the first time.
      */
     public static final int START = 10;
+
     /**
-     * This event is broadcast by the Wizard in 
-     * {@link Wizard#encodeEnd(FacesContext) encodeEnd} to indicate
-     * that this wizard session has completed.
+     * This event is broadcast by the Wizard in
+     * {@link Wizard#encodeEnd(FacesContext) encodeEnd} to indicate that this
+     * wizard session has completed.
      */
     public static final int COMPLETE = 11;
+
     /**
-     * This is an internal Wizard event and is not broadcast
-     * to application defined {@link WizardEventListener WizardEventListeners}.
+     * This is an internal Wizard event and is not broadcast to application
+     * defined {@link WizardEventListener WizardEventListeners}.
      */
     public static final int NOEVENT = 12;
+
     /**
      * @deprecated
      */
     public static final int INVALID = 9;
+
     /**
      * @deprecated
      */
     public static final int DECODE = 13;
+
     /**
      * @deprecated
      */
     public static final int VALIDATE = 14;
+
     /**
      * @deprecated
      */
     public static final int UPDATE = 15;
+
     /**
      * @deprecated
      */
     public static final int INVOKE_APPLICATION = 16;
+
     /**
      * @deprecated
      */
     public static final int RENDER = 17;
+
     /**
      * @deprecated
      */
     public static final int STEP_ENTER = 18;
+
     /**
      * @deprecated
      */
     public static final int STEP_EXIT = 19;
-    // package protected can't get rid of them.
-    //
+
     /**
      * @deprecated use {@link #getStep()}
      */
-     WizardStep step;
+    private WizardStep step;
+
     /**
      * @deprecated use {@link #getEvent()}
      */
-     int navigationEvent;
+    private int navigationEvent;
+
     /**
      * @deprecated use {@link #getEventSource()}
      */
-     UIComponent navigationSource;
+    private UIComponent navigationSource;
+
     /**
      * @deprecated use {@link #getGotoStepId()}
      */
-     Object data;
+    private Object data;
 
     /**
-     * Contruct a <code>WizardEvent</code> instance, specifying the
-     * <code>Wizard</code> source.
+     * Construct a {@code WizardEvent} instance, specifying the {@code Wizard}
+     * source.
+     *
+     * @param wizard wizard
      */
-    public WizardEvent(Wizard wizard) {
+    public WizardEvent(final Wizard wizard) {
         super(wizard);
     }
 
     /**
+     * @param wizard wizard
+     * @param newNavigationSource UI component
+     * @param newNavigationEVent event id
+     * @param newData event payload
      * @deprecated replaced by {@link #WizardEvent(Wizard, UIComponent, int,
      * WizardStep, String)}
      */
-    public WizardEvent(Wizard wizard, UIComponent navigationSource,
-            int navigationEvent, Object data) {
+    @SuppressWarnings("checkstyle:avoidinlineconditionals")
+    public WizardEvent(final Wizard wizard,
+            final UIComponent newNavigationSource, final int newNavigationEVent,
+            final Object newData) {
 
-        this(wizard, navigationSource, navigationEvent, null,
-                data instanceof String ? (String) data : null);
+        this(wizard, newNavigationSource, newNavigationEVent, null,
+                newData instanceof String ? (String) newData : null);
 
         // deprecation support
         //
-        if (!(data instanceof String)) {
-            this.data = data;
+        if (!(newData instanceof String)) {
+            this.data = newData;
         }
     }
 
-    /** 
-     * Contruct a <code>WizardEvent</code> with event data.
-     * Not all data will be available with all events. In particular:
+    /**
+     * Construct a {@code WizardEvent} with event data. Not all data will be
+     * available with all events. In particular:
      * <ul>
-     * <li><code>gotoStepId</code> will only be available if the event
-     * is <code>GOTOSTEP</code>.
+     * <li>{@code gotoStepId} will only be available if the event is
+     * {@code GOTOSTEP}.
      * </li>
-     * <li><code>eventSource</code> will be null for the <code>START</code>
-     * and <code>COMPLETE</code> events.
+     * <li>{@code eventSource} will be null for the {@code START} and
+     * {@code COMPLETE} events.
      * </li>
-     * 
-     * @param wizard the wizard instance broadcasting this event
-     * @param eventSource the component that generated this event
-     * @param event the WizardEvent constant identifying this event
-     * @param step the WizardStep generating this event
+     * </ul>
+     *
+     * @param newWizard the wizard instance broadcasting this event
+     * @param newEventSource the component that generated this event
+     * @param newEvent the WizardEvent constant identifying this event
+     * @param newStep the WizardStep generating this event
      * @param gotoStepId the id of the step the wizard will display next
      */
-    public WizardEvent(Wizard wizard, UIComponent eventSource,
-            int event, WizardStep step, String gotoStepId) {
+    public WizardEvent(final Wizard newWizard,
+            final UIComponent newEventSource, final int newEvent,
+            final WizardStep newStep, final String gotoStepId) {
 
         // wizard -> source
         // Should this acually be the button ?
-        //
-        super(wizard);
-        this.navigationSource = eventSource;
-        this.navigationEvent = event;
+        super(newWizard);
+        this.navigationSource = newEventSource;
+        this.navigationEvent = newEvent;
         this.data = gotoStepId;
     }
 
     /**
+     * Get the navigation event.
+     *
+     * @return int
      * @deprecated replaced by {@link #getEvent()}
      */
     public int getNavigationEvent() {
@@ -192,27 +227,37 @@ public class WizardEvent extends FacesEvent {
     }
 
     /**
-     * Return the <code>WizardEvent</code> constant identifying this event.
+     * Return the {@code WizardEvent} constant identifying this event.
+     *
+     * @return int
      */
     public int getEvent() {
         return navigationEvent;
     }
 
     /**
+     * Set the navigation event.
+     *
+     * @param newNavigationEvent event id
      * @deprecated replaced by {@link #setEvent(int)}
      */
-    public void setNavigationEvent(int navigationEvent) {
-        this.navigationEvent = navigationEvent;
+    public void setNavigationEvent(final int newNavigationEvent) {
+        this.navigationEvent = newNavigationEvent;
     }
 
     /**
      * Set the event constant identifying this event.
+     *
+     * @param event event id
      */
-    public void setEvent(int event) {
+    public void setEvent(final int event) {
         this.navigationEvent = event;
     }
 
     /**
+     * Get the navigation event source.
+     *
+     * @return UIComponent
      * @deprecated replaced by {@link #getEventSource}
      */
     public UIComponent getNavigationEventSource() {
@@ -220,61 +265,61 @@ public class WizardEvent extends FacesEvent {
     }
 
     /**
-     * Return the wizard subcomponent that generated the original 
-     * <code>ActionEvent</code> that queued this event.
+     * Return the wizard sub component that generated the original
+     * {@code ActionEvent} that queued this event.
+     *
+     * @return UIComponent
      */
     public UIComponent getEventSource() {
         return navigationSource;
     }
 
     /**
-     * Return the <code>Wizard</code> broadcasting this event.
+     * Return the {@code Wizard} broadcasting this event.
+     *
+     * @return Wizard
      */
     public Wizard getWizard() {
         return (Wizard) source;
     }
 
     /**
-     * Return the <code>WizardStep</code> that generated this event.
+     * Return the {@code WizardStep} that generated this event.
+     *
+     * @return WizardStep
      */
     public WizardStep getStep() {
         return (WizardStep) step;
     }
 
     /**
-     * Set the <code>WizardStep</code> that generated this event.
+     * Set the {@code WizardStep} that generated this event.
+     *
+     * @param newStep wizard step
      */
-    public void setStep(WizardStep step) {
-        this.step = step;
+    public void setStep(final WizardStep newStep) {
+        this.step = newStep;
     }
 
     /**
-     * Return the component id of the <code>WizardStep</code> that the
-     * wizard will be proceeding to.
+     * Return the component id of the {@code WizardStep} that the wizard will be
+     * proceeding to.
+     *
+     * @return String
      */
     public String getGotoStepId() {
-        return navigationEvent == GOTOSTEP ? (String) data : null;
+        if (navigationEvent == GOTOSTEP) {
+            return (String) data;
+        }
+        return null;
     }
 
-
-    // FacesEvent methods
-    //
-    /**
-     * Return <code>true</code> if <code>listener</code> is an instance of
-     * <code>WizardEventListener</code>.
-     *
-     * @param listener appropriate listener for this event.
-     */
-    public boolean isAppropriateListener(FacesListener listener) {
+    @Override
+    public boolean isAppropriateListener(final FacesListener listener) {
         return (listener instanceof WizardEventListener);
     }
 
-    public void processListener(FacesListener listener) {
-
-        /*
-        if (!listener.handleEvent(this)) {
-        throw new AbortProcessingException();
-        }
-         */
+    @Override
+    public void processListener(final FacesListener listener) {
     }
 }

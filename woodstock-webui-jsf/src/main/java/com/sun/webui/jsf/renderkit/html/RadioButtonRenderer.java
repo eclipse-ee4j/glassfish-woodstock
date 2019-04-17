@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -31,167 +30,143 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
  * <p>
- * The <code>RadioButtonRenderer</code> renders a 
+ * The {@code RadioButtonRenderer} renders a
  * {@link com.sun.webui.jsf.component.RadioButton} component.
  * </p>
  * <h3>Encoding</h3>
  * <p>
- * The <code>RadioButtonRenderer</code> renders a <code>RadioButton</code> as:
+ * The {@code RadioButtonRenderer} renders a {@code RadioButton} as:
  * <ul>
  * <li> An INPUT element of type radio for each radio button.
  * </li>
  * <li> An optional image. The component rendered for this feature is obtained
- * from a call to <code>getImageComponent()</code> on the component being
+ * from a call to {@code getImageComponent()} on the component being
  * rendered. </li>
  * <li> An optional label. The component rendered for this feature is obtained
- * from a call to <code>getLabelComponent()</code> on the component being
+ * from a call to {@code getLabelComponent()} on the component being
  * rendered. </li>
- * </li>
  * </ul>
  * </p>
  * <p>
- * The CSS selectors for the elements and components that comprise a
- * radio button are identified by java
- * constants defined in the {@link ThemeStyles} class.
+ * The CSS selectors for the elements and components that comprise a radio
+ * button are identified by java constants defined in the {@link ThemeStyles}
+ * class.
  * </p>
  * <ul>
  * <li>RADIOBUTTON for the INPUT element</li>
  * <li>RADIOBUTTON_DISABLED for the INPUT element of a disabled radio
  * button</li>
  * <li>RADIOBUTTON_LABEL for label component if a label is rendered</li>
- * <li>RADIOBUTTON_LABEL_DISABLED for a label component of a disabled
- * radio button, if a label is rendered</li>
+ * <li>RADIOBUTTON_LABEL_DISABLED for a label component of a disabled radio
+ * button, if a label is rendered</li>
  * <li>RADIOBUTTON_IMAGE for an image component if an image is rendered</li>
- * <li>RADIOBUTTON_IMAGE_DISABLED for an image component of a disabled 
- * radio button if an image is rendered.</li>
+ * <li>RADIOBUTTON_IMAGE_DISABLED for an image component of a disabled radio
+ * button if an image is rendered.</li>
  * </ul>
- * <em>Note that these selectors are appended to any existing selectors
- * that may already exist on the <code>styleClass</code> property of the
- * <code>RadioButton</code> component and the optional image and label
+ * <em>Note that these selectors are appended to any existing selectors that may
+ * already exist on the {@code styleClass} property of the
+ * {@code RadioButton} component and the optional image and label
  * components.</em>
  * <p>
- * For more details on the encoding the
- * <code>RadioButton</code> component see the super class
- * {@link com.sun.webui.jsf.renderkit.html.RbCbRendererBase}
+ * For more details on the encoding the {@code RadioButton} component see
+ * the super class {@link com.sun.webui.jsf.renderkit.html.RbCbRendererBase}
  * </p>
  * <p>
  * <h3>Decoding</h3>
  * <p>
- * If the INPUT element representing a radio button is selected on the
- * the client, the submitted request will contain a request parameter
- * whose name is the value of the name attribute of the selected
- * HTML INPUT element. The value of the request parameter will be the
- * value of the value attribute of the selected HTML INPUT element.
+ * If the INPUT element representing a radio button is selected on the the
+ * client, the submitted request will contain a request parameter whose name is
+ * the value of the name attribute of the selected HTML INPUT element. The value
+ * of the request parameter will be the value of the value attribute of the
+ * selected HTML INPUT element.
  * </p>
  * <p>
  * The component being decoded is selected if the component's
- * <code>isDisabled</code> and <code>isReadOnly</code> methods
- * return false and:
+ * {@code isDisabled} and {@code isReadOnly} methods return false and:
  * </p>
  * <ul>
- * <li>a request parameter exists that is equal to its <code>name</code>
- * property. If the <code>name</code> property is null, then a
- * request parameter exists that is equal to its <code>clientId</code>
- * property.
- * <li/>
+ * <li>a request parameter exists that is equal to its {@code name}
+ * property. If the {@code name} property is null, then a request parameter
+ * exists that is equal to its {@code clientId} property.
  * </ul>
  * <p>
  * And
  * </p>
  * <ul>
- * <li>the request parameter's value is <code>String.equal</code> to the
- * the component's <code>selectedValue</code> property, after conversion
- * to a <code>String</code>, by calling
- * <code>ConversionUtilities.convertValueToString</code>. If the component
- * was encoded as a boolean control, then the request parameter's value
- * must be equal to the component's <code>clientId</code> property.
+ * <li>the request parameter's value is {@code String.equal} to the the
+ * component's {@code selectedValue} property, after conversion to a
+ * {@code String}, by calling
+ * {@code ConversionUtilities.convertValueToString}. If the component was
+ * encoded as a boolean control, then the request parameter's value must be
+ * equal to the component's {@code clientId} property.
  * </li>
  * </ul>
  * <p>
- * If selected, a <code>String[1]</code> array is assigned as the component's
- * submitted value where the single array element is the <code>String</code>
- * version of the <code>selectedValue</code> property or "true" if the
- * component was encoded as a boolean control.<br/>
- * If not selected, a <code>String[0]</code> array is assigned as the
- * component's submitted value or a <code>String[1]</code> array where the
- * single array element is "false" if the component was encoded as a 
- * boolean control.
+ * If selected, a {@code String[1]} array is assigned as the component's
+ * submitted value where the single array element is the {@code String}
+ * version of the {@code selectedValue} property or "true" if the component
+ * was encoded as a boolean control.
+ * If not selected, a {@code String[0]} array is assigned as the
+ * component's submitted value or a {@code String[1]} array where the
+ * single array element is "false" if the component was encoded as a boolean
+ * control.
  * </p>
  * <p>
- * If the component's <code>isDisabled</code> or <code>isReadOnly</code>
- * methods return true no submitted value is assigned to the component,
- * and results in a null submitted value implying the component
- * was not submitted, and the state of the component is unchanged.
+ * If the component's {@code isDisabled} or {@code isReadOnly} methods
+ * return true no submitted value is assigned to the component, and results in a
+ * null submitted value implying the component was not submitted, and the state
+ * of the component is unchanged.
  * <p>
- * Since the <code>RadioButtonRenderer</code> only renders a single 
- * <code>RadioButton</code> component it cannot enforce that at least
- * one radio button should be selected among a group of <code>RadioButton</code>
- * components with the same <code>name</code> property.
+ * Since the {@code RadioButtonRenderer} only renders a single
+ * {@code RadioButton} component it cannot enforce that at least one radio
+ * button should be selected among a group of {@code RadioButton}
+ * components with the same {@code name} property.
  * </p>
  * <p>
- * If the <code>RadioButton</code> is selected, the <code>selected<code>
- * property will be the same value as the <code>selectedValue</code>
- * property. If more than one <code>RadioButton</code> component is
- * encoded with the same <code>name</code> property and more than one
- * <code>RadioButton</code>'s is selectred,
- * the last selected <code>RadioButton</code> component that is encoded
- * will be appear as checked in the HTML page. Subsequently during the
- * next submit, only the checked <code>RadioButton</code> component
- * will be selected.
+ * If the {@code RadioButton} is selected, the {@code selected} property will be
+ * the same value as the {@code selectedValue} property. If more than one
+ * {@code RadioButton} component is encoded with the same {@code name} property
+ * and more than one {@code RadioButton}'s is selected, the last selected
+ * {@code RadioButton} component that is encoded will be appear as checked in
+ * the HTML page. Subsequently during the next submit, only the checked
+ * {@code RadioButton} component will be selected.
  * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.RadioButton"))
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.RadioButton"))
 //FIXME check about making RbCbRendererBase a public abstract class
-public class RadioButtonRenderer extends RbCbRendererBase {
-
-    private final String MSG_COMPONENT_NOT_RADIOBUTTON =
-            "RadioButtonRenderer only renders RadioButton components.";
+public final class RadioButtonRenderer extends RbCbRendererBase {
 
     /**
-     * Creates a new instance of RadioButtonRenderer
+     * Error message when wrong component type is being rendered.
+     */
+    private static final String MSG_COMPONENT_NOT_RADIOBUTTON
+            = "RadioButtonRenderer only renders RadioButton components.";
+
+    /**
+     * CSS styles.
+     */
+    private static final String[] STYLES = {
+        ThemeStyles.RADIOBUTTON, /* INPUT */
+        ThemeStyles.RADIOBUTTON_DISABLED, /* INPUT_DIS */
+        ThemeStyles.RADIOBUTTON_LABEL, /* LABEL */
+        ThemeStyles.RADIOBUTTON_LABEL_DISABLED, /* LABEL_DIS */
+        ThemeStyles.RADIOBUTTON_IMAGE, /* IMAGE */
+        ThemeStyles.RADIOBUTTON_IMAGE_DISABLED, /* IMAGE_DIS */
+        ThemeStyles.RADIOBUTTON_SPAN, /* SPAN */
+        ThemeStyles.RADIOBUTTON_SPAN_DISABLED /* SPAN_DIS */
+    };
+
+    /**
+     * Creates a new instance of RadioButtonRenderer.
      */
     public RadioButtonRenderer() {
         super();
     }
 
-    /**
-     * <p>Decode the <code>RadioButton</code> selection.</p>
-     * <p>
-     * If the value of the component's <code>name</code> property
-     * has been set, the value is used to match a request parameter.
-     * If it has not been set the component clientId is used to match
-     * a request parameter. If a match is found, and the value of the 
-     * of the request parameter matches the <code>String</code> value of the 
-     * component's <code>selectedValue</code> property, the
-     * radio button is selected. The component's submitted value is
-     * assigned a <code>String[1]</code> array where the single array
-     * element is the matching parameter value.
-     * </p>
-     * <p>
-     * If no matching request parameter or value is found, an instance of 
-     * <code>String[0]</code> is assigned as the submitted value,
-     * meaning that this is a component was not selected.
-     * </p>
-     * <p>
-     * If the component was encoded as a boolean control the
-     * value of the matching request attribute will be the component's
-     * <code>clientId</code> property if selected. If selected the 
-     * submitted value is <code>new String[] { "true" }</code>
-     * and <code>new String[] { "false" }</code> if not selected.
-     * </p>
-     * <p>
-     * It is the developer's responsibility to ensure the validity of the
-     * <code>name</code> property (the name attribute on the
-     * INPUT element) by ensuring that it is unique to the radio buttons
-     * for a given group within a form.
-     * </p>
-     *
-     * @param context FacesContext for the request we are processing.
-     * @param component The <code>RadioButton</code>
-     * component to be decoded.
-     */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         // We need to know the last state of the component before decoding
         // this radio button. This disabled check is not to determine
@@ -205,7 +180,6 @@ public class RadioButtonRenderer extends RbCbRendererBase {
         // No radio buttons are selected when "isDisabled || isReadOnly -> false
         // and no request parameters match the name attribute if part of a
         // group or the clientId if a single radio button.
-        //
         if (isDisabled(component) || isReadOnly(component)) {
             return;
         }
@@ -213,13 +187,11 @@ public class RadioButtonRenderer extends RbCbRendererBase {
         // name property, this component is one of the possible
         // selections. We need to match the value of the parameter to the
         // the component's value to see if this is the selected component.
-        //
         RadioButton radioButton = (RadioButton) component;
         String name = radioButton.getName();
         boolean inGroup = name != null;
 
         // If name is null use the clientId.
-        //
         if (name == null) {
             name = component.getClientId(context);
         }
@@ -230,7 +202,6 @@ public class RadioButtonRenderer extends RbCbRendererBase {
         // The request parameter map contains the INPUT element
         // name attribute value as a parameter. The value is the
         // the "selectedValue" value of the RadioButton component.
-        //
         if (requestParameterMap.containsKey(name)) {
 
             String newValue = (String) requestParameterMap.get(name);
@@ -247,25 +218,22 @@ public class RadioButtonRenderer extends RbCbRendererBase {
             // every radio button component in the group would decode
             // as selected. Due to the HTML implementation of radio
             // buttons, only the last radio button will appear selected.
-            //
             Object selectedValue = radioButton.getSelectedValue();
-            String selectedValueAsString = null;
-
+            String selectedValueAsString;
             if (inGroup && selectedValue instanceof Boolean) {
                 selectedValueAsString = component.getClientId(context);
                 // Use the toString value of selectedValue even if
                 // it is a Boolean control, in case the application
                 // wants "FALSE == FALSE" to mean checked.
-                //
                 if (selectedValueAsString.equals(newValue)) {
                     ((UIInput) component).setSubmittedValue(
                             new String[]{selectedValue.toString()});
                     return;
                 }
             } else {
-                selectedValueAsString =
-                        ConversionUtilities.convertValueToString(component,
-                        selectedValue);
+                selectedValueAsString
+                        = ConversionUtilities.convertValueToString(component,
+                                selectedValue);
                 if (selectedValueAsString.equals(newValue)) {
                     ((UIInput) component).setSubmittedValue(
                             new String[]{newValue});
@@ -273,81 +241,43 @@ public class RadioButtonRenderer extends RbCbRendererBase {
                 }
             }
             // Not selected possibly deselected.
-            //
             ((UIInput) component).setSubmittedValue(new String[0]);
         }
-        return;
     }
 
-    /**
-     * Ensure that the component to be rendered is a RadioButton instance.
-     * Actual rendering occurs during <code>renderEnd</code>
-     *
-     * @param context FacesContext for the request we are processing.
-     * @param component UIComponent to be decoded.
-     */
     @Override
-    public void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    public void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         // Bail out if the component is not a RadioButton component.
         // This message should be logged.
-        //
         if (!(component instanceof RadioButton)) {
             throw new IllegalArgumentException(MSG_COMPONENT_NOT_RADIOBUTTON);
         }
     }
 
-    /**
-     * RadioButtonRenderer renders the entire RadioButton
-     * component within the renderEnd method.
-     *
-     * @param context FacesContext for the request we are processing.
-     * @param component UIComponent to be decoded.
-     */
     @Override
-    public void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    public void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         Theme theme = ThemeUtilities.getTheme(context);
         renderSelection(context, component, theme, writer, "radio");
-
     }
 
-    /**
-     * Return true if the <code>component</code> is selected, false
-     * otherwise.
-     *
-     * @param context FacesContext for the request we are processing.
-     * @param component UIComponent to test for selected.
-     */
-    protected boolean isSelected(FacesContext context, UIComponent component) {
+    @Override
+    protected boolean isSelected(final FacesContext context,
+            final UIComponent component) {
+
         return ((RadioButton) component).isChecked();
     }
-    protected String[] styles = {
-        ThemeStyles.RADIOBUTTON, /* INPUT */
-        ThemeStyles.RADIOBUTTON_DISABLED, /* INPUT_DIS */
-        ThemeStyles.RADIOBUTTON_LABEL, /* LABEL */
-        ThemeStyles.RADIOBUTTON_LABEL_DISABLED, /* LABEL_DIS */
-        ThemeStyles.RADIOBUTTON_IMAGE, /* IMAGE */
-        ThemeStyles.RADIOBUTTON_IMAGE_DISABLED, /* IMAGE_DIS */
-        ThemeStyles.RADIOBUTTON_SPAN, /* SPAN */
-        ThemeStyles.RADIOBUTTON_SPAN_DISABLED /* SPAN_DIS */};
 
-    /**
-     * Return the style class name for the structural element indicated
-     * by <code>styleCode</code>
-     *
-     * @param theme The Theme for this request.
-     * @param styleCode identifies the style class for the element about
-     * to be rendered.
-     */
-    protected String getStyle(Theme theme, int styleCode) {
+    @Override
+    protected String getStyle(final Theme theme, final int styleCode) {
         String style = null;
         try {
-            style = theme.getStyleClass(styles[styleCode]);
+            style = theme.getStyleClass(STYLES[styleCode]);
         } catch (Exception e) {
             // Don't care
         }

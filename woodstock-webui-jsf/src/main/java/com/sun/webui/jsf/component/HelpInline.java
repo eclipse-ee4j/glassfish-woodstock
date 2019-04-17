@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -27,53 +26,102 @@ import javax.faces.convert.Converter;
  * The HelpInline component is used to display inline help at the page and field
  * level.
  */
-@Component(type = "com.sun.webui.jsf.HelpInline", family = "com.sun.webui.jsf.HelpInline",
-displayName = "Inline Help", tagName = "helpInline",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_help_inline",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_help_inline_props")
-public class HelpInline extends UIOutput {
+@Component(type = "com.sun.webui.jsf.HelpInline",
+        family = "com.sun.webui.jsf.HelpInline",
+        displayName = "Inline Help", tagName = "helpInline",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_help_inline",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_help_inline_props")
+        //CHECKSTYLE:ON
+public final class HelpInline extends UIOutput {
 
-    /** Creates a new instance of HelpInline */
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * The type of inline help to display. Valid values are "page" or "field".
+     * Page help is displayed by default.
+     */
+    @Property(name = "type",
+            displayName = "Type of Help",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.HelpTypesEditor")
+            //CHECKSTYLE:ON
+    private String type = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible",
+            displayName = "Visible",
+            category = "Behavior")
+    private boolean visible = false;
+
+    /**
+     * Creates a new instance of HelpInline.
+     */
     public HelpInline() {
         super();
         setRendererType("com.sun.webui.jsf.HelpInline");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.HelpInline";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * The converter attribute is used to specify a method to translate native
-     * property values to String and back for this component. The converter 
+     * property values to String and back for this component. The converter
      * attribute value must be one of the following:
      * <ul>
      * <li>A JavaServer Faces EL expression that resolves to a backing bean or
-     * bean property that implements the 
-     * <code>javax.faces.converter.Converter</code> interface; or
+     * bean property that implements the
+     * {@code javax.faces.converter.Converter} interface; or
      * </li><li>the ID of a registered converter (a String).</li>
      * </ul>
+     * @param converter converter
      */
     @Property(name = "converter")
     @Override
-    public void setConverter(Converter converter) {
+    public void setConverter(final Converter converter) {
         super.setConverter(converter);
     }
 
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -83,37 +131,26 @@ public class HelpInline extends UIOutput {
      * the rendered HTML page does not include the HTML for the component. If
      * the component is not rendered, it is also not processed on any subsequent
      * form submission.
+     * @param rendered rendered
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
-    /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
-     *
-     * @param name Name of value binding expression to retrieve
-     */
     @Override
-    public ValueExpression getValueExpression(String name) {
+    public ValueExpression getValueExpression(final String name) {
         if (name.equals("text")) {
             return super.getValueExpression("value");
         }
         return super.getValueExpression(name);
     }
 
-    /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
-     *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
-     */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
+    public void setValueExpression(final String name,
+            final ValueExpression binding) {
+
         if (name.equals("text")) {
             super.setValueExpression("value", binding);
             return;
@@ -127,174 +164,182 @@ public class HelpInline extends UIOutput {
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
+
+    /**
+     * Get the style.
+     * @return String
+     */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
+    /**
+     * Get the style class.
+     * @return String
+     */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
 
     /**
-     * <p>The inline help text to display.</p>
+     * The inline help text to display.
+     * @return Object
      */
-    @Property(name = "text", displayName = "text", category = "Appearance", isDefault = true,
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+    @Property(name = "text",
+            displayName = "text",
+            category = "Appearance",
+            isDefault = true,
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
     public Object getText() {
         return getValue();
     }
 
     /**
-     * <p>The inline help text to display.</p>
+     * The inline help text to display.
+     *
      * @see #getText()
+     * @param text text
      */
-    public void setText(Object text) {
+    public void setText(final  Object text) {
         setValue(text);
     }
-    /**
-     * <p>The type of inline help to display. Valid values are "page" or "field". 
-     * Page help is displayed by default.</p>
-     */
-    @Property(name = "type", displayName = "Type of Help", category = "Appearance",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.HelpTypesEditor")
-    private String type = null;
 
+    /**
+     * Get the type.
+     * @return String
+     */
     public String getType() {
         if (this.type != null) {
             return this.type;
         }
-        ValueExpression _vb = getValueExpression("type");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("type");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return "page";
     }
 
     /**
-     * <p>The type of inline help to display. Valid values are "page" or "field". 
-     * Page help is displayed by default.</p>
+     * The type of inline help to display. Valid values are "page" or "field".
+     * Page help is displayed by default.
+     *
      * @see #getType()
+     * @param newType type
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setType(final String newType) {
+        this.type = newType;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible", category = "Behavior")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
+    /**
+     * Get the value of the visible flag.
+     * @return {@code boolean}
+     */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.style = (String) _values[1];
-        this.styleClass = (String) _values[2];
-        this.type = (String) _values[3];
-        this.visible = ((Boolean) _values[4]).booleanValue();
-        this.visible_set = ((Boolean) _values[5]).booleanValue();
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.style = (String) values[1];
+        this.styleClass = (String) values[2];
+        this.type = (String) values[3];
+        this.visible = ((Boolean) values[4]);
+        this.visibleSet = ((Boolean) values[5]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[6];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.style;
-        _values[2] = this.styleClass;
-        _values[3] = this.type;
-        _values[4] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[6];
+        values[0] = super.saveState(context);
+        values[1] = this.style;
+        values[2] = this.styleClass;
+        values[3] = this.type;
+        if (this.visible) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[5] = Boolean.TRUE;
+        } else {
+            values[5] = Boolean.FALSE;
+        }
+        return values;
     }
 }

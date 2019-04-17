@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,13 +18,19 @@ package com.sun.faces.mirror.generator;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
- *
- * @author gjmurphy
+ * Generator factory.
  */
-public class GeneratorFactory {
+public final class GeneratorFactory {
 
-    VelocityEngine velocityEngine;
+    /**
+     * Template engine.
+     */
+    private final VelocityEngine velocityEngine;
 
+    /**
+     * Create a new instance.
+     */
+    @SuppressWarnings("checkstyle:linelength")
     public GeneratorFactory() {
         this.velocityEngine = new VelocityEngine();
         this.velocityEngine.addProperty("resource.loader", "classpath");
@@ -37,24 +43,43 @@ public class GeneratorFactory {
         }
     }
 
+    /**
+     * Get the faces config file generator.
+     * @return FacesConfigFileGenerator
+     */
     public FacesConfigFileGenerator getFacesConfigFileGenerator() {
         return new FacesConfigFileGeneratorImpl(this.velocityEngine);
     }
 
+    /**
+     * Get the bean info source generator.
+     * @return BeanInfoSourceGenerator
+     */
     public BeanInfoSourceGenerator getBeanInfoSourceGenerator() {
         return new BeanInfoSourceGeneratorImpl(this.velocityEngine);
     }
 
+    /**
+     * Get the tag lib file generator.
+     * @return TagLibFileGenerator
+     */
     public TagLibFileGenerator getTagLibFileGenerator() {
         return new TagLibFileGeneratorImpl(this.velocityEngine);
     }
 
+    /**
+     * Get the tag source generator.
+     * @return TagSourceGenerator
+     */
     public TagSourceGenerator getTagSourceGenerator() {
         return new TagSourceGeneratorImpl(this.velocityEngine);
     }
 
+    /**
+     * Get the debug generator.
+     * @return DebugGenerator
+     */
     public DebugGenerator getDebugGenerator() {
         return new DebugGenerator(this.velocityEngine);
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,18 +31,44 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  * Renderer for an {@link Alarm} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Alarm"))
-public class AlarmRenderer extends ImageRenderer {
- 
-    // Label position.
+public final class AlarmRenderer extends ImageRenderer {
+
+    /**
+     * Left position.
+     */
     private static final String LABEL_LEFT = "left";
+
+    /**
+     * Right position.
+     */
     private static final String LABEL_RIGHT = "right";
+
+    /**
+     * HTML encoded space.
+     */
     private static final String WHITE_SPACE = "&nbsp;";
+
+    /**
+     * Label critical alternate text key.
+     */
     private static final String CRITICAL_ALT_TEXT_KEY =
             "Alarm.criticalImageAltText";
+
+    /**
+     * Label major image alternate text.
+     */
     private static final String MAJOR_ALT_TEXT_KEY =
             "Alarm.majorImageAltText";
+
+    /**
+     * Label minor image alternate text.
+     */
     private static final String MINOR_ALT_TEXT_KEY =
             "Alarm.minorImageAltText";
+
+    /**
+     * LAbel down alternate text.
+     */
     private static final String DOWN_ALT_TEXT_KEY =
             "Alarm.downImageAltText";
 
@@ -53,8 +79,9 @@ public class AlarmRenderer extends ImageRenderer {
     }
 
     @Override
-    protected void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         if (context == null || component == null) {
             throw new NullPointerException(
@@ -68,7 +95,6 @@ public class AlarmRenderer extends ImageRenderer {
 
         // If the severity is "ok" and there is no url just render
         // the label, there's no image.
-        //
         boolean showImage = !(severityOk && alarm.getUrl() == null);
 
         if (showImage) {
@@ -77,18 +103,17 @@ public class AlarmRenderer extends ImageRenderer {
                 renderImage(context, alarm, severity, writer);
             } else {
                 // Since we have a label and an image always add the space
-                //
                 if (LABEL_LEFT.equalsIgnoreCase(alarm.getTextPosition())) {
-                    renderLabel(context, alarm, label, true, true, writer);
+                    renderLabel(label, true, true, writer);
                     renderImage(context, alarm, severity, writer);
                 } else {
                     renderImage(context, alarm, severity, writer);
-                    renderLabel(context, alarm, label, false, true, writer);
+                    renderLabel(label, false, true, writer);
                 }
             }
         } else if (label != null) {
             // Just a label no additional space.
-            renderLabel(context, alarm, label, false, false, writer);
+            renderLabel(label, false, false, writer);
         }
     }
 
@@ -96,10 +121,15 @@ public class AlarmRenderer extends ImageRenderer {
      * Render the label with additional white space if addSpace is true.
      * Render the space first if addSpace is true and labelLeft is true
      * or render the label first if labelLeft is false.
+     * @param label label text
+     * @param labelLeft {@code true} if positioned left, {@code false} if right
+     * @param addSpace {@code true} to add space
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
      */
-    private void renderLabel(FacesContext context, Alarm alarm,
-            String label, boolean labelLeft, boolean addSpace,
-            ResponseWriter writer) throws IOException {
+    private static void renderLabel(final String label,
+            final boolean labelLeft, final boolean addSpace,
+            final ResponseWriter writer) throws IOException {
 
         if (labelLeft) {
             writer.writeText(label, null);
@@ -114,21 +144,37 @@ public class AlarmRenderer extends ImageRenderer {
         }
     }
 
-    private void renderImage(FacesContext context, Alarm alarm, String severity,
-            ResponseWriter writer) throws IOException {
+    /**
+     * Render an image.
+     * @param context faces context
+     * @param alarm alarm component
+     * @param severity alarm severity
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    private void renderImage(final FacesContext context, final Alarm alarm,
+            final String severity, final ResponseWriter writer)
+            throws IOException {
 
         super.renderStart(context, alarm, writer);
         ImageComponent sevImage = getImage(context, alarm, severity);
         super.renderAttributes(context, sevImage, writer);
 
-        String integerAttributes[] = {"border", "hspace", "vspace"}; //NOI18N
+        String[] integerAttributes = {"border", "hspace", "vspace"};
         addIntegerAttributes(context, alarm, writer, integerAttributes);
-        String stringAttributes[] = {"align", "onClick", "onDblClick"}; //NO18N
+        String[] stringAttributes = {"align", "onClick", "onDblClick"};
         addStringAttributes(context, alarm, writer, stringAttributes);
     }
 
-    private ImageComponent getImage(FacesContext context, Alarm alarm,
-            String severity) {
+    /**
+     * Get the alarm image.
+     * @param context faces context
+     * @param alarm component
+     * @param severity severity
+     * @return ImageComponent
+     */
+    private ImageComponent getImage(final FacesContext context,
+            final Alarm alarm, final String severity) {
 
         Theme theme = ThemeUtilities.getTheme(context);
 
@@ -137,11 +183,10 @@ public class AlarmRenderer extends ImageRenderer {
         String sevToolTip = null;
         String sevUrl = null;
 
-        // If the data for the alarm icons existed in Themes then you could obtain
-        // the necessary data from "theme.getIcon()" but you would have to transfer the Icon's
-        // data from the returned Icon to the ImageComponent to ensure that developer values
-        // are respected.
-
+        // If the data for the alarm icons existed in Themes then you could
+        // obtain the necessary data from "theme.getIcon()" but you would have
+        // to transfer the Icon's data from the returned Icon to the
+        // ImageComponent to ensure that developer values are respected.
         if (severity.equalsIgnoreCase(Alarm.SEVERITY_CRITICAL)) {
             sevIcon = ThemeImages.ALARM_CRITICAL_MEDIUM;
             sevAlt = theme.getMessage(CRITICAL_ALT_TEXT_KEY);
@@ -205,15 +250,15 @@ public class AlarmRenderer extends ImageRenderer {
     }
 
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         String severity = getSeverity((Alarm) component);
         boolean severityOk = isSeverityOk(severity);
 
         // If the severity is "ok" and there is no url just render
         // or severity was not "ok", close the img element.
-        //
         if (!(severityOk && ((Alarm) component).getUrl() == null)) {
             super.renderEnd(context, component, writer);
         }
@@ -233,24 +278,25 @@ public class AlarmRenderer extends ImageRenderer {
      * @exception IOException if an input/output error occurs
      */
     @Override
-    protected void renderAttributes(FacesContext context,
-            UIComponent component, ResponseWriter writer) throws IOException {
+    protected void renderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
     }
 
     /**
-     * Get alarm severity. 
+     * Get alarm severity.
      * Return the severity or DEFAULT_SEVERITY if severity is not set
      * or if the severity is a custom severity
      *
      * @param alarm The Alarm component.
-     * @param theme The Theme object to use.
+     * @return String
      */
-    private String getSeverity(Alarm alarm) {
+    private static String getSeverity(final Alarm alarm) {
         String severity = alarm.getSeverity();
-        if (severity == null || !(severity.equals(Alarm.SEVERITY_CRITICAL) ||
-                severity.equals(Alarm.SEVERITY_DOWN) ||
-                severity.equals(Alarm.SEVERITY_MAJOR) ||
-                severity.equals(Alarm.SEVERITY_MINOR))) {
+        if (severity == null || !(severity.equals(Alarm.SEVERITY_CRITICAL)
+                || severity.equals(Alarm.SEVERITY_DOWN)
+                || severity.equals(Alarm.SEVERITY_MAJOR)
+                || severity.equals(Alarm.SEVERITY_MINOR))) {
             severity = Alarm.DEFAULT_SEVERITY;
         }
         return severity.toLowerCase();
@@ -263,7 +309,7 @@ public class AlarmRenderer extends ImageRenderer {
      * @param severity severity to test
      * @return {@code true} if acceptable, {@code false} otherwise
      */
-    private boolean isSeverityOk(String severity) {
+    private static boolean isSeverityOk(final String severity) {
         return Alarm.DEFAULT_SEVERITY.equalsIgnoreCase(severity);
     }
 }

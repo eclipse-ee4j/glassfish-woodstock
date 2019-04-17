@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -31,22 +30,46 @@ import javax.faces.context.FacesContext;
  * Component that represents a group of table rows.
  */
 @Component(type = "com.sun.webui.jsf.Table2RowGroup",
-family = "com.sun.webui.jsf.Table2RowGroup",
-tagRendererType = "com.sun.webui.jsf.widget.Table2RowGroup",
-displayName = "Table2RowGroup", tagName = "table2RowGroup", isTag = false) // Remove isTag to run
+        family = "com.sun.webui.jsf.Table2RowGroup",
+        tagRendererType = "com.sun.webui.jsf.widget.Table2RowGroup",
+        // Remove isTag to run
+        displayName = "Table2RowGroup",
+        tagName = "table2RowGroup",
+        isTag = false)
 public final class Table2RowGroup extends TableRowGroup
         implements NamingContainer, Widget {
 
     /**
-     * A List containing Table2Column children. 
+     * A List containing Table2Column children.
      */
     private List<Table2Column> table2ColumnChildren = null;
 
+    /**
+     * Flag indicating to turn off default Ajax functionality. Set
+     * {@code ajaxify} to false when providing a different Ajax implementation.
+     */
+    @Property(name = "ajaxify",
+            displayName = "Ajaxify",
+            category = "Javascript")
+    private boolean ajaxify = true;
+
+    /**
+     * ajaxify set flag.
+     */
+    private boolean ajaxifySet = false;
+
+    /**
+     * Default constructor.
+     */
     public Table2RowGroup() {
         super();
         setRendererType("com.sun.webui.jsf.widget.Table2RowGroup");
     }
 
+    /**
+     * Get the faces context.
+     * @return FacesContext
+     */
     public FacesContext getContext() {
         return getFacesContext();
     }
@@ -71,8 +94,7 @@ public final class Table2RowGroup extends TableRowGroup
     }
 
     /**
-     * Get an Iterator over the Table2Column children found for
-     * this component.
+     * Get an Iterator over the Table2Column children found for this component.
      *
      * @return An Iterator over the Table2Column children.
      */
@@ -81,7 +103,7 @@ public final class Table2RowGroup extends TableRowGroup
             table2ColumnChildren = new ArrayList<Table2Column>();
             for (UIComponent kid : getChildren()) {
                 if ((kid instanceof Table2Column)) {
-                    table2ColumnChildren.add((Table2Column)kid);
+                    table2ColumnChildren.add((Table2Column) kid);
                 }
             }
         }
@@ -93,6 +115,7 @@ public final class Table2RowGroup extends TableRowGroup
      * <p>
      * Note: UI guidelines recommend a default value of 25 rows per page.
      * </p>
+     *
      * @return The number of rows to be displayed for a paginated table.
      */
     @Override
@@ -102,29 +125,21 @@ public final class Table2RowGroup extends TableRowGroup
     }
 
     /**
-     * Flag indicating to turn off default Ajax functionality.
-     * Set {@code ajaxify} to false when providing a different Ajax
-     * implementation.
-     */
-    @Property(name = "ajaxify", displayName = "Ajaxify", category = "Javascript")
-    private boolean ajaxify = true;
-    private boolean ajaxify_set = false;
-
-    /**
      * Test if default Ajax functionality should be turned off.
-     * @return 
+     *
+     * @return {@code boolean}
      */
     public boolean isAjaxify() {
-        if (this.ajaxify_set) {
+        if (this.ajaxifySet) {
             return this.ajaxify;
         }
-        ValueExpression _vb = getValueExpression("ajaxify");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("ajaxify");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result);
+                return ((Boolean) result);
             }
         }
         return true;
@@ -132,10 +147,11 @@ public final class Table2RowGroup extends TableRowGroup
 
     /**
      * Set flag indicating to turn off default Ajax functionality.
-     * @param ajaxify
+     *
+     * @param newAjaxify ajaxify
      */
-    public void setAjaxify(boolean ajaxify) {
-        this.ajaxify = ajaxify;
-        this.ajaxify_set = true;
+    public void setAjaxify(final boolean newAjaxify) {
+        this.ajaxify = newAjaxify;
+        this.ajaxifySet = true;
     }
 }

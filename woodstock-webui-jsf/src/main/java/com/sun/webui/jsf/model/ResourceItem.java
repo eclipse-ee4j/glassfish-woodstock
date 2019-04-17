@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,20 +17,21 @@
 package com.sun.webui.jsf.model;
 
 /**
- * This interface describes a selectable item in the filehooser listbox.
- * The item has 5 values which can be implemented based on the resource type
- * in question:
- * a) An Object representing the value of the item
- * b) A key that will be used as the value of the <option> tag in the 
- *    filechooser listbox
- * c) A label that will be the label of the <option> tag described above.
- * d) A boolean flag indicating whether the option should be disabled or not.
- * e) A boolean flag indicating if the resource being represented by this
- *    item is a container resource or a child resource. In the realm of
- *    of File systems this would translate to directory and file respectively.
- * 
- *
- * @author deep
+ * This interface describes a selectable item in the file chooser list-box. The
+ * item has 5 values which can be implemented based on the resource type in
+ * question:
+ * <ul>
+ * <li>An Object representing the value of the item</li>
+ * <li>A key that will be used as the value of the {@code <option>} tag in the
+ * file chooser list-box></li>
+ * <li>A label that will be the label of the {@code <option>} tag described
+ * above.</li>
+ * <li>A {@code boolean} flag indicating whether the option should be disabled
+ * or not.</li>
+ * <li>A {@code boolean} flag indicating if the resource being represented by
+ * this item is a container resource or a child resource. In the realm of of
+ * File systems this would translate to directory and file respectively.</li>
+ * </ul>
  */
 public interface ResourceItem {
 
@@ -41,67 +42,60 @@ public interface ResourceItem {
      *
      * @return an object which is the value of the ResourceItem.
      */
-    public Object getItemValue();
+    Object getItemValue();
 
     /**
      * Returns a String representing the item key.
-     * 
      *
      * @return returns an object representing the resource item
      */
-    public String getItemKey();
+    String getItemKey();
 
     /**
      * Set the item key.
-     * 
      *
      * @param key - the resource item key
      */
-    public void setItemKey(String key);
+    void setItemKey(String key);
 
     /**
      * Returns an object representing the resource item.
-     * 
      *
      * @return returns an object representing the resource item
      */
-    public String getItemLabel();
+    String getItemLabel();
 
     /**
      * Returns an object representing the resource item.
-     * 
      *
-     * @return returns an object representing the resource item
+     * @param label new value
      */
-    public void setItemLabel(String label);
+    void setItemLabel(String label);
 
     /**
      * Returns an boolean value indicating if the item should be selectable
-     * in the filechooser's listbox.
-     * 
+     * in the file chooser list-box.
      *
-     * @return true if the item in the listbox should be disabled. 
+     * @return true if the item in the list-box should be disabled.
      */
-    public boolean isItemDisabled();
+    boolean isItemDisabled();
 
     /**
-     * Sets the item disabled flag. If set to true the item should 
-     * not be selectable.
-     * 
-     * 
+     * Sets the item disabled flag.If set to true the item should not be
+     * selectable.
      *
-     * @enabled flag when set to true indicates item is not selectable.
+     * @param disabled flag when set to true indicates item is not selectable.
      */
-    public void setItemDisabled(boolean disabled);
+    void setItemDisabled(boolean disabled);
 
     /**
-     * Returns a flag indicating if the resource item is a container. If true 
+     * Returns a flag indicating if the resource item is a container. If true
      * the item is a container item.
-     * 
      *
      * @return true if the item is a container, false otherwise.
      */
-    public boolean isContainerItem();
+    boolean isContainerItem();
 
-    public boolean equals(Object resourceItem);
+    @Override
+    boolean equals(Object resourceItem);
 }

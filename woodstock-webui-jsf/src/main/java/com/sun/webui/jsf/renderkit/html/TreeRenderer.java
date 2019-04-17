@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -43,21 +42,27 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 /**
  * Renderer for a {@link Tree} component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Tree"))
-public class TreeRenderer extends TreeNodeRenderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Tree"))
+public final class TreeRenderer extends TreeNodeRenderer {
 
+    /**
+     * Skip tree link property.
+     */
     private static final String SKIPTREE_LINK = "skipTreeLink";
 
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }
     }
 
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         Iterator messages = context.getMessages();
         if (messages != null) {
@@ -78,17 +83,15 @@ public class TreeRenderer extends TreeNodeRenderer {
 
         ResponseWriter writer = context.getResponseWriter();
         Tree node = (Tree) component;
-
         Theme theme = getTheme(context);
 
         // The title bar can be defined with either ui:tree tag attributes or
-        // facets. 
+        // facets.
         // The title bar is rendered if the tree component includes imageURL
-        // property 
+        // property
         // for the graphic, the text property for the title text, the content
-        // facet, 
+        // facet,
         // or the image facet.
-
         // render outermost div of the tree.
         writer.write("\n\n\n");
         writer.startElement(HTMLElements.DIV, node);
@@ -118,10 +121,10 @@ public class TreeRenderer extends TreeNodeRenderer {
         writer.write("\n");
         String rootText = node.getText();
         String rootImageURL = node.getImageURL();
-        boolean hasRootContentFacet =
-                (node.getFacet(Tree.TREE_CONTENT_FACET_NAME) != null);
-        boolean hasRootImageFacet =
-                (node.getFacet(Tree.TREE_IMAGE_FACET_NAME) != null);
+        boolean hasRootContentFacet
+                = (node.getFacet(Tree.TREE_CONTENT_FACET_NAME) != null);
+        boolean hasRootImageFacet
+                = (node.getFacet(Tree.TREE_IMAGE_FACET_NAME) != null);
 
         if ((rootText != null && rootText.length() > 0)
                 || rootImageURL != null
@@ -142,7 +145,7 @@ public class TreeRenderer extends TreeNodeRenderer {
                     theme.getStyleClass(ThemeStyles.TREE_ROOT_ROW_HEADER),
                     null);
             writer.endElement(HTMLElements.DIV);
-            writer.write("\n"); // NOI18N
+            writer.write("\n");
 
             writer.startElement(HTMLElements.DIV, node); // tree root row start
             writer.writeAttribute(HTMLAttributes.ID, titlebarDivID, null);
@@ -150,18 +153,18 @@ public class TreeRenderer extends TreeNodeRenderer {
                     theme.getStyleClass(ThemeStyles.TREE_ROOT_ROW), null);
             writer.write("\n");
             Iterator imageIter = node.getImageKeys().iterator();
-            if (((node.getUrl() != null) && (node.getUrl().length() > 0)) ||
-                    hasRootContentFacet) {
+            if (((node.getUrl() != null) && (node.getUrl().length() > 0))
+                    || hasRootContentFacet) {
 
                 renderTreeRow(node, imageIter, context, writer);
 
             } else {
 
-                writer.write("\n"); // NOI18N
+                writer.write("\n");
                 writer.startElement(HTMLElements.SPAN, node);
                 writer.writeAttribute(HTMLAttributes.CLASS,
                         theme.getStyleClass(ThemeStyles.TREE_TITLE), null);
-                writer.write("\n"); // NOI18N
+                writer.write("\n");
                 renderTreeRow(node, imageIter, context, writer);
                 writer.endElement(HTMLElements.SPAN);
             }
@@ -171,7 +174,6 @@ public class TreeRenderer extends TreeNodeRenderer {
 
         // Check if the TreeNode has children. If so, render each child which
         // in turn would cause each of the descendent nodes to get rendered.
-
         Iterator<UIComponent> iter = node.getChildren().iterator();
 
         //writer.writeText("\n", null);
@@ -211,8 +213,8 @@ public class TreeRenderer extends TreeNodeRenderer {
     }
 
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component)
             throws IOException {
-        // Do nothing...
     }
 }

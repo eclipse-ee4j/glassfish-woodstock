@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -14,9 +14,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * $Id: FieldRenderer.java,v 1.1.4.1.2.1 2009-12-29 04:52:44 jyeary Exp $
- */
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -39,32 +36,61 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>Renderer for {@link com.sun.webui.jsf.component.TextField} components.</p>
+ * Renderer for {@link com.sun.webui.jsf.component.TextField} components.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Field"))
 public class FieldRenderer extends javax.faces.render.Renderer {
 
     /**
-     * <p>The list of attribute names in the HTML 4.01 Specification that
-     * correspond to the entity type <em>%events;</em>.</p>
+     * The list of attribute names in the HTML 4.01 Specification that
+     * correspond to the entity type <em>%events;</em>.
      */
-    public static final String[] STRING_ATTRIBUTES = {"onBlur", "onChange", "onClick", "onDblClick", //NOI18N
-        "onFocus", "onMouseDown", "onMouseUp", "onMouseOver", //NOI18N
-        "onMouseMove", "onMouseOut", //NOI18N
-        "onKeyDown", "onKeyPress", "onKeyUp", "onSelect" //NOI18N
+    public static final String[] STRING_ATTRIBUTES = {
+        "onBlur",
+        "onChange",
+        "onClick",
+        "onDblClick",
+        "onFocus",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseOver",
+        "onMouseMove",
+        "onMouseOut",
+        "onKeyDown",
+        "onKeyPress",
+        "onKeyUp",
+        "onSelect"
     };
-    public static final String SPACER_ID = "_spacer";
-    private final static boolean DEBUG = false;
 
+    /**
+     * Spacer id.
+     */
+    public static final String SPACER_ID = "_spacer";
+
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
+     * This implementation renders the component.
+     * @param context faces context
+     * @param component UI component
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
 
         if (!(component instanceof Field)) {
-            Object[] params = {component.toString(),
+            Object[] params = {
+                component.toString(),
                 this.getClass().getName(),
-                Field.class.getName()};
-            String message = MessageUtil.getMessage("com.sun.webui.jsf.resources.LogMessages", //NOI18N
-                    "Renderer.component", params);              //NOI18N
+                Field.class.getName()
+            };
+            String message = MessageUtil
+                    .getMessage("com.sun.webui.jsf.resources.LogMessages",
+                    "Renderer.component", params);
             throw new FacesException(message);
         }
 
@@ -72,14 +98,18 @@ public class FieldRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * <p>Render the TextField depending on the value of the
-     * <code>type</code> property.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
+     * Render the TextField depending on the value of the
+     * {@code type} property.
+     * @param context {@code FacesContext} for the current request
+     * @param component {@code UIComponent} to be rendered
+     * @param type field type
+     * @param styles CSS styles
+     * @return {@code boolean}
      * @exception IOException if an input/output error occurs
      */
-    public boolean renderField(FacesContext context, Field component, String type,
-            String[] styles)
+    @SuppressWarnings("checkstyle:magicnumber")
+    public boolean renderField(final FacesContext context,
+            final Field component, final String type, final String[] styles)
             throws IOException {
 
         String id = component.getClientId(context);
@@ -96,14 +126,14 @@ public class FieldRenderer extends javax.faces.render.Renderer {
 
             // Add a 10 px spacer image after the label text so that the
             // label has the right distance (10px) from the field, since
-            // a developer has no control over the layout in this case.                       
+            // a developer has no control over the layout in this case.
             Theme theme = ThemeUtilities.getTheme(context);
             Icon icon = ThemeUtilities.getIcon(theme, ThemeImages.DOT);
             icon.setId(component.getId().concat(SPACER_ID));
             icon.setHeight(1);
             icon.setWidth(10);
             RenderingUtilities.renderComponent(icon, context);
-            writer.writeText("\n", null); //NOI18N                  
+            writer.writeText("\n", null);
 
             // Set the ID to use on the inner component
             if (component instanceof Upload) {
@@ -118,11 +148,13 @@ public class FieldRenderer extends javax.faces.render.Renderer {
             UIComponent text = component.getReadOnlyComponent(context);
             if (label == null) {
                 text.getAttributes().put("style", component.getStyle());
-                text.getAttributes().put("styleClass", component.getStyleClass());
+                text.getAttributes().put("styleClass",
+                        component.getStyleClass());
             }
             RenderingUtilities.renderComponent(text, context);
         } else {
-            renderInput(component, type, id, label == null, styles, context, writer);
+            renderInput(component, type, id, label == null, styles, context,
+                    writer);
         }
         if (label != null) {
             writer.writeText("\n", null);
@@ -131,69 +163,78 @@ public class FieldRenderer extends javax.faces.render.Renderer {
         return spanRendered;
     }
 
-    protected void renderInput(Field component, String type, String id,
-            boolean renderUserStyles, String[] styles,
-            FacesContext context, ResponseWriter writer)
-            throws IOException {
+    /**
+     * Render the input.
+     * @param component UI component
+     * @param type type
+     * @param id id
+     * @param renderUserStyles user styles
+     * @param styles CSS styles
+     * @param context faces context
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
+    protected void renderInput(final Field component, final String type,
+            final String id, final boolean renderUserStyles,
+            final String[] styles, final FacesContext context,
+            final ResponseWriter writer) throws IOException {
 
         if (component instanceof TextArea) {
-            writer.startElement("textarea", component); //NOI18N        
+            writer.startElement("textarea", component);
             int rows = ((TextArea) component).getRows();
             if (rows > 0) {
-                writer.writeAttribute("rows", String.valueOf(rows), "rows"); // NOI18N
+                writer.writeAttribute("rows", String.valueOf(rows), "rows");
             }
             int columns = component.getColumns();
 
             if (columns > 0) {
-                writer.writeAttribute("cols", //NOI18N
+                writer.writeAttribute("cols",
                         String.valueOf(columns),
-                        "columns"); //NOI18N
+                        "columns");
             }
         } else {
-            writer.startElement("input", component); //NOI18N
-            writer.writeAttribute("type", type, null); //NOI18N
+            writer.startElement("input", component);
+            writer.writeAttribute("type", type, null);
 
             int columns = component.getColumns();
             if (columns > 0) {
-                writer.writeAttribute("size", //NOI18N
+                writer.writeAttribute("size",
                         String.valueOf(columns),
-                        "columns"); //NOI18N
+                        "columns");
             }
         }
 
-        writer.writeAttribute("id", id, null); //NOI18N
-        writer.writeAttribute("name", id, null); //NOI18N
+        writer.writeAttribute("id", id, null);
+        writer.writeAttribute("name", id, null);
 
         if (component.isDisabled()) {
-            writer.writeAttribute("disabled", "disabled", null); //NOI18N
+            writer.writeAttribute("disabled", "disabled", null);
         }
-
-
 
         int maxlength = component.getMaxLength();
         if (maxlength > 0) {
             writer.writeAttribute("maxlength",
                     String.valueOf(maxlength),
-                    "maxLength"); // NOI18N
+                    "maxLength");
         }
 
         // Render attributes based on the "toolTip" properties
         String toolTip = component.getToolTip();
         if (toolTip != null && toolTip.length() > 0) {
-            writer.writeAttribute("title", toolTip, "toolTip"); // NOI18N
+            writer.writeAttribute("title", toolTip, "toolTip");
         }
 
         int tabIndex = component.getTabIndex();
         if (tabIndex > 0) {
-            writer.writeAttribute("tabindex", // NOI18N
+            writer.writeAttribute("tabindex",
                     String.valueOf(tabIndex),
-                    "tabIndex"); // NOI18N
+                    "tabIndex");
         }
 
         RenderingUtilities.writeStringAttributes(component, writer,
                 STRING_ATTRIBUTES);
 
-        String styleClass = null;
+        String styleClass;
         if (component.isDisabled()) {
             styleClass = styles[1];
         } else {
@@ -201,7 +242,6 @@ public class FieldRenderer extends javax.faces.render.Renderer {
         }
 
         String style = null;
-
         if (renderUserStyles) {
 
             String compStyleClass = getStyleClass(component, styles[2]);
@@ -215,9 +255,9 @@ public class FieldRenderer extends javax.faces.render.Renderer {
             }
         }
 
-        writer.writeAttribute("class", styleClass, null); //NOI18N
+        writer.writeAttribute("class", styleClass, null);
         if (style != null) {
-            writer.writeAttribute("style", style, null); //NOI18N
+            writer.writeAttribute("style", style, null);
         }
 
         // Record the value that is rendered.
@@ -233,7 +273,6 @@ public class FieldRenderer extends javax.faces.render.Renderer {
         // therefore assume that this is an immediate or premature
         // render response. Therefore just assume that if the rendered
         // value was null, the saved information is still valid.
-        // 
         if (component.getSubmittedValue() == null) {
             ConversionUtilities.setRenderedValue(component,
                     component.getValue());
@@ -241,21 +280,26 @@ public class FieldRenderer extends javax.faces.render.Renderer {
 
         // Still call the component's getValueAsString method
         // in order to render it.
-        //
         String value = component.getValueAsString(context);
         if (component instanceof TextArea) {
-            writer.writeText(value, "value"); //NOI18N
+            writer.writeText(value, "value");
             writer.endElement("textarea");
         } else {
             if (value != null) {
-                writer.writeAttribute("value", value, "value"); //NOI18N
+                writer.writeAttribute("value", value, "value");
             }
             writer.endElement("input");
         }
     }
 
-    // Prepend the hidden style to the user's added style if necessary
-    protected String getStyleClass(Field component, String hiddenStyle) {
+    /**
+     * Prepend the hidden style to the user's added style if necessary.
+     * @param component UI component
+     * @param hiddenStyle hidden style
+     * @return String
+     */
+    protected String getStyleClass(final Field component,
+            final String hiddenStyle) {
 
         String style = component.getStyleClass();
         if (style != null && style.length() == 0) {
@@ -273,45 +317,45 @@ public class FieldRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * Decode the component component
+     * Decode the component.
      * @param context The FacesContext associated with this request
      * @param component The TextField component to decode
      */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
+
         HiddenFieldRenderer.decodeInput(context, component);
     }
 
     /**
-     * <p>No-op.</p>
-     * 
+     * This implementation is empty.
+     *
      * @param context {@link FacesContext} for the response we are creating
      * @param component {@link UIComponent} whose children are to be rendered
-     * 
-     * @exception IOException if an input/output error occurs while rendering
-     * @exception NullPointerException if <code>context</code>
-     *  or <code>component</code> is <code>null</code>
      */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component) {
-        return;
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) {
     }
 
     /**
-     * <p>No-op</p>
-     * 
+     * This implementation is empty.
+     *
      * @param context {@link FacesContext} for the request we are processing
      * @param component {@link UIComponent} to be rendered
      */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) {
-        return;
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) {
     }
 
     /**
-     * <p>Returns true, meaning that the FieldRenderer is responsible
-     * for rendering the children the component it is asked to render.</p>
-     * @return false;
+     * This implementation returns {@code true}, meaning that the FieldRenderer
+     * is responsible for rendering the children the component it is asked to
+     * render.
+     *
+     * @return {@code boolean}
      */
     @Override
     public boolean getRendersChildren() {
@@ -319,13 +363,12 @@ public class FieldRenderer extends javax.faces.render.Renderer {
     }
 
     /**
-     * Log an error - only used during development time.
+     * Get the CSS styles.
+     * @param context faces context
+     * @return String[]
      */
-    void log(String s) {
-        System.out.println(this.getClass().getName() + "::" + s); //NOI18N
-    }
-
-    String[] getStyles(FacesContext context) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    protected String[] getStyles(final FacesContext context) {
         Theme theme = ThemeUtilities.getTheme(context);
         String[] styles = new String[4];
         styles[0] = theme.getStyleClass(ThemeStyles.TEXT_FIELD);
@@ -335,29 +378,30 @@ public class FieldRenderer extends javax.faces.render.Renderer {
         return styles;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Render the TextField depending on the value of the
-     * <code>type</code> property.</p>
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>UIComponent</code> to be rendered
+     * Render the TextField depending on the value of the
+     * {@code type} property.
+     * @param component {@code UIComponent} to be rendered
+     * @param id component id
+     * @param hiddenStyle hidden style
+     * @param writer writer to use
      * @exception IOException if an input/output error occurs
      */
-    private void renderOpeningSpan(Field component, String id,
-            String hiddenStyle, ResponseWriter writer) throws IOException {
-        writer.startElement("span", component); //NOI18N
-        writer.writeAttribute("id", id, "id"); //NOI18N
+    private void renderOpeningSpan(final Field component, final String id,
+            final String hiddenStyle, final ResponseWriter writer)
+            throws IOException {
+
+        writer.startElement("span", component);
+        writer.writeAttribute("id", id, "id");
 
         String style = component.getStyle();
         if (style != null && style.length() > 0) {
-            writer.writeAttribute("style", style, "style"); //NOI18N
+            writer.writeAttribute("style", style, "style");
         }
 
         style = getStyleClass(component, hiddenStyle);
         if (style != null) {
-            writer.writeAttribute("class", style, "class"); //NOI18N
+            writer.writeAttribute("class", style, "class");
         }
     }
 }

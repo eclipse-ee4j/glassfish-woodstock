@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -31,33 +30,31 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.RenderingUtilities;
 
 /**
- * <p>Renders an instance of the TimeStamp component.</p>
- *
- * @author Sean Comerford
+ * Renders an instance of the TimeStamp component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TimeStamp"))
-public class TimeStampRenderer extends AbstractRenderer {
-
-    /** Creates a new instance of TimeStampRenderer */
-    public TimeStampRenderer() {
-    }
-    // Core attributes that are simple pass throughs
-    private static final String coreAttributes[] = {"style", "title"}; // NOI18N
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TimeStamp"))
+public final class TimeStampRenderer extends AbstractRenderer {
 
     /**
-     * <p>Render the end element for the TimeStamp.</p>
-     *
-     * @param context <code>FacesContext</code> for the current request
-     * @param component <code>EditableValueHolder</code> component whose
-     *  submitted value is to be stored
-     * @param writer <code>ResponseWriter</code> to which the element
-     *  start should be rendered
-     *
-     * @exception IOException if an input/output error occurs
+     * Creates a new instance of TimeStampRenderer.
      */
+    public TimeStampRenderer() {
+    }
+
+    /**
+     * Core attributes that are simple pass through.
+     */
+    private static final String[] CORE_ATTRIBUTES = {
+        "style",
+        "title"
+    };
+
     @Override
-    protected void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    protected void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
+
         TimeStamp timeStamp = (TimeStamp) component;
         Theme theme = ThemeUtilities.getTheme(context);
 
@@ -67,46 +64,49 @@ public class TimeStampRenderer extends AbstractRenderer {
 
         String textStyle = theme.getStyleClass(ThemeStyles.TIMESTAMP_TEXT);
 
-        StringBuffer sb = new StringBuffer(timeStamp.getClientId(context));
+        StringBuilder sb = new StringBuilder(timeStamp.getClientId(context));
         int idlen = sb.length();
 
-        writer.startElement("span", timeStamp); // NOI18N
-        writer.writeAttribute("id", sb.toString(), "id"); // NOI18N
-        writer.startElement("span", timeStamp); // NOI18N
+        writer.startElement("span", timeStamp);
+        writer.writeAttribute("id", sb.toString(), "id");
+        writer.startElement("span", timeStamp);
 
-        writer.writeAttribute("id", sb.append("_span1"), "id"); // NOI18N
+        writer.writeAttribute("id", sb.append("_span1"), "id");
         //Reset the length
         sb.setLength(idlen);
 
-        RenderingUtilities.renderStyleClass(context, writer, component, textStyle);
-        addStringAttributes(context, component, writer, coreAttributes);
+        RenderingUtilities.renderStyleClass(context, writer, component,
+                textStyle);
+        addStringAttributes(context, component, writer, CORE_ATTRIBUTES);
 
         String message = timeStamp.getText();
         if (message == null) {
             // use the default "Last updated:" message
-            message = theme.getMessage("TimeStamp.lastUpdate"); // NOI18N
+            message = theme.getMessage("TimeStamp.lastUpdate");
         }
 
         writer.write(message);
-        writer.endElement("span"); // NOI18N
-        writer.write("&nbsp;"); // NOI18N
-        writer.startElement("span", timeStamp); // NOI18N
+        writer.endElement("span");
+        writer.write("&nbsp;");
+        writer.startElement("span", timeStamp);
 
-        writer.writeAttribute("id", sb.append("_span2"), "id"); // NOI18N
+        writer.writeAttribute("id", sb.append("_span2"), "id");
 
-        RenderingUtilities.renderStyleClass(context, writer, component, textStyle);
-        addStringAttributes(context, component, writer, coreAttributes);
+        RenderingUtilities.renderStyleClass(context, writer, component,
+                textStyle);
+        addStringAttributes(context, component, writer, CORE_ATTRIBUTES);
 
-        Locale locale =
-                FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        Locale locale
+                = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 
         DateFormat dateFormat = DateFormat.getDateTimeInstance(
-                Integer.parseInt(theme.getMessage("TimeStamp.dateStyle")), // NOI18N
-                Integer.parseInt(theme.getMessage("TimeStamp.timeStyle")), locale); // NOI18N
+                Integer.parseInt(theme.getMessage("TimeStamp.dateStyle")),
+                Integer.parseInt(theme.getMessage("TimeStamp.timeStyle")),
+                locale);
 
-        writer.write(dateFormat.format(new Date())); // NOI18N
+        writer.write(dateFormat.format(new Date()));
 
-        writer.endElement("span"); // NOI18N
-        writer.endElement("span"); // NOI18N
+        writer.endElement("span");
+        writer.endElement("span");
     }
 }

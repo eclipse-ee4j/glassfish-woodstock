@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,13 +16,8 @@
 
 package org.example;
 
-import com.sun.faces.annotation.Attribute;
 import com.sun.faces.annotation.Property;
 
-/**
- *
- * @author gjmurphy
- */
 public class SuperBean05 {
     
     @Property(isHidden=true, displayName="This element is not the display name", category="myFavoriteProperties")

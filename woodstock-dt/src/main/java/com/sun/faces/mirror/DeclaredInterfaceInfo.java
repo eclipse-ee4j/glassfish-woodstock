@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -24,13 +24,17 @@ import javax.lang.model.element.TypeElement;
  * properties, which can be useful during source code generation. In addition to
  * providing a map of all declared properties, it provides a map which contains
  * all inherited properties.
- *
- *
- * @author gjmurphy
  */
-public class DeclaredInterfaceInfo extends DeclaredTypeInfo {
+public final class DeclaredInterfaceInfo extends DeclaredTypeInfo {
 
-    DeclaredInterfaceInfo(ProcessingEnvironment env, TypeElement decl) {
+    /**
+     * Create a new instance.
+     * @param env annotation processing environment
+     * @param decl type declaration representing the interface
+     */
+    DeclaredInterfaceInfo(final ProcessingEnvironment env,
+            final TypeElement decl) {
+
         super(env, decl);
     }
 }

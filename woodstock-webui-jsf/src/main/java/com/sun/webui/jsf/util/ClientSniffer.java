@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -51,6 +51,7 @@ import javax.faces.context.FacesContext;
  * </pre></p><p>
  *
  */
+@SuppressWarnings("checkstyle:magicnumber")
 public final class ClientSniffer {
 
     // User Agent Headers (DON'T DELETE).
@@ -84,10 +85,14 @@ public final class ClientSniffer {
     // HotJava 1.0.1    HotJava/1.0.1/JRE1.1.3
     // Generic    Profile/MIDP-1.0 Configuration/CLDC-1.0
 
-    // User agent.
+    /**
+     * User agent.
+     */
     private String agent = null;
 
-    // User agent major version number.
+    /**
+     * User agent major version number.
+     */
     private int major = -1;
 
     /**
@@ -96,7 +101,7 @@ public final class ClientSniffer {
      * @param context {@code FacesContext} which should be used to extract
      * the user agent.
      */
-    public ClientSniffer(FacesContext context) {
+    public ClientSniffer(final FacesContext context) {
         String version = null;
         setUserAgent(context);
         agent = getUserAgent();
@@ -148,7 +153,7 @@ public final class ClientSniffer {
      *
      * @return  A {@code ClientSniffer} instance.
      */
-    public static ClientSniffer getInstance(FacesContext context) {
+    public static ClientSniffer getInstance(final FacesContext context) {
         // Look for a cached one
         Map<String, Object> requestMap = context.getExternalContext()
                 .getRequestMap();
@@ -172,7 +177,7 @@ public final class ClientSniffer {
      *
      * @param context The {@code FacesContext}
      */
-    protected void setUserAgent(FacesContext context) {
+    protected void setUserAgent(final FacesContext context) {
         Map headerMap = context.getExternalContext().getRequestHeaderMap();
         if (null != headerMap) {
             agent = (String) headerMap.get("USER-AGENT");
@@ -209,8 +214,8 @@ public final class ClientSniffer {
     public boolean isWin() {
         boolean result = false;
 
-        if ((agent != null) && ((agent.indexOf("win") != -1)
-                || (agent.indexOf("16bit") != -1))) {
+        if ((agent != null) && ((agent.contains("win"))
+                || (agent.contains("16bit")))) {
             result = true;
         }
 
@@ -534,7 +539,7 @@ public final class ClientSniffer {
      * @param context The {@code FacesContext}
      * @return  The {@link ClientType}.
      */
-    public static ClientType getClientType(FacesContext context) {
+    public static ClientType getClientType(final FacesContext context) {
         Map map = context.getExternalContext().getRequestHeaderMap();
         if (null == map) {
             return ClientType.OTHER;

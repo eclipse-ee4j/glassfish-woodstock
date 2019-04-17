@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
@@ -29,79 +28,68 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.io.IOException;
 import javax.faces.component.UIComponent;
-import javax.faces.component.NamingContainer;
+import javax.faces.component.UINamingContainer;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 /**
  * This class renders TablePanels components.
  * <p>
- * Note: To see the messages logged by this class, set the following global
- * defaults in your JDK's "jre/lib/logging.properties" file.
- * </p><p><pre>
+ * <pre>
  * java.util.logging.ConsoleHandler.level = FINE
  * com.sun.webui.jsf.renderkit.html.TablePanelsRenderer.level = FINE
- * </pre></p>
+ * </pre>
+ * </p>
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.TablePanels"))
-public class TablePanelsRenderer extends javax.faces.render.Renderer {
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TablePanels"))
+public final class TablePanelsRenderer extends javax.faces.render.Renderer {
 
     /**
      * The set of String pass-through attributes to be rendered.
      * <p>
      * Note: The WIDTH, HEIGHT, and BGCOLOR attributes are all deprecated (in
-     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and 
-     * LANG attributes are not cuurently supported.
+     * the HTML 4.0 spec) in favor of style sheets. In addition, the DIR and
+     * LANG attributes are not currently supported.
      * </p>
      */
-    private static final String stringAttributes[] = {
-        "abbr", //NOI18N
-        "align", //NOI18N
-        "axis", //NOI18N
-        "bgColor", //NOI18N
-        "char", //NOI18N
-        "charOff", //NOI18N
-        "dir", //NOI18N
-        "headers", //NOI18N
-        "height", //NOI18N
-        "lang", //NOI18N
-        "onClick", //NOI18N
-        "onDblClick", //NOI18N
-        "onKeyDown", //NOI18N
-        "onKeyPress", //NOI18N
-        "onKeyUp", //NOI18N
-        "onMouseDown", //NOI18N
-        "onMouseUp", //NOI18N
-        "onMouseMove", //NOI18N
-        "onMouseOut", //NOI18N
-        "onMouseOver", //NOI18N
-        "style", //NOI18N
-        "valign", //NOI18N
-        "width"}; //NOI18N
+    private static final String[] STRING_ATTRIBUTES = {
+        "abbr",
+        "align",
+        "axis",
+        "bgColor",
+        "char",
+        "charOff",
+        "dir",
+        "headers",
+        "height",
+        "lang",
+        "onClick",
+        "onDblClick",
+        "onKeyDown",
+        "onKeyPress",
+        "onKeyUp",
+        "onMouseDown",
+        "onMouseUp",
+        "onMouseMove",
+        "onMouseOut",
+        "onMouseOver",
+        "style",
+        "valign",
+        "width"
+    };
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Renderer methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /**
-     * Render the beginning of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeBegin(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeBegin", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeBegin",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeBegin", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeBegin", "Component not rendered, nothing to display");
             return;
         }
 
@@ -110,26 +98,17 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
         renderEnclosingTagStart(context, panel, writer);
     }
 
-    /**
-     * Render the children of the specified UIComponent to the output stream or
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be decoded.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeChildren", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeChildren",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeChildren", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeChildren", "Component not rendered, nothing to display");
             return;
         }
 
@@ -146,26 +125,17 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
         renderSortPanel(context, panel, writer);
     }
 
-    /**
-     * Render the ending of the specified UIComponent to the output stream or 
-     * writer associated with the response we are creating.
-     *
-     * @param context FacesContext for the current request.
-     * @param component UIComponent to be rendered.
-     *
-     * @exception IOException if an input/output error occurs.
-     * @exception NullPointerException if context or component is null.
-     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
-            log("encodeEnd", //NOI18N
-                    "Cannot render, FacesContext or UIComponent is null"); //NOI18N
+            log("encodeEnd",
+                    "Cannot render, FacesContext or UIComponent is null");
             throw new NullPointerException();
         }
         if (!component.isRendered()) {
-            log("encodeEnd", "Component not rendered, nothing to display"); //NOI18N
+            log("encodeEnd", "Component not rendered, nothing to display");
             return;
         }
 
@@ -174,19 +144,11 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
         renderEnclosingTagEnd(context, panel, writer);
     }
 
-    /**
-     * Return a flag indicating whether this Renderer is responsible
-     * for rendering the children the component it is asked to render.
-     * The default implementation returns false.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Panel methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render filter panel for TablePanels components.
      *
@@ -196,27 +158,34 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderFilterPanel(FacesContext context,
-            TablePanels component, ResponseWriter writer) throws IOException {
+    protected void renderFilterPanel(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderFilterPanel", //NOI18N
-                    "Cannot render filter panel, TablePanels is null"); //NOI18N
+            log("renderFilterPanel",
+                    "Cannot render filter panel, TablePanels is null");
             return;
         }
 
         // Get facet.
         Table table = component.getTableAncestor();
-        UIComponent facet = (table != null)
-                ? table.getFacet(Table.FILTER_PANEL_FACET) : null;
+        UIComponent facet;
+        if (table != null) {
+            facet = table.getFacet(Table.FILTER_PANEL_FACET);
+        } else {
+            facet = null;
+        }
         if (!(facet != null && facet.isRendered())) {
-            log("renderFilterPanel", //NOI18N
-                    "Filter panel not rendered, nothing to display"); //NOI18N
+            log("renderFilterPanel",
+                    "Filter panel not rendered, nothing to display");
             return;
         }
 
         // Render filter panel.
-        renderPanelStart(context, component, writer, TablePanels.FILTER_PANEL_ID,
-                getTheme().getMessage("table.panel.filterTitle"), null); //NOI18N
+        renderPanelStart(context, component, writer,
+                TablePanels.FILTER_PANEL_ID, getTheme().getMessage(
+                        "table.panel.filterTitle"), null);
         RenderingUtilities.renderComponent(facet, context);
         renderPanelEnd(writer);
     }
@@ -230,27 +199,34 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderPreferencesPanel(FacesContext context,
-            TablePanels component, ResponseWriter writer) throws IOException {
+    protected void renderPreferencesPanel(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderPreferencesPanel", //NOI18N
-                    "Cannot render preferences panel, TablePanels is null"); //NOI18N
+            log("renderPreferencesPanel",
+                    "Cannot render preferences panel, TablePanels is null");
             return;
         }
 
         // Get facet.
         Table table = component.getTableAncestor();
-        UIComponent facet = (table != null)
-                ? table.getFacet(Table.PREFERENCES_PANEL_FACET) : null;
+        UIComponent facet;
+        if (table != null) {
+            facet = table.getFacet(Table.PREFERENCES_PANEL_FACET);
+        } else {
+            facet = null;
+        }
         if (!(facet != null && facet.isRendered())) {
-            log("renderPreferencesPanel", //NOI18N
-                    "Preferences panel not rendered, nothing to display"); //NOI18N
+            log("renderPreferencesPanel",
+                    "Preferences panel not rendered, nothing to display");
             return;
         }
 
         // Render filter panel.
-        renderPanelStart(context, component, writer, TablePanels.PREFERENCES_PANEL_ID,
-                getTheme().getMessage("table.panel.preferencesTitle"), null); //NOI18N
+        renderPanelStart(context, component, writer,
+                TablePanels.PREFERENCES_PANEL_ID,
+                getTheme().getMessage("table.panel.preferencesTitle"), null);
         RenderingUtilities.renderComponent(facet, context);
         renderPanelEnd(writer);
     }
@@ -264,24 +240,30 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderSortPanel(FacesContext context,
-            TablePanels component, ResponseWriter writer) throws IOException {
+    protected void renderSortPanel(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderSortPanel", //NOI18N
-                    "Cannot render sort panel, TablePanels is null"); //NOI18N
+            log("renderSortPanel",
+                    "Cannot render sort panel, TablePanels is null");
             return;
         }
 
         // Render filter panel
         Theme theme = getTheme();
         renderPanelStart(context, component, writer, TablePanels.SORT_PANEL_ID,
-                theme.getMessage("table.panel.sortTitle"), //NOI18N
-                theme.getMessage("table.panel.help")); //NOI18N
+                theme.getMessage("table.panel.sortTitle"),
+                theme.getMessage("table.panel.help"));
 
         // Get facet.
         Table table = component.getTableAncestor();
-        UIComponent facet = (table != null)
-                ? table.getFacet(Table.SORT_PANEL_FACET) : null;
+        UIComponent facet;
+        if (table != null) {
+            facet = table.getFacet(Table.SORT_PANEL_FACET);
+        } else {
+            facet = null;
+        }
         if (facet != null && facet.isRendered()) {
             RenderingUtilities.renderComponent(facet, context);
         } else {
@@ -290,9 +272,6 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
         renderPanelEnd(writer);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Enclosing tag methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Render enclosing tag for TablePanels components.
      *
@@ -302,18 +281,20 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagStart(FacesContext context,
-            TablePanels component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagStart(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagStart", //NOI18N
-                    "Cannot render enclosing tag, TablePanels is null"); //NOI18N
+            log("renderEnclosingTagStart",
+                    "Cannot render enclosing tag, TablePanels is null");
             return;
         }
 
         Theme theme = getTheme();
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
-        writer.writeAttribute("id", component.getClientId(context), null); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
+        writer.writeAttribute("id", component.getClientId(context), null);
 
         // Render style class.
         String extraHtml = RenderingUtilities.renderStyleClass(context, writer,
@@ -321,30 +302,34 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
                 component.getExtraHtml());
 
         // Render colspan.
-        if (component.getColSpan() > -1 && (extraHtml == null || extraHtml.indexOf("colspan=") == -1)) { //NOI18N
-            writer.writeAttribute("colspan", //NOI18N
-                    Integer.toString(component.getColSpan()), null); //NOI18N
+        if (component.getColSpan() > -1
+                && (extraHtml == null || !extraHtml.contains("colspan="))) {
+            writer.writeAttribute("colspan",
+                    Integer.toString(component.getColSpan()), null);
         }
 
         // Render rowspan.
-        if (component.getRowSpan() > -1 && (extraHtml == null || extraHtml.indexOf("rowspan=") == -1)) { //NOI18N
-            writer.writeAttribute("rowspan", //NOI18N
-                    Integer.toString(component.getRowSpan()), null); //NOI18N
+        if (component.getRowSpan() > -1
+                && (extraHtml == null || !extraHtml.contains("rowspan="))) {
+            writer.writeAttribute("rowspan",
+                    Integer.toString(component.getRowSpan()), null);
         }
 
         // Render nowrap.
-        if (component.isNoWrap() && (extraHtml == null || extraHtml.indexOf("nowrap=") == -1)) { //NOI18N
-            writer.writeAttribute("nowrap", "nowrap", null); //NOI18N
+        if (component.isNoWrap()
+                && (extraHtml == null || !extraHtml.contains("nowrap="))) {
+            writer.writeAttribute("nowrap", "nowrap", null);
         }
 
         // Render tooltip.
-        if (component.getToolTip() != null && (extraHtml == null || extraHtml.indexOf("title=") == -1)) { //NOI18N
-            writer.writeAttribute("title", component.getToolTip(), "toolTip"); //NOI18N
+        if (component.getToolTip() != null
+                && (extraHtml == null || !extraHtml.contains("title="))) {
+            writer.writeAttribute("title", component.getToolTip(), "toolTip");
         }
 
         // Render pass through attributes.
         RenderingUtilities.writeStringAttributes(component, writer,
-                stringAttributes, extraHtml);
+                STRING_ATTRIBUTES, extraHtml);
     }
 
     /**
@@ -356,44 +341,50 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    protected void renderEnclosingTagEnd(FacesContext context,
-            TablePanels component, ResponseWriter writer) throws IOException {
+    protected void renderEnclosingTagEnd(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderEnclosingTagEnd", //NOI18N
-                    "Cannot render enclosing tag, TablePanels is null"); //NOI18N
+            log("renderEnclosingTagEnd",
+                    "Cannot render enclosing tag, TablePanels is null");
             return;
         }
-        writer.endElement("td"); //NOI18N
+        writer.endElement("td");
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Private methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
      * Get component id.
      *
      * @param component The parent UIComponent component.
      * @param id The id of the the component to be rendered.
+     * @return String
      */
-    private String getId(UIComponent component, String id) {
-        String clientId = component.getClientId(FacesContext.getCurrentInstance());
-        return clientId + NamingContainer.SEPARATOR_CHAR + id;
+    private String getId(final UIComponent component, final String id) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String clientId = component.getClientId(context);
+        return clientId + UINamingContainer.getSeparatorChar(context) + id;
     }
 
-    /** Helper method to get Theme objects. */
+    /**
+     * Helper method to get Theme objects.
+     * @return Theme
+     */
     private Theme getTheme() {
         return ThemeUtilities.getTheme(FacesContext.getCurrentInstance());
     }
 
     /**
      * Log fine messages.
+     * @param method method to log
+     * @param msg message to log
      */
-    private void log(String method, String message) {
+    private static void log(final String method, final String msg) {
         // Get class.
-        Class clazz = this.getClass();
+        Class clazz = TablePanelsRenderer.class;
         if (LogUtil.fineEnabled(clazz)) {
             // Log method name and message.
-            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + message); //NOI18N
+            LogUtil.fine(clazz, clazz.getName() + "." + method + ": " + msg);
         }
     }
 
@@ -409,85 +400,87 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderPanelStart(FacesContext context, TablePanels component,
-            ResponseWriter writer, String id, String title, String tip)
+    private void renderPanelStart(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer,
+            final String id, final String title, final String tip)
             throws IOException {
+
         if (component == null) {
-            log("renderPanelStart", "Cannot render panel, TablePanels is null"); //NOI18N
+            log("renderPanelStart", "Cannot render panel, TablePanels is null");
             return;
         }
 
         Theme theme = getTheme();
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render client id.
-        writer.writeAttribute("id", getId(component, id), null); //NOI18N
+        writer.writeAttribute("id", getId(component, id), null);
 
         // Render style (i.e., div is initially hidden).
-        writer.writeAttribute("class", theme.getStyleClass(ThemeStyles.HIDDEN), //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(ThemeStyles.HIDDEN),
                 null);
 
         // Render div used to create drop shadow effect.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render style class.
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_SHADOW3_DIV), null);
 
         // Render div used to create drop shadow effect.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render style class.
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_SHADOW2_DIV), null);
 
         // Render div used to create drop shadow effect.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render style class.
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_SHADOW1_DIV), null);
 
         // Render div used to create the yellow box itself.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render style class.
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_DIV), null);
 
         // Render div used to create help tip.
         if (tip != null) {
-            writer.writeText("\n", null); //NOI18N
-            writer.startElement("div", component); //NOI18N
-            writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+            writer.writeText("\n", null);
+            writer.startElement("div", component);
+            writer.writeAttribute("class", theme.getStyleClass(
                     ThemeStyles.TABLE_PANEL_HELP_TEXT), null);
-            writer.writeText(tip, null); //NOI18N        
-            writer.endElement("div"); //NOI18N
+            writer.writeText(tip, null);
+            writer.endElement("div");
         }
 
         // Render div used to format the title in the box.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render style class.
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_TITLE), null);
 
         // Render title.
         writer.writeText(title, null);
-        writer.endElement("div"); //NOI18N
+        writer.endElement("div");
 
         // Render div for whatever content goes in the box.
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
 
         // Render style class.
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_CONTENT), null);
     }
 
@@ -498,13 +491,15 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderPanelEnd(ResponseWriter writer) throws IOException {
-        writer.endElement("div"); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.endElement("div"); //NOI18N
-        writer.endElement("div"); //NOI18N
+    private void renderPanelEnd(final ResponseWriter writer)
+            throws IOException {
+
+        writer.endElement("div");
+        writer.endElement("div");
+        writer.endElement("div");
+        writer.endElement("div");
+        writer.endElement("div");
+        writer.endElement("div");
     }
 
     /**
@@ -516,23 +511,26 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderSortPanelLayout(FacesContext context,
-            TablePanels component, ResponseWriter writer) throws IOException {
+    @SuppressWarnings("checkstyle:magicnumber")
+    private void renderSortPanelLayout(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer)
+            throws IOException {
+
         if (component == null) {
-            log("renderSortPanelLayout", //NOI18N
-                    "Cannot render sort panel layout, TablePanels is null"); //NOI18N
+            log("renderSortPanelLayout",
+                    "Cannot render sort panel layout, TablePanels is null");
             return;
         }
 
         // Render panel layout table.
         Theme theme = getTheme();
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("table", component); //NOI18N
-        writer.writeAttribute("class", //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("table", component);
+        writer.writeAttribute("class",
                 theme.getStyleClass(ThemeStyles.TABLE_PANEL_TABLE), null);
-        writer.writeAttribute("border", "0", null); //NOI18N
-        writer.writeAttribute("cellpadding", "0", null); //NOI18N
-        writer.writeAttribute("cellspacing", "0", null); //NOI18N
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
 
         // Render primary sort column menu.
         renderSortPanelRow(context, component, writer,
@@ -543,35 +541,42 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
         // Render secondary sort column menu if there are more than 2 choices,
         // including the none selected option.
         UIComponent menu = component.getSecondarySortColumnMenu();
-        Option[] options = (menu instanceof DropDown)
-                ? (Option[]) ((DropDown) menu).getItems() : null;
+        Option[] options;
+        if (menu instanceof DropDown) {
+            options = (Option[]) ((DropDown) menu).getItems();
+        } else {
+            options = null;
+        }
         if (options != null && options.length > 2) {
             renderSortPanelRow(context, component, writer,
                     component.getSecondarySortColumnMenuLabel(), menu,
                     component.getSecondarySortOrderMenu());
         } else {
-            log("renderSortPanelLayout", //NOI18N
-                    "Secondary sort column menu not rendered"); //NOI18N
+            log("renderSortPanelLayout",
+                    "Secondary sort column menu not rendered");
         }
 
         // Render tertiary sort column menu if there are more than 3 choices,
         // including the none selected option.
         menu = component.getTertiarySortColumnMenu();
-        options = (menu instanceof DropDown)
-                ? (Option[]) ((DropDown) menu).getItems() : null;
+        if (menu instanceof DropDown) {
+            options = (Option[]) ((DropDown) menu).getItems();
+        } else {
+            options = null;
+        }
         if (options != null && options.length > 3) {
             renderSortPanelRow(context, component, writer,
                     component.getTertiarySortColumnMenuLabel(), menu,
                     component.getTertiarySortOrderMenu());
         } else {
-            log("renderSortPanelLayout", //NOI18N
-                    "Tertiary sort column menu not rendered"); //NOI18N
+            log("renderSortPanelLayout",
+                    "Tertiary sort column menu not rendered");
         }
 
-        writer.endElement("table"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("div", component); //NOI18N
-        writer.writeAttribute("class", theme.getStyleClass( //NOI18N
+        writer.endElement("table");
+        writer.writeText("\n", null);
+        writer.startElement("div", component);
+        writer.writeAttribute("class", theme.getStyleClass(
                 ThemeStyles.TABLE_PANEL_BUTTON_DIV), null);
 
         // Render ok and cancel buttons.
@@ -580,7 +585,7 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
         RenderingUtilities.renderComponent(
                 component.getSortPanelCancelButton(), context);
 
-        writer.endElement("div"); //NOI18N
+        writer.endElement("div");
     }
 
     /**
@@ -595,44 +600,46 @@ public class TablePanelsRenderer extends javax.faces.render.Renderer {
      *
      * @exception IOException if an input/output error occurs.
      */
-    private void renderSortPanelRow(FacesContext context, TablePanels component,
-            ResponseWriter writer, UIComponent label, UIComponent columnMenu,
-            UIComponent orderMenu) throws IOException {
+    private void renderSortPanelRow(final FacesContext context,
+            final TablePanels component, final ResponseWriter writer,
+            final UIComponent label, final UIComponent columnMenu,
+            final UIComponent orderMenu) throws IOException {
+
         if (component == null) {
-            log("renderSortPanelRow", //NOI18N
-                    "Cannot render sort panel row, TablePanels is null"); //NOI18N
+            log("renderSortPanelRow",
+                    "Cannot render sort panel row, TablePanels is null");
             return;
         }
 
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("tr", component); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
+        writer.writeText("\n", null);
+        writer.startElement("tr", component);
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
 
         // Render primary sort column menu label.
         if (label instanceof Label) {
             ((Label) label).setFor(columnMenu.getClientId(context));
             RenderingUtilities.renderComponent(label, context);
         } else {
-            log("renderSortPanelRow", //NOI18N
-                    "Cannot render label, not Label instance"); //NOI18N
+            log("renderSortPanelRow",
+                    "Cannot render label, not Label instance");
         }
 
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
 
         // Render primary sort column menu.
         RenderingUtilities.renderComponent(columnMenu, context);
 
-        writer.endElement("td"); //NOI18N
-        writer.writeText("\n", null); //NOI18N
-        writer.startElement("td", component); //NOI18N
+        writer.endElement("td");
+        writer.writeText("\n", null);
+        writer.startElement("td", component);
 
         // Render primary sort order menu.
         RenderingUtilities.renderComponent(orderMenu, context);
 
-        writer.endElement("td"); //NOI18N
-        writer.endElement("tr"); //NOI18N
+        writer.endElement("td");
+        writer.endElement("tr");
     }
 }

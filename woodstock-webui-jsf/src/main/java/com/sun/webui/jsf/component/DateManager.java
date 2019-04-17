@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,18 +21,37 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- *
- * @author avk
+ * Date manager.
  */
 public interface DateManager {
 
-    public DateFormat getDateFormat();
+    /**
+     * Get the date format.
+     * @return DateFormat
+     */
+    DateFormat getDateFormat();
 
-    public String getDateFormatPattern();
+    /**
+     * Get the date format pattern.
+     * @return String
+     */
+    String getDateFormatPattern();
 
-    public TimeZone getTimeZone();
+    /**
+     * Get the timezone.
+     * @return TimeZone
+     */
+    TimeZone getTimeZone();
 
-    public Date getFirstAvailableDate();
+    /**
+     * Get the first available date.
+     * @return Date
+     */
+    Date getFirstAvailableDate();
 
-    public Date getLastAvailableDate();
+    /**
+     * Get the last available date.
+     * @return Date
+     */
+    Date getLastAvailableDate();
 }

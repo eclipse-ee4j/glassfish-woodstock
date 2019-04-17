@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,11 +28,10 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.MessageUtil;
-import com.sun.webui.jsf.util.ThemeUtilities;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**
- * The {@code CheckboxRenderer} renders a 
+ * The {@code CheckboxRenderer} renders a
  * {@link com.sun.webui.jsf.component.Checkbox} component.
  *
  * <h3>Encoding</h3>
@@ -47,7 +46,6 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * <li> An optional label. The component rendered for this feature is obtained
  * from a call to {@code getLabelComponent()} on the component being
  * rendered. </li>
- * </li>
  * </ul>
  * </p>
  * <p>
@@ -63,7 +61,7 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * <li>CHECKBOX_LABEL_DISABLED for a label component of a disabled
  * radio button, if a label is rendered</li>
  * <li>CHECKBOX_IMAGE for an image component if an image is rendered</li>
- * <li>CHECKBOX_IMAGE_DISABLED for an image component of a disabled 
+ * <li>CHECKBOX_IMAGE_DISABLED for an image component of a disabled
  * radio button if an image is rendered.</li>
  * </ul>
  * <em>Note that these selectors are appended to any existing selectors
@@ -76,7 +74,6 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * {@link com.sun.webui.jsf.renderkit.html.RbCbRendererBase}
  * </p>
  * <p>
-
 
  * <h3>Decoding</h3>
  * <p>
@@ -118,10 +115,10 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * If selected, a {@code String[1]} array is assigned as the component's
  * submitted value where the single array element is the {@code String}
  * version of the {@code selectedValue} property or "true" if the
- * component was encoded as a boolean control.<br/>
+ * component was encoded as a boolean control.
  * If not selected, a {@code String[0]} array is assigned as the
  * component's submitted value or a {@code String[1]} array where the
- * single array element is "false" if the component was encoded as a 
+ * single array element is "false" if the component was encoded as a
  * boolean control.
  * </p>
  * <p>
@@ -133,13 +130,30 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Checkbox"))
 //FIXME check about making SelectGroupRenderer a public abstract class
-public class CheckboxRenderer extends RbCbRendererBase {
+public final class CheckboxRenderer extends RbCbRendererBase {
 
-    private final String MSG_COMPONENT_NOT_CHECKBOX =
+    /**
+     * Error message for component not a check-box type.
+     */
+    private static final String MSG_COMPONENT_NOT_CHECKBOX =
             "CheckboxRenderer only renders Checkbox components.";
 
     /**
-     * Creates a new instance of CheckboxRenderer
+     * All checkbox styles.
+     */
+    private static final String[] STYLES = {
+        ThemeStyles.CHECKBOX, // INPUT
+        ThemeStyles.CHECKBOX_DISABLED, // INPUT_DIS
+        ThemeStyles.CHECKBOX_LABEL, // LABEL
+        ThemeStyles.CHECKBOX_LABEL_DISABLED, // LABEL_DIS
+        ThemeStyles.CHECKBOX_IMAGE, // IMAGE
+        ThemeStyles.CHECKBOX_IMAGE_DISABLED, // IMAGE_DIS
+        ThemeStyles.CHECKBOX_SPAN, // SPAN
+        ThemeStyles.CHECKBOX_SPAN_DISABLED, // SPAN_DIS
+    };
+
+    /**
+     * Creates a new instance of CheckboxRenderer.
      */
     public CheckboxRenderer() {
         super();
@@ -149,26 +163,26 @@ public class CheckboxRenderer extends RbCbRendererBase {
      * <p>Decode the {@code Checkbox} selection.</p>
      * <p>
      * If the component's {@code isDisabled} and {@code isReadOnly}
-     * methods return false, 
+     * methods return false,
      * If the value of the component's {@code name} property
      * has been set, the value is used to match a request parameter.
      * If it has not been set the component clientId is used to match
-     * a request parameter. If a match is found, and the value of the 
-     * of the request parameter matches the {@code String} value of the 
+     * a request parameter. If a match is found, and the value of the
+     * of the request parameter matches the {@code String} value of the
      * component's {@code selectedValue} property, the
      * radio button is selected. The component's submitted value is
      * assigned a {@code String[1]} array where the single array
      * element is the matching parameter value.
      * </p>
      * <p>
-     * If no matching request parameter or value is found, an instance of 
+     * If no matching request parameter or value is found, an instance of
      * {@code String[0]} is assigned as the submitted value,
      * meaning that this is a component was not selected.
      * </p>
      * <p>
      * If the component was encoded as a boolean control the
      * value of the matching request attribute will be the component's
-     * {@code clientId} property if selected. If selected the 
+     * {@code clientId} property if selected. If selected the
      * submitted value is {@code new String[] { "true" }}
      * and {@code new String[] { "false" }} if not selected.
      * </p>
@@ -184,7 +198,8 @@ public class CheckboxRenderer extends RbCbRendererBase {
      * component to be decoded.
      */
     @Override
-    public void decode(FacesContext context, UIComponent component) {
+    public void decode(final FacesContext context,
+            final UIComponent component) {
 
         // We need to know if the last state of the component before decoding
         // this checkbox. This disabled check is not to determine
@@ -237,7 +252,7 @@ public class CheckboxRenderer extends RbCbRendererBase {
 
             if (newValues != null || newValues.length != 0) {
 
-                String selectedValueAsString = null;
+                String selectedValueAsString;
                 Object selectedValue = checkbox.getSelectedValue();
 
                 // We need to discern the case where the checkbox
@@ -251,7 +266,6 @@ public class CheckboxRenderer extends RbCbRendererBase {
                 // and the submitted value would always be "true" and then
                 // every checkbox component in the group would decode
                 // as selected.
-                //
                 if (inGroup && selectedValue instanceof Boolean) {
                     selectedValueAsString = component.getClientId(context);
                     // See if one of the values of the attribute
@@ -288,7 +302,6 @@ public class CheckboxRenderer extends RbCbRendererBase {
                 // of every checkbox, even if the value is the same.
                 // However only those that experience a state change issue
                 // a ValueChangeEvent.
-                //
                 ((UIInput) component).setSubmittedValue(new String[0]);
                 return;
             }
@@ -296,8 +309,6 @@ public class CheckboxRenderer extends RbCbRendererBase {
         // Not disabled and this checkbox is not selected.
         //
         ((UIInput) component).setSubmittedValue(new String[0]);
-
-        return;
     }
 
     /**
@@ -306,10 +317,11 @@ public class CheckboxRenderer extends RbCbRendererBase {
      *
      * @param context FacesContext for the request we are processing.
      * @param component UIComponent to be decoded.
+     * @throws IOException if an IO error occurs
      */
     @Override
-    public void renderStart(FacesContext context, UIComponent component,
-            ResponseWriter writer)
+    public void renderStart(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
 
         // Bail out if the component is not a Checkbox component.
@@ -321,37 +333,26 @@ public class CheckboxRenderer extends RbCbRendererBase {
     }
 
     @Override
-    public void renderEnd(FacesContext context, UIComponent component,
-            ResponseWriter writer) throws IOException {
+    public void renderEnd(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
+            throws IOException {
 
         Theme theme = getTheme(context);
         renderSelection(context, component, theme, writer, "checkbox");
     }
 
     @Override
-    protected final boolean isSelected(FacesContext context, UIComponent component) {
+    protected boolean isSelected(final FacesContext context,
+            final UIComponent component) {
+
         return ((Checkbox) component).isChecked();
     }
 
-    /**
-     * All checkbox styles.
-     */
-    protected final String[] styles = {
-        ThemeStyles.CHECKBOX, // INPUT
-        ThemeStyles.CHECKBOX_DISABLED, // INPUT_DIS
-        ThemeStyles.CHECKBOX_LABEL, // LABEL
-        ThemeStyles.CHECKBOX_LABEL_DISABLED, // LABEL_DIS
-        ThemeStyles.CHECKBOX_IMAGE, // IMAGE
-        ThemeStyles.CHECKBOX_IMAGE_DISABLED, // IMAGE_DIS
-        ThemeStyles.CHECKBOX_SPAN, // SPAN
-        ThemeStyles.CHECKBOX_SPAN_DISABLED, // SPAN_DIS
-    };
-
     @Override
-    protected String getStyle(Theme theme, int styleCode) {
+    protected String getStyle(final Theme theme, final int styleCode) {
         String style = null;
         try {
-            style = theme.getStyleClass(styles[styleCode]);
+            style = theme.getStyleClass(STYLES[styleCode]);
         } catch (Exception e) {
             // Don't care
         }

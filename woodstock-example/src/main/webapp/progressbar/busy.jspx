@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,7 +20,7 @@
 <jsp:root version="2.0" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:webuijsf="http://www.sun.com/webui/webuijsf">
     <jsp:directive.page contentType="text/html"/>
     <f:view>
-        <webuijsf:page >
+        <webuijsf:page>
             <webuijsf:html>
                 <f:loadBundle basename="com.sun.webui.jsf.example.resources.Resources" var="msgs" />
                 <webuijsf:head id="progressBarHead" title="#{msgs.progressbar_title}">
@@ -63,6 +63,8 @@
                                 <!-- ProgressBar Busy -->
                                 <webuijsf:progressBar id="pb1"
                                                       refreshRate="2000"
+                                                      description="#{msgs.progressbar_description}"
+                                                      status="#{ProgressBarBean.status}"
                                                       type="BUSY" />
 
                             </webuijsf:markup>

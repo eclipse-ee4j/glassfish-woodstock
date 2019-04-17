@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
@@ -33,11 +32,327 @@ import com.sun.webui.jsf.util.ComponentUtilities;
  * The Masthead component displays a masthead or page banner at the top of the
  * page.
  */
-@Component(type = "com.sun.webui.jsf.Masthead", family = "com.sun.webui.jsf.Masthead",
-displayName = "Masthead", tagName = "masthead",
-helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_masthead",
-propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_masthead_props")
-public class Masthead extends UIOutput implements NamingContainer {
+@Component(type = "com.sun.webui.jsf.Masthead",
+        family = "com.sun.webui.jsf.Masthead",
+        displayName = "Masthead",
+        tagName = "masthead",
+        helpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_masthead",
+        //CHECKSTYLE:OFF
+        propertiesHelpKey = "projrave_ui_elements_palette_wdstk-jsf1.2_propsheets_masthead_props")
+        //CHECKSTYLE:ON
+public final class Masthead extends UIOutput implements NamingContainer {
+
+    /**
+     * A JavaServer Faces EL expression that resolves to a backing bean or a
+     * backing bean property that is an array of integers that specify the down,
+     * critical, major, and minor alarm counts.
+     */
+    @Property(name = "alarmCounts",
+            displayName = "Alarm Counts",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
+            //CHECKSTYLE:ON
+    private int[] alarmCounts = null;
+
+    /**
+     * The description to use for the Brand Image, used as alt text for the
+     * image.
+     */
+    @Property(name = "brandImageDescription",
+            displayName = "Brand Image Description",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String brandImageDescription = null;
+
+    /**
+     * The height to use for the Brand Image, in pixels. Use this attribute
+     * along with the brandImageWidth attribute to specify dimensions of PNG
+     * images for use in Internet Explorer.
+     */
+    @Property(name = "brandImageHeight",
+            displayName = "Brand Image Height",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int brandImageHeight = Integer.MIN_VALUE;
+
+    /**
+     * brandImageHeight set flag.
+     */
+    private boolean brandImageHeightSet = false;
+
+    /**
+     * The URL to the image file to use as the Brand Image. Use this attribute
+     * to override the brand image that is set in the theme.
+     */
+    @Property(name = "brandImageURL",
+            displayName = "Brand Image URL",
+            category = "Navigation",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String brandImageURL = null;
+
+    /**
+     * The width to use for the Brand Image, in pixels. Use this attribute when
+     * specifying the brandImageURL, along with the brandImageHeight attribute,
+     * to specify dimensions of PNG images for use in Internet Explorer.
+     */
+    @Property(name = "brandImageWidth",
+            displayName = "Brand Image Width",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int brandImageWidth = Integer.MIN_VALUE;
+
+    /**
+     * brandImageWidth set flag.
+     */
+    private boolean brandImageWidthSet = false;
+
+    /**
+     * Set to true to display a date and time stamp in the status area.
+     */
+    @Property(name = "dateTime",
+            displayName = "Date Time",
+            category = "Advanced")
+    private boolean dateTime = false;
+
+    /**
+     * dateTime set flag.
+     */
+    private boolean dateTimeSet = false;
+
+    /**
+     * The number of currently executing jobs or tasks. A JavaServer Faces EL
+     * expression that resolves to a backing bean or a backing bean property
+     * that is an integer.
+     */
+    @Property(name = "jobCount",
+            displayName = "Job Count",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int jobCount = Integer.MIN_VALUE;
+
+    /**
+     * jobCount set flag.
+     */
+    private boolean jobCountSet = false;
+
+    /**
+     * Text to display for the notification info in the status area.
+     */
+    @Property(name = "notificationMsg",
+            displayName = "Notification Message",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String notificationMsg = null;
+
+    /**
+     * The description for the product name image, used as alt text for the
+     * image.
+     */
+    @Property(name = "productImageDescription",
+            displayName = "Product Image Description",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String productImageDescription = null;
+
+    /**
+     * The height to use for the Product Name Image, in pixels. For mastheads
+     * that are used in secondary windows, you might need to specify the
+     * productImageHeight and productImageWidth for correct display on Internet
+     * Explorer.
+     */
+    @Property(name = "productImageHeight",
+            displayName = "Product Image Height",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int productImageHeight = Integer.MIN_VALUE;
+
+    /**
+     * productImageHeight set flag.
+     */
+    private boolean productImageHeightSet = false;
+
+    /**
+     * The URL to the image file to use for the Product Name Image.
+     */
+    @Property(name = "productImageURL",
+            displayName = "Product Image URL",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String productImageURL = null;
+
+    /**
+     * The width to use for the Product Name Image, in pixels. For mastheads
+     * that are used in secondary windows, you might need to specify the
+     * productImageHeight and productImageWidth for correct display on Internet
+     * Explorer.
+     */
+    @Property(name = "productImageWidth",
+            displayName = "Product Image Width",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
+            //CHECKSTYLE:ON
+    private int productImageWidth = Integer.MIN_VALUE;
+
+    /**
+     * productImageWidth set flag.
+     */
+    private boolean productImageWidthSet = false;
+
+    /**
+     * Set to true to indicate that the masthead is to be used in a
+     * secondary/popup window.
+     */
+    @Property(name = "secondary",
+            displayName = "Is Secondary",
+            category = "Advanced")
+    private boolean secondary = false;
+
+    /**
+     * secondary set flag.
+     */
+    private boolean secondarySet = false;
+
+    /**
+     * Text to display for the current Server information, such as the name of
+     * the server whose data is being displayed.
+     */
+    @Property(name = "serverInfo",
+            displayName = "Current Server Info",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String serverInfo = null;
+
+    /**
+     * The label text to display for the current Server information.
+     */
+    @Property(name = "serverInfoLabel",
+            displayName = "Current Server Info Label",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String serverInfoLabel = null;
+
+    /**
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "style",
+            displayName = "CSS Style(s)",
+            category = "Appearance",
+            editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
+    private String style = null;
+
+    /**
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     */
+    @Property(name = "styleClass",
+            displayName = "CSS Style Class(es)",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
+            //CHECKSTYLE:ON
+    private String styleClass = null;
+
+    /**
+     * Text to display for the current User information, such as the name of the
+     * user who is running the application.
+     */
+    @Property(name = "userInfo",
+            displayName = "Current User Info",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String userInfo = null;
+
+    /**
+     * The label text to display for the current User information.
+     */
+    @Property(name = "userInfoLabel",
+            displayName = "Current User Info Label",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String userInfoLabel = null;
+
+    /**
+     * Text to display for the current Role information, such as the name of the
+     * user who is running the application.
+     */
+    @Property(name = "roleInfo",
+            displayName = "Current Role Info",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String roleInfo = null;
+
+    /**
+     * The label text to display for the current User information.
+     */
+    @Property(name = "roleInfoLabel",
+            displayName = "Current Role Info Label",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String roleInfoLabel = null;
+
+    /**
+     * A JavaServer Faces EL expression that resolves to a backing bean or a
+     * backing bean property that is an array of one or more custom Hyperlink
+     * components to display in the utility bar. The Hyperlink components must
+     * be given ids.
+     */
+    @Property(name = "utilities",
+            displayName = "Utility Bar Links",
+            category = "Behavior",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
+            //CHECKSTYLE:ON
+    private com.sun.webui.jsf.component.Hyperlink[] utilities = null;
+
+    /**
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
+     * component is not visible, it can still be processed on subsequent form
+     * submissions because the HTML is present.
+     */
+    @Property(name = "visible", displayName = "Visible")
+    private boolean visible = false;
+
+    /**
+     * visible set flag.
+     */
+    private boolean visibleSet = false;
 
     /**
      * Default constructor.
@@ -47,24 +362,19 @@ public class Masthead extends UIOutput implements NamingContainer {
         setRendererType("com.sun.webui.jsf.Masthead");
     }
 
-    /**
-     * <p>Return the family for this component.</p>
-     */
     @Override
     public String getFamily() {
         return "com.sun.webui.jsf.Masthead";
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * The component identifier for this component. This value must be unique 
+     * The component identifier for this component. This value must be unique
      * within the closest parent component that is a naming container.
+     * @param id id
      */
     @Property(name = "id")
     @Override
-    public void setId(String id) {
+    public void setId(final String id) {
         super.setId(id);
     }
 
@@ -77,7 +387,7 @@ public class Masthead extends UIOutput implements NamingContainer {
      */
     @Property(name = "rendered")
     @Override
-    public void setRendered(boolean rendered) {
+    public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
     }
 
@@ -94,811 +404,727 @@ public class Masthead extends UIOutput implements NamingContainer {
     public Object getValue() {
         return super.getValue();
     }
-    /**
-     * <p>A JavaServer Faces EL expression that resolves to a backing bean or a 
-     * backing bean property that is an array of integers that specify the 
-     * down, critical, major, and minor alarm counts.</p>
-     */
-    @Property(name = "alarmCounts", displayName = "Alarm Counts", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
-    private int[] alarmCounts = null;
 
     /**
-     * <p>A JavaServer Faces EL expression that resolves to a backing bean or a 
-     * backing bean property that is an array of integers that specify the 
-     * down, critical, major, and minor alarm counts.</p>
+     * A JavaServer Faces EL expression that resolves to a backing bean or a
+     * backing bean property that is an array of integers that specify the down,
+     * critical, major, and minor alarm counts.
+     * @return int[]
      */
     public int[] getAlarmCounts() {
         if (this.alarmCounts != null) {
             return this.alarmCounts;
         }
-        ValueExpression _vb = getValueExpression("alarmCounts");
-        if (_vb != null) {
-            return (int[]) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("alarmCounts");
+        if (vb != null) {
+            return (int[]) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>A JavaServer Faces EL expression that resolves to a backing bean or a 
-     * backing bean property that is an array of integers that specify the 
-     * down, critical, major, and minor alarm counts.</p>
+     * A JavaServer Faces EL expression that resolves to a backing bean or a
+     * backing bean property that is an array of integers that specify the down,
+     * critical, major, and minor alarm counts.
+     *
      * @see #getAlarmCounts()
+     * @param newAlarmCounts alarmCounts
      */
-    public void setAlarmCounts(int[] alarmCounts) {
-        this.alarmCounts = alarmCounts;
+    public void setAlarmCounts(final int[] newAlarmCounts) {
+        this.alarmCounts = newAlarmCounts;
     }
-    /**
-     * <p>The description to use for the Brand Image, used as alt text for the image.</p>
-     */
-    @Property(name = "brandImageDescription", displayName = "Brand Image Description",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String brandImageDescription = null;
 
     /**
-     * <p>The description to use for the Brand Image, used as alt text for the image.</p>
+     * The description to use for the Brand Image, used as alt text for the
+     * image.
+     * @return String
      */
     public String getBrandImageDescription() {
         if (this.brandImageDescription != null) {
             return this.brandImageDescription;
         }
-        ValueExpression _vb = getValueExpression("brandImageDescription");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("brandImageDescription");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The description to use for the Brand Image, used as alt text for the image.</p>
+     * The description to use for the Brand Image, used as alt text for the
+     * image.
+     *
      * @see #getBrandImageDescription()
+     * @param newBrandImageDescription brandImageDescription
      */
-    public void setBrandImageDescription(String brandImageDescription) {
-        this.brandImageDescription = brandImageDescription;
+    public void setBrandImageDescription(
+            final String newBrandImageDescription) {
+
+        this.brandImageDescription = newBrandImageDescription;
     }
-    /**
-     * <p>The height to use for the Brand Image, in pixels. Use this attribute 
-     * along with the brandImageWidth attribute to specify dimensions of PNG images for use in Internet Explorer.</p>
-     */
-    @Property(name = "brandImageHeight", displayName = "Brand Image Height",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int brandImageHeight = Integer.MIN_VALUE;
-    private boolean brandImageHeight_set = false;
 
     /**
-     * <p>The height to use for the Brand Image, in pixels. Use this attribute 
-     * along with the brandImageWidth attribute to specify dimensions of PNG images for use in Internet Explorer.</p>
+     * The height to use for the Brand Image, in pixels. Use this attribute
+     * along with the brandImageWidth attribute to specify dimensions of PNG
+     * images for use in Internet Explorer.
+     * @return int
      */
     public int getBrandImageHeight() {
-        if (this.brandImageHeight_set) {
+        if (this.brandImageHeightSet) {
             return this.brandImageHeight;
         }
-        ValueExpression _vb = getValueExpression("brandImageHeight");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("brandImageHeight");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result).intValue();
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The height to use for the Brand Image, in pixels. Use this attribute 
-     * along with the brandImageWidth attribute to specify dimensions of PNG images for use in Internet Explorer.</p>
+     * The height to use for the Brand Image, in pixels. Use this attribute
+     * along with the brandImageWidth attribute to specify dimensions of PNG
+     * images for use in Internet Explorer.
+     *
      * @see #getBrandImageHeight()
+     * @param newBrandImageHeight brandImageHeight
      */
-    public void setBrandImageHeight(int brandImageHeight) {
-        this.brandImageHeight = brandImageHeight;
-        this.brandImageHeight_set = true;
+    public void setBrandImageHeight(final int newBrandImageHeight) {
+        this.brandImageHeight = newBrandImageHeight;
+        this.brandImageHeightSet = true;
     }
-    /**
-     * <p>The url to the image file to use as the Brand Image. Use this attribute to override the  brand image that is set in the theme.</p>
-     */
-    @Property(name = "brandImageURL", displayName = "Brand Image URL",
-    category = "Navigation", editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
-    private String brandImageURL = null;
 
     /**
-     * <p>The url to the image file to use as the Brand Image. Use this attribute to override the  brand image that is set in the theme.</p>
+     * The URL to the image file to use as the Brand Image. Use this attribute
+     * to override the brand image that is set in the theme.
+     * @return String
      */
     public String getBrandImageURL() {
         if (this.brandImageURL != null) {
             return this.brandImageURL;
         }
-        ValueExpression _vb = getValueExpression("brandImageURL");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("brandImageURL");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The url to the image file to use as the Brand Image. Use this attribute to override the  brand image that is set in the theme.</p>
+     * The URL to the image file to use as the Brand Image. Use this attribute
+     * to override the brand image that is set in the theme.
+     *
      * @see #getBrandImageURL()
+     * @param newBrandImageURL brandImageURL
      */
-    public void setBrandImageURL(String brandImageURL) {
-        this.brandImageURL = brandImageURL;
+    public void setBrandImageURL(final String newBrandImageURL) {
+        this.brandImageURL = newBrandImageURL;
     }
-    /**
-     * <p>The width to use for the Brand Image, in pixels. 
-     * Use this attribute when specifying the brandImageURL, along with the 
-     * brandImageHeight attribute, to specify dimensions of  PNG images for 
-     * use in Internet Explorer.</p>
-     */
-    @Property(name = "brandImageWidth", displayName = "Brand Image Width",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int brandImageWidth = Integer.MIN_VALUE;
-    private boolean brandImageWidth_set = false;
 
     /**
-     * <p>The width to use for the Brand Image, in pixels. 
-     * Use this attribute when specifying the brandImageURL, along with the 
-     * brandImageHeight attribute, to specify dimensions of  PNG images for 
-     * use in Internet Explorer.</p>
+     * The width to use for the Brand Image, in pixels. Use this attribute when
+     * specifying the brandImageURL, along with the brandImageHeight attribute,
+     * to specify dimensions of PNG images for use in Internet Explorer.
+     * @return int
      */
     public int getBrandImageWidth() {
-        if (this.brandImageWidth_set) {
+        if (this.brandImageWidthSet) {
             return this.brandImageWidth;
         }
-        ValueExpression _vb = getValueExpression("brandImageWidth");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("brandImageWidth");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The width to use for the Brand Image, in pixels. 
-     * Use this attribute when specifying the brandImageURL, along with the 
-     * brandImageHeight attribute, to specify dimensions of  PNG images for 
-     * use in Internet Explorer.</p>
+     * The width to use for the Brand Image, in pixels. Use this attribute when
+     * specifying the brandImageURL, along with the brandImageHeight attribute,
+     * to specify dimensions of PNG images for use in Internet Explorer.
+     *
      * @see #getBrandImageWidth()
+     * @param newBrandImageWidth brandImageWidth
      */
-    public void setBrandImageWidth(int brandImageWidth) {
-        this.brandImageWidth = brandImageWidth;
-        this.brandImageWidth_set = true;
+    public void setBrandImageWidth(final int newBrandImageWidth) {
+        this.brandImageWidth = newBrandImageWidth;
+        this.brandImageWidthSet = true;
     }
-    /**
-     * <p>Set to true to display a date and time stamp in the status area.</p>
-     */
-    @Property(name = "dateTime", displayName = "Date Time", category = "Advanced")
-    private boolean dateTime = false;
-    private boolean dateTime_set = false;
 
     /**
-     * <p>Set to true to display a date and time stamp in the status area.</p>
+     * Set to true to display a date and time stamp in the status area.
+     * @return {@code boolean}
      */
     public boolean isDateTime() {
-        if (this.dateTime_set) {
+        if (this.dateTimeSet) {
             return this.dateTime;
         }
-        ValueExpression _vb = getValueExpression("dateTime");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("dateTime");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Set to true to display a date and time stamp in the status area.</p>
+     * Set to true to display a date and time stamp in the status area.
+     *
      * @see #isDateTime()
+     * @param newDateTime dateTime
      */
-    public void setDateTime(boolean dateTime) {
-        this.dateTime = dateTime;
-        this.dateTime_set = true;
+    public void setDateTime(final boolean newDateTime) {
+        this.dateTime = newDateTime;
+        this.dateTimeSet = true;
     }
-    /**
-     * <p>The number of currently executing jobs or tasks. A JavaServer Faces EL 
-     * expression that resolves to a backing bean or a backing bean property 
-     * that is an integer.</p>
-     */
-    @Property(name = "jobCount", displayName = "Job Count", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int jobCount = Integer.MIN_VALUE;
-    private boolean jobCount_set = false;
 
     /**
-     * <p>The number of currently executing jobs or tasks. A JavaServer Faces EL 
-     * expression that resolves to a backing bean or a backing bean property 
-     * that is an integer.</p>
+     * The number of currently executing jobs or tasks. A JavaServer Faces EL
+     * expression that resolves to a backing bean or a backing bean property
+     * that is an integer.
+     * @return int
      */
     public int getJobCount() {
-        if (this.jobCount_set) {
+        if (this.jobCountSet) {
             return this.jobCount;
         }
-        ValueExpression _vb = getValueExpression("jobCount");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("jobCount");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return -1;
     }
 
     /**
-     * <p>The number of currently executing jobs or tasks. A JavaServer Faces EL 
-     * expression that resolves to a backing bean or a backing bean property 
-     * that is an integer.</p>
+     * The number of currently executing jobs or tasks. A JavaServer Faces EL
+     * expression that resolves to a backing bean or a backing bean property
+     * that is an integer.
+     *
      * @see #getJobCount()
+     * @param newJobCount jobCount
      */
-    public void setJobCount(int jobCount) {
-        this.jobCount = jobCount;
-        this.jobCount_set = true;
+    public void setJobCount(final int newJobCount) {
+        this.jobCount = newJobCount;
+        this.jobCountSet = true;
     }
-    /**
-     * <p>Text to display for the notification info in the status area</p>
-     */
-    @Property(name = "notificationMsg", displayName = "Notification Message",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String notificationMsg = null;
 
     /**
-     * <p>Text to display for the notification info in the status area</p>
+     * Text to display for the notification info in the status area.
+     * @return String
      */
     public String getNotificationMsg() {
         if (this.notificationMsg != null) {
             return this.notificationMsg;
         }
-        ValueExpression _vb = getValueExpression("notificationMsg");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("notificationMsg");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Text to display for the notification info in the status area</p>
+     * Text to display for the notification info in the status area.
+     *
      * @see #getNotificationMsg()
+     * @param newNotificationMsg notificationMsg
      */
-    public void setNotificationMsg(String notificationMsg) {
-        this.notificationMsg = notificationMsg;
+    public void setNotificationMsg(final String newNotificationMsg) {
+        this.notificationMsg = newNotificationMsg;
     }
-    /**
-     * <p>The description for the product name image, used as alt text for the image.</p>
-     */
-    @Property(name = "productImageDescription", displayName = "Product Image Description",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String productImageDescription = null;
 
     /**
-     * <p>The description for the product name image, used as alt text for the image.</p>
+     * The description for the product name image, used as alt text for the
+     * image.
+     * @return String
      */
     public String getProductImageDescription() {
         if (this.productImageDescription != null) {
             return this.productImageDescription;
         }
-        ValueExpression _vb = getValueExpression("productImageDescription");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("productImageDescription");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The description for the product name Image, used as alt text for the image.</p>
+     * The description for the product name Image, used as alt text for the
+     * image.
+     *
      * @see #getProductImageDescription()
+     * @param newProductImageDescription productImageDescription
      */
-    public void setProductImageDescription(String productImageDescription) {
-        this.productImageDescription = productImageDescription;
+    public void setProductImageDescription(
+            final String newProductImageDescription) {
+
+        this.productImageDescription = newProductImageDescription;
     }
-    /**
-     * <p>The height to use for the Product Name Image, in pixels.  For mastheads that are used in secondary windows, 
-     * you might need to specify the productImageHeight and productImageWidth 
-     * for correct display on Internet Explorer.</p>
-     */
-    @Property(name = "productImageHeight", displayName = "Product Image Height",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int productImageHeight = Integer.MIN_VALUE;
-    private boolean productImageHeight_set = false;
 
     /**
-     * <p>The height to use for the Product Name Image, in pixels.  For mastheads that are used in secondary windows, 
-     * you might need to specify the productImageHeight and productImageWidth 
-     * for correct display on Internet Explorer.</p>
+     * The height to use for the Product Name Image, in pixels. For mastheads
+     * that are used in secondary windows, you might need to specify the
+     * productImageHeight and productImageWidth for correct display on Internet
+     * Explorer.
+     * @return int
      */
     public int getProductImageHeight() {
-        if (this.productImageHeight_set) {
+        if (this.productImageHeightSet) {
             return this.productImageHeight;
         }
-        ValueExpression _vb = getValueExpression("productImageHeight");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("productImageHeight");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The height to use for the Product Name Image, in pixels.  For mastheads that are used in secondary windows, 
-     * you might need to specify the productImageHeight and productImageWidth 
-     * for correct display on Internet Explorer.</p>
+     * The height to use for the Product Name Image, in pixels. For mastheads
+     * that are used in secondary windows, you might need to specify the
+     * productImageHeight and productImageWidth for correct display on Internet
+     * Explorer.
+     *
      * @see #getProductImageHeight()
+     * @param newProductImageHeight productImageHeight
      */
-    public void setProductImageHeight(int productImageHeight) {
-        this.productImageHeight = productImageHeight;
-        this.productImageHeight_set = true;
+    public void setProductImageHeight(final int newProductImageHeight) {
+        this.productImageHeight = newProductImageHeight;
+        this.productImageHeightSet = true;
     }
-    /**
-     * <p>The url to the image file to use for the Product Name Image.</p>
-     */
-    @Property(name = "productImageURL", displayName = "Product Image URL",
-    category = "Appearance", editorClassName = "com.sun.webui.jsf.component.propertyeditors.SunWebUrlPropertyEditor")
-    private String productImageURL = null;
 
     /**
-     * <p>The url to the image file to use for the Product Name Image.</p>
+     * The URL to the image file to use for the Product Name Image.
+     * @return String
      */
     public String getProductImageURL() {
         if (this.productImageURL != null) {
             return this.productImageURL;
         }
-        ValueExpression _vb = getValueExpression("productImageURL");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("productImageURL");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The url to the image file to use for the Product Name Image.</p>
+     * The URL to the image file to use for the Product Name Image.
+     *
      * @see #getProductImageURL()
+     * @param newProductImageURL productImageURL
      */
-    public void setProductImageURL(String productImageURL) {
-        this.productImageURL = productImageURL;
+    public void setProductImageURL(final String newProductImageURL) {
+        this.productImageURL = newProductImageURL;
     }
-    /**
-     * <p>The width to use for the Product Name Image, in pixels. For mastheads 
-     * that are used in secondary windows, you might need to specify the 
-     * productImageHeight and productImageWidth for correct display on 
-     * Internet Explorer.</p>
-     */
-    @Property(name = "productImageWidth", displayName = "Product Image Width",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.IntegerPropertyEditor")
-    private int productImageWidth = Integer.MIN_VALUE;
-    private boolean productImageWidth_set = false;
 
     /**
-     * <p>The width to use for the Product Name Image, in pixels. For mastheads 
-     * that are used in secondary windows, you might need to specify the 
-     * productImageHeight and productImageWidth for correct display on 
-     * Internet Explorer.</p>
+     * The width to use for the Product Name Image, in pixels. For mastheads
+     * that are used in secondary windows, you might need to specify the
+     * productImageHeight and productImageWidth for correct display on Internet
+     * Explorer.
+     * @return int
      */
     public int getProductImageWidth() {
-        if (this.productImageWidth_set) {
+        if (this.productImageWidthSet) {
             return this.productImageWidth;
         }
-        ValueExpression _vb = getValueExpression("productImageWidth");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("productImageWidth");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return Integer.MIN_VALUE;
             } else {
-                return ((Integer) _result).intValue();
+                return ((Integer) result);
             }
         }
         return Integer.MIN_VALUE;
     }
 
     /**
-     * <p>The width to use for the Product Name Image, in pixels. For mastheads 
-     * that are used in secondary windows, you might need to specify the 
-     * productImageHeight and productImageWidth for correct display on 
-     * Internet Explorer.</p>
+     * The width to use for the Product Name Image, in pixels. For mastheads
+     * that are used in secondary windows, you might need to specify the
+     * productImageHeight and productImageWidth for correct display on Internet
+     * Explorer.
+     *
      * @see #getProductImageWidth()
+     * @param newProductImageWidth productImageWidth
      */
-    public void setProductImageWidth(int productImageWidth) {
-        this.productImageWidth = productImageWidth;
-        this.productImageWidth_set = true;
+    public void setProductImageWidth(final int newProductImageWidth) {
+        this.productImageWidth = newProductImageWidth;
+        this.productImageWidthSet = true;
     }
-    /**
-     * <p>Set to true to indicate that the masthead is to be used in a secondary/popup window.</p>
-     */
-    @Property(name = "secondary", displayName = "Is Secondary", category = "Advanced")
-    private boolean secondary = false;
-    private boolean secondary_set = false;
 
     /**
-     * <p>Set to true to indicate that the masthead is to be used in a secondary/popup window.</p>
+     * Set to true to indicate that the masthead is to be used in a
+     * secondary/popup window.
+     * @return {@code boolean}
      */
     public boolean isSecondary() {
-        if (this.secondary_set) {
+        if (this.secondarySet) {
             return this.secondary;
         }
-        ValueExpression _vb = getValueExpression("secondary");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("secondary");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return false;
     }
 
     /**
-     * <p>Set to true to indicate that the masthead is to be used in a secondary/popup window.</p>
+     * Set to true to indicate that the masthead is to be used in a
+     * secondary/popup window.
+     *
      * @see #isSecondary()
+     * @param newSecondary secondary
      */
-    public void setSecondary(boolean secondary) {
-        this.secondary = secondary;
-        this.secondary_set = true;
+    public void setSecondary(final boolean newSecondary) {
+        this.secondary = newSecondary;
+        this.secondarySet = true;
     }
-    /**
-     * <p>Text to display for the current Server information, such as the name 
-     * of the server whose data is being displayed.</p>
-     */
-    @Property(name = "serverInfo", displayName = "Current Server Info",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String serverInfo = null;
 
     /**
-     * <p>Text to display for the current Server information, such as the name 
-     * of the server whose data is being displayed.</p>
+     * Text to display for the current Server information, such as the name of
+     * the server whose data is being displayed.
+     * @return String
      */
     public String getServerInfo() {
         if (this.serverInfo != null) {
             return this.serverInfo;
         }
-        ValueExpression _vb = getValueExpression("serverInfo");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("serverInfo");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Text to display for the current Server information, such as the name 
-     * of the server whose data is being displayed.</p>
+     * Text to display for the current Server information, such as the name of
+     * the server whose data is being displayed.
+     *
      * @see #getServerInfo()
+     * @param newServerInfo serverInfo
      */
-    public void setServerInfo(String serverInfo) {
-        this.serverInfo = serverInfo;
+    public void setServerInfo(final String newServerInfo) {
+        this.serverInfo = newServerInfo;
     }
-    /**
-     * <p>The label text to display for the current Server information.</p>
-     */
-    @Property(name = "serverInfoLabel", displayName = "Current Server Info Label",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String serverInfoLabel = null;
 
     /**
-     * <p>The label text to display for the current Server information.</p>
+     * The label text to display for the current Server information.
+     * @return String
      */
     public String getServerInfoLabel() {
         if (this.serverInfoLabel != null) {
             return this.serverInfoLabel;
         }
-        ValueExpression _vb = getValueExpression("serverInfoLabel");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("serverInfoLabel");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The label text to display for the current Server information.</p>
+     * The label text to display for the current Server information.
+     *
      * @see #getServerInfoLabel()
+     * @param newServerInfoLabel serverInfoLabel
      */
-    public void setServerInfoLabel(String serverInfoLabel) {
-        this.serverInfoLabel = serverInfoLabel;
+    public void setServerInfoLabel(final String newServerInfoLabel) {
+        this.serverInfoLabel = newServerInfoLabel;
     }
-    /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "style", displayName = "CSS Style(s)", category = "Appearance",
-    editorClassName = "com.sun.jsfcl.std.css.CssStylePropertyEditor")
-    private String style = null;
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyle() {
         if (this.style != null) {
             return this.style;
         }
-        ValueExpression _vb = getValueExpression("style");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("style");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style(s) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style(s) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyle()
+     * @param newStyle style
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setStyle(final String newStyle) {
+        this.style = newStyle;
     }
-    /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
-     */
-    @Property(name = "styleClass", displayName = "CSS Style Class(es)",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StyleClassPropertyEditor")
-    private String styleClass = null;
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     * @return String
      */
     public String getStyleClass() {
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueExpression _vb = getValueExpression("styleClass");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("styleClass");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>CSS style class(es) to be applied to the outermost HTML element when this 
-     * component is rendered.</p>
+     * CSS style class(es) to be applied to the outermost HTML element when this
+     * component is rendered.
+     *
      * @see #getStyleClass()
+     * @param newStyleClass styleClass
      */
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
+    public void setStyleClass(final String newStyleClass) {
+        this.styleClass = newStyleClass;
     }
-    /**
-     * <p>Text to display for the current User information, such as the name of 
-     * the user who is running the application.</p>
-     */
-    @Property(name = "userInfo", displayName = "Current User Info",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String userInfo = null;
 
     /**
-     * <p>Text to display for the current User information, such as the name of 
-     * the user who is running the application.</p>
+     * Text to display for the current User information, such as the name of the
+     * user who is running the application.
+     * @return String
      */
     public String getUserInfo() {
         if (this.userInfo != null) {
             return this.userInfo;
         }
-        ValueExpression _vb = getValueExpression("userInfo");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("userInfo");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Text to display for the current User information, such as the name of 
-     * the user who is running the application.</p>
+     * Text to display for the current User information, such as the name of the
+     * user who is running the application.
+     *
      * @see #getUserInfo()
+     * @param newUserInfo userInfo
      */
-    public void setUserInfo(String userInfo) {
-        this.userInfo = userInfo;
+    public void setUserInfo(final String newUserInfo) {
+        this.userInfo = newUserInfo;
     }
-    /**
-     * <p>The label text to display for the current User information.</p>
-     */
-    @Property(name = "userInfoLabel", displayName = "Current User Info Label",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String userInfoLabel = null;
 
     /**
-     * <p>The label text to display for the current User information.</p>
+     * The label text to display for the current User information.
+     * @return String
      */
     public String getUserInfoLabel() {
         if (this.userInfoLabel != null) {
             return this.userInfoLabel;
         }
-        ValueExpression _vb = getValueExpression("userInfoLabel");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("userInfoLabel");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The label text to display for the current User information.</p>
+     * The label text to display for the current User information.
+     *
      * @see #getUserInfoLabel()
+     * @param newUserInfoLabel userInfoLabel
      */
-    public void setUserInfoLabel(String userInfoLabel) {
-        this.userInfoLabel = userInfoLabel;
+    public void setUserInfoLabel(final String newUserInfoLabel) {
+        this.userInfoLabel = newUserInfoLabel;
     }
-    /**
-     * <p>Text to display for the current Role information, such as the name of 
-     * the user who is running the application.</p>
-     */
-    @Property(name = "roleInfo", displayName = "Current Role Info",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String roleInfo = null;
 
     /**
-     * <p>Getter method to get Role information, such as the name of 
-     * the role who is running the application.</p>
+     * Getter method to get Role information, such as the name of the role who
+     * is running the application.
+     * @return String
      */
     public String getRoleInfo() {
         if (this.roleInfo != null) {
             return this.roleInfo;
         }
-        ValueExpression _vb = getValueExpression("roleInfo");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("roleInfo");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Set the current Role information, such as the name of 
-     * the role who is running the application.</p>
+     * Set the current Role information, such as the name of the role who is
+     * running the application.
+     *
      * @see #getRoleInfo()
+     * @param newRoleInfo roleInfo
      */
-    public void setRoleInfo(String roleInfo) {
-        this.roleInfo = roleInfo;
+    public void setRoleInfo(final String newRoleInfo) {
+        this.roleInfo = newRoleInfo;
     }
-    /**
-     * <p>The label text to display for the current User information.</p>
-     */
-    @Property(name = "roleInfoLabel", displayName = "Current Role Info Label",
-    category = "Appearance", editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String roleInfoLabel = null;
 
     /**
-     * <p>The label text to display for the current Role information.</p>
+     * The label text to display for the current Role information.
+     * @return String
      */
     public String getRoleInfoLabel() {
         if (this.roleInfoLabel != null) {
             return this.roleInfoLabel;
         }
-        ValueExpression _vb = getValueExpression("roleInfoLabel");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("roleInfoLabel");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>The label text to display for the current Role information.</p>
+     * The label text to display for the current Role information.
+     *
      * @see #getRoleInfoLabel()
+     * @param newRoleInfoLabel roleInfoLabel
      */
-    public void setRoleInfoLabel(String roleInfoLabel) {
-        this.roleInfoLabel = roleInfoLabel;
+    public void setRoleInfoLabel(final String newRoleInfoLabel) {
+        this.roleInfoLabel = newRoleInfoLabel;
     }
-    /**
-     * <p>A JavaServer Faces EL expression that resolves to a backing bean or 
-     * a backing bean property that is an array of one or more custom 
-     * Hyperlink components to display in the utility bar. The Hyperlink 
-     * components must be given ids.</p>
-     */
-    @Property(name = "utilities", displayName = "Utility Bar Links", category = "Behavior",
-    editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
-    private com.sun.webui.jsf.component.Hyperlink[] utilities = null;
 
     /**
-     * <p>A JavaServer Faces EL expression that resolves to a backing bean or 
-     * a backing bean property that is an array of one or more custom 
-     * Hyperlink components to display in the utility bar. The Hyperlink 
-     * components must be given ids.</p>
+     * A JavaServer Faces EL expression that resolves to a backing bean or a
+     * backing bean property that is an array of one or more custom Hyperlink
+     * components to display in the utility bar. The Hyperlink components must
+     * be given ids.
+     * @return {@code com.sun.webui.jsf.component.Hyperlink[]}
      */
     public com.sun.webui.jsf.component.Hyperlink[] getUtilities() {
         if (this.utilities != null) {
             return this.utilities;
         }
-        ValueExpression _vb = getValueExpression("utilities");
-        if (_vb != null) {
-            return (com.sun.webui.jsf.component.Hyperlink[]) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("utilities");
+        if (vb != null) {
+            return (com.sun.webui.jsf.component.Hyperlink[]) vb
+                    .getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>A JavaServer Faces EL expression that resolves to a backing bean or 
-     * a backing bean property that is an array of one or more custom 
-     * Hyperlink components to display in the utility bar. The Hyperlink 
-     * components must be given ids.</p>
+     * A JavaServer Faces EL expression that resolves to a backing bean or a
+     * backing bean property that is an array of one or more custom Hyperlink
+     * components to display in the utility bar. The Hyperlink components must
+     * be given ids.
+     *
      * @see #getUtilities()
+     * @param newUtilities utilities
      */
-    public void setUtilities(com.sun.webui.jsf.component.Hyperlink[] utilities) {
-        this.utilities = utilities;
+    public void setUtilities(
+            final com.sun.webui.jsf.component.Hyperlink[] newUtilities) {
+
+        this.utilities = newUtilities;
     }
-    /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
-     * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
-     */
-    @Property(name = "visible", displayName = "Visible")
-    private boolean visible = false;
-    private boolean visible_set = false;
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     * @return {@code boolean}
      */
     public boolean isVisible() {
-        if (this.visible_set) {
+        if (this.visibleSet) {
             return this.visible;
         }
-        ValueExpression _vb = getValueExpression("visible");
-        if (_vb != null) {
-            Object _result = _vb.getValue(getFacesContext().getELContext());
-            if (_result == null) {
+        ValueExpression vb = getValueExpression("visible");
+        if (vb != null) {
+            Object result = vb.getValue(getFacesContext().getELContext());
+            if (result == null) {
                 return false;
             } else {
-                return ((Boolean) _result).booleanValue();
+                return ((Boolean) result);
             }
         }
         return true;
     }
 
     /**
-     * <p>Use the visible attribute to indicate whether the component should be
-     * viewable by the user in the rendered HTML page. If set to false, the
-     * HTML code for the component is present in the page, but the component
-     * is hidden with style attributes. By default, visible is set to true, so
-     * HTML for the component HTML is included and visible to the user. If the
+     * Use the visible attribute to indicate whether the component should be
+     * viewable by the user in the rendered HTML page. If set to false, the HTML
+     * code for the component is present in the page, but the component is
+     * hidden with style attributes. By default, visible is set to true, so HTML
+     * for the component HTML is included and visible to the user. If the
      * component is not visible, it can still be processed on subsequent form
-     * submissions because the HTML is present.</p>
+     * submissions because the HTML is present.
+     *
      * @see #isVisible()
+     * @param newVisible visible
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.visible_set = true;
+    public void setVisible(final boolean newVisible) {
+        this.visible = newVisible;
+        this.visibleSet = true;
     }
 
     /**
-     * <p> Get the masthead jobcount hyperlink</p>
+     * Get the masthead jobcount hyperlink.
+     *
+     * @return UIComponent
      */
     public UIComponent getJobCountLink() {
         FacesContext context = FacesContext.getCurrentInstance();
         Theme theme = ThemeUtilities.getTheme(context);
-        Hyperlink jcLink = (Hyperlink) ComponentUtilities.getPrivateFacet(this,
-                "jobCountHyperlink", true);
-        // (Hyperlink) Util.getChild(this, "jobCountHyperlink");
+        Hyperlink jcLink = (Hyperlink) ComponentUtilities
+                .getPrivateFacet(this, "jobCountHyperlink", true);
         if (jcLink == null) {
             jcLink = new Hyperlink();
-            jcLink.setId(ComponentUtilities.createPrivateFacetId(this,
-                    "jobCountHyperlink"));
-            ComponentUtilities.putPrivateFacet(this,
-                    "jobCountHyperlink", jcLink);
-        }   // setId("jobCountHyperlink");
-        jcLink.setStyleClass(theme.getStyleClass(ThemeStyles.MASTHEAD_PROGRESS_LINK));
-        jcLink.setText(theme.getMessage("masthead.tasksRunning") +
-                " " + getJobCount());
-        // this.getChildren().add(jcLink);
-        // }
+            jcLink.setId(ComponentUtilities
+                    .createPrivateFacetId(this, "jobCountHyperlink"));
+            ComponentUtilities
+                    .putPrivateFacet(this, "jobCountHyperlink", jcLink);
+        }
+        jcLink.setStyleClass(theme
+                .getStyleClass(ThemeStyles.MASTHEAD_PROGRESS_LINK));
+        jcLink.setText(theme.getMessage("masthead.tasksRunning")
+                + " " + getJobCount());
         return jcLink;
     }
 
     @Override
-    public void processDecodes(FacesContext context) {
+    public void processDecodes(final FacesContext context) {
         if (this.isRendered()) {
             if (this.getUtilities() != null) {
                 for (Hyperlink hyperlink : this.getUtilities()) {
@@ -913,7 +1139,7 @@ public class Masthead extends UIOutput implements NamingContainer {
     }
 
     @Override
-    public void processValidators(FacesContext context) {
+    public void processValidators(final FacesContext context) {
         if (this.isRendered()) {
             if (this.getUtilities() != null) {
                 for (Hyperlink hyperlink : this.getUtilities()) {
@@ -928,7 +1154,7 @@ public class Masthead extends UIOutput implements NamingContainer {
     }
 
     @Override
-    public void processUpdates(FacesContext context) {
+    public void processUpdates(final FacesContext context) {
         if (this.isRendered()) {
             if (this.getUtilities() != null) {
                 for (Hyperlink hyperlink : this.getUtilities()) {
@@ -942,97 +1168,133 @@ public class Masthead extends UIOutput implements NamingContainer {
         }
     }
 
-    /**
-     * <p>Restore the state of this component.</p>
-     */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.alarmCounts = (int[]) _values[1];
-        this.brandImageDescription = (String) _values[2];
-        this.brandImageHeight = ((Integer) _values[3]).intValue();
-        this.brandImageHeight_set = ((Boolean) _values[4]).booleanValue();
-        this.brandImageURL = (String) _values[5];
-        this.brandImageWidth = ((Integer) _values[6]).intValue();
-        this.brandImageWidth_set = ((Boolean) _values[7]).booleanValue();
-        this.dateTime = ((Boolean) _values[8]).booleanValue();
-        this.dateTime_set = ((Boolean) _values[9]).booleanValue();
-        this.jobCount = ((Integer) _values[10]).intValue();
-        this.jobCount_set = ((Boolean) _values[11]).booleanValue();
-        this.notificationMsg = (String) _values[12];
-        this.productImageDescription = (String) _values[13];
-        this.productImageHeight = ((Integer) _values[14]).intValue();
-        this.productImageHeight_set = ((Boolean) _values[15]).booleanValue();
-        this.productImageURL = (String) _values[16];
-        this.productImageWidth = ((Integer) _values[17]).intValue();
-        this.productImageWidth_set = ((Boolean) _values[18]).booleanValue();
-        this.secondary = ((Boolean) _values[19]).booleanValue();
-        this.secondary_set = ((Boolean) _values[20]).booleanValue();
-        this.serverInfo = (String) _values[21];
-        this.serverInfoLabel = (String) _values[22];
-        this.style = (String) _values[23];
-        this.styleClass = (String) _values[24];
-        this.userInfo = (String) _values[25];
-        this.userInfoLabel = (String) _values[26];
-        // this.utilities = (com.sun.webui.jsf.component.Hyperlink[]) _values[27];
-        if (_values[27] != null) {
-            Object[] _linkValues = (Object[]) _values[27];
-            this.utilities = new Hyperlink[_linkValues.length];
-            for (int i = 0; i < _linkValues.length; i++) {
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.alarmCounts = (int[]) values[1];
+        this.brandImageDescription = (String) values[2];
+        this.brandImageHeight = ((Integer) values[3]);
+        this.brandImageHeightSet = ((Boolean) values[4]);
+        this.brandImageURL = (String) values[5];
+        this.brandImageWidth = ((Integer) values[6]);
+        this.brandImageWidthSet = ((Boolean) values[7]);
+        this.dateTime = ((Boolean) values[8]);
+        this.dateTimeSet = ((Boolean) values[9]);
+        this.jobCount = ((Integer) values[10]);
+        this.jobCountSet = ((Boolean) values[11]);
+        this.notificationMsg = (String) values[12];
+        this.productImageDescription = (String) values[13];
+        this.productImageHeight = ((Integer) values[14]);
+        this.productImageHeightSet = ((Boolean) values[15]);
+        this.productImageURL = (String) values[16];
+        this.productImageWidth = ((Integer) values[17]);
+        this.productImageWidthSet = ((Boolean) values[18]);
+        this.secondary = ((Boolean) values[19]);
+        this.secondarySet = ((Boolean) values[20]);
+        this.serverInfo = (String) values[21];
+        this.serverInfoLabel = (String) values[22];
+        this.style = (String) values[23];
+        this.styleClass = (String) values[24];
+        this.userInfo = (String) values[25];
+        this.userInfoLabel = (String) values[26];
+        if (values[27] != null) {
+            Object[] linkValues = (Object[]) values[27];
+            this.utilities = new Hyperlink[linkValues.length];
+            for (int i = 0; i < linkValues.length; i++) {
                 this.utilities[i] = new Hyperlink();
-                this.utilities[i].restoreState(_context, _linkValues[i]);
+                this.utilities[i].restoreState(context, linkValues[i]);
             }
         }
-
-        this.visible = ((Boolean) _values[28]).booleanValue();
-        this.visible_set = ((Boolean) _values[29]).booleanValue();
+        this.visible = ((Boolean) values[28]);
+        this.visibleSet = ((Boolean) values[29]);
     }
 
-    /**
-     * <p>Save the state of this component.</p>
-     */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[36];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.alarmCounts;
-        _values[2] = this.brandImageDescription;
-        _values[3] = new Integer(this.brandImageHeight);
-        _values[4] = this.brandImageHeight_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[5] = this.brandImageURL;
-        _values[6] = new Integer(this.brandImageWidth);
-        _values[7] = this.brandImageWidth_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[8] = this.dateTime ? Boolean.TRUE : Boolean.FALSE;
-        _values[9] = this.dateTime_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[10] = new Integer(this.jobCount);
-        _values[11] = this.jobCount_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[12] = this.notificationMsg;
-        _values[13] = this.productImageDescription;
-        _values[14] = new Integer(this.productImageHeight);
-        _values[15] = this.productImageHeight_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[16] = this.productImageURL;
-        _values[17] = new Integer(this.productImageWidth);
-        _values[18] = this.productImageWidth_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[19] = this.secondary ? Boolean.TRUE : Boolean.FALSE;
-        _values[20] = this.secondary_set ? Boolean.TRUE : Boolean.FALSE;
-        _values[21] = this.serverInfo;
-        _values[22] = this.serverInfoLabel;
-        _values[23] = this.style;
-        _values[34] = this.styleClass;
-        _values[25] = this.userInfo;
-        _values[26] = this.userInfoLabel;
-        // _values[27] = this.utilities;
-        if (this.utilities != null) {
-            Object[] _linkValues = new Object[this.utilities.length];
-            for (int i = 0; i < this.utilities.length; i++) {
-                _linkValues[i] = this.utilities[i].saveState(_context);
-            }
-            _values[27] = _linkValues;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[36];
+        values[0] = super.saveState(context);
+        values[1] = this.alarmCounts;
+        values[2] = this.brandImageDescription;
+        values[3] = this.brandImageHeight;
+        if (this.brandImageHeightSet) {
+            values[4] = Boolean.TRUE;
+        } else {
+            values[4] = Boolean.FALSE;
         }
-
-        _values[28] = this.visible ? Boolean.TRUE : Boolean.FALSE;
-        _values[29] = this.visible_set ? Boolean.TRUE : Boolean.FALSE;
-        return _values;
+        values[5] = this.brandImageURL;
+        values[6] = this.brandImageWidth;
+        if (this.brandImageWidthSet) {
+            values[7] = Boolean.TRUE;
+        } else {
+            values[7] = Boolean.FALSE;
+        }
+        if (this.dateTime) {
+            values[8] = Boolean.TRUE;
+        } else {
+            values[8] = Boolean.FALSE;
+        }
+        if (this.dateTimeSet) {
+            values[9] = Boolean.TRUE;
+        } else {
+            values[9] = Boolean.FALSE;
+        }
+        values[10] = this.jobCount;
+        if (this.jobCountSet) {
+            values[11] = Boolean.TRUE;
+        } else {
+            values[11] = Boolean.FALSE;
+        }
+        values[12] = this.notificationMsg;
+        values[13] = this.productImageDescription;
+        values[14] = this.productImageHeight;
+        if (this.productImageHeightSet) {
+            values[15] = Boolean.TRUE;
+        } else {
+            values[15] = Boolean.FALSE;
+        }
+        values[16] = this.productImageURL;
+        values[17] = this.productImageWidth;
+        if (this.productImageHeightSet) {
+            values[18] = Boolean.TRUE;
+        } else {
+            values[18] = Boolean.FALSE;
+        }
+        if (this.secondary) {
+            values[19] = Boolean.TRUE;
+        } else {
+            values[19] = Boolean.FALSE;
+        }
+        if (this.secondarySet) {
+            values[20] = Boolean.TRUE;
+        } else {
+            values[20] = Boolean.FALSE;
+        }
+        values[21] = this.serverInfo;
+        values[22] = this.serverInfoLabel;
+        values[23] = this.style;
+        values[34] = this.styleClass;
+        values[25] = this.userInfo;
+        values[26] = this.userInfoLabel;
+        if (this.utilities != null) {
+            Object[] linkValues = new Object[this.utilities.length];
+            for (int i = 0; i < this.utilities.length; i++) {
+                linkValues[i] = this.utilities[i].saveState(context);
+            }
+            values[27] = linkValues;
+        }
+        if (this.visible) {
+            values[28] = Boolean.TRUE;
+        } else {
+            values[28] = Boolean.FALSE;
+        }
+        if (this.visibleSet) {
+            values[29] = Boolean.TRUE;
+        } else {
+            values[29] = Boolean.FALSE;
+        }
+        return values;
     }
 }

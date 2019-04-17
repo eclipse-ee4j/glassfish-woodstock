@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,29 +13,38 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
-/*
- * $Id: ResourceModelException.java,v 1.1.20.1 2009-12-29 03:47:57 jyeary Exp $
- */
 package com.sun.webui.jsf.model;
 
 import javax.faces.validator.ValidatorException;
 import javax.faces.application.FacesMessage;
 
 /**
- *
  * Need to make this an interface as well.
  * And in our implementation log the exception as well.
  */
-public class ResourceModelException extends ValidatorException {
+public final class ResourceModelException extends ValidatorException {
 
+    /**
+     * Serialization UID.
+     */
     private static final long serialVersionUID = -8267067702146533999L;
 
-    public ResourceModelException(FacesMessage fmsg) {
+    /**
+     * Create a new instance.
+     * @param fmsg faces message
+     */
+    public ResourceModelException(final FacesMessage fmsg) {
         super(fmsg);
     }
 
-    public ResourceModelException(FacesMessage fmsg, Throwable cause) {
+    /**
+     * Create a new instance.
+     * @param fmsg faces message
+     * @param cause cause
+     */
+    public ResourceModelException(final FacesMessage fmsg,
+            final Throwable cause) {
+
         super(fmsg, cause);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.renderkit.html;
 
 import java.io.IOException;
@@ -31,10 +30,12 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
 /**
- * <p>Renders a version page.</p>
+ * Renders a version page.
  */
-@com.sun.faces.annotation.Renderer(@com.sun.faces.annotation.Renderer.Renders(componentFamily = "com.sun.webui.jsf.PropertySheetSection"))
-public class PropertySheetSectionRenderer extends Renderer {
+@com.sun.faces.annotation.Renderer(
+        @com.sun.faces.annotation.Renderer.Renders(
+                componentFamily = "com.sun.webui.jsf.PropertySheetSection"))
+public final class PropertySheetSectionRenderer extends Renderer {
 
     /**
      * Creates a new instance of PropertySheetSectionRenderer.
@@ -42,25 +43,15 @@ public class PropertySheetSectionRenderer extends Renderer {
     public PropertySheetSectionRenderer() {
     }
 
-    /**
-     * This renderer renders the component's children.
-     */
     @Override
     public boolean getRendersChildren() {
         return true;
     }
 
-    /**
-     * Render a property sheet.
-     * 
-     * @param context The current FacesContext
-     * @param component The PropertySheet object to render
-     *
-     * @exception IOException if an input/output error occurs
-     */
     @Override
-    public void encodeEnd(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeEnd(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }
@@ -70,14 +61,11 @@ public class PropertySheetSectionRenderer extends Renderer {
         }
 
         ResponseWriter writer = context.getResponseWriter();
-
-        PropertySheetSection propertySheetSection =
-                (PropertySheetSection) component;
+        PropertySheetSection propertySheetSection
+                = (PropertySheetSection) component;
 
         // Get the theme
-        //
         Theme theme = ThemeUtilities.getTheme(context);
-
         renderPropertySheetSection(context, propertySheetSection, theme,
                 writer);
     }
@@ -86,20 +74,19 @@ public class PropertySheetSectionRenderer extends Renderer {
     // template renderer.
     // The setAttribute handler places the key/value pair in the
     // request map.
-    //
     /**
      * Render the property sheet sections.
-     * 
+     *
      * @param context The current FacesContext
-     * @param propertySheet The PropertySheet object to render
+     * @param propertySheetSection The PropertySheet object to render
      * @param theme The Theme to reference.
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderPropertySheetSection(FacesContext context,
-            PropertySheetSection propertySheetSection, Theme theme,
-            ResponseWriter writer) throws IOException {
+    protected void renderPropertySheetSection(final FacesContext context,
+            final PropertySheetSection propertySheetSection, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         int numChildren = propertySheetSection.getSectionChildrenCount();
         if (numChildren <= 0) {
@@ -108,7 +95,7 @@ public class PropertySheetSectionRenderer extends Renderer {
 
         writer.startElement(HTMLElements.DIV, propertySheetSection);
         writer.writeAttribute(HTMLAttributes.ID,
-                propertySheetSection.getClientId(context), "id");//NOI18N
+                propertySheetSection.getClientId(context), "id");
         String propValue = RenderingUtilities.getStyleClasses(context,
                 propertySheetSection,
                 theme.getStyleClass(ThemeStyles.CONTENT_FIELDSET));
@@ -117,46 +104,43 @@ public class PropertySheetSectionRenderer extends Renderer {
         // There was a distinction made between ie and other browsers.
         // If the browser was ie, fieldsets were used, and if not
         // divs were used. Why ? Just use divs here.
-        //
         writer.startElement(HTMLElements.DIV, propertySheetSection);
         writer.writeAttribute(HTMLAttributes.CLASS,
                 theme.getStyleClass(ThemeStyles.CONTENT_FIELDSET_DIV), null);
 
         // Render the section label
         // Why isn't this a label facet on PropertySheetSection, too ?
-        //
         propValue = propertySheetSection.getLabel();
         if (propValue != null) {
             writer.startElement(HTMLElements.DIV, propertySheetSection);
             writer.writeAttribute(HTMLAttributes.CLASS,
-                    theme.getStyleClass(ThemeStyles.CONTENT_FIELDSET_LEGEND_DIV),
+                    theme.getStyleClass(
+                            ThemeStyles.CONTENT_FIELDSET_LEGEND_DIV),
                     null);
             writer.writeText(propValue, null);
             writer.endElement(HTMLElements.DIV);
         }
 
         renderProperties(context, propertySheetSection, theme, writer);
-
         writer.endElement(HTMLElements.DIV);
         writer.endElement(HTMLElements.DIV);
     }
 
     /**
-     * Render a required fields legend.
-     * If <code>propertySheet.getRequiredFields</code> returns null
-     * a spacer is rendered.
-     * 
+     * Render a required fields legend. If
+     * {@code propertySheet.getRequiredFields} returns null a spacer is
+     * rendered.
+     *
      * @param context The current FacesContext
-     * @param propertySheet The PropertySheet object to render
+     * @param propertySheetSection The PropertySheet object to render
      * @param theme The Theme to reference.
      * @param writer The current ResponseWriter
      *
      * @exception IOException if an input/output error occurs
      */
-    protected void renderProperties(FacesContext context,
-            PropertySheetSection propertySheetSection, Theme theme,
-            ResponseWriter writer) throws IOException {
-
+    protected void renderProperties(final FacesContext context,
+            final PropertySheetSection propertySheetSection, final Theme theme,
+            final ResponseWriter writer) throws IOException {
 
         List properties = propertySheetSection.getVisibleSectionChildren();
 
@@ -164,8 +148,9 @@ public class PropertySheetSectionRenderer extends Renderer {
         writer.writeAttribute(HTMLAttributes.BORDER, 0, null);
         writer.writeAttribute(HTMLAttributes.CELLSPACING, 0, null);
         writer.writeAttribute(HTMLAttributes.CELLPADDING, 0, null);
-        writer.writeAttribute(HTMLAttributes.TITLE, "", null); //NOI18N
-        writer.writeAttribute(HTMLAttributes.ROLE, HTMLAttributes.ROLE_PRESENTATION, null);
+        writer.writeAttribute(HTMLAttributes.TITLE, "", null);
+        writer.writeAttribute(HTMLAttributes.ROLE,
+                HTMLAttributes.ROLE_PRESENTATION, null);
 
         // Unfortunately the PropertyRenderer needs to render
         // a TR and TD since we are opening a table context here.
@@ -173,26 +158,24 @@ public class PropertySheetSectionRenderer extends Renderer {
         // radio button and checkbox group renderer is used, where there is
         // a table layout renderer. I'm not sure if that is sufficiently
         // robust to handle "properties".
-        //
-
         for (Object property : properties) {
             RenderingUtilities.renderComponent((UIComponent) property, context);
         }
-
         writer.endElement(HTMLElements.TABLE);
     }
 
     /**
      * Render a property sheet.
-     * 
+     *
      * @param context The current FacesContext
      * @param component The PropertySheet object to render
      *
      * @exception IOException if an input/output error occurs
      */
     @Override
-    public void encodeChildren(FacesContext context, UIComponent component)
-            throws IOException {
+    public void encodeChildren(final FacesContext context,
+            final UIComponent component) throws IOException {
+
         if (context == null || component == null) {
             throw new NullPointerException();
         }

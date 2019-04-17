@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Property;
@@ -28,50 +27,72 @@ import javax.faces.convert.ConverterException;
 import javax.faces.render.Renderer;
 
 /**
- * This renderer meta-data is not mapped one to one with a component.
- * A renderer of this name does exist as the super class of the
- * RadioButton and Checkbox renderers.
+ * This renderer meta-data is not mapped one to one with a component. A renderer
+ * of this name does exist as the super class of the RadioButton and Checkbox
+ * renderers.
  */
 public class RbCbSelector extends Selector implements NamingContainer {
 
     /**
      * Image facet name.
      */
-    public final static String IMAGE_FACET = "image"; //NOI18N
+    public static final String IMAGE_FACET = "image";
 
-    // Properties to transfer from "this" to the image subcomponent
-    //
-    private final static String IMAGE_URL_PROP = "imageURL";
-    private final static String URL_PROP = "url";
-    private final static String ALT_PROP = "alt";
     /**
      * Label facet name.
      */
-    public final static String LABEL_FACET = "label"; //NOI18N
+    public static final String LABEL_FACET = "label";
 
-    // Properties to transfer from "this" to the label subcomponent
-    //
-    private final static String LABEL_PROP = "label";
-    private final static String TEXT_PROP = "text";
-    private final static String LABEL_LEVEL_PROP = "labelLevel";
+    /**
+     * This is the default value for selectedValue. Because of the generation
+     * and alias of "items" (Need to reconsider this inheritance) its not
+     * possible to set up a default value. If selectedValue is not set, then
+     * allow this component to behave as a {@code boolean} control. The
+     * component is selected if both "selected" and "selectedValue" are "true".
+     */
+    private static final Boolean TRUE_SELECTED_VALUE = Boolean.TRUE;
 
-    // Props for both subcomponents
-    //
-    private final static String TOOLTIP_PROP = "toolTip";
-    private final static String VISIBLE_PROP = "visible";
-    private final static String RENDERED_PROP = "rendered";
-    private final static String ID_SEPARATOR = "_"; //NOI18N
+    /**
+     * A context relative path of an image to be displayed with the control. If
+     * you want to be able to specify attributes for the image, specify an
+     * {@code image} facet instead of the {@code imageURL}
+     * attribute.
+     */
+    @Property(name = "imageURL",
+            category = "Appearance",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.ImageUrlPropertyEditor")
+            //CHECKSTYLE:ON
+    private String imageURL = null;
 
-    // This is the default value for selectedValue.
-    // Because of the generation and alias of "items"
-    // (Need to reconsider this inheritance)
-    // its not possible to set up a default value.
-    // If selectedValue is not set, then allow this
-    // component to behave as a boolean control.
-    // The component is selected if both "selected" and
-    // "selectedValue" are "true".
-    //
-    private final static Boolean trueSelectedValue = Boolean.TRUE;
+    /**
+     * Specifies the options that the web application user can choose from. The
+     * value must be one of an array, Map or Collection whose members are all
+     * subclasses of{@code com.sun.webui.jsf.model.Option}.
+     */
+    @Property(name = "items",
+            displayName = "Items",
+            category = "Data",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
+            //CHECKSTYLE:ON
+    private Object items = null;
+
+    /**
+     * Identifies the control as participating as part of a group. The
+     * {@code RadioButton} and {@code Checkbox} classes determine the behavior
+     * of the group, that are assigned the same value to the {@code name}
+     * property. The value of this property must be unique for components in the
+     * group, within the scope of the {@code Form} parent component containing
+     * the grouped components.
+     */
+    @Property(name = "name",
+            displayName = "Group Name",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
+    private String name = null;
 
     /**
      * Default constructor.
@@ -82,7 +103,8 @@ public class RbCbSelector extends Selector implements NamingContainer {
     }
 
     /**
-     * <p>Return the family for this component.</p>
+     * This implementation returns {@code "com.sun.webui.jsf.RbCbSelector"}.
+     * @return String
      */
     @Override
     public String getFamily() {
@@ -90,31 +112,34 @@ public class RbCbSelector extends Selector implements NamingContainer {
     }
 
     /**
-     * Implemented by subclasses in order to reflect the selection
-     * state of this component id part of a group.
-     * This method is called if the component is part of a group.
-     * 
+     * Implemented by subclasses in order to reflect the selection state of this
+     * component id part of a group. This method is called if the component is
+     * part of a group.
+     * This implementation does nothing.
+     *
      * @param context the context for this request.
-     * @param groupName the value of the <code>name</code> property.
+     * @param groupName the value of the {@code name} property.
      */
-    protected void addToRequestMap(FacesContext context, String groupName) {
+    protected void addToRequestMap(final FacesContext context,
+            final String groupName) {
     }
 
     /**
      * Encode the component.
      * <p>
-     * If this component is part of a group, ensure that the initial
-     * state is reflected in the request map by calling
-     * <code>addToRequestMap</code>.
+     * If this component is part of a group, ensure that the initial state is
+     * reflected in the request map by calling {@code addToRequestMap}.
      * </p>
+     *
      * @param context the context for this request.
+     * @throws IOException if an IO error occurs
      */
     // Implement this here to initialize the RequestMap ArrayList
     // of selected grouped checkboxes, so that initially selected
     // check boxes are available on the first render cycle
     //
     @Override
-    public void encodeBegin(FacesContext context) throws IOException {
+    public void encodeBegin(final FacesContext context) throws IOException {
 
         if (context == null) {
             throw new NullPointerException();
@@ -126,74 +151,66 @@ public class RbCbSelector extends Selector implements NamingContainer {
         // If the checkbox or radio button isn't valid, or
         // not in a group or not
         // selected, don't put it in the RequestMap.
-        //
         String groupName = getName();
         if (groupName == null || !isValid() || !isChecked()) {
             return;
         }
-
         addToRequestMap(context, groupName);
-
         String rendererType = getRendererType();
         if (rendererType != null) {
             getRenderer(context).encodeBegin(context, this);
         }
-
     }
 
     /**
-     * Convert the <code>submittedValue</code> argument.
+     * Convert the {@code submittedValue} argument.
      * <p>
-     * If there is a renderer for this component,
-     * its <code>getConvertedValue()</code> method is called and
-     * the value returned by that method is returned. 
+     * If there is a renderer for this component, its
+     * {@code getConvertedValue()} method is called and the value returned by
+     * that method is returned.
      * </p>
      * <p>
-     * If there is no renderer, and <code>submittedValue</code> is not
-     * an instance of <code>String[]</code> or
-     * <code>String</code> a <code>ConverterException</code> is thrown.
+     * If there is no renderer, and {@code submittedValue} is not an instance of
+     * {@code String[]} or {@code String} a {@code ConverterException} is
+     * thrown.
      * </p>
      * <p>
-     * The <code>submittedValue</code> indicates selected if it is
-     * <code>String[1].length() != 0</code> or 
-     * <code>String.length() != 0</code>.
-     * </p>
-     * If not selected and <code>getSelectedValue()</code> returns an
-     * instance of <code>Boolean</code>, <code>Boolean.FALSE</code> is
-     * returned.
+     * The {@code submittedValue} indicates selected if it is
+     * {@code String[1].length() != 0} or {@code String.length() != 0}.
      * </p>
      * <p>
-     * If not selected and it's not a boolean control then an unselected
-     * value is returned appropriate for the type of the <code>selected</code>
-     * property. If the type of the <code>selected</code> property evaluates
-     * to a primitive type by virtue of a value binding the appropriate
-     * <code>MIN_VALUE</code> constant is returned. For example if the
-     * type is <code>int</code>, <code>new Integer(Integer.MIN_VALUE)</code>
-     * is returned.<br/>
-     * If the type is not a primitive value <code>""</code> is returned.
+     * If not selected and {@code getSelectedValue()} returns an instance of
+     * {@code Boolean}, {@code Boolean.FALSE} is returned.
+     * </p>
+     * <p>
+     * If not selected and it's not a {@code boolean} control then an unselected
+     * value is returned appropriate for the type of the {@code selected}
+     * property. If the type of the {@code selected} property evaluates to a
+     * primitive type by virtue of a value binding the appropriate
+     * {@code MIN_VALUE} constant is returned. For example if the type is
+     * {@code int}, {@code new Integer(Integer.MIN_VALUE)} is returned. If the
+     * type is not a primitive value {@code ""} is returned.
      * </p>
      * <p>
      * If the control is selected
-     * <code>ConversionUtilities.convertValueToObject()</code> is called to
-     * convert <code>submittedValue</code>.
+     * {@code ConversionUtilities.convertValueToObject()} is called to convert
+     * {@code submittedValue}.
      * </p>
      * <p>
-     * If <code>ConversionUtilities.convertValueToObject()</code> returns
-     * <code>submittedValue</code>, the value of the 
-     * <code>getSelectedValue()</code> property
-     * is returned, else the value returned by 
-     * <code>ConversionUtilities.convertValueToObject()</code> is returned.
+     * If {@code ConversionUtilities.convertValueToObject()} returns
+     * {@code submittedValue}, the value of the {@code getSelectedValue()}
+     * property is returned, else the value returned by
+     * {@code ConversionUtilities.convertValueToObject()} is returned.
      * </p>
+     *
      * @param context the context of this request.
      * @param submittedValue the submitted String value of this component.
      */
     @Override
-    public Object getConvertedValue(FacesContext context,
-            Object submittedValue)
-            throws ConverterException {
+    public Object getConvertedValue(final FacesContext context,
+            final Object submittedValue) throws ConverterException {
 
         // First defer to the renderer.
-        //
         Renderer renderer = getRenderer(context);
         if (renderer != null) {
             return renderer.getConvertedValue(context, this, submittedValue);
@@ -202,67 +219,64 @@ public class RbCbSelector extends Selector implements NamingContainer {
     }
 
     /**
-     * Convert the <code>submittedValue</code> argument.
+     * Convert the {@code submittedValue} argument.
      * <p>
-     * If <code>submittedValue</code> is not
-     * an instance of <code>String[]</code> or
-     * <code>String</code> a <code>ConverterException</code> is thrown.
+     * If {@code submittedValue} is not an instance of {@code String[]} or
+     * {@code String} a {@code ConverterException} is thrown.
      * </p>
      * <p>
-     * The <code>submittedValue</code> indicates selected if it is
-     * <code>String[1].length() != 0</code> or 
-     * <code>String.length() != 0</code>.
-     * </p>
-     * If not selected and <code>getSelectedValue()</code> returns an
-     * instance of <code>Boolean</code>, <code>Boolean.FALSE</code> is
-     * returned.
+     * The {@code submittedValue} indicates selected if it is
+     * {@code String[1].length() != 0} or {@code String.length() != 0}.
      * </p>
      * <p>
-     * If not selected and it's not a boolean control then an unselected
-     * value is returned appropriate for the type of the <code>selected</code>
-     * property. If the type of the <code>selected</code> property evaluates
-     * to a primitive type by virtue of a value binding the appropriate
-     * <code>MIN_VALUE</code> constant is returned. For example if the
-     * type is <code>int</code>, <code>new Integer(Integer.MIN_VALUE)</code>
-     * is returned.<br/>
-     * If the type is not a primitive value <code>""</code> is returned.
+     * If not selected and {@code getSelectedValue()} returns an instance of
+     * {@code Boolean}, {@code Boolean.FALSE} is returned.
+     * </p>
+     * <p>
+     * If not selected and it's not a {@code boolean} control then an unselected
+     * value is returned appropriate for the type of the {@code selected}
+     * property. If the type of the {@code selected} property evaluates to a
+     * primitive type by virtue of a value binding the appropriate
+     * {@code MIN_VALUE} constant is returned. For example if the type is
+     * {@code int}, {@code new Integer(Integer.MIN_VALUE)} is returned. If the
+     * type is not a primitive value {@code ""} is returned.
      * </p>
      * <p>
      * If the control is selected
-     * <code>ConversionUtilities.convertValueToObject()</code> is called to
-     * convert <code>submittedValue</code>.
+     * {@code ConversionUtilities.convertValueToObject()} is called to convert
+     * {@code submittedValue}.
      * </p>
      * <p>
-     * If <code>ConversionUtilities.convertValueToObject()</code> returns
-     * <code>submittedValue</code>, the value of the 
-     * <code>getSelectedValue()</code> property
-     * is returned, else the value returned by 
-     * <code>ConversionUtilities.convertValueToObject()</code> is returned.
+     * If {@code ConversionUtilities.convertValueToObject()} returns
+     * {@code submittedValue}, the value of the {@code getSelectedValue()}
+     * property is returned, else the value returned by
+     * {@code ConversionUtilities.convertValueToObject()} is returned.
      * </p>
+     *
      * @param context the context of this request.
      * @param component an RbCbSelector instance.
      * @param submittedValue the submitted String value of this component.
+     * @return Object
+     * @throws ConverterException if a conversion error occurs
      */
-    public Object getConvertedValue(FacesContext context,
-            RbCbSelector component, Object submittedValue)
+    public Object getConvertedValue(final FacesContext context,
+            final RbCbSelector component, final Object submittedValue)
             throws ConverterException {
 
         // This would indicate minimally not selected
-        //
         if (submittedValue == null) {
             throw new ConverterException(
-                    "The submitted value is null. " + //NOI18N
-                    "The submitted value must be a String or String array.");//NOI18N
+                    "The submitted value is null. "
+                    + "The submitted value must be a String or String array.");
         }
 
         // Expect a String or String[]
         // Should be made to be just String.
-        //
         boolean isStringArray = submittedValue instanceof String[];
         boolean isString = submittedValue instanceof String;
         if (!(isStringArray || isString)) {
             throw new ConverterException(
-                    "The submitted value must be a String or String array.");//NOI18N
+                    "The submitted value must be a String or String array.");
         }
 
         String rawValue = null;
@@ -279,7 +293,6 @@ public class RbCbSelector extends Selector implements NamingContainer {
         // rawValue == "". Compare with the rendered value. If the
         // rendered value is "" or null, then the component is unchanged
         // and if the rendered value was not null, try and convert it.
-        //
         boolean unselected = rawValue == null || rawValue.length() == 0;
 
         // If the component was unselected then we need to know if it
@@ -288,12 +301,11 @@ public class RbCbSelector extends Selector implements NamingContainer {
         // and rendered as unselected, we need the rendered value that
         // implied unselected, since it may not null, just different
         // than "selectedValue"
-        //
-        Object newValue = null;
+        Object newValue;
         Object selectedValue = getSelectedValue();
         if (unselected) {
-            newValue = ConversionUtilities.convertRenderedValue(context,
-                    rawValue, this);
+            newValue = ConversionUtilities
+                    .convertRenderedValue(context, rawValue, this);
             // Determine the unselected value for Boolean controls
             // if the converted value is null but the the component
             // value wasn't rendered as null.
@@ -302,33 +314,45 @@ public class RbCbSelector extends Selector implements NamingContainer {
             // for a Boolean control, since it is unchanged.
             // But if it has changed and is unselected then return
             // the unselected value of FALSE.
-            //
-            if (!ConversionUtilities.renderedNull(component) &&
-                    selectedValue instanceof Boolean &&
-                    newValue == null) {
+            if (!ConversionUtilities.renderedNull(component)
+                    && selectedValue instanceof Boolean
+                    && newValue == null) {
 
                 // return the complement of the selectedValue
                 // Boolean value.
-                //
-                newValue = ((Boolean) selectedValue).booleanValue() ? Boolean.FALSE : Boolean.TRUE;
+                if (((Boolean) selectedValue)) {
+                    newValue = Boolean.FALSE;
+                } else {
+                    newValue = Boolean.TRUE;
+                }
             }
             return getUnselectedValue(context, component, newValue);
         } else {
-            newValue = ConversionUtilities.convertValueToObject(component, rawValue, context);
-            return newValue == rawValue ? selectedValue : newValue;
+            newValue = ConversionUtilities
+                    .convertValueToObject(component, rawValue, context);
+            if (newValue == rawValue) {
+                return selectedValue;
+            }
+            return newValue;
         }
     }
 
-    private Object getUnselectedValue(FacesContext context,
-            UIComponent component, Object noValue) {
+    /**
+     * Get the unselected value.
+     * @param context faces context
+     * @param component UI component
+     * @param noValue no value
+     * @return Object
+     */
+    private Object getUnselectedValue(final FacesContext context,
+            final UIComponent component, final Object noValue) {
 
         // Determine the type of the component's value object
-        ValueExpression valueExpr =
-                component.getValueExpression("value"); //NOI18N
+        ValueExpression valueExpr
+                = component.getValueExpression("value");
 
         // If there's no value binding we don't care
         // since the local value is an object and can support null or ""
-        //
         if (valueExpr == null) {
             return noValue;
         }
@@ -342,68 +366,76 @@ public class RbCbSelector extends Selector implements NamingContainer {
         // Pass noValue for use in primitive boolean case.
         // If the "selectedValue" was Boolean.FALSE, unselected
         // will be Boolean.TRUE.
-        //
         if (clazz.isPrimitive()) {
             return getPrimitiveUnselectedValue(clazz, noValue);
         }
-
         // bail out
         return noValue;
     }
 
-    private Object getPrimitiveUnselectedValue(Class clazz,
-            Object booleanUnselectedValue) {
+    /**
+     * Get the primitive unselected value.
+     * @param clazz the class
+     * @param booleanUnselectedValue unselected flag
+     * @return Object
+     */
+    private Object getPrimitiveUnselectedValue(final Class clazz,
+            final Object booleanUnselectedValue) {
 
         // it MUST be at least one of these
-        //
         if (clazz.equals(Boolean.TYPE)) {
             return booleanUnselectedValue;
         } else if (clazz.equals(Byte.TYPE)) {
             return new Integer(Byte.MIN_VALUE);
         } else if (clazz.equals(Double.TYPE)) {
-            return new Double(Double.MIN_VALUE);
+            return Double.MIN_VALUE;
         } else if (clazz.equals(Float.TYPE)) {
-            return new Float(Float.MIN_VALUE);
+            return Float.MIN_VALUE;
         } else if (clazz.equals(Integer.TYPE)) {
-            return new Integer(Integer.MIN_VALUE);
+            return Integer.MIN_VALUE;
         } else if (clazz.equals(Character.TYPE)) {
-            return new Character(Character.MIN_VALUE);
+            return Character.MIN_VALUE;
         } else if (clazz.equals(Short.TYPE)) {
-            return new Short(Short.MIN_VALUE);
+            return Short.MIN_VALUE;
         } else {
             // if (clazz.equals(Long.TYPE))
-            return new Long(Long.MIN_VALUE);
+            return Long.MIN_VALUE;
         }
     }
 
     /**
-     * <p>
      * The value of the component when it is selected. The value of this
-     * property is assigned to the <code>selected</code> property when
-     * the component is selected. The component is selected
-     * when the <code>selected</code> property is equal to this value.</br>
-     * This attribute can be bound to a <code>String</code>, or <code>
-     * Object</code> value.</br>
-     * If this property is not assigned a value, the component behaves
-     * as a boolean component. A boolean component
-     * is selected when the <code>selected</code> property is equal to a
-     * true <code>Boolean</code> instance.<br>
-     * If a boolean component is not selected, the <code>selected</code>
-     * property value is a false <code>Boolean</code> instance.</p>
+     * property is assigned to the {@code selected} property when the component
+     * is selected. The component is selected when the {@code selected} property
+     * is equal to this value. This attribute can be bound to a {@code String},
+     * or {@code
+     * Object} value. If this property is not assigned a value, the component
+     * behaves as a {@code boolean} component. A {@code boolean} component is
+     * selected when the {@code selected} property is equal to a true
+     * {@code Boolean} instance.<br>
+     * If a {@code boolean} component is not selected, the {@code selected}
+     * property value is a false {@code Boolean} instance.
+     * @return Object
      */
-    @Property(name = "selectedValue", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+    @Property(name = "selectedValue",
+            category = "Advanced",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
+            //CHECKSTYLE:ON
     public Object getSelectedValue() {
-        Object sv = _getSelectedValue();
-        return sv == null ? trueSelectedValue : sv;
+        Object sv = getItems();
+        if (sv == null) {
+            return TRUE_SELECTED_VALUE;
+        }
+        return sv;
     }
 
     // Hack to overcome introspection of "isSelected"
-    //
     /**
-     * Return <code>true</code> if the control is checked.
-     * A control is checked when the <code>selectedValue</code> property is
-     * equal to the <code>selected</code> property.
+     * Return {@code true} if the control is checked. A control is checked
+     * when the {@code selectedValue} property is equal to the
+     * {@code selected} property.
+     * @return {@code boolean}
      */
     public boolean isChecked() {
         Object selectedValue = getSelectedValue();
@@ -414,9 +446,9 @@ public class RbCbSelector extends Selector implements NamingContainer {
         // Need to support "selected" set to a constant String
         // such as "true" or "false" when it is a boolean control.
         // This does not include when selected is bound to a String
-        //
-        if (getValueExpression("selected") == null && //NOI18N
-                selected instanceof String && selectedValue instanceof Boolean) {
+        if (getValueExpression("selected") == null
+                && selected instanceof String
+                && selectedValue instanceof Boolean) {
             return selectedValue.equals(Boolean.valueOf((String) selected));
         } else {
             return selected.equals(selectedValue);
@@ -424,26 +456,25 @@ public class RbCbSelector extends Selector implements NamingContainer {
     }
 
     /**
-     * Return a component that implements an image.
-     * If a facet named <code>image</code> is found
-     * that component is returned.</br>
-     * If a facet is not found and
-     * <code>getImageURL()</code> returns a non null value
-     * an <code>ImageComponent</code> component instance is
-     * returned with the id</br>
-     * <code>getId() + "_image"</code>.</br>
-     * The <code>ImageComponent</code> instance is
-     * intialized with the values from
+     * Return a component that implements an image. If a facet named
+     * {@code image} is found that component is returned.
+     * If a facet is not found and {@code getImageURL()} returns a non null
+     * value an {@code ImageComponent} component instance is returned with
+     * the id
+     * {@code getId() + "_image"}.
+     * The {@code ImageComponent} instance is initialized with the values
+     * from
      * <p>
      * <ul>
-     * <li><code>getImageURL()</code></li>
-     * <li><code>getToolTip()</code> for the toolTip and alt property</li>
+     * <li>{@code getImageURL()}</li>
+     * <li>{@code getToolTip()} for the toolTip and alt property</li>
      * </ul>
      * </p>
      * <p>
-     * If a facet is not defined then the returned <code>ImageComponent</code>
+     * If a facet is not defined then the returned {@code ImageComponent}
      * component is created every time this method is called.
      * </p>
+     *
      * @return - the image facet or an ImageComponent instance or null
      */
     public UIComponent getImageComponent() {
@@ -455,29 +486,27 @@ public class RbCbSelector extends Selector implements NamingContainer {
     }
 
     /**
-     * Return a component that implements a label.
-     * If a facet named <code>label</code> is found
-     * that component is returned.</br>
-     * If a facet is not found and <code>getLabel()</code> returns a non
-     * null value, a <code>Label</code>
-     * component instance is returned with the id</br>
-     * <code>getId() + "_label"</code>.</br>
-     * The <code>Label</code> instance is
-     * intialized with the values from
+     * Return a component that implements a label. If a facet named
+     * {@code label} is found that component is returned.
+     * If a facet is not found and {@code getLabel()} returns a non null
+     * value, a {@code Label} component instance is returned with the
+     * id
+     * {@code getId() + "_label"}.
+     * The {@code Label} instance is initialized with the values from
      * <p>
      * <ul>
-     * <li><code>getLabel()</code></li>
-     * <li><code>getLabelLevel()</code></li>
+     * <li>{@code getLabel()}</li>
+     * <li>{@code getLabelLevel()}</li>
      * </ul>
      * </p>
      * <p>
-     * If a facet is not defined then the returned <code>Label</code>
-     * component is created every time this method is called.
+     * If a facet is not defined then the returned {@code Label} component
+     * is created every time this method is called.
      * </p>
+     *
      * @return - the label facet or a Label instance or null
      */
     public UIComponent getLabelComponent() {
-
         UIComponent labelComponent = getFacet(LABEL_FACET);
         if (labelComponent != null) {
             return labelComponent;
@@ -486,327 +515,270 @@ public class RbCbSelector extends Selector implements NamingContainer {
     }
 
     /**
-     * Create a <code>com.sun.webui.jsf.component.Label</code> to implement
-     * a label for this component.
-     * If <code>getLabel()</code> returns null, null is returned else
-     * a <code>Label</code> component is created each time this method
-     * is called.
+     * Create a {@code com.sun.webui.jsf.component.Label} to implement a
+     * label for this component. If {@code getLabel()} returns null, null
+     * is returned else a {@code Label} component is created each time this
+     * method is called.
+     * @return UIComponent
      */
-    protected UIComponent createLabelComponent() {
+    private UIComponent createLabelComponent() {
 
         // This diverges from previous behavior if a subsequent
         // request yields a null label. Previously if a private
         // facet was created, and getLabel() returned null
         // the previous facet was returned.
-        //
         String label = getLabel();
         if (label == null) {
-            /* Not saving the facet yet.
-            ComponentUtilities.removePrivateFacet(this, LABEL_FACET);
-             */
             return null;
         }
 
         Label flabel = new Label();
-        if (flabel == null) {
-            return null;
-        }
-        flabel.setId(
-                ComponentUtilities.createPrivateFacetId(this, LABEL_FACET));
-
+        flabel.setId(ComponentUtilities
+                .createPrivateFacetId(this, LABEL_FACET));
         flabel.setFor(getClientId(getFacesContext()));
         flabel.setText(label);
         flabel.setLabelLevel(getLabelLevel());
         flabel.setToolTip(getToolTip());
-
-        /* This wasn't done previously.
-         * But need to set parent. I'm not sure the Label
-         * for stuff will work, or even if it should for individual
-         * rb's and cb's
-         *
-        ComponentUtilities.putPrivateFacet(this, LABEL_FACET, flabel);
-         */
         flabel.setParent(this);
         return flabel;
     }
 
     /**
-     * Create a </code>com.sun.webui.jsf.component.ImageComponent</code>
-     * to represent the image for this component.
+     * Create a {@code com.sun.webui.jsf.component.ImageComponent} to
+     * represent the image for this component.
+     * @return UIComponent
      */
-    protected UIComponent createImageComponent() {
+    private UIComponent createImageComponent() {
 
         String iurl = getImageURL();
         if (iurl == null) {
-            /* Not saving the facet yet.
-            ComponentUtilities.removePrivateFacet(this, IMAGE_FACET);
-             */
             return null;
         }
 
         ImageComponent image = new ImageComponent();
-        image.setId(
-                ComponentUtilities.createPrivateFacetId(this, IMAGE_FACET));
-
+        image.setId(ComponentUtilities
+                .createPrivateFacetId(this, IMAGE_FACET));
         image.setUrl(getImageURL());
         image.setToolTip(getToolTip());
         image.setAlt(getToolTip());
-
-        /* This wasn't done previously.
-         * But need to set parent. I'm not sure the Label
-         * for stuff will work, or even if it should for individual
-         * rb's and cb's
-         *
-        ComponentUtilities.putPrivateFacet(this, LABEL_FACET, flabel);
-         */
         image.setParent(this);
-
         return image;
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Tag attribute methods
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     /**
-     * <p>Return the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property aliases.</p>
-     *
-     * @param name Name of value binding expression to retrieve
+     * This implementation aliases "selected" with "value" and "selectedValue"
+     * width "items" and invokes {@code super.getValueExpression}.
+     * @param exprName value expression name
+     * @return ValueExpression
      */
     @Override
-    public ValueExpression getValueExpression(String name) {
-        if (name.equals("selected")) {
+    public ValueExpression getValueExpression(final String exprName) {
+        if (exprName.equals("selected")) {
             return super.getValueExpression("value");
         }
-        if (name.equals("selectedValue")) {
+        if (exprName.equals("selectedValue")) {
             return super.getValueExpression("items");
         }
-        return super.getValueExpression(name);
+        return super.getValueExpression(exprName);
     }
 
     /**
-     * <p>Set the <code>ValueExpression</code> stored for the
-     * specified name (if any), respecting any property
-     * aliases.</p>
-     *
-     * @param name    Name of value binding to set
-     * @param binding ValueExpression to set, or null to remove
+     * This implementation aliases "selected" with "value" and "selectedValue"
+     * width "items" and invokes {@code super.setValueExpression}.
+     * @param exprName value expression name
+     * @param binding value expression
      */
     @Override
-    public void setValueExpression(String name, ValueExpression binding) {
-        if (name.equals("selected")) {
+    public void setValueExpression(final String exprName,
+            final ValueExpression binding) {
+
+        if (exprName.equals("selected")) {
             super.setValueExpression("value", binding);
             return;
         }
-        if (name.equals("selectedValue")) {
+        if (exprName.equals("selectedValue")) {
             super.setValueExpression("items", binding);
             return;
         }
-        super.setValueExpression(name, binding);
+        super.setValueExpression(exprName, binding);
     }
-    /**
-     * <p>
-     * A context relative path of an image to be displayed with
-     * the control. If you want to be able to specify attributes
-     * for the image, specify an <code>image</code> facet instead
-     * of the <code>imageURL</code> attribute.</p>
-     */
-    @Property(name = "imageURL", category = "Appearance",
-    editorClassName = "com.sun.rave.propertyeditors.ImageUrlPropertyEditor")
-    private String imageURL = null;
 
     /**
-     * <p>
-     * A context relative path of an image to be displayed with
-     * the control. If you want to be able to specify attributes
-     * for the image, specify an <code>image</code> facet instead
-     * of the <code>imageURL</code> attribute.</p>
+     * A context relative path of an image to be displayed with the control. If
+     * you want to be able to specify attributes for the image, specify an
+     * {@code image} facet instead of the {@code imageURL}
+     * attribute.
+     * @return String
      */
     public String getImageURL() {
         if (this.imageURL != null) {
             return this.imageURL;
         }
-        ValueExpression _vb = getValueExpression("imageURL");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("imageURL");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>
-     * A context relative path of an image to be displayed with
-     * the control. If you want to be able to specify attributes
-     * for the image, specify an <code>image</code> facet instead
-     * of the <code>imageURL</code> attribute.</p>
+     * A context relative path of an image to be displayed with the control. If
+     * you want to be able to specify attributes for the image, specify an
+     * {@code image} facet instead of the {@code imageURL}
+     * attribute.
+     *
      * @see #getImageURL()
+     * @param newImageURL imageURL
      */
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageURL(final String newImageURL) {
+        this.imageURL = newImageURL;
     }
-    /**
-     * <p>Specifies the options that the web application user can choose
-     * from. The value must be one of an array, Map or Collection
-     * whose members are all subclasses of<code>com.sun.webui.jsf.model.Option</code>.</p>
-     */
-    @Property(name = "items", displayName = "Items", category = "Data",
-    editorClassName = "com.sun.rave.propertyeditors.binding.ValueBindingPropertyEditor")
-    private Object items = null;
 
     /**
-     * <p>Specifies the options that the web application user can choose
-     * from. The value must be one of an array, Map or Collection
-     * whose members are all subclasses of<code>com.sun.webui.jsf.model.Option</code>.</p>
+     * Specifies the options that the web application user can choose from. The
+     * value must be one of an array, Map or Collection whose members are all
+     * subclasses of{@code com.sun.webui.jsf.model.Option}.
+     * @return Object
      */
     @Override
     public Object getItems() {
         if (this.items != null) {
             return this.items;
         }
-        ValueExpression _vb = getValueExpression("items");
-        if (_vb != null) {
-            return (Object) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("items");
+        if (vb != null) {
+            return (Object) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>Specifies the options that the web application user can choose
-     * from. The value must be one of an array, Map or Collection
-     * whose members are all subclasses of<code>com.sun.webui.jsf.model.Option</code>.</p>
+     * Specifies the options that the web application user can choose from. The
+     * value must be one of an array, Map or Collection whose members are all
+     * subclasses of{@code com.sun.webui.jsf.model.Option}.
+     *
      * @see #getItems()
+     * @param newItems items
      */
     @Override
-    public void setItems(Object items) {
-        this.items = items;
+    public void setItems(final Object newItems) {
+        this.items = newItems;
     }
-    /**
-     * <p>
-     * Identifies the control as participating as part
-     * of a group. The <code>RadioButton</code> and <code>Checkbox</code>
-     * classes determine the behavior of the group,
-     * that are assigned the same value to the <code>name</code>
-     * property. The value of this property must be unique for components
-     * in the group, within the scope of the <code>Form</code>
-     * parent component containing the grouped components.</p>
-     */
-    @Property(name = "name", displayName = "Group Name", category = "Advanced",
-    editorClassName = "com.sun.rave.propertyeditors.StringPropertyEditor")
-    private String name = null;
 
     /**
-     * <p>
-     * Identifies the control as participating as part
-     * of a group. The <code>RadioButton</code> and <code>Checkbox</code>
-     * classes determine the behavior of the group,
-     * that are assigned the same value to the <code>name</code>
-     * property. The value of this property must be unique for components
-     * in the group, within the scope of the <code>Form</code>
-     * parent component containing the grouped components.</p>
+     * Identifies the control as participating as part of a group. The
+     * {@code RadioButton} and {@code Checkbox} classes determine the
+     * behavior of the group, that are assigned the same value to the
+     * {@code name} property. The value of this property must be unique for
+     * components in the group, within the scope of the {@code Form} parent
+     * component containing the grouped components.
+     * @return String
      */
     public String getName() {
         if (this.name != null) {
             return this.name;
         }
-        ValueExpression _vb = getValueExpression("name");
-        if (_vb != null) {
-            return (String) _vb.getValue(getFacesContext().getELContext());
+        ValueExpression vb = getValueExpression("name");
+        if (vb != null) {
+            return (String) vb.getValue(getFacesContext().getELContext());
         }
         return null;
     }
 
     /**
-     * <p>
-     * Identifies the control as participating as part
-     * of a group. The <code>RadioButton</code> and <code>Checkbox</code>
-     * classes determine the behavior of the group,
-     * that are assigned the same value to the <code>name</code>
-     * property. The value of this property must be unique for components
-     * in the group, within the scope of the <code>Form</code>
-     * parent component containing the grouped components.</p>
+     * Identifies the control as participating as part of a group. The
+     * {@code RadioButton} and {@code Checkbox} classes determine the
+     * behavior of the group, that are assigned the same value to the
+     * {@code name} property. The value of this property must be unique for
+     * components in the group, within the scope of the {@code Form} parent
+     * component containing the grouped components.
+     *
      * @see #getName()
+     * @param newName name
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setName(final String newName) {
+        this.name = newName;
     }
 
     /**
-     * <p>The object that represents the selections made from the
-     * available options. If multiple selections are allowed, this
-     * must be bound to ArrayList, an Object array, or an array of
-     * primitives.</p>
+     * The object that represents the selections made from the available
+     * options. If multiple selections are allowed, this must be bound to
+     * ArrayList, an Object array, or an array of primitives.
+     * @return Object
      */
-    @Property(name = "selected", displayName = "Selected", category = "Data",
-    editorClassName = "com.sun.webui.jsf.component.propertyeditors.RbCbSelectedPropertyEditor")
+    @Property(name = "selected",
+            displayName = "Selected",
+            category = "Data",
+            //CHECKSTYLE:OFF
+            editorClassName = "com.sun.webui.jsf.component.propertyeditors.RbCbSelectedPropertyEditor")
+            //CHECKSTYLE:ON
     @Override
     public Object getSelected() {
         return getValue();
     }
 
     /**
-     * <p>The object that represents the selections made from the
-     * available options. If multiple selections are allowed, this
-     * must be bound to ArrayList, an Object array, or an array of
-     * primitives.</p>
+     * The object that represents the selections made from the available
+     * options. If multiple selections are allowed, this must be bound to
+     * ArrayList, an Object array, or an array of primitives.
+     *
      * @see #getSelected()
+     * @param selected selected
      */
     @Override
-    public void setSelected(Object selected) {
+    public void setSelected(final Object selected) {
         setValue(selected);
     }
 
     /**
-     * Return the value of the <code>selectedValue</code> property.
-     * If <code>selectedValue</code> is null, then a <code>Boolean</code>
-     * true instance is returned and the control will behave as a
-     * boolean control.
-     */
-    private Object _getSelectedValue() {
-        return getItems();
-    }
-
-    /**
-     * <p>
      * The value of the component when it is selected. The value of this
-     * property is assigned to the <code>selected</code> property when
-     * the component is selected. The component is selected
-     * when the <code>selected</code> property is equal to this value.</br>
-     * This attribute can be bound to a <code>String</code>, or <code>
-     * Object</code> value.</br>
-     * If this property is not assigned a value, the component behaves
-     * as a boolean component. A boolean component
-     * is selected when the <code>selected</code> property is equal to a
-     * true <code>Boolean</code> instance.<br>
-     * If a boolean component is not selected, the <code>selected</code>
-     * property value is a false <code>Boolean</code> instance.</p>
+     * property is assigned to the {@code selected} property when the component
+     * is selected. The component is selected when the {@code selected} property
+     * is equal to this value.
+     * This attribute can be bound to a {@code String}, or {@code
+     * Object} value.
+     * If this property is not assigned a value, the component behaves as a
+     * {@code boolean} component. A {@code boolean} component is selected when
+     * the {@code selected} property is equal to a true {@code Boolean}
+     * instance.<br>
+     * If a {@code boolean} component is not selected, the {@code selected}
+     * property value is a false {@code Boolean} instance.
+     *
      * @see #getSelectedValue()
+     * @param selectedValue selectedValue
      */
-    public void setSelectedValue(Object selectedValue) {
+    public void setSelectedValue(final Object selectedValue) {
         setItems(selectedValue);
     }
 
     /**
-     * <p>Restore the state of this component.</p>
+     * This implementation restores the state of all properties.
+     * @param context faces context
+     * @param state state object
      */
     @Override
-    public void restoreState(FacesContext _context, Object _state) {
-        Object _values[] = (Object[]) _state;
-        super.restoreState(_context, _values[0]);
-        this.imageURL = (String) _values[1];
-        this.items = (Object) _values[2];
-        this.name = (String) _values[3];
+    @SuppressWarnings("checkstyle:magicnumber")
+    public void restoreState(final FacesContext context, final Object state) {
+        Object[] values = (Object[]) state;
+        super.restoreState(context, values[0]);
+        this.imageURL = (String) values[1];
+        this.items = (Object) values[2];
+        this.name = (String) values[3];
     }
 
     /**
-     * <p>Save the state of this component.</p>
+     * This implementation saves the state of all properties.
+     * @param context faces context
+     * @return Object
      */
     @Override
-    public Object saveState(FacesContext _context) {
-        Object _values[] = new Object[4];
-        _values[0] = super.saveState(_context);
-        _values[1] = this.imageURL;
-        _values[2] = this.items;
-        _values[3] = this.name;
-        return _values;
+    @SuppressWarnings("checkstyle:magicnumber")
+    public Object saveState(final FacesContext context) {
+        Object[] values = new Object[4];
+        values[0] = super.saveState(context);
+        values[1] = this.imageURL;
+        values[2] = this.items;
+        values[3] = this.name;
+        return values;
     }
 }

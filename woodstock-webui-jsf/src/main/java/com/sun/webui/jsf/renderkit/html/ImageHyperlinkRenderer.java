@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,38 +27,54 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 /**
- * <p>This class is responsible for rendering the {@link ImageHyperlink} component for the
- * HTML Render Kit.</p> <p> The {@link ImageHyperlink} component can be used as an anchor, a
- * plain hyperlink or a hyperlink that submits the form depending on how the
- * properites are filled out for the component </p>
+ * This class is responsible for rendering the {@link ImageHyperlink} component
+ * for the HTML Render Kit. The {@link ImageHyperlink} component can be used as
+ * an anchor, a plain hyperlink or a hyperlink that submits the form depending
+ * on how the properties are filled out for the component.
  */
-@Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.ImageHyperlink"))
+@Renderer(
+        @Renderer.Renders(componentFamily = "com.sun.webui.jsf.ImageHyperlink"))
 public class ImageHyperlinkRenderer extends HyperlinkRenderer {
 
-    // -------------------------------------------------------- Static Variables
-    // for positioning of the label.
-    private static final String LABEL_LEFT = "left"; //NOI8N
-    private static final String LABEL_RIGHT = "right"; //NOI8N
+    /**
+     * Label left.
+     */
+    private static final String LABEL_LEFT = "left";
 
-    // -------------------------------------------------------- Renderer Methods
+    /**
+     * Label right.
+     */
+    private static final String LABEL_RIGHT = "right";
+
+    /**
+     * This implementation renders the image.
+     * @param context faces context
+     * @param component UI component
+     * @param writer writer to use
+     * @throws IOException if an IO error occurs
+     */
     @Override
-    protected void finishRenderAttributes(FacesContext context,
-            UIComponent component,
-            ResponseWriter writer)
+    protected void finishRenderAttributes(final FacesContext context,
+            final UIComponent component, final ResponseWriter writer)
             throws IOException {
+
         //create an image component based on image attributes
         //write out image as escaped text
-        //TODO: suppress the text field from the XML
+        //FIXME: suppress the text field from the XML
         ImageHyperlink ilink = (ImageHyperlink) component;
 
         // If there is no text property set, then label == null which prevents
         // rendering anything at all
         //
         Object text = ilink.getText();
-        String label = (text == null) ? null : ConversionUtilities.convertValueToString(component, text);
+        String label;
+        if (text == null) {
+            label = null;
+        } else {
+            label = ConversionUtilities.convertValueToString(component, text);
+        }
 
         String textPosition = ilink.getTextPosition();
-
         if (label != null && textPosition.equalsIgnoreCase(LABEL_LEFT)) {
             writer.writeText(label, null);
             writer.write("&nbsp;");
@@ -84,7 +100,5 @@ public class ImageHyperlinkRenderer extends HyperlinkRenderer {
             writer.write("&nbsp;");
             writer.writeText(label, null);
         }
-
     }
-    // --------------------------------------------------------- Private Methods
 }
