@@ -241,34 +241,6 @@
         </pathconvert>
         <mkdir dir="${generated-source-dir}"/>
         <mkdir dir="${generated-classes-dir}"/>
-        <!-- <javac srcdir="${generate-source-dir}"
-            destdir="${generated-output-dir}" deprecation="false"
-            debug="${debug}"
-            optimize="false"
-            verbose="true"
-            includeantruntime="false"
-            source="1.7" target="1.7">
-            <compilerarg line="-Xmaxwarns 1000"/>
-            <compilerarg line="-XprintProcessorInfo"/>
-            <compilerarg line="-processor=com.sun.faces.mirror.FacesAnnotationProcessor"/>
-            <compilerarg value="-A${generate-option}"/>
-            <compilerarg value="-Anamespace.uri=${taglib-uri}"/>
-            <compilerarg value="-Anamespace.prefix=${taglib-prefix}"/>
-            <compilerarg value="-Ataglibdoc=src/runtime/conf/tag-descriptions.xml"/>
-            <compilerarg value="-Alocalize"/>
-            <compilerarg value="-proc:only"/>
-            <classpath>
-                <path refid=""/>
-                <path refid="dataprovider.jars"/>
-                <path refid="jsf.jars"/>
-                <path refid="jsf-ri.jars"/>
-                <path refid="webui.jars"/>
-                <path refid="jsfcl.jars"/>
-                <path refid="propertyeditors.jars"/>
-                <path refid="designtime.jars"/>
-                <path refid="annotation-lib.jars"/>
-            </classpath>
-        </javac> -->
         <echo message="${apt.processorpath}"/>
         <!-- <echo message="${apt.sourcepath}"/> -->
         <exec executable="javac" failonerror="true">
@@ -289,20 +261,6 @@
             <arg line="-d ${generated-classes-dir}"/>
             <arg line="${apt.sourcepath}"/>
         </exec>
-        
-        <!-- <exec executable="${apt.home}/bin/apt">
-            <arg line="-s ${generated-source-dir}"/>
-            <arg line="-d ${generated-classes-dir}"/>
-            <arg line="-nocompile"/>
-            <arg value="-A ${generate-option}"/>
-            <arg value="-A namespace.uri=${taglib-uri}"/>
-            <arg value="-A namespace.prefix=${taglib-prefix}"/>
-            <arg value="-A taglibdoc=src/runtime/conf/tag-descriptions.xml"/>
-            <arg value="-A localize"/>
-            <arg line="-classpath ${apt.classpath}"/>
-            <arg line="-factory com.sun.faces.mirror.FacesAnnotationProcessorFactory"/>
-            <arg line="${apt.sourcepath}"/>
-        </exec> -->
     </target>
 
     <target name="compile-precopy-runtime" depends="process-runtime-annotations"

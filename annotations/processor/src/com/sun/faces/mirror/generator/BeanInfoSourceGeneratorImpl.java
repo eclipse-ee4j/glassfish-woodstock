@@ -49,7 +49,7 @@ class BeanInfoSourceGeneratorImpl extends BeanInfoSourceGenerator{
     }
     
     @Override
-            public void generate() throws GeneratorException {
+    public void generate() throws GeneratorException {
         try {
             DeclaredComponentInfo componentInfo = this.getDeclaredComponentInfo();
             String namespace = this.getNamespace();
