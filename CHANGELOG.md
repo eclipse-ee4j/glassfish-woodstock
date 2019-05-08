@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Resurect the example
 - Update/Improve the JS code rendering
 - Update the theme JS code for components for DojoJS async
+- Replace the use of `org.json` with `javax.json`
 
 ### Fixes
 
