@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.glassfish.woodstock</groupId>
         <artifactId>woodstock-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>5.0-SNAPSHOT</version>
     </parent>
     <artifactId>woodstock-webui-jsf</artifactId>
     <name>Woodstock WebUI JSF</name>
