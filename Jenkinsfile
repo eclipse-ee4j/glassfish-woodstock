@@ -64,7 +64,7 @@ spec:
     volumeMounts:
       - mountPath: "/home/jenkins/.m2/repository"
         name: maven-repo-shared-storage
-      - mountPath: "/home/jenkins/.m2/repository/com/sun/woodstock"
+      - mountPath: "/home/jenkins/.m2/repository/org/glassfish/woodstock"
         name: maven-repo-local-storage
     resources:
       limits:
