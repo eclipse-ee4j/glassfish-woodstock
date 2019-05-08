@@ -6,7 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 
+- Update the annotation processor to work with JSR 269.
+- Mavenize the build
+- Re-package dojo as part of the build
+- Update common fileupload to 1.3.3
+- Enforce and update checkstyle
+- Enforce and update copyright headers
+- Resurect the example
+- Update/Improve the JS code rendering
+- Update the theme JS code for components for DojoJS async
+
 ### Fixes
+
+- Fix some of the issues added with the switch to the async mode of DojoJS
+- Woodstock can be built with JDK >= 1.7
 
 ### Notes
 
