@@ -12,15 +12,16 @@ All notable changes to this project will be documented in this file.
 - Update common fileupload to 1.3.3
 - Enforce and update checkstyle
 - Enforce and update copyright headers
-- Resurect the example
 - Update/Improve the JS code rendering
 - Update the theme JS code for components for DojoJS async
 - Replace the use of `org.json` with `javax.json`
+- Update all APIs to JakartaEE artifacts / versions
 
 ### Fixes
 
 - Fix some of the issues added with the switch to the async mode of DojoJS
 - Woodstock can be built with JDK >= 1.7
+- Fix the example (it deploys to GF 5.1.0)
 
 ### Notes
 
