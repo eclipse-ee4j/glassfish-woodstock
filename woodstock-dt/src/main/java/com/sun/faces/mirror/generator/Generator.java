@@ -35,8 +35,7 @@ public abstract class Generator {
      * is asked to generate its source. A generator may be invoked more than
      * once. The {@code printWriter} will be reset before each call to generate.
      *
-     * @throws com.sun.faces.mirror.generator.GeneratorException if an error
-     * occurs during generation
+     * @throws GeneratorException if an error occurs during generation
      */
     public abstract void generate() throws GeneratorException;
 

@@ -26,7 +26,6 @@ import javax.faces.event.ActionEvent;
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
-import com.sun.webui.jsf.util.JavaScriptUtilities;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
@@ -40,7 +39,6 @@ import com.sun.webui.jsf.component.ImageHyperlink;
 import com.sun.webui.jsf.component.ImageComponent;
 import com.sun.webui.jsf.component.Icon;
 import com.sun.webui.jsf.util.ComponentUtilities;
-import java.io.StringWriter;
 import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,6 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
-import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
 /**

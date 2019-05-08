@@ -28,11 +28,9 @@ import com.sun.webui.jsf.component.EditableList;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import javax.json.JsonObject;
-
+import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
-import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
