@@ -45,21 +45,32 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderHiddenField;
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Upload"))
 public final class UploadRenderer extends FieldRenderer {
 
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
     @Override
     public void decode(final FacesContext context,
             final UIComponent component) {
 
-        log("decode()");
+        if (DEBUG) {
+            log("decode()");
+        }
         if (component == null) {
             return;
         }
         Upload upload = (Upload) component;
         String id = component.getClientId(context).concat(Upload.INPUT_ID);
-        log("\tLooking for id " + id);
+        if (DEBUG) {
+            log("\tLooking for id " + id);
+        }
         Map map = context.getExternalContext().getRequestMap();
 
         if (map.containsKey(id)) {
-            log("\tFound id " + id);
+            if (DEBUG) {
+                log("\tFound id " + id);
+            }
             upload.setSubmittedValue(id);
         }
     }

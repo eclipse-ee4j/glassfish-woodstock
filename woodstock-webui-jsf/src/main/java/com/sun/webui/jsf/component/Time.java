@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,6 +21,7 @@ import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.model.ClockTime;
 import com.sun.webui.jsf.model.Option;
 import com.sun.webui.jsf.util.ComponentUtilities;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.theme.Theme;
 import java.io.IOException;
@@ -588,7 +590,7 @@ public final class Time extends WebuiInput implements NamingContainer {
                     time.setMinute(minute);
                 } catch (Exception ex) {
                     if (DEBUG) {
-                        ex.printStackTrace();
+                        LogUtil.finest("invaliddata", ex);
                     }
                     messageKey = "Time.invalidData";
                 }
@@ -618,7 +620,7 @@ public final class Time extends WebuiInput implements NamingContainer {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(Time.class.getName() + "::" + msg);
+        LogUtil.finest(Time.class.getName() + "::" + msg);
     }
 
     // Take this from TimeRenderer. A Renderer shouldn't be

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,6 +17,7 @@
 
 package com.sun.webui.jsf.model.scheduler;
 
+import com.sun.webui.jsf.util.LogUtil;
 import java.io.Serializable;
 import java.util.Calendar;
 import com.sun.webui.jsf.util.ThemeUtilities;
@@ -106,7 +108,7 @@ public final class RepeatUnit implements Serializable {
      */
     private RepeatUnit(final int newCalField, final String newKey,
             final String newRepresentation) {
-
+        
         if (DEBUG) {
             log("Create new RU");
         }
@@ -124,11 +126,11 @@ public final class RepeatUnit implements Serializable {
      * @return RepeatUnit
      */
     public static RepeatUnit getInstance(final String newRepresentation) {
-
+        
         if (DEBUG) {
             log("getInstance(" + newRepresentation + ")");
         }
-
+        
         if (newRepresentation.equals(HOURS)) {
             if (hoursRi == null) {
                 hoursRi = new RepeatUnit(Calendar.HOUR_OF_DAY,
@@ -278,6 +280,6 @@ public final class RepeatUnit implements Serializable {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(RepeatUnit.class.getName() + "::" + msg);
+        LogUtil.finest(RepeatUnit.class.getName() + "::" + msg);
     }
 }

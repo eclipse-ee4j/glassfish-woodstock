@@ -51,6 +51,11 @@ import static com.sun.webui.jsf.util.RenderingUtilities.writeStringAttributes;
 public final class AddRemoveRenderer extends ListRendererBase {
 
     /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
      * Items id.
      */
     private static final String ITEMS_ID = "_item_list";
@@ -59,7 +64,9 @@ public final class AddRemoveRenderer extends ListRendererBase {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        log("encodeEnd()");
+        if (DEBUG) {
+            log("encodeEnd()");
+        }
 
         if (component == null) {
             return;
@@ -629,7 +636,9 @@ public final class AddRemoveRenderer extends ListRendererBase {
             writer.writeAttribute(HTMLAttributes.TITLE, tooltip, null);
         }
 
-        log("Setting onchange event handler");
+        if (DEBUG) {
+            log("Setting onchange event handler");
+        }
         //writer.writeAttribute("onchange", script, null);
 
         int tabindex = component.getTabIndex();
@@ -717,7 +726,9 @@ public final class AddRemoveRenderer extends ListRendererBase {
                     "disabled");
         }
 
-        log("Setting onchange event handler");
+        if (DEBUG) {
+            log("Setting onchange event handler");
+        }
 
         int tabindex = component.getTabIndex();
         if (tabindex > 0 && tabindex < 32767) {
@@ -743,7 +754,9 @@ public final class AddRemoveRenderer extends ListRendererBase {
     public void decode(final FacesContext context,
             final UIComponent component) {
 
-        log("decode()");
+        if (DEBUG) {
+            log("decode()");
+        }
 
         if (component == null) {
             return;
@@ -766,7 +779,9 @@ public final class AddRemoveRenderer extends ListRendererBase {
     @SuppressWarnings("checkstyle:magicnumber")
     private static String[] getStyles(final FacesContext context) {
 
-        log("getStyles()");
+        if (DEBUG) {
+            log("getStyles()");
+        }
 
         Theme theme = ThemeUtilities.getTheme(context);
 
