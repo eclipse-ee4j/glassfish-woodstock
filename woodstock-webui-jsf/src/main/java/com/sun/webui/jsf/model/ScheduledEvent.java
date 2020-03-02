@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import com.sun.webui.jsf.model.scheduler.RepeatInterval;
 import com.sun.webui.jsf.model.scheduler.RepeatUnit;
+import com.sun.webui.jsf.util.LogUtil;
 
 /**
  * Scheduled event.
@@ -460,6 +461,6 @@ public final class ScheduledEvent implements Serializable {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(ScheduledEvent.class.getName() + "::" + msg);
+        LogUtil.finest(ScheduledEvent.class.getName() + "::" + msg);
     }
 }

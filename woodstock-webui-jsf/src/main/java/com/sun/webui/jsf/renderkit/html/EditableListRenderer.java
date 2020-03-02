@@ -45,6 +45,11 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 public class EditableListRenderer extends ListRendererBase {
 
     /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
      * This implementation renders the component.
      * @param context faces context
      * @param component UI component
@@ -54,8 +59,9 @@ public class EditableListRenderer extends ListRendererBase {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        log("encodeEnd()");
-        
+        if (DEBUG) {
+            log("encodeEnd()");
+        }
         if (component == null) {
             return;
         }
@@ -82,15 +88,18 @@ public class EditableListRenderer extends ListRendererBase {
     public void decode(final FacesContext context,
             final UIComponent component) {
 
-        log("decode()");
-        
+        if (DEBUG) {
+            log("decode()");
+        }
         if (component == null) {
             return;
         }
 
         EditableList list = (EditableList) component;
         if (list.isReadOnly()) {
-            log("component is readonly...");
+            if (DEBUG) {
+                log("component is readonly...");
+            }
             return;
         }
 
@@ -198,7 +207,9 @@ public class EditableListRenderer extends ListRendererBase {
         ResponseWriter writer = context.getResponseWriter();
         renderOpenEncloser(component, context, "div", styles[8]);
 
-        log("layout the component");
+        if (DEBUG) {
+            log("layout the component");
+        }
 
         if (gotHeaderOrFooter) {
 
@@ -461,8 +472,9 @@ public class EditableListRenderer extends ListRendererBase {
     private static String[] getStyles(final UIComponent component,
             final FacesContext context) {
 
-        log("getStyles()");
-        
+        if (DEBUG) {
+            log("getStyles()");
+        }
         Theme theme = getTheme(context);
 
         String[] styles = new String[17];

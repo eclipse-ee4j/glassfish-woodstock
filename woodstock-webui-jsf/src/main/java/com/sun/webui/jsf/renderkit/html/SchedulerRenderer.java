@@ -55,6 +55,11 @@ public final class SchedulerRenderer extends javax.faces.render.Renderer {
      */
     private static final String SPACE = "&nbsp;";
 
+    /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
     @Override
     public void encodeBegin(final FacesContext context,
             final UIComponent component) {
@@ -77,8 +82,9 @@ public final class SchedulerRenderer extends javax.faces.render.Renderer {
         if (component == null) {
             return;
         }
-        
-        log("encodeEnd");
+        if (DEBUG) {
+            log("encodeEnd");
+        }
 
         if (!(component instanceof Scheduler)) {
             Object[] params = {

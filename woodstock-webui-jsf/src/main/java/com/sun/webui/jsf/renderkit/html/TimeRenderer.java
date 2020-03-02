@@ -48,7 +48,9 @@ public final class TimeRenderer extends javax.faces.render.Renderer {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        log("encodeEnd() START");
+        if (DEBUG) {
+            log("encodeEnd() START");
+        }
 
         if (!(component instanceof Time)) {
             Object[] params = {

@@ -43,6 +43,11 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 public class DropDownRenderer extends ListRendererBase {
 
     /**
+     * Debug flag.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
      * This implementation renders the component.
      * @param context faces context
      * @param component UI component
@@ -52,8 +57,9 @@ public class DropDownRenderer extends ListRendererBase {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        log("encodeEnd()");
-        
+        if (DEBUG) {
+            log("encodeEnd()");
+        }
         if (component == null) {
             return;
         }
