@@ -23,6 +23,7 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ConversionUtilities;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ValueType;
 import com.sun.webui.jsf.util.ValueTypeEvaluator;
 import java.lang.reflect.Array;
@@ -919,7 +920,7 @@ public final class OrderableList extends WebuiInput
             }
         } catch (FacesException ex) {
             if (DEBUG) {
-                ex.printStackTrace();
+                LogUtil.finest(null, ex);
             }
         }
         return cValue;

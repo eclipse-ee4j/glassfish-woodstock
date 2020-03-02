@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,6 +20,7 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.model.OptionTitle;
 import com.sun.webui.jsf.util.ConversionUtilities;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.ValueType;
 import com.sun.webui.jsf.util.ValueTypeEvaluator;
@@ -1687,6 +1689,6 @@ public class Selector extends WebuiInput implements SelectorManager {
      * @param object object to derive the class of
      */
     private static void log(final String msg, final Object object) {
-        System.out.println(object.getClass().getName() + "::" + msg);
+        LogUtil.finest(object.getClass().getName() + "::" + msg);
     }
 }
