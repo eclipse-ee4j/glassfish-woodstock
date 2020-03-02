@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -36,6 +37,7 @@ import com.sun.webui.jsf.model.Option;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderAnchor;
@@ -1083,6 +1085,6 @@ public final class CalendarMonthRenderer extends AbstractRenderer {
      * @param msg message to log
      */
     private void log(final String msg) {
-        System.out.println(this.getClass().getName() + "::" + msg);
+        LogUtil.finest(this.getClass().getName() + "::" + msg);
     }
 }

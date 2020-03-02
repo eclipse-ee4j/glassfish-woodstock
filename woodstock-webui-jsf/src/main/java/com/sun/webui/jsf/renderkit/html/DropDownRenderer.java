@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,6 +27,7 @@ import com.sun.webui.jsf.component.DropDown;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.MessageUtil;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
@@ -41,11 +43,6 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 public class DropDownRenderer extends ListRendererBase {
 
     /**
-     * Debug flag.
-     */
-    private static final boolean DEBUG = false;
-
-    /**
      * This implementation renders the component.
      * @param context faces context
      * @param component UI component
@@ -55,9 +52,8 @@ public class DropDownRenderer extends ListRendererBase {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        if (DEBUG) {
-            log("encodeEnd()");
-        }
+        log("encodeEnd()");
+        
         if (component == null) {
             return;
         }
@@ -163,6 +159,6 @@ public class DropDownRenderer extends ListRendererBase {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(ListRendererBase.class.getName() + "::" + msg);
+        LogUtil.finest(ListRendererBase.class.getName() + "::" + msg);
     }
 }
