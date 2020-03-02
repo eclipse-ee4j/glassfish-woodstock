@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,6 +29,7 @@ import javax.faces.context.ResponseWriter;
 import javax.faces.context.FacesContext;
 import javax.faces.application.FacesMessage;
 import com.sun.webui.jsf.component.Upload;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
@@ -43,32 +45,21 @@ import static com.sun.webui.jsf.util.RenderingUtilities.renderHiddenField;
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Upload"))
 public final class UploadRenderer extends FieldRenderer {
 
-    /**
-     * Debug flag.
-     */
-    private static final boolean DEBUG = false;
-
     @Override
     public void decode(final FacesContext context,
             final UIComponent component) {
 
-        if (DEBUG) {
-            log("decode()");
-        }
+        log("decode()");
         if (component == null) {
             return;
         }
         Upload upload = (Upload) component;
         String id = component.getClientId(context).concat(Upload.INPUT_ID);
-        if (DEBUG) {
-            log("\tLooking for id " + id);
-        }
+        log("\tLooking for id " + id);
         Map map = context.getExternalContext().getRequestMap();
 
         if (map.containsKey(id)) {
-            if (DEBUG) {
-                log("\tFound id " + id);
-            }
+            log("\tFound id " + id);
             upload.setSubmittedValue(id);
         }
     }
@@ -140,6 +131,6 @@ public final class UploadRenderer extends FieldRenderer {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(UploadRenderer.class.getName() + "::" + msg);
+        LogUtil.finest(UploadRenderer.class.getName() + "::" + msg);
     }
 }

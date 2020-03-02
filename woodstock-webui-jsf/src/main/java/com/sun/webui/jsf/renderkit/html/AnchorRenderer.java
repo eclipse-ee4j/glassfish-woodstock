@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,6 +23,7 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.component.Icon;
 import com.sun.webui.jsf.util.ClientSniffer;
+import com.sun.webui.jsf.util.LogUtil;
 import java.beans.Beans;
 import java.io.IOException;
 import java.net.URL;
@@ -74,8 +76,7 @@ public final class AnchorRenderer extends AbstractRenderer {
                 URL url = this.getClass().getResource(DESIGN_TIME_ICON);
                 writer.writeURIAttribute("src", url, null);
             } catch (IOException e) {
-                System.out.println("Error getting anchor icon: " + e);
-                e.printStackTrace(System.out);
+                LogUtil.severe("Error getting anchor icon: ", e);
             }
             writer.endElement("img");
         }

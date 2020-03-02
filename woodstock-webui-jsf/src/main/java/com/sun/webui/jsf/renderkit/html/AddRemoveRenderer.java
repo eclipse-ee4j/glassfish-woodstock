@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,6 +33,7 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.html.HTMLAttributes;
 import com.sun.webui.html.HTMLElements;
+import com.sun.webui.jsf.util.LogUtil;
 import javax.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.getDomNode;
@@ -49,11 +51,6 @@ import static com.sun.webui.jsf.util.RenderingUtilities.writeStringAttributes;
 public final class AddRemoveRenderer extends ListRendererBase {
 
     /**
-     * Debug flag.
-     */
-    private static final boolean DEBUG = false;
-
-    /**
      * Items id.
      */
     private static final String ITEMS_ID = "_item_list";
@@ -62,9 +59,7 @@ public final class AddRemoveRenderer extends ListRendererBase {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        if (DEBUG) {
-            log("encodeEnd()");
-        }
+        log("encodeEnd()");
 
         if (component == null) {
             return;
@@ -112,9 +107,7 @@ public final class AddRemoveRenderer extends ListRendererBase {
             final FacesContext context, final String[] styles)
             throws IOException {
 
-        if (DEBUG) {
-            log("renderListComponent()");
-        }
+        log("renderListComponent()");
 
         if (component.isReadOnly()) {
             UIComponent label = component.getReadOnlyLabelComponent();
@@ -636,9 +629,7 @@ public final class AddRemoveRenderer extends ListRendererBase {
             writer.writeAttribute(HTMLAttributes.TITLE, tooltip, null);
         }
 
-        if (DEBUG) {
-            log("Setting onchange event handler");
-        }
+        log("Setting onchange event handler");
         //writer.writeAttribute("onchange", script, null);
 
         int tabindex = component.getTabIndex();
@@ -726,9 +717,7 @@ public final class AddRemoveRenderer extends ListRendererBase {
                     "disabled");
         }
 
-        if (DEBUG) {
-            log("Setting onchange event handler");
-        }
+        log("Setting onchange event handler");
 
         int tabindex = component.getTabIndex();
         if (tabindex > 0 && tabindex < 32767) {
@@ -754,9 +743,7 @@ public final class AddRemoveRenderer extends ListRendererBase {
     public void decode(final FacesContext context,
             final UIComponent component) {
 
-        if (DEBUG) {
-            log("decode()");
-        }
+        log("decode()");
 
         if (component == null) {
             return;
@@ -779,9 +766,7 @@ public final class AddRemoveRenderer extends ListRendererBase {
     @SuppressWarnings("checkstyle:magicnumber")
     private static String[] getStyles(final FacesContext context) {
 
-        if (DEBUG) {
-            log("getStyles()");
-        }
+        log("getStyles()");
 
         Theme theme = ThemeUtilities.getTheme(context);
 
@@ -821,6 +806,6 @@ public final class AddRemoveRenderer extends ListRendererBase {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(ListRendererBase.class.getName() + "::" + msg);
+        LogUtil.finest(ListRendererBase.class.getName() + "::" + msg);
     }
 }

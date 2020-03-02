@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,6 +29,7 @@ import com.sun.webui.jsf.component.EditableList;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import com.sun.webui.jsf.util.LogUtil;
 import javax.json.JsonObject;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
@@ -43,11 +45,6 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 public class EditableListRenderer extends ListRendererBase {
 
     /**
-     * Debug flag.
-     */
-    private static final boolean DEBUG = false;
-
-    /**
      * This implementation renders the component.
      * @param context faces context
      * @param component UI component
@@ -57,9 +54,8 @@ public class EditableListRenderer extends ListRendererBase {
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        if (DEBUG) {
-            log("encodeEnd()");
-        }
+        log("encodeEnd()");
+        
         if (component == null) {
             return;
         }
@@ -86,18 +82,15 @@ public class EditableListRenderer extends ListRendererBase {
     public void decode(final FacesContext context,
             final UIComponent component) {
 
-        if (DEBUG) {
-            log("decode()");
-        }
+        log("decode()");
+        
         if (component == null) {
             return;
         }
 
         EditableList list = (EditableList) component;
         if (list.isReadOnly()) {
-            if (DEBUG) {
-                log("component is readonly...");
-            }
+            log("component is readonly...");
             return;
         }
 
@@ -187,9 +180,7 @@ public class EditableListRenderer extends ListRendererBase {
             final FacesContext context, final String[] styles)
             throws IOException {
 
-        if (DEBUG) {
-            log("renderListComponent()");
-        }
+        log("renderListComponent()");
         if (component.isReadOnly()) {
             UIComponent label = component.getListLabelComponent();
             renderReadOnlyList(component, label, context, styles[8]);
@@ -207,9 +198,7 @@ public class EditableListRenderer extends ListRendererBase {
         ResponseWriter writer = context.getResponseWriter();
         renderOpenEncloser(component, context, "div", styles[8]);
 
-        if (DEBUG) {
-            log("layout the component");
-        }
+        log("layout the component");
 
         if (gotHeaderOrFooter) {
 
@@ -472,9 +461,8 @@ public class EditableListRenderer extends ListRendererBase {
     private static String[] getStyles(final UIComponent component,
             final FacesContext context) {
 
-        if (DEBUG) {
-            log("getStyles()");
-        }
+        log("getStyles()");
+        
         Theme theme = getTheme(context);
 
         String[] styles = new String[17];
@@ -506,6 +494,6 @@ public class EditableListRenderer extends ListRendererBase {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(EditableListRenderer.class.getName() + "::" + msg);
+        LogUtil.finest(EditableListRenderer.class.getName() + "::" + msg);
     }
 }
