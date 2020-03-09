@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,6 +17,7 @@
 
 package com.sun.webui.theme;
 
+import com.sun.webui.jsf.util.LogUtil;
 import java.beans.Beans;
 import java.io.IOException;
 import java.io.InputStream;
@@ -266,7 +268,7 @@ public final class JarThemeFactory implements ThemeFactory {
                     }
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LogUtil.severe(null, ex);
             } finally {
                 try {
                     if (in != null) {
@@ -342,7 +344,7 @@ public final class JarThemeFactory implements ThemeFactory {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(JarThemeFactory.class.getName() + "::" + msg);
+        LogUtil.finest(JarThemeFactory.class.getName() + "::" + msg);
     }
 
     /**

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -358,12 +359,10 @@ public final class HelpUtils implements SearchListener {
                     "javax.help.ServletHelpBroker");
         } catch (ClassNotFoundException exc) {
             // XXX: Is this serious??
-            System.out.println("Cannot instantiate ServletHelpBroker."
-                    + exc.getMessage());
+            LogUtil.warning("Cannot instantiate ServletHelpBroker." + exc.getMessage());
         } catch (IOException exc) {
             // XXX: Is this serious??
-            System.out.println("Cannot create bean of class ServletHelpBroker."
-                    + exc.getMessage());
+            LogUtil.warning("Cannot create bean of class ServletHelpBroker." + exc.getMessage());
         }
     }
 

@@ -155,7 +155,7 @@ public final class IncludeInputStream extends FilterInputStream {
                 bytes[off + i] = (byte) c;
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LogUtil.severe(null, ex);
         }
         return i;
     }
@@ -309,7 +309,7 @@ public final class IncludeInputStream extends FilterInputStream {
                 ch = stream.read();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LogUtil.severe(null, ex);
         }
     }
 

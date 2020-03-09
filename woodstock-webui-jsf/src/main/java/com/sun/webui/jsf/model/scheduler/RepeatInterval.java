@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,6 +17,7 @@
 
 package com.sun.webui.jsf.model.scheduler;
 
+import com.sun.webui.jsf.util.LogUtil;
 import java.io.Serializable;
 import java.util.Calendar;
 import com.sun.webui.jsf.util.ThemeUtilities;
@@ -146,7 +148,7 @@ public final class RepeatInterval implements Serializable {
         if (DEBUG) {
             log("getInstance(" + repr + ")");
         }
-
+        
         if (repr.equals(ONETIME)) {
             if (onetimeRi == null) {
                 onetimeRi = new RepeatInterval(-1, "Scheduler.oneTime",
@@ -313,6 +315,6 @@ public final class RepeatInterval implements Serializable {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(RepeatInterval.class.getName() + "::" + msg);
+        LogUtil.finest(RepeatInterval.class.getName() + "::" + msg);
     }
 }
