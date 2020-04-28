@@ -18,15 +18,15 @@ package com.sun.webui.jsf.component;
 import java.util.List;
 import java.util.Iterator;
 import java.beans.Beans;
-import javax.faces.component.UIComponent;
-import javax.faces.component.NamingContainer;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.context.FacesContext;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ComponentUtilities;
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 
 /**
  * The CommonTasksSection component is used to present a number of tasks that
@@ -38,7 +38,7 @@ import javax.el.ValueExpression;
         instanceName = "commonTasksSection",
         tagName = "commonTasksSection")
 public final class CommonTasksSection
-        extends javax.faces.component.UIComponentBase
+        extends jakarta.faces.component.UIComponentBase
         implements NamingContainer {
 
     /**

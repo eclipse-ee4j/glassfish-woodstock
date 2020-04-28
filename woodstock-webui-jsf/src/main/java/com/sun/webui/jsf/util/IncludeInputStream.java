@@ -319,7 +319,7 @@ public final class IncludeInputStream extends FilterInputStream {
      */
     private static Class getFacesContextClass() {
         try {
-            return Class.forName("javax.faces.context.FacesContext");
+            return Class.forName("jakarta.faces.context.FacesContext");
         } catch (ClassNotFoundException ex) {
             // Ignore, this just means we're not in a JSF environment
             return null;

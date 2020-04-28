@@ -17,8 +17,8 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The Hyperlink component is used to create a link.

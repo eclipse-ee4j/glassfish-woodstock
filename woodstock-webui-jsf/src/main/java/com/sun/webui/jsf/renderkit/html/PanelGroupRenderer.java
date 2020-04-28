@@ -20,9 +20,9 @@ import com.sun.webui.jsf.component.PanelGroup;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import java.io.IOException;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 
 /**
  * Renderer for a {@link com.sun.webui.jsf.component.PanelGroup} component.

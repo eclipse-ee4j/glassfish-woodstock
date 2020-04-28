@@ -18,7 +18,7 @@ package com.sun.webui.jsf.example;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 import com.sun.webui.jsf.component.Tree;
 import com.sun.webui.jsf.component.TreeNode;

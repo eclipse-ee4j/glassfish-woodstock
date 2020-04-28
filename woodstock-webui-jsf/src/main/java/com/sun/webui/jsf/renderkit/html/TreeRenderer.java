@@ -23,13 +23,13 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.LogUtil;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.application.FacesMessage;
 import com.sun.webui.html.HTMLAttributes;
 import com.sun.webui.html.HTMLElements;
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;

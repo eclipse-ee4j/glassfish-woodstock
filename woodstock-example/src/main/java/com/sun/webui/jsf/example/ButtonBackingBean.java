@@ -17,8 +17,8 @@ package com.sun.webui.jsf.example;
 
 import java.io.Serializable;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.context.FacesContext;
 
 import com.sun.webui.jsf.model.Option;
 import com.sun.webui.jsf.model.OptionTitle;
@@ -28,7 +28,7 @@ import com.sun.webui.jsf.example.util.MessageUtil;
  * Backing bean for Button example.
  *
  * Note that we must implement {@code java.io.Serializable} or
- * {@Code javax.faces.component.StateHolder} in case client-side state saving is
+ * {@Code jakarta.faces.component.StateHolder} in case client-side state saving is
  * used, or if server-side state saving is used with a distributed system.
  */
 public final class ButtonBackingBean implements Serializable {

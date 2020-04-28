@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.util.ClientSniffer;
 import com.sun.webui.jsf.util.ClientType;
 import com.sun.webui.jsf.util.MessageUtil;

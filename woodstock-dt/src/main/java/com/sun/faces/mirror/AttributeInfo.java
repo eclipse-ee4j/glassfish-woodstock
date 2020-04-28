@@ -48,7 +48,7 @@ public interface AttributeInfo {
 
     /**
      * If this attribute corresponds to a property of type
-     * {@link javax.el.MethodExpression}, then this method will return the
+     * {@link jakarta.el.MethodExpression}, then this method will return the
      * signature of the method to which the expression should be bound.
      *
      * @return String

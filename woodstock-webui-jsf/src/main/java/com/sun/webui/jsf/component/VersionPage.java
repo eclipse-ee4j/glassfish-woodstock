@@ -15,11 +15,11 @@
  */
 package com.sun.webui.jsf.component;
 
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIOutput;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIOutput;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;

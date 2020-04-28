@@ -19,9 +19,9 @@ package com.sun.webui.jsf.renderkit.html;
 import com.sun.faces.annotation.Renderer;
 import java.util.List;
 import java.io.IOException;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.component.Tab;
 import com.sun.webui.jsf.component.TabSet;
@@ -30,7 +30,7 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.RenderingUtilities;
-import javax.el.MethodExpression;
+import jakarta.el.MethodExpression;
 
 /**
  * Renders a TabSet component.

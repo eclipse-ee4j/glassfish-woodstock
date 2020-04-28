@@ -28,12 +28,12 @@ import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.theme.Theme;
 import java.io.IOException;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
-import javax.faces.component.UINamingContainer;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.component.UINamingContainer;
 
 /**
  * Component that represents a table action bar.

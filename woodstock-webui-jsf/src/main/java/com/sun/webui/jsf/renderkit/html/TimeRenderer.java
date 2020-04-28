@@ -19,10 +19,10 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.ResponseWriter;
-import javax.faces.context.FacesContext;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.component.DropDown;
 import com.sun.webui.jsf.component.Time;
 import com.sun.webui.theme.Theme;
@@ -37,7 +37,7 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Time"))
-public final class TimeRenderer extends javax.faces.render.Renderer {
+public final class TimeRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * Debug flag.

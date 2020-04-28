@@ -15,11 +15,11 @@
  */
 package com.sun.webui.jsf.example;
 
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.application.FacesMessage;
 
 import com.sun.webui.jsf.example.util.MessageUtil;
 

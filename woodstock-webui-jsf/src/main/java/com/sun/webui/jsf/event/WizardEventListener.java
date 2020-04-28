@@ -15,9 +15,9 @@
  */
 package com.sun.webui.jsf.event;
 
-import javax.faces.event.FacesListener;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.component.StateHolder;
+import jakarta.faces.event.FacesListener;
+import jakarta.faces.event.AbortProcessingException;
+import jakarta.faces.component.StateHolder;
 
 /**
  * The WizardEventListener is an event listener defined on

@@ -21,12 +21,12 @@ import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.theme.Theme;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIOutput;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIOutput;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
 
 /**
  * The Legend component displays a legend to explain icons used in a page.

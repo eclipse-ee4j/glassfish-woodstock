@@ -21,9 +21,9 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
 import com.sun.webui.jsf.component.ContentPageTitle;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
@@ -36,7 +36,7 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 @Renderer(
         @Renderer.Renders(
                 componentFamily = "com.sun.webui.jsf.ContentPageTitle"))
-public class ContentPageTitleRenderer extends javax.faces.render.Renderer {
+public class ContentPageTitleRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * Bottom id.

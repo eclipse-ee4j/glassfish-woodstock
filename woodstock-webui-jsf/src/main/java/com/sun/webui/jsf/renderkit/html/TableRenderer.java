@@ -31,14 +31,14 @@ import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.io.IOException;
 import java.util.Iterator;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UINamingContainer;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UINamingContainer;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
@@ -73,7 +73,7 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Table"))
-public final class TableRenderer extends javax.faces.render.Renderer {
+public final class TableRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * JS object name.

@@ -75,6 +75,10 @@
             <artifactId>jakarta.faces</artifactId>
         </dependency>
         <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jakarta.el</groupId>
             <artifactId>jakarta.el-api</artifactId>
         </dependency>

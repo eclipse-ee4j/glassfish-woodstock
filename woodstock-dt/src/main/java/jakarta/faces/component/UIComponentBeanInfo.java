@@ -13,9 +13,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
+package jakarta.faces.component;
 
 /**
- * Provides basic BeanInfo implementations for the fundamental JSF 1.2 user
- * interface components.
+ * BeanInfo for {@link jakarta.faces.component.UIComponent}.
+ *
  */
-package javax.faces.component;
+public class UIComponentBeanInfo extends UIComponentBaseBeanInfo {
+
+    /**
+     * Create a new instance.
+     */
+    public UIComponentBeanInfo() {
+        super(UIComponent.class);
+    }
+
+}

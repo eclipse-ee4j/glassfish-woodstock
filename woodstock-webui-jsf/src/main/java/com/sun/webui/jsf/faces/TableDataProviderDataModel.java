@@ -26,9 +26,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import javax.faces.model.DataModel;
-import javax.faces.model.DataModelEvent;
-import javax.faces.model.DataModelListener;
+import jakarta.faces.model.DataModel;
+import jakarta.faces.model.DataModelEvent;
+import jakarta.faces.model.DataModelListener;
 
 /**
  * {@code DataModel} implementation that wraps a specified

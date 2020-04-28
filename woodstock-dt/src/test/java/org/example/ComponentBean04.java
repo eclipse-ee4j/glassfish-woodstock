@@ -18,7 +18,7 @@ package org.example;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.el.MethodExpression;
+import jakarta.el.MethodExpression;
 
 @Component
 public class ComponentBean04 extends SuperBean01 {

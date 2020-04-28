@@ -19,9 +19,9 @@ import com.sun.faces.annotation.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Component that represents a table.

@@ -23,10 +23,10 @@ import com.sun.webui.jsf.component.TableRowGroup;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.LogUtil;
 import java.util.Iterator;
-import javax.faces.component.UIComponent;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.event.AbortProcessingException;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ActionListener;
 
 /**
  * A listener for receiving pagination toggle events.

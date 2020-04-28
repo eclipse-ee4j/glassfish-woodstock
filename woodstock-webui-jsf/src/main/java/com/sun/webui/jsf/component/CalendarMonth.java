@@ -23,6 +23,7 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.model.Option;
 import com.sun.webui.jsf.model.ScheduledEvent;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.beans.Beans;
 import java.io.Serializable;
@@ -33,14 +34,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIOutput;
-import javax.faces.component.NamingContainer;
-import javax.faces.convert.IntegerConverter;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIOutput;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.convert.IntegerConverter;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ActionListener;
 
 /**
  * <h3>NOT FOR DEVELOPER USE - base renderer class for {@code ui:calendar} and

@@ -45,7 +45,7 @@ public @interface Attribute {
      * Indicates whether the value of this attribute may be a value-binding
      * expression. If the value of this element is false, the type of the
      * attribute will be set to the property type. If the value is true, it will
-     * be set to {@link javax.el.ValueExpression}.
+     * be set to {@link jakarta.el.ValueExpression}.
      *
      * @return {@code true} if bind-able, {@code false} otherwise
      */

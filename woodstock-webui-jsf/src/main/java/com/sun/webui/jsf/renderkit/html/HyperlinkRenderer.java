@@ -22,11 +22,11 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.LogUtil;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIParameter;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.event.ActionEvent;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIParameter;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -17,10 +17,10 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponentBase;
-import javax.faces.component.NamingContainer;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The PanelGroup component is used to arrange a group of components.

@@ -21,7 +21,7 @@ import com.sun.webui.jsf.component.TableColumn;
 import com.sun.webui.jsf.component.Markup;
 import com.sun.data.provider.TableDataProvider;
 import com.sun.data.provider.impl.ObjectArrayDataProvider;
-import javax.faces.component.UIParameter;
+import jakarta.faces.component.UIParameter;
 import java.io.Serializable;
 import com.sun.webui.jsf.example.util.ExampleUtilities;
 

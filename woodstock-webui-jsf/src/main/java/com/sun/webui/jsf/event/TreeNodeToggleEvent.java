@@ -15,8 +15,8 @@
  */
 package com.sun.webui.jsf.event;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.event.FacesListener;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.FacesListener;
 import com.sun.webui.jsf.component.TreeNode;
 
 /**

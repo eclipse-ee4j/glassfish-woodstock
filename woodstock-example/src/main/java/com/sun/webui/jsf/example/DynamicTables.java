@@ -22,7 +22,7 @@ import com.sun.webui.jsf.component.StaticText;
 import com.sun.webui.jsf.component.Table;
 import com.sun.webui.jsf.component.TableColumn;
 import com.sun.webui.jsf.component.TableRowGroup;
-import javax.faces.component.UIParameter;
+import jakarta.faces.component.UIParameter;
 
 /**
  * This class provides functionality for dynamic tables.

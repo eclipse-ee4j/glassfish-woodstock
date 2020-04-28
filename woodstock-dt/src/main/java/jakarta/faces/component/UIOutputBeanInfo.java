@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-package javax.faces.component;
+package jakarta.faces.component;
 
 import com.sun.rave.designtime.markup.AttributeDescriptor;
 import java.beans.IntrospectionException;
@@ -24,11 +24,11 @@ import java.util.List;
 
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR;
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.CATEGORY;
-import static javax.faces.component.CategoryDescriptorsConstants.DATA;
-import static javax.faces.component.PropertyEditorConstants.VALUEBINDING_EDITOR;
+import static jakarta.faces.component.CategoryDescriptorsConstants.DATA;
+import static jakarta.faces.component.PropertyEditorConstants.VALUEBINDING_EDITOR;
 
 /**
- * BeanInfo for {@link javax.faces.component.UICommand}.
+ * BeanInfo for {@link jakarta.faces.component.UICommand}.
  */
 public class UIOutputBeanInfo extends UIComponentBaseBeanInfo {
 

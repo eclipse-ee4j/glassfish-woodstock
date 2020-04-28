@@ -22,13 +22,13 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ComponentUtilities;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIOutput;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIOutput;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
 
 /**
  * The Alert component is used to render an inline alert message.
@@ -91,7 +91,7 @@ public final class Alert extends UIOutput implements NamingContainer {
      * method. The method must take no parameters and return an outcome string.
      * The class that defines the method must implement the<br>
      * {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.</li>
+     * {@code jakarta.faces.component.StateHolder} interface.</li>
      * </ul>
      */
     @Property(name = "linkActionExpression",
@@ -99,7 +99,7 @@ public final class Alert extends UIOutput implements NamingContainer {
             displayName = "Link Action Method Expression",
             category = "Navigation")
     @Property.Method(signature = "java.lang.String action()")
-    private javax.el.MethodExpression linkActionExpression = null;
+    private jakarta.el.MethodExpression linkActionExpression = null;
 
     /**
      * The window (target) in which to load the link that is specified with
@@ -473,18 +473,18 @@ public final class Alert extends UIOutput implements NamingContainer {
      * method. The method must take no parameters and return an outcome string.
      * The class that defines the method must implement the<br>
      * {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.</li>
+     * {@code jakarta.faces.component.StateHolder} interface.</li>
      * </ul>
      *
-     * @return {@code javax.el.MethodExpression}
+     * @return {@code jakarta.el.MethodExpression}
      */
-    public javax.el.MethodExpression getLinkActionExpression() {
+    public jakarta.el.MethodExpression getLinkActionExpression() {
         if (this.linkActionExpression != null) {
             return this.linkActionExpression;
         }
         ValueExpression vb = getValueExpression("linkActionExpression");
         if (vb != null) {
-            return (javax.el.MethodExpression) vb
+            return (jakarta.el.MethodExpression) vb
                     .getValue(getFacesContext().getELContext());
         }
         return null;
@@ -503,14 +503,14 @@ public final class Alert extends UIOutput implements NamingContainer {
      * method. The method must take no parameters and return an outcome string.
      * The class that defines the method must implement the<br>
      * {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.</li>
+     * {@code jakarta.faces.component.StateHolder} interface.</li>
      * </ul>
      *
      * @param newLinkActionExpression method expression
      * @see #getLinkActionExpression()
      */
     public void setLinkActionExpression(
-            final javax.el.MethodExpression newLinkActionExpression) {
+            final jakarta.el.MethodExpression newLinkActionExpression) {
 
         this.linkActionExpression = newLinkActionExpression;
     }
@@ -832,7 +832,7 @@ public final class Alert extends UIOutput implements NamingContainer {
         super.restoreState(context, values[0]);
         this.alt = (String) values[1];
         this.detail = (String) values[2];
-        this.linkActionExpression = (javax.el.MethodExpression)
+        this.linkActionExpression = (jakarta.el.MethodExpression)
                 restoreAttachedState(context, values[3]);
         this.linkTarget = (String) values[4];
         this.linkText = (String) values[5];

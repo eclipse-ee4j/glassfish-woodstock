@@ -17,8 +17,8 @@ package com.sun.webui.jsf.example;
 
 import com.sun.webui.jsf.component.ProgressBar;
 import com.sun.webui.jsf.example.util.MessageUtil;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 
 /**
  *

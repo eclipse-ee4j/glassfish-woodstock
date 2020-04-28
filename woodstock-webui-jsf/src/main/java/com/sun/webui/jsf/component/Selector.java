@@ -26,10 +26,10 @@ import com.sun.webui.jsf.util.ValueType;
 import com.sun.webui.jsf.util.ValueTypeEvaluator;
 import java.lang.reflect.Array;
 import java.util.Iterator;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.ConverterException;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.ConverterException;
 
 /**
  * Base component for UI components that allow the user to make a selection from
@@ -512,7 +512,7 @@ public class Selector extends WebuiInput implements SelectorManager {
                 if (DEBUG) {
                     log("\tComponent value is a list", component);
                 }
-                throw new javax.faces.FacesException(
+                throw new jakarta.faces.FacesException(
                         "List is not a supported value.");
             } else {
                 if (DEBUG) {
@@ -557,7 +557,7 @@ public class Selector extends WebuiInput implements SelectorManager {
      *
      * @param context The FacesContext
      * @return String
-     * @throws javax.faces.FacesException If the list items cannot be processed
+     * @throws jakarta.faces.FacesException If the list items cannot be processed
      */
     // AVK - instead of doing this here, I think we
     // should set the value to be displayed when we get the readOnly

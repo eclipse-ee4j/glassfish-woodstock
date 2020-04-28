@@ -18,7 +18,7 @@ package com.sun.webui.jsf.example;
 import java.util.Date;
 import java.io.Serializable;
 import com.sun.webui.jsf.example.util.MessageUtil;
-import javax.faces.convert.Converter;
+import jakarta.faces.convert.Converter;
 
 /**
  * Backing bean for Static Text example.

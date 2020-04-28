@@ -21,9 +21,9 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.component.PasswordField;
 import com.sun.webui.jsf.util.MessageUtil;
 

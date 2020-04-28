@@ -15,6 +15,6 @@
  */
 
 /**
- * Implementations of {@link javax.faces.validator.Validator}.
+ * Implementations of {@link jakarta.faces.validator.Validator}.
  */
 package com.sun.webui.jsf.validator;

@@ -21,10 +21,10 @@ import com.sun.webui.jsf.component.ImageHyperlink;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
+import jakarta.faces.component.UIComponent;
 import java.util.Map;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 
 /**
  * This class is responsible for rendering the {@link ImageHyperlink} component

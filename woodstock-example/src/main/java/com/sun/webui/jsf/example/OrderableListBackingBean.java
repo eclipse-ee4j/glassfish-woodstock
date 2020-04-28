@@ -15,8 +15,8 @@
  */
 package com.sun.webui.jsf.example;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.example.util.MessageUtil;
 import com.sun.webui.jsf.example.util.UserData;
 import com.sun.webui.jsf.component.OrderableList;

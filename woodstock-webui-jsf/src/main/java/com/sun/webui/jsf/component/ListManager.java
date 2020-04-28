@@ -16,9 +16,9 @@
 package com.sun.webui.jsf.component;
 
 import java.util.Iterator;
-import javax.faces.context.FacesContext;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.UIComponent;
 
 //FIXME: consider making this a base class instead. There
 // is code which is shared between Selectors and Editable List,

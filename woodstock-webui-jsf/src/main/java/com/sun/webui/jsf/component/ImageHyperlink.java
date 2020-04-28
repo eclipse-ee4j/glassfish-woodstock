@@ -19,10 +19,10 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import java.util.Map;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The ImageHyperlink component is used to display a hyperlinked image.

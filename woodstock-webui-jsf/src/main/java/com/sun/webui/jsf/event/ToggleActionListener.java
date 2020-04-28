@@ -16,9 +16,9 @@
 
 package com.sun.webui.jsf.event;
 
-import javax.faces.component.UIComponent;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ActionListener;
 import com.sun.webui.jsf.component.TreeNode;
 import com.sun.webui.jsf.component.Tree;
 import java.io.Serializable;

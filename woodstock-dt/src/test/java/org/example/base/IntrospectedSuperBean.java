@@ -15,7 +15,7 @@
  */
 package org.example.base;
 
-import javax.el.MethodExpression;
+import jakarta.el.MethodExpression;
 
 /**
  * This bean provides two events, introspectedAction01 and introspectedAction02,

@@ -17,12 +17,12 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIOutput;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIOutput;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.ThemeUtilities;

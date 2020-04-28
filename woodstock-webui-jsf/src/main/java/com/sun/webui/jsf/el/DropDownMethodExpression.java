@@ -16,11 +16,11 @@
 
 package com.sun.webui.jsf.el;
 
-import javax.faces.component.StateHolder;
-import javax.el.MethodExpression;
-import javax.el.MethodInfo;
-import javax.el.ELContext;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.StateHolder;
+import jakarta.el.MethodExpression;
+import jakarta.el.MethodInfo;
+import jakarta.el.ELContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Drop down method expression.

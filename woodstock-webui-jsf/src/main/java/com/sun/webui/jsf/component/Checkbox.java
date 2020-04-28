@@ -19,8 +19,8 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import java.util.ArrayList;
 import java.util.Map;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The Checkbox component is used to display a checkbox input element.

@@ -18,7 +18,7 @@ package com.sun.webui.jsf.example.util;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * This utility class parses the user agent of a HttpServletRequest object to

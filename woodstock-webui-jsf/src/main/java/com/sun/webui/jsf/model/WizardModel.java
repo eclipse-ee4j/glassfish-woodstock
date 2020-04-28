@@ -16,7 +16,7 @@
 package com.sun.webui.jsf.model;
 
 import java.util.Iterator;
-import javax.faces.component.StateHolder;
+import jakarta.faces.component.StateHolder;
 import com.sun.webui.jsf.event.WizardEvent;
 import com.sun.webui.jsf.component.Wizard;
 import com.sun.webui.jsf.component.WizardStep;

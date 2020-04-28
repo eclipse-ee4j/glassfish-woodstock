@@ -17,9 +17,9 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponentBase;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The MessageGroup component is used to display a list of messages for the page

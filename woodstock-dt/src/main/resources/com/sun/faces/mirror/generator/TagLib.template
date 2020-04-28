@@ -46,7 +46,7 @@
 #else
             <required>false</required>
 #end  
-#if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.methodSignature)
             <deferred-method>
                 <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
@@ -60,7 +60,7 @@
             <deferred-value>
                 <type>${propertyInfo.type}</type>
             </deferred-value>
-#end##if ($propertyInfo.type == 'javax.el.MethodExpression')
+#end##if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.description)
             <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
 #end
@@ -87,7 +87,7 @@
 #else
             <required>false</required>
 #end
-#if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.methodSignature)
             <deferred-method>
                 <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
@@ -101,7 +101,7 @@
             <deferred-value>
                 <type>${propertyInfo.type}</type>
             </deferred-value>
-#end##if ($propertyInfo.type == 'javax.el.MethodExpression')
+#end##if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.description)
             <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
 #end

@@ -15,11 +15,11 @@
  */
 package com.sun.webui.jsf.example;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.validator.ValidatorException;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.validator.ValidatorException;
+import jakarta.faces.application.FacesMessage;
 
 import com.sun.webui.jsf.example.util.MessageUtil;
 

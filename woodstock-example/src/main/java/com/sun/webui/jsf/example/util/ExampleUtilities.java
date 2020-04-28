@@ -15,10 +15,10 @@
  */
 package com.sun.webui.jsf.example.util;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
 
 /**
  * Common example utilities.

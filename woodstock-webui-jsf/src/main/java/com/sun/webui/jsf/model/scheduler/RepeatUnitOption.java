@@ -16,7 +16,7 @@
 
 package com.sun.webui.jsf.model.scheduler;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.model.Option;
 
 /**

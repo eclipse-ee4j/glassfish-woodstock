@@ -18,10 +18,10 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Field;
 import com.sun.webui.jsf.component.TextArea;
 import com.sun.webui.jsf.component.Upload;
@@ -39,7 +39,7 @@ import com.sun.webui.jsf.util.ThemeUtilities;
  * Renderer for {@link com.sun.webui.jsf.component.TextField} components.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Field"))
-public class FieldRenderer extends javax.faces.render.Renderer {
+public class FieldRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * The list of attribute names in the HTML 4.01 Specification that

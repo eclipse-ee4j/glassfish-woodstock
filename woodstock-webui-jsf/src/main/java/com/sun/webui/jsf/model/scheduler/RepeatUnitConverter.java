@@ -17,10 +17,10 @@
 package com.sun.webui.jsf.model.scheduler;
 
 import java.io.Serializable;
-import javax.faces.component.UIComponent;
-import javax.faces.convert.Converter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.convert.Converter;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 // Delete the setters once you have reimplemented this not to
 // use the default Serializable mechanism, but the same as

@@ -18,12 +18,12 @@ package com.sun.webui.jsf.event;
 import com.sun.data.provider.RowKey;
 import com.sun.webui.jsf.util.LogUtil;
 import java.util.HashMap;
-import javax.faces.FactoryFinder;
-import javax.faces.lifecycle.Lifecycle;
-import javax.faces.lifecycle.LifecycleFactory;
-import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
+import jakarta.faces.FactoryFinder;
+import jakarta.faces.lifecycle.Lifecycle;
+import jakarta.faces.lifecycle.LifecycleFactory;
+import jakarta.faces.event.PhaseEvent;
+import jakarta.faces.event.PhaseId;
+import jakarta.faces.event.PhaseListener;
 
 /**
  * A utility class for radiobutton and checkbox components used to select rows

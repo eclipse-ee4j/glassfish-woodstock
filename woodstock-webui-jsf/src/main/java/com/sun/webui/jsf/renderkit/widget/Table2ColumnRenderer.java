@@ -19,9 +19,9 @@ package com.sun.webui.jsf.renderkit.widget;
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Table2Column;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.json.JsonObjectBuilder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.json.JsonObjectBuilder;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;

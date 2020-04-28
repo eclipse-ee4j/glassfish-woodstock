@@ -20,10 +20,10 @@ package com.sun.webui.jsf.renderkit.html;
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
 import java.util.MissingResourceException;
-import javax.faces.FacesException;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIComponent;
+import jakarta.faces.FacesException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
 import com.sun.webui.jsf.component.Calendar;
 import com.sun.webui.jsf.component.CalendarMonth;
 import com.sun.webui.jsf.component.ImageHyperlink;
@@ -37,7 +37,7 @@ import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.text.SimpleDateFormat;
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 

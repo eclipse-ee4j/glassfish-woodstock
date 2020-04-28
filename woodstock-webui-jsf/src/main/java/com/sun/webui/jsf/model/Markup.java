@@ -18,8 +18,8 @@ package com.sun.webui.jsf.model;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
 
 /**
  * Utility bean that serves as an accumulating buffer for

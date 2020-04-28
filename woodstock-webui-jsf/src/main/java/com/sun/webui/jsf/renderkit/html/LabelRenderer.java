@@ -35,20 +35,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.faces.FacesException;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UINamingContainer;
-import javax.faces.component.UIParameter;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UINamingContainer;
+import jakarta.faces.component.UIParameter;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 
 /**
  * Renderer for a {@link Label} component.
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Label"))
-public final class LabelRenderer extends javax.faces.render.Renderer {
+public final class LabelRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * The set of additional String pass-through attributes to be rendered if we

@@ -28,9 +28,9 @@ import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.beans.Beans;
 import java.io.IOException;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
 
 /**
  * Image renderer.

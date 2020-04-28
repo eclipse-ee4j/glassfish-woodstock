@@ -16,7 +16,7 @@
 
 package com.sun.webui.jsf.model;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 /**
  * Model bean that represents a selectable choice in a selection

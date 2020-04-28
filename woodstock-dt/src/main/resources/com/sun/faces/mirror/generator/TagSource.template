@@ -1,16 +1,16 @@
 package ${tagPackage};
 
-import javax.el.ELException;
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.component.StateHolder;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.webapp.UIComponentELTag;
-import javax.faces.context.FacesContext;
+import jakarta.el.ELException;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.StateHolder;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.faces.webapp.UIComponentELTag;
+import jakarta.faces.context.FacesContext;
 
 /**
  * This file was generated automatically on ${date}.
@@ -56,7 +56,7 @@ public class ${tagClass} extends UIComponentELTag {
                         
 #foreach($propertyInfo in $propertyInfos)
 #if ($propertyInfo.attributeInfo)
-#if ($propertyInfo.type == "javax.el.MethodExpression")
+#if ($propertyInfo.type == "jakarta.el.MethodExpression")
         if (${propertyInfo.instanceName} != null) {
             try {
                 component.getAttributes().put("${propertyInfo.instanceName}", ${propertyInfo.instanceName});
@@ -79,7 +79,7 @@ public class ${tagClass} extends UIComponentELTag {
     /**
      * Set attribute corresponding to the "${propertyInfo.name}" property
      */
-#if ($propertyInfo.type == 'javax.el.MethodExpression')
+#if ($propertyInfo.type == 'jakarta.el.MethodExpression')
     private MethodExpression ${propertyInfo.instanceName} = null;
     public void ${propertyInfo.attributeInfo.writeMethodName} (MethodExpression ${propertyInfo.instanceName}) {
         this.${propertyInfo.instanceName} = ${propertyInfo.instanceName};

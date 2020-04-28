@@ -15,7 +15,7 @@
  */
 package com.sun.webui.jsf.example;
 
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.event.ValueChangeEvent;
 import java.io.Serializable;
 
 /**

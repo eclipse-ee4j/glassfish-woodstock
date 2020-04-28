@@ -15,8 +15,8 @@
  */
 package com.sun.webui.jsf.model;
 
-import javax.faces.validator.ValidatorException;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.validator.ValidatorException;
+import jakarta.faces.application.FacesMessage;
 
 /**
  * Need to make this an interface as well.

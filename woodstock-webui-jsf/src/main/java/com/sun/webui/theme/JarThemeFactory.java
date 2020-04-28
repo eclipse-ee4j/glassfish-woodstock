@@ -38,8 +38,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import javax.faces.application.Application;
-import javax.faces.context.FacesContext;
+import jakarta.faces.application.Application;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Factory class responsible for setting up the Sun Web Component

@@ -17,9 +17,9 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.faces.component.NamingContainer;
-import javax.faces.context.FacesContext;
-import javax.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
 
 /**
  * Mastfooter component.
@@ -29,7 +29,7 @@ import javax.el.ValueExpression;
         displayName = "MastFooter Section",
         instanceName = "mastFooter",
         tagName = "mastFooter")
-public final class MastFooter extends javax.faces.component.UIComponentBase
+public final class MastFooter extends jakarta.faces.component.UIComponentBase
         implements NamingContainer {
 
     /**

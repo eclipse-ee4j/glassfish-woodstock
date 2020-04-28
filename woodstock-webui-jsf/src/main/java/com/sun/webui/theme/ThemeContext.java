@@ -26,7 +26,7 @@ import java.util.Set;
  * For example:
  * <p>
  * <ul>
- * <li>In a {@code javax.servlet.Servlet} application environment information
+ * <li>In a {@code jakarta.servlet.Servlet} application environment information
  * about a theme and its resources is specified by the application in its
  * {@code web.xml} file
  * </li>

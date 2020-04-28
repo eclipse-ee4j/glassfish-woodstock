@@ -17,10 +17,10 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
-import javax.el.ValueExpression;
-import javax.faces.component.UIOutput;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIOutput;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
 
 /**
  * The HelpInline component is used to display inline help at the page and field
@@ -103,7 +103,7 @@ public final class HelpInline extends UIOutput {
      * <ul>
      * <li>A JavaServer Faces EL expression that resolves to a backing bean or
      * bean property that implements the
-     * {@code javax.faces.converter.Converter} interface; or
+     * {@code jakarta.faces.converter.Converter} interface; or
      * </li><li>the ID of a registered converter (a String).</li>
      * </ul>
      * @param converter converter

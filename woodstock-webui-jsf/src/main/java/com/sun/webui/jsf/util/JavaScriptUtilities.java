@@ -19,11 +19,11 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeJavascript;
 import java.io.IOException;
 import java.io.StringWriter;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.json.JsonObject;
-import javax.json.JsonWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonWriter;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_WRITER_FACTORY;

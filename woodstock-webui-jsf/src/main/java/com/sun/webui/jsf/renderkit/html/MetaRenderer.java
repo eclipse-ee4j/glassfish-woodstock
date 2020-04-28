@@ -18,9 +18,9 @@ package com.sun.webui.jsf.renderkit.html;
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Meta;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 
 /**
  * This class is responsible for rendering the meta component for the HTML

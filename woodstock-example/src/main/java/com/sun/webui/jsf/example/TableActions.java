@@ -23,7 +23,7 @@ import com.sun.webui.jsf.model.OptionTitle;
 
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 import com.sun.webui.jsf.example.util.MessageUtil;
 

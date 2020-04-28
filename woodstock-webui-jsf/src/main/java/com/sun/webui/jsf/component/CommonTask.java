@@ -15,13 +15,13 @@
  */
 package com.sun.webui.jsf.component;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.NamingContainer;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.context.FacesContext;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.ComponentUtilities;
-import javax.el.ValueExpression;
+import jakarta.el.ValueExpression;
 
 /**
  * The CommonTask component is used to create a single task within a

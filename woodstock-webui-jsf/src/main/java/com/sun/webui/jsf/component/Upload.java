@@ -22,13 +22,13 @@ import com.sun.webui.jsf.model.UploadedFile;
 import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.io.Serializable;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.FacesException;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.FacesException;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.FileItem;
 
 /**
  * The Upload component is used to create an input tag with its
@@ -365,7 +365,7 @@ public final class Upload extends Field implements Serializable {
      * <ul>
      * <li>a JavaServer Faces EL expression that resolves to a backing bean or
      * bean property that implements the
-     * {@code javax.faces.converter.Converter} interface; or</li>
+     * {@code jakarta.faces.converter.Converter} interface; or</li>
      * <li>the ID of a registered converter (a String).</li>
      * </ul>
      * @return Converter

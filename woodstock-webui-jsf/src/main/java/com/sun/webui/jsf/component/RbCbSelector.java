@@ -19,12 +19,12 @@ import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import java.io.IOException;
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.component.NamingContainer;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.ConverterException;
-import javax.faces.render.Renderer;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.render.Renderer;
 
 /**
  * This renderer meta-data is not mapped one to one with a component. A renderer

@@ -158,9 +158,9 @@ public @interface Event {
      * Indicates whether this event is the default event for its component. Only
      * one event may be declared to be the default event for a component. If a
      * component does not declare a default event and does not inherit a default
-     * event, and implements {@link javax.faces.component.ActionSource}, the
+     * event, and implements {@link jakarta.faces.component.ActionSource}, the
      * {@code action} event will be made the default, if it exists; if it
-     * implements {@link javax.faces.component.EditableValueHolder}, the
+     * implements {@link jakarta.faces.component.EditableValueHolder}, the
      * {@code valueChange} event will be made the default, if it exists.
      *
      * @return {@code true} if default, {@code false} otherwise

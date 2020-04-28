@@ -17,20 +17,20 @@
 package com.sun.webui.jsf.component;
 
 import com.sun.webui.jsf.event.MethodExprValueChangeListener;
-import javax.el.MethodExpression;
-import javax.faces.component.UIInput;
-import javax.faces.convert.Converter;
-import javax.faces.event.ValueChangeListener;
+import jakarta.el.MethodExpression;
+import jakarta.faces.component.UIInput;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.event.ValueChangeListener;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.validator.MethodExprValidator;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.el.MethodBinding;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.FacesEvent;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.validator.Validator;
-import javax.faces.validator.ValidatorException;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.el.MethodBinding;
+import jakarta.faces.event.AbortProcessingException;
+import jakarta.faces.event.FacesEvent;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.faces.validator.Validator;
+import jakarta.faces.validator.ValidatorException;
 
 /**
  * WebUI input.
@@ -44,7 +44,7 @@ public class WebuiInput extends UIInput {
      * <ul>
      * <li>A JavaServer Faces EL expression that resolves to a backing bean or
      * bean property that implements the
-     * {@code javax.faces.converter.Converter} interface; or
+     * {@code jakarta.faces.converter.Converter} interface; or
      * </li><li>the ID of a registered converter (a String).</li>
      * </ul>
      * This implementation invokes {@code super.setConverter}.
@@ -136,10 +136,10 @@ public class WebuiInput extends UIInput {
      * user enters data in the input component. The value of the
      * attribute value must be a JavaServer Faces EL expression that
      * resolves to a backing bean method. The method must take a single
-     * parameter of type {@code javax.faces.event.ValueChangeEvent},
+     * parameter of type {@code jakarta.faces.event.ValueChangeEvent},
      * and its return type must be void. The backing bean where the
      * method is defined must implement {@code java.io.Serializable}
-     * or {@code javax.faces.component.StateHolder}.
+     * or {@code jakarta.faces.component.StateHolder}.
      */
     @Property(name = "valueChangeListenerExpression",
             isHidden = true,
@@ -179,15 +179,15 @@ public class WebuiInput extends UIInput {
      * JavaServer Faces EL expression that resolves to a public method with
      * return type void. The method must take three parameters:
      * <ul>
-     * <li>a {@code javax.faces.context.FacesContext}</li>
-     * <li>a {@code javax.faces.component.UIComponent} (the component whose
+     * <li>a {@code jakarta.faces.context.FacesContext}</li>
+     * <li>a {@code jakarta.faces.component.UIComponent} (the component whose
      * data is to be validated)</li>
      * <li>a {@code java.lang.Object} containing the data to be validated.
      * </li>
      * </ul>
      * <p>The backing bean where the method is defined must implement
      * {@code java.io.Serializable} or
-     * {@code javax.faces.component.StateHolder}.
+     * {@code jakarta.faces.component.StateHolder}.
      * </p>
      * <p>The method is invoked during the Process Validations Phase.</p>
      */

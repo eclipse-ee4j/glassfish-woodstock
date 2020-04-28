@@ -18,16 +18,16 @@ package com.sun.webui.jsf.component;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
-import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.context.FacesContext;
 
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.FocusManager;
 import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.theme.Theme;
-import javax.faces.component.UINamingContainer;
+import jakarta.faces.component.UINamingContainer;
 
 /**
  * The Body component is used to contain the other components of the page.

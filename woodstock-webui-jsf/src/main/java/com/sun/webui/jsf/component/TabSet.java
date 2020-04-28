@@ -18,14 +18,14 @@ package com.sun.webui.jsf.component;
 import com.sun.faces.annotation.Property;
 import com.sun.faces.annotation.Component;
 import java.util.Stack;
-import javax.faces.component.NamingContainer;
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.component.NamingContainer;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.event.ValueChangeEvent;
 
 /**
  * A set of one or more tabs. A TabSet is a naming container which should
@@ -36,7 +36,7 @@ import javax.faces.event.ValueChangeEvent;
  * notified of all tab selection actions.
  *
  * <p>
- * TabSet implements {@link javax.faces.component.EditableValueHolder}, but it
+ * TabSet implements {@link jakarta.faces.component.EditableValueHolder}, but it
  * diverges significantly from the behavior of a typical editable value holder.
  * Note that the {@code selected} property is an alias for the {@code value}
  * property.
@@ -79,15 +79,15 @@ public final class TabSet extends WebuiInput implements NamingContainer {
      * Set the method expression that identifies a method that handles the
      * action event fired when one of this tab set's tabs is used to submit the
      * page. The signature of the bound method must correspond to {@link
-     * javax.faces.event.ActionListenerExpression#processAction}. The class that
+     * jakarta.faces.event.ActionListenerExpression#processAction}. The class that
      * defines the method must implement the {@code java.io.Serializable}
-     * interface or {@code javax.faces.component.StateHolder} interface.
+     * interface or {@code jakarta.faces.component.StateHolder} interface.
      */
     @Property(name = "actionListenerExpression",
             displayName = "Action Listener Expression",
             category = "Advanced")
     @Property.Method(signature
-            = "void processAction(javax.faces.event.ActionEvent)")
+            = "void processAction(jakarta.faces.event.ActionEvent)")
     private MethodExpression actionListenerExpression;
 
     /**
@@ -248,10 +248,10 @@ public final class TabSet extends WebuiInput implements NamingContainer {
      * Set the method expression that identifies a method that handles the
      * action event fired when one of this tab set's tabs is used to submit the
      * page. The signature of the bound method must correspond to {@link
-     * javax.faces.event.MethodExpressionActionListener#processAction}. The
+     * jakarta.faces.event.MethodExpressionActionListener#processAction}. The
      * class that defines the method must implement the
      * {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.
+     * {@code jakarta.faces.component.StateHolder} interface.
      * @param newActionListenerExpression actionListenerExpression
      */
     public void setActionListenerExpression(
@@ -573,7 +573,7 @@ public final class TabSet extends WebuiInput implements NamingContainer {
     public void restoreState(final FacesContext context, final Object state) {
         Object[] values = (Object[]) state;
         super.restoreState(context, values[0]);
-        this.actionListenerExpression = (javax.el.MethodExpression) values[1];
+        this.actionListenerExpression = (jakarta.el.MethodExpression) values[1];
         this.lastSelectedChildSaved = ((Boolean) values[2]);
         this.lastSelectedChildSavedSet = ((Boolean) values[3]);
         this.lite = ((Boolean) values[4]);

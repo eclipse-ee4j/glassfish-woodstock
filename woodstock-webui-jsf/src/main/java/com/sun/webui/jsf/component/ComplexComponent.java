@@ -15,7 +15,7 @@
  */
 package com.sun.webui.jsf.component;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Most components whose renderers write more than one HTML element need to

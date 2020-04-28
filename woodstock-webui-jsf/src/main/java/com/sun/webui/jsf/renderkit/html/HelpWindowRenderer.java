@@ -20,8 +20,8 @@ import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.HelpWindow;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 
 /**
  * This class is responsible for rendering the {@link HelpWindow} component for

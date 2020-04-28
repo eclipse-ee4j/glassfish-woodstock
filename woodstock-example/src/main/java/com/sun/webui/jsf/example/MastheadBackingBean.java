@@ -16,9 +16,9 @@
 package com.sun.webui.jsf.example;
 
 import com.sun.webui.jsf.component.Hyperlink;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import java.io.Serializable;
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.event.ValueChangeEvent;
 import com.sun.webui.jsf.example.util.MessageUtil;
 
 /**

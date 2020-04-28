@@ -17,16 +17,16 @@ package com.sun.webui.jsf.converter;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
 import com.sun.webui.jsf.component.DateManager;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.application.FacesMessage;
 
 /**
  * Data converter.

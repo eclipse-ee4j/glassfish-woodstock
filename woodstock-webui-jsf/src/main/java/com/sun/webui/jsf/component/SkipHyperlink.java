@@ -15,9 +15,9 @@
  */
 package com.sun.webui.jsf.component;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 

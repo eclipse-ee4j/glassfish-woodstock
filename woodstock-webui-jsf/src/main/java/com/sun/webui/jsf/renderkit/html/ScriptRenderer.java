@@ -19,9 +19,9 @@ import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.Script;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 
 /**
  * This class is responsible for rendering the script component for the HTML

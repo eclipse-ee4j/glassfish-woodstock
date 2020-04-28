@@ -21,11 +21,11 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.theme.Theme;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The PageAlert component displays a full page alert.

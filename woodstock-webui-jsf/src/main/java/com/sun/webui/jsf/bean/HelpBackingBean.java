@@ -17,8 +17,8 @@ package com.sun.webui.jsf.bean;
 
 import javax.help.TreeItem;
 import javax.help.SearchTOCItem;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ExternalContext;
 import com.sun.webui.jsf.component.Button;
 import com.sun.webui.jsf.component.TextField;
 import com.sun.webui.jsf.component.Hyperlink;
@@ -40,8 +40,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.faces.component.UIComponent;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.faces.component.UIComponent;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import static com.sun.webui.jsf.util.ConversionUtilities.convertValueToString;

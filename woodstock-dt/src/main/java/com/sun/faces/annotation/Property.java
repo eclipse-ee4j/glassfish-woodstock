@@ -199,7 +199,7 @@ public @interface Property {
      * component. Only one property may be declared to be the default property
      * for a component. If a component does not declare a default property and
      * does not inherit a default property, and implements
-     * {@link javax.faces.component.ValueHolder}, the {@code value} property
+     * {@link jakarta.faces.component.ValueHolder}, the {@code value} property
      * will be made the default.
      *
      * @return {@code true} if default, {@code false} otherwise
@@ -239,7 +239,7 @@ public @interface Property {
 
     /**
      * Annotation that provides additional information about properties of type
-     * {@link javax.el.MethodExpression}, which are used to invoke a method at
+     * {@link jakarta.el.MethodExpression}, which are used to invoke a method at
      * run-time. All properties of type {@code MethodExpression} must be thus
      * annotated, and the annotation must specify either the signature of the
      * method to which method expressions are to be bound, or, a component event
@@ -251,7 +251,7 @@ public @interface Property {
      * method on a backing bean which does not implement the event's listener
      * interface, a common Faces design pattern. For example, to respond to a
      * change in the value of input component, one can register an instance of a
-     * class that implements {@link javax.faces.event.ValueChangeListener}, or,
+     * class that implements {@link jakarta.faces.event.ValueChangeListener}, or,
      * one can set a method expression bound to a method whose signature matches
      * {@code void valueChange(ValueChangeEvent)}.
      *
@@ -261,7 +261,7 @@ public @interface Property {
      *
      * <p>
      * The JSF {@code actionExpression} property of
-     * {@link javax.faces.component.UICommand} might be annotated thusly:
+     * {@link jakarta.faces.component.UICommand} might be annotated thusly:
      *
      * <pre>
      *    &#64;Property(name="action")
@@ -271,7 +271,7 @@ public @interface Property {
      *
      * <p>
      * The JSF {@code valueChange} event of
-     * {@link javax.faces.component.UIInput} might be annotated thusly:
+     * {@link jakarta.faces.component.UIInput} might be annotated thusly:
      *
      * <pre>
      *    &#64;Property(name="valueChange")

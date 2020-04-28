@@ -19,12 +19,12 @@ import com.sun.faces.annotation.Component;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import java.beans.Beans;
 import java.util.Iterator;
-import javax.el.ValueExpression;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The {@code Property} component was written to be used within

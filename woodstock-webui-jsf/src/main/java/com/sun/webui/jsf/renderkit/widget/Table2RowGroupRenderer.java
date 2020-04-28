@@ -22,10 +22,10 @@ import com.sun.webui.jsf.component.Table2Column;
 import com.sun.webui.jsf.component.Table2RowGroup;
 import java.io.IOException;
 import java.util.Iterator;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.WidgetUtilities.renderComponent;
 

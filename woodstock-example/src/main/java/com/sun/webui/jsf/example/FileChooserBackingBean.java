@@ -15,8 +15,8 @@
  */
 package com.sun.webui.jsf.example;
 
-import javax.faces.context.FacesContext;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.application.FacesMessage;
 import com.sun.webui.jsf.example.util.MessageUtil;
 import java.io.File;
 import java.io.Serializable;

@@ -20,11 +20,11 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.LogUtil;
 import java.io.IOException;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
-import javax.faces.component.NamingContainer;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.component.NamingContainer;
 
 /**
  * Component that represents a table footer.

@@ -16,10 +16,10 @@
 package com.sun.webui.jsf.example;
 
 import com.sun.webui.jsf.model.UploadedFile;
-import javax.faces.context.FacesContext;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.validator.ValidatorException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.validator.ValidatorException;
 import com.sun.webui.jsf.example.util.MessageUtil;
 import java.io.File;
 import java.io.Serializable;

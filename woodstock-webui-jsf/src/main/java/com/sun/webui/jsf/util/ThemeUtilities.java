@@ -19,7 +19,7 @@ package com.sun.webui.jsf.util;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 import com.sun.webui.jsf.component.Icon;
 import com.sun.webui.jsf.theme.JSFThemeContext;

@@ -1248,7 +1248,7 @@ the page, set the <code>reset</code> attribute to true.<br>
  <code>import java.io.Serializable;<br>
  import java.util.Date;<br>
  import java.util.Calendar;<br>
- import javax.faces.event.ValueChangeEvent;<br>
+ import jakarta.faces.event.ValueChangeEvent;<br>
  <br>
  <br>
  public class CalendarBean {<br>
@@ -1610,7 +1610,7 @@ the page, set the <code>reset</code> attribute to true.<br>
  </p>
  The converter class might look like:
  <code><pre>
-     public class PrinterConverter implements javax.faces.convert.Converter {
+     public class PrinterConverter implements jakarta.faces.convert.Converter {
       public PrinterConverter() {
       }
       public String getAsString(FacesContext context, 
@@ -3878,7 +3878,7 @@ The Common Tasks Section component. This encapsulates a number of common task gr
  The example uses the following backing bean.</p>
  <pre>
  import java.io.File;
- import javax.faces.event.ActionEvent;
+ import jakarta.faces.event.ActionEvent;
  // Mapped to managed bean "fileList" in faces-config.xml
  // This managed bean is session scoped.
  //
@@ -5929,12 +5929,12 @@ com.sun.webui.jsf.component.Hyperlink;<br>
 import com.sun.webui.jsf.component.DropDown;<br>
 import com.sun.webui.jsf.model.Option;<br>
 <br>
-import javax.el.MethodExpression;<br>
+import jakarta.el.MethodExpression;<br>
 <br>
-import javax.faces.component.UIComponent;<br>
-import javax.faces.context.FacesContext;<br>
-import javax.faces.event.ActionEvent;<br>
-import javax.faces.event.AbortProcessingException;<br>
+import jakarta.faces.component.UIComponent;<br>
+import jakarta.faces.context.FacesContext;<br>
+import jakarta.faces.event.ActionEvent;<br>
+import jakarta.faces.event.AbortProcessingException;<br>
 <br>
 import util.JSFUtilities;<br>
 <br>
@@ -7509,8 +7509,8 @@ href=#Example_4>Example 4</a>.&nbsp; <br>
 package progressbar;<br>
 <br>
 import com.sun.webui.jsf.component.ProgressBar;<br>
-import javax.faces.component.UIComponent;<br>
-import javax.faces.context.FacesContext;<br>
+import jakarta.faces.component.UIComponent;<br>
+import jakarta.faces.context.FacesContext;<br>
 <br>
 <br>
 public class ProgressBean2 {<br>
@@ -8273,7 +8273,7 @@ documentation</a>.</p>
  </p>
  The converter class might look like:
  <code><pre>
-     public class RbConverter implements javax.faces.convert.Converter {
+     public class RbConverter implements jakarta.faces.convert.Converter {
  	public RbConverter() {
  	}
  	public String getAsString(FacesContext context, 
@@ -9581,11 +9581,11 @@ serverInfo="test_server" /&gt;
 
 <p><code>import java.util.List;<br>
 import java.lang.Class;<br>
-import javax.faces.FactoryFinder;<br>
-import javax.faces.el.MethodBinding;<br>
-import javax.faces.event.ActionEvent;<br>
-import javax.faces.application.Application;<br>
-import javax.faces.application.ApplicationFactory;<br>
+import jakarta.faces.FactoryFinder;<br>
+import jakarta.faces.el.MethodBinding;<br>
+import jakarta.faces.event.ActionEvent;<br>
+import jakarta.faces.application.Application;<br>
+import jakarta.faces.application.ApplicationFactory;<br>
 import com.sun.webui.jsf.component.Tab;<br>
 import com.sun.webui.jsf.component.TabSet;<br>
 <br>
@@ -11914,7 +11914,7 @@ text=&quot;Three B&quot; /&gt;<br>
  import java.util.List;<br>
  import java.util.Map;<br>
  <br>
- import javax.faces.context.FacesContext;<br>
+ import jakarta.faces.context.FacesContext;<br>
  <br>
  // This class provides functionality for table actions.<br>
  public class Actions {<br>
@@ -12321,8 +12321,8 @@ text=&quot;Three B&quot; /&gt;<br>
  import com.sun.data.provider.TableDataProvider;<br>
  import com.sun.webui.jsf.event.TableSelectPhaseListener;<br>
  <br>
- import javax.faces.context.FacesContext;<br>
- import javax.faces.el.ValueBinding;<br>
+ import jakarta.faces.context.FacesContext;<br>
+ import jakarta.faces.el.ValueBinding;<br>
  <br>
  // This class provides functionality for select tables.<br>
  //<br>
@@ -14574,10 +14574,10 @@ text=&quot;Three B&quot; /&gt;<br>
  import com.sun.webui.jsf.component.TableColumn;<br>
  import com.sun.webui.jsf.component.TableRowGroup;<br>
  <br>
- import javax.faces.context.FacesContext;<br>
- import javax.faces.component.UIComponent;<br>
- import javax.faces.component.UIParameter;<br>
- import javax.faces.el.ValueBinding;<br>
+ import jakarta.faces.context.FacesContext;<br>
+ import jakarta.faces.component.UIComponent;<br>
+ import jakarta.faces.component.UIParameter;<br>
+ import jakarta.faces.el.ValueBinding;<br>
  <br>
  // This class provides functionality for dynamic tables.<br>
  public class Dynamic {<br>
@@ -16401,8 +16401,8 @@ public class FileUploadBean implements Serializable {
 <pre>
 import java.io.File; 
 import java.io.Serializable;
-import javax.faces.event.AbortProcessingException; 
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.event.AbortProcessingException; 
+import jakarta.faces.event.ValueChangeEvent;
 import com.sun.webui.jsf.model.UploadedFile;
 
 public class FileUploadedListener implements ValueChangeListener, Serializable {
@@ -17027,11 +17027,11 @@ components are used in the page.</p>
  interface.<br>
  <br>
  <pre wrap="">package wizard;
- import javax.faces.application.FacesMessage;
- import javax.faces.context.FacesContext;
- import javax.faces.component.UIComponent;
- import javax.faces.validator.Validator;
- import javax.faces.validator.ValidatorException;
+ import jakarta.faces.application.FacesMessage;
+ import jakarta.faces.context.FacesContext;
+ import jakarta.faces.component.UIComponent;
+ import jakarta.faces.validator.Validator;
+ import jakarta.faces.validator.ValidatorException;
  import com.sun.webui.jsf.event.WizardEvent;
  import com.sun.webui.jsf.event.WizardEventListener;
  import com.sun.webui.jsf.component.Wizard;

@@ -17,11 +17,11 @@ package com.sun.webui.jsf.example;
 
 import java.io.Serializable;
 
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.validator.ValidatorException;
-import javax.faces.application.FacesMessage;
-import javax.faces.event.ActionEvent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.validator.ValidatorException;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.event.ActionEvent;
 
 import com.sun.webui.jsf.component.Checkbox;
 import com.sun.webui.jsf.component.TextField;

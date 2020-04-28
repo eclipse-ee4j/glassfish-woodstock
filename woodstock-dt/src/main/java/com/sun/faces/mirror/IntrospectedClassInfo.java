@@ -21,9 +21,9 @@ import java.beans.MethodDescriptor;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.faces.component.ActionSource;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.ValueHolder;
+import jakarta.faces.component.ActionSource;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.ValueHolder;
 
 /**
  * Represents a component class or a non-component base class from a dependent

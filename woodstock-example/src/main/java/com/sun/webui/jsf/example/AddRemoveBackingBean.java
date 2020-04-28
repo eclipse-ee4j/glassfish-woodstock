@@ -17,9 +17,9 @@ package com.sun.webui.jsf.example;
 
 import com.sun.webui.jsf.model.Option;
 import com.sun.webui.jsf.component.AddRemove;
-import javax.faces.event.ActionEvent;
-import javax.faces.context.FacesContext;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.application.FacesMessage;
 import com.sun.webui.jsf.example.util.MessageUtil;
 import com.sun.webui.jsf.example.util.UserData;
 import java.io.Serializable;

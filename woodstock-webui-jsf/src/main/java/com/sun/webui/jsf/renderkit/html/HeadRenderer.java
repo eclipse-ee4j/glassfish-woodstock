@@ -18,16 +18,16 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Head;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.theme.Theme;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderHeaderScriptTags;
 import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;

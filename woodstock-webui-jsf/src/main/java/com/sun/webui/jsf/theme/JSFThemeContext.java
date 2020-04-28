@@ -19,7 +19,7 @@ package com.sun.webui.jsf.theme;
 import java.beans.Beans;
 import java.net.URL;
 import java.util.Map;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.util.ClassLoaderFinder;
 import com.sun.webui.theme.ServletThemeContext;
 import com.sun.webui.theme.ThemeContext;

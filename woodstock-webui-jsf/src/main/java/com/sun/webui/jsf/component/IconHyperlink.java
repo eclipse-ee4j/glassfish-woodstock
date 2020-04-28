@@ -16,7 +16,7 @@
 package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The Icon component is used to display a clickable icon image from the current

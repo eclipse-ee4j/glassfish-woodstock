@@ -17,8 +17,8 @@ package com.sun.webui.jsf.component;
 
 import com.sun.faces.annotation.Component;
 
-import javax.faces.component.NamingContainer;
-import javax.faces.context.FacesContext;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Component that represents a table column.

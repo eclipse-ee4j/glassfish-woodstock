@@ -23,12 +23,12 @@ import com.sun.webui.jsf.util.JavaScriptUtilities;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.validator.Validator;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.validator.Validator;
 
 /**
  * The Calendar component is used to allow a user to select a date.
@@ -167,7 +167,7 @@ public final class Calendar extends Field
     /**
      * The {@code java.util.TimeZone} used with this component. Unless set, the
      * default TimeZone for the locale in
-     * {@code javax.faces.component.UIViewRoot} is used.
+     * {@code jakarta.faces.component.UIViewRoot} is used.
      */
     @Property(name = "timeZone",
             displayName = "Time Zone",

@@ -36,18 +36,18 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-import javax.faces.FacesException;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.FacesException;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ActionListener;
 
 /**
  * The EditableList component allows users to create and modify a list of
@@ -536,7 +536,7 @@ public final class EditableList extends WebuiInput implements ListManager,
     /**
      * A validator that will be applied to entries made into the textfield.
      * Specify this to be the {@code validate()} method of a
-     * {@code javax.faces.validator.Validator}, or to another method with the
+     * {@code jakarta.faces.validator.Validator}, or to another method with the
      * same argument structure and exceptions.
      */
     @Property(name = "fieldValidatorExpression",
@@ -546,7 +546,7 @@ public final class EditableList extends WebuiInput implements ListManager,
     //CHECKSTYLE:ON
     @Property.Method(
             //CHECKSTYLE:OFF
-            signature = "void validate(javax.faces.context.FacesContext,javax.faces.component.UIComponent,java.lang.Object)")
+            signature = "void validate(jakarta.faces.context.FacesContext,jakarta.faces.component.UIComponent,java.lang.Object)")
     //CHECKSTYLE:ON
     private MethodExpression fieldValidatorExpression;
 
@@ -588,7 +588,7 @@ public final class EditableList extends WebuiInput implements ListManager,
      * A validator which will be applied to the contents of the list (e.g. to
      * verify that the list has a minimum number of entries). Specify this to be
      * the {@code validate()} method of a
-     * {@code javax.faces.validator.Validator}, or to another method with the
+     * {@code jakarta.faces.validator.Validator}, or to another method with the
      * same argument structure and exceptions.
      *
      * @return MethodExpression
@@ -601,7 +601,7 @@ public final class EditableList extends WebuiInput implements ListManager,
     //CHECKSTYLE:ON
     @Property.Method(
             //CHECKSTYLE:OFF
-            signature = "void validate(javax.faces.context.FacesContext,javax.faces.component.UIComponent,java.lang.Object)")
+            signature = "void validate(jakarta.faces.context.FacesContext,jakarta.faces.component.UIComponent,java.lang.Object)")
     //CHECKSTYLE:ON
     public MethodExpression getListValidatorExpression() {
         return getValidatorExpression();
@@ -611,7 +611,7 @@ public final class EditableList extends WebuiInput implements ListManager,
      * A validator which will be applied to the contents of the list (e.g. to
      * verify that the list has a minimum number of entries). Specify this to be
      * the {@code validate()} method of a
-     * {@code javax.faces.validator.Validator}, or to another method with the
+     * {@code jakarta.faces.validator.Validator}, or to another method with the
      * same argument structure and exceptions.
      *
      * @see #getListValidatorExpression()
@@ -1145,7 +1145,7 @@ public final class EditableList extends WebuiInput implements ListManager,
      *
      * @param context The FacesContext
      * @return String
-     * @throws javax.faces.FacesException If the list items cannot be processed
+     * @throws jakarta.faces.FacesException If the list items cannot be processed
      */
     private String getValueAsReadOnly(final FacesContext context)
             throws FacesException {
@@ -1172,7 +1172,7 @@ public final class EditableList extends WebuiInput implements ListManager,
     // The following methods overrides default behaviour that does not
     // make sense for this component
     @Override
-    public void setConverter(final javax.faces.convert.Converter converter) {
+    public void setConverter(final jakarta.faces.convert.Converter converter) {
         String msg = getTheme().getMessage("EditableList.noConversion");
         throw new RuntimeException(msg);
     }
@@ -1275,7 +1275,7 @@ public final class EditableList extends WebuiInput implements ListManager,
      * @param context faces context
      * @param rulerAtEnd ruler flag
      * @return an Iterator over {@link ListItem}.
-     * @throws javax.faces.FacesException
+     * @throws jakarta.faces.FacesException
      */
     @Override
     @SuppressWarnings("checkstyle:methodlength")
@@ -2296,7 +2296,7 @@ public final class EditableList extends WebuiInput implements ListManager,
     /**
      * A validator that will be applied to entries made into the textfield.
      * Specify this to be the {@code validate()} method of a
-     * {@code javax.faces.validator.Validator}, or to another method with
+     * {@code jakarta.faces.validator.Validator}, or to another method with
      * the same argument structure and exceptions.
      * @return MethodExpression
      */
@@ -2307,7 +2307,7 @@ public final class EditableList extends WebuiInput implements ListManager,
     /**
      * A validator that will be applied to entries made into the textfield.
      * Specify this to be the {@code validate()} method of a
-     * {@code javax.faces.validator.Validator}, or to another method with
+     * {@code jakarta.faces.validator.Validator}, or to another method with
      * the same argument structure and exceptions.
      *
      * @see #getFieldValidatorExpression()

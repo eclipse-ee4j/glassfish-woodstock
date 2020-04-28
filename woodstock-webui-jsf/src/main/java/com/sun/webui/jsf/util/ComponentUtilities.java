@@ -18,14 +18,14 @@ package com.sun.webui.jsf.util;
 
 import java.beans.Beans;
 import java.util.Iterator;
-import javax.faces.FactoryFinder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseListener;
-import javax.faces.lifecycle.Lifecycle;
-import javax.faces.lifecycle.LifecycleFactory;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.faces.FactoryFinder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIForm;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseListener;
+import jakarta.faces.lifecycle.Lifecycle;
+import jakarta.faces.lifecycle.LifecycleFactory;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Methods for general component manipulation.

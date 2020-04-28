@@ -18,8 +18,8 @@ package com.sun.webui.jsf.component;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.ConversionUtilities;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The PasswordField component is used to create a password text field.

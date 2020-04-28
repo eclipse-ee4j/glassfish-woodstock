@@ -29,12 +29,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIParameter;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIParameter;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;

@@ -42,19 +42,19 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import javax.el.ValueExpression;
-import javax.faces.FacesException;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.ValueHolder;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.render.Renderer;
-import javax.faces.validator.ValidatorException;
+import jakarta.el.ValueExpression;
+import jakarta.faces.FacesException;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.ValueHolder;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.faces.render.Renderer;
+import jakarta.faces.validator.ValidatorException;
 
 // The file chooser poses several problems when trying to integrate
 // with the JSF lifecycle. As an EditableValueHolder it must
@@ -940,9 +940,9 @@ public final class FileChooser extends WebuiInput implements NamingContainer {
      * null, exit without further processing. (This indicates that no value was
      * submitted for fileChooser.) Convert the submitted value into a "local
      * value" of the appropriate data type by calling
-     * getConvertedValue(javax.faces.context.FacesContext, java.lang.Object).
+     * getConvertedValue(jakarta.faces.context.FacesContext, java.lang.Object).
      * Validate the property by calling
-     * validateValue(javax.faces.context.FacesContext, java.lang.Object). If the
+     * validateValue(jakarta.faces.context.FacesContext, java.lang.Object). If the
      * valid property of this component is still true, retrieve the previous
      * value of the component (with getValue()), store the new local value using
      * setValue(), and reset the submitted value to null. If the local value is

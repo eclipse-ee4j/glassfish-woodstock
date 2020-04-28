@@ -15,7 +15,7 @@
  */
 package com.sun.webui.jsf.util;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Methods to manage focus during a request and response. The actual component

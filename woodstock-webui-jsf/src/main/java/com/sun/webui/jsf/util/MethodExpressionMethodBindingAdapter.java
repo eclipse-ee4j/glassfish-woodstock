@@ -16,17 +16,17 @@
 
 package com.sun.webui.jsf.util;
 
-import javax.el.MethodExpression;
-import javax.el.ELException;
-import javax.el.ELContext;
-import javax.el.MethodInfo;
-import javax.faces.el.MethodBinding;
-import javax.faces.context.FacesContext;
-import javax.faces.component.StateHolder;
+import jakarta.el.MethodExpression;
+import jakarta.el.ELException;
+import jakarta.el.ELContext;
+import jakarta.el.MethodInfo;
+import jakarta.faces.el.MethodBinding;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.StateHolder;
 
 import java.io.Serializable;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.MethodNotFoundException;
+import jakarta.faces.el.EvaluationException;
+import jakarta.faces.el.MethodNotFoundException;
 
 /**
  * Wrap a MethodBinding instance and expose it as a MethodExpression.

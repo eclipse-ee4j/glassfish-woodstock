@@ -15,7 +15,7 @@
  */
 package com.sun.webui.jsf.component;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import com.sun.faces.annotation.Component;
 
 /**

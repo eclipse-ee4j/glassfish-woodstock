@@ -18,9 +18,9 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
 import com.sun.webui.jsf.component.ImageComponent;
 import com.sun.webui.jsf.component.MastFooter;
 import com.sun.webui.jsf.component.Icon;

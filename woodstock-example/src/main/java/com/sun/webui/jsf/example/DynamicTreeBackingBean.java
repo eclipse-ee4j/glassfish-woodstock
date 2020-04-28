@@ -16,8 +16,8 @@
 package com.sun.webui.jsf.example;
 
 import java.io.Serializable;
-import javax.faces.event.ActionEvent;
-import javax.faces.component.UIComponentBase;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.component.UIComponentBase;
 import com.sun.webui.jsf.component.Tree;
 import com.sun.webui.jsf.component.TreeNode;
 import com.sun.webui.jsf.component.Hyperlink;

@@ -18,8 +18,8 @@ package com.sun.webui.jsf.component;
 import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The Button component is used to display an input button.

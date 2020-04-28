@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import com.sun.webui.jsf.util.ThemeUtilities;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Repeat unit.

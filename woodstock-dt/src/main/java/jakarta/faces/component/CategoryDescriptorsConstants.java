@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-package javax.faces.component;
+package jakarta.faces.component;
 
 import com.sun.rave.designtime.CategoryDescriptor;
 import java.util.Locale;
@@ -34,7 +34,7 @@ public final class CategoryDescriptorsConstants {
      * The resource bundle.
      */
     private static final ResourceBundle BUNDLE = ResourceBundle
-            .getBundle("javax.faces.component.bundle", Locale.getDefault());
+            .getBundle("jakarta.faces.component.bundle", Locale.getDefault());
 
     /**
      * Advanced category.

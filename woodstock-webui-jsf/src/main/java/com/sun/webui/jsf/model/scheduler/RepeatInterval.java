@@ -21,7 +21,7 @@ import com.sun.webui.jsf.util.LogUtil;
 import java.io.Serializable;
 import java.util.Calendar;
 import com.sun.webui.jsf.util.ThemeUtilities;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 // Delete the setters once you have reimplemented this not to
 // use the default Serializable mechanism, but the same as

@@ -90,8 +90,9 @@
             <artifactId>javahelp</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>com.sun.faces.extensions</groupId>

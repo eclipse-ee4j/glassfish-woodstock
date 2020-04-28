@@ -22,7 +22,7 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.theme.Theme;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The NotificationPhrase component is used to display a message in the

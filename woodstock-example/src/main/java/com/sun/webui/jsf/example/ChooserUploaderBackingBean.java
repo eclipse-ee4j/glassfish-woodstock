@@ -16,9 +16,9 @@
 package com.sun.webui.jsf.example;
 
 import com.sun.webui.jsf.model.UploadedFile;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
-import javax.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.application.FacesMessage;
 
 import com.sun.webui.jsf.example.util.MessageUtil;
 import java.io.File;

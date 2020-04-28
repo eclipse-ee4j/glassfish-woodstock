@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-package javax.faces.component;
+package jakarta.faces.component;
 
 import com.sun.rave.designtime.markup.AttributeDescriptor;
 import java.beans.EventSetDescriptor;
@@ -23,19 +23,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.event.ValueChangeListener;
-import javax.faces.validator.Validator;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.faces.event.ValueChangeListener;
+import jakarta.faces.validator.Validator;
 
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR;
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.CATEGORY;
-import static javax.faces.component.CategoryDescriptorsConstants.ADVANCED;
-import static javax.faces.component.CategoryDescriptorsConstants.DATA;
-import static javax.faces.component.PropertyEditorConstants.VALIDATOR_EDITOR;
+import static jakarta.faces.component.CategoryDescriptorsConstants.ADVANCED;
+import static jakarta.faces.component.CategoryDescriptorsConstants.DATA;
+import static jakarta.faces.component.PropertyEditorConstants.VALIDATOR_EDITOR;
 
 /**
- * BeanInfo for {@link javax.faces.component.UIInput}.
+ * BeanInfo for {@link jakarta.faces.component.UIInput}.
  */
 public final class UIInputBeanInfo extends UIOutputBeanInfo {
 

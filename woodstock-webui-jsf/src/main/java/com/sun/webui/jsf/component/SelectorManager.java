@@ -16,7 +16,7 @@
 
 package com.sun.webui.jsf.component;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 /**
  * For internal use only.

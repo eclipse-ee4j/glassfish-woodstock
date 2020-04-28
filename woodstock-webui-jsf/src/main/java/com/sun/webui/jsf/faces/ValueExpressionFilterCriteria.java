@@ -18,8 +18,8 @@ package com.sun.webui.jsf.faces;
 
 import java.util.Locale;
 import java.util.Map;
-import javax.faces.context.FacesContext;
-import javax.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
 import com.sun.data.provider.FilterCriteria;
 import com.sun.data.provider.RowKey;
 import com.sun.data.provider.TableDataProvider;

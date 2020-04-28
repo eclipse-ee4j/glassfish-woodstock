@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-package javax.faces.component;
+package jakarta.faces.component;
 
 import com.sun.rave.designtime.markup.AttributeDescriptor;
 import java.beans.BeanDescriptor;
@@ -26,10 +26,10 @@ import java.util.ResourceBundle;
 import static com.sun.rave.designtime.Constants.BeanDescriptor.INSTANCE_NAME;
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DESCRIPTOR;
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.CATEGORY;
-import static javax.faces.component.CategoryDescriptorsConstants.ADVANCED;
+import static jakarta.faces.component.CategoryDescriptorsConstants.ADVANCED;
 
 /**
- * BeanInfo for {@link javax.faces.component.UIComponentBase}.
+ * BeanInfo for {@link jakarta.faces.component.UIComponentBase}.
  */
 public class UIComponentBaseBeanInfo extends SimpleBeanInfo {
 
@@ -37,7 +37,7 @@ public class UIComponentBaseBeanInfo extends SimpleBeanInfo {
      * Resource bundle.
      */
     protected static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle("javax.faces.component.bundle", Locale.getDefault());
+            .getBundle("jakarta.faces.component.bundle", Locale.getDefault());
 
     /**
      * Component class.

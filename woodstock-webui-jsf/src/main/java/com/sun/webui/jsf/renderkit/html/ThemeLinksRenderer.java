@@ -17,10 +17,10 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.ThemeLinks;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.MessageUtil;
@@ -35,7 +35,7 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.ThemeLinks"))
-public final class ThemeLinksRenderer extends javax.faces.render.Renderer {
+public final class ThemeLinksRenderer extends jakarta.faces.render.Renderer {
 
     @Override
     public void encodeEnd(final FacesContext context,
