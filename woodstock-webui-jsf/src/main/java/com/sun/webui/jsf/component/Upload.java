@@ -27,8 +27,7 @@ import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
 import jakarta.faces.FacesException;
-
-import org.apache.commons.fileupload2.FileItem;
+import org.apache.commons.fileupload.FileItem;
 
 /**
  * The Upload component is used to create an input tag with its

@@ -38,10 +38,10 @@ import com.sun.webui.jsf.component.Upload;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.fileupload2.FileItem;
-import org.apache.commons.fileupload2.FileUploadException;
-import org.apache.commons.fileupload2.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload2.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
  * <p>
@@ -204,7 +204,7 @@ public final class UploadFilter implements Filter {
 
             // Need to add the parameters from the original request
             // into parameters
-            //
+//
             Enumeration<String> names = request.getParameterNames();
             while (names.hasMoreElements()) {
                 String param = names.nextElement();

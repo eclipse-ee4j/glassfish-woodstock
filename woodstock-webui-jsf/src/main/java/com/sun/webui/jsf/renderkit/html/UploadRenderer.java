@@ -33,7 +33,7 @@ import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ThemeUtilities;
-import org.apache.commons.fileupload2.impl.SizeLimitExceededException;
+import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderScripTag;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderHiddenField;
