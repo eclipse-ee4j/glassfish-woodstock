@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -73,7 +73,7 @@ public abstract class ClassInfo {
      * default property. If a default property was specified explicitly as part
      * of a class's annotations, or implicitly via introspection, it is
      * returned. Otherwise, if this class is a Faces component class and
-     * implements {@link javax.faces.component.ValueHolder}, the {@code value}
+     * implements {@link jakarta.faces.component.ValueHolder}, the {@code value}
      * property is returned. Otherwise null is returned.
      * @return PropertyInfo
      */
@@ -84,9 +84,9 @@ public abstract class ClassInfo {
      * default event. If a default event was specified explicitly as part of a
      * class's annotations, or implicitly via introspection, it is returned.
      * Otherwise, if this class is a Faces component class and implements
-     * {@link javax.faces.component.ValueHolder}, the {@code valueChange} event
+     * {@link jakarta.faces.component.ValueHolder}, the {@code valueChange} event
      * is returned if it is defined; if it implements (@link
-     * javax.faces.component.ActionSource}, the {@code action} event is returned
+     * jakarta.faces.component.ActionSource}, the {@code action} event is returned
      * if it is defined.
      * @return EventInfo
      */

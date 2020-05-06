@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,9 +26,9 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
 
 import static com.sun.webui.jsf.util.ConversionUtilities.convertValueToString;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleClass;
@@ -39,7 +39,7 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
  * Renderer for the {@link Breadcrumbs} component.
  */
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Breadcrumbs"))
-public final class BreadcrumbsRenderer extends javax.faces.render.Renderer {
+public final class BreadcrumbsRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * Separator key.

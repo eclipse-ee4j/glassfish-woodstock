@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -15,7 +15,7 @@
  */
 package com.sun.webui.jsf.component;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import com.sun.faces.annotation.Component;
 
 /**

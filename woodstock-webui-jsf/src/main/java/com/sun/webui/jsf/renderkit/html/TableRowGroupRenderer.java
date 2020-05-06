@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,10 +31,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UINamingContainer;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UINamingContainer;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 
 /**
  * This class renders TableRowGroup components.
@@ -61,7 +61,7 @@ import javax.faces.context.ResponseWriter;
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.TableRowGroup"))
-public final class TableRowGroupRenderer extends javax.faces.render.Renderer {
+public final class TableRowGroupRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * The set of String pass-through attributes to be rendered.

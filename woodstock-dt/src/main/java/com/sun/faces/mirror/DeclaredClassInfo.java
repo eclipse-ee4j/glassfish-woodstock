@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,9 +18,9 @@ package com.sun.faces.mirror;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.faces.component.ActionSource;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.ValueHolder;
+import jakarta.faces.component.ActionSource;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.ValueHolder;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
@@ -57,7 +57,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * Returns this class's default property. If no default property was
      * declared explicitly via a {@link com.sun.faces.annotation.Property}
      * annotation, and this type implements or extends
-     * {@link javax.faces.component.ValueHolder}, then the {@code value}
+     * {@link jakarta.faces.component.ValueHolder}, then the {@code value}
      * property is made default.
      *
      * @return PropertyInfo
@@ -95,7 +95,7 @@ public class DeclaredClassInfo extends DeclaredTypeInfo {
      * Returns this class's default Event. If no default Event was declared
      * explicitly via a {@link com.sun.faces.annotation.Event} annotation, and
      * this type implements or extends
-     * {@link javax.faces.component.ValueHolder}, then the {@code value} Event
+     * {@link jakarta.faces.component.ValueHolder}, then the {@code value} Event
      * is made default.
      * @return EventInfo
      */

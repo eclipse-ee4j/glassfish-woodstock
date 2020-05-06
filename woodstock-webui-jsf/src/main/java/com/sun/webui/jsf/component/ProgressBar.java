@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,12 +21,12 @@ import com.sun.faces.extensions.avatar.lifecycle.AsyncResponse;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.util.ThemeUtilities;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.el.ValueBinding;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.el.ValueBinding;
 
 /**
  * The ProgressBar component is used to create a progress indicator.
@@ -73,7 +73,7 @@ import javax.faces.el.ValueBinding;
         displayName = "ProgressBar",
         tagName = "progressBar",
         tagRendererType = "com.sun.webui.jsf.widget.ProgressBar")
-public final class ProgressBar extends javax.faces.component.UIOutput
+public final class ProgressBar extends jakarta.faces.component.UIOutput
         implements NamingContainer, Widget {
 
     /**

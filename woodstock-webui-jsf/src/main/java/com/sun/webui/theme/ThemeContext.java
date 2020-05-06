@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,7 +26,7 @@ import java.util.Set;
  * For example:
  * <p>
  * <ul>
- * <li>In a {@code javax.servlet.Servlet} application environment information
+ * <li>In a {@code jakarta.servlet.Servlet} application environment information
  * about a theme and its resources is specified by the application in its
  * {@code web.xml} file
  * </li>

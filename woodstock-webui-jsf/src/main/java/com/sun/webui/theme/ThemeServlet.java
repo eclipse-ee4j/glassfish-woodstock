@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,17 +27,17 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * {@code ThemeServlet} is required by the {@code com.sun.webui} components to
  * resolve references to resources that exist in a jar. This servlet
  * implementation is needed because a JSF FacesServlet cannot be extended and
- * because a {@code javax.servlet.ServletContext.getResourceAsStream,} does not
+ * because a {@code jakarta.servlet.ServletContext.getResourceAsStream,} does not
  * search for a resource within jars that are on the application's class path.
  * <p>
  * Not all theme resources that are referenced by a component are located in
@@ -289,7 +289,7 @@ public final class ThemeServlet extends HttpServlet {
      * Initializes the ThemeServlet.
      *
      * @param config The ServletConfig object
-     * @throws javax.servlet.ServletException if an error occurs
+     * @throws jakarta.servlet.ServletException if an error occurs
      */
     @Override
     public void init(final ServletConfig config) throws ServletException {

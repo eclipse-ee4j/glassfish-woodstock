@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,13 +17,13 @@
 package com.sun.webui.jsf.util;
 
 import java.io.Serializable;
-import javax.faces.component.StateHolder;
-import javax.faces.context.FacesContext;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.MethodBinding;
-import javax.el.MethodExpression;
-import javax.el.MethodInfo;
-import javax.el.ELException;
+import jakarta.faces.component.StateHolder;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.el.EvaluationException;
+import jakarta.faces.el.MethodBinding;
+import jakarta.el.MethodExpression;
+import jakarta.el.MethodInfo;
+import jakarta.el.ELException;
 
 /**
  * Wrap a MethodExpression instance and expose it as a MethodBinding.
@@ -64,8 +64,8 @@ public final class MethodBindingMethodExpressionAdapter extends MethodBinding
 
     @Override
     public Object invoke(final FacesContext context, final Object[] params)
-            throws javax.faces.el.EvaluationException,
-            javax.faces.el.MethodNotFoundException {
+            throws jakarta.faces.el.EvaluationException,
+            jakarta.faces.el.MethodNotFoundException {
 
         assert (null != methodExpression);
         if (context == null) {
@@ -76,9 +76,9 @@ public final class MethodBindingMethodExpressionAdapter extends MethodBinding
         try {
             result = methodExpression.invoke(context.getELContext(),
                     params);
-        } catch (javax.el.MethodNotFoundException e) {
-            throw new javax.faces.el.MethodNotFoundException(e);
-        } catch (javax.el.PropertyNotFoundException e) {
+        } catch (jakarta.el.MethodNotFoundException e) {
+            throw new jakarta.faces.el.MethodNotFoundException(e);
+        } catch (jakarta.el.PropertyNotFoundException e) {
             throw new EvaluationException(e);
         } catch (ELException e) {
             // look for the root cause and pass that to the
@@ -93,14 +93,14 @@ public final class MethodBindingMethodExpressionAdapter extends MethodBinding
             }
             throw new EvaluationException(cause);
         } catch (NullPointerException e) {
-            throw new javax.faces.el.MethodNotFoundException(e);
+            throw new jakarta.faces.el.MethodNotFoundException(e);
         }
         return result;
     }
 
     @Override
     public Class getType(final FacesContext context)
-            throws javax.faces.el.MethodNotFoundException {
+            throws jakarta.faces.el.MethodNotFoundException {
 
         assert (null != methodExpression);
         Class result = null;
@@ -112,12 +112,12 @@ public final class MethodBindingMethodExpressionAdapter extends MethodBinding
             MethodInfo mi
                     = methodExpression.getMethodInfo(context.getELContext());
             result = mi.getReturnType();
-        } catch (javax.el.PropertyNotFoundException e) {
-            throw new javax.faces.el.MethodNotFoundException(e);
-        } catch (javax.el.MethodNotFoundException e) {
-            throw new javax.faces.el.MethodNotFoundException(e);
+        } catch (jakarta.el.PropertyNotFoundException e) {
+            throw new jakarta.faces.el.MethodNotFoundException(e);
+        } catch (jakarta.el.MethodNotFoundException e) {
+            throw new jakarta.faces.el.MethodNotFoundException(e);
         } catch (ELException e) {
-            throw new javax.faces.el.MethodNotFoundException(e);
+            throw new jakarta.faces.el.MethodNotFoundException(e);
         }
         return result;
     }

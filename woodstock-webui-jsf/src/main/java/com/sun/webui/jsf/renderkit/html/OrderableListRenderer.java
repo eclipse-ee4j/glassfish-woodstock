@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -18,15 +18,15 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.jsf.component.OrderableList;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.getDomNode;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
@@ -331,8 +331,8 @@ public final class OrderableListRenderer extends ListRendererBase {
     }
 
     @Override
-    public void encodeChildren(final javax.faces.context.FacesContext context,
-            final javax.faces.component.UIComponent component)
+    public void encodeChildren(final jakarta.faces.context.FacesContext context,
+            final jakarta.faces.component.UIComponent component)
             throws java.io.IOException {
     }
 

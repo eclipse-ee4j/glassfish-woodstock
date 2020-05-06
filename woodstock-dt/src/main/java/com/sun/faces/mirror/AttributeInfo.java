@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -48,7 +48,7 @@ public interface AttributeInfo {
 
     /**
      * If this attribute corresponds to a property of type
-     * {@link javax.el.MethodExpression}, then this method will return the
+     * {@link jakarta.el.MethodExpression}, then this method will return the
      * signature of the method to which the expression should be bound.
      *
      * @return String

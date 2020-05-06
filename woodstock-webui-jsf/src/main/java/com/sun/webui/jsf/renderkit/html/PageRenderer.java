@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,10 +21,10 @@ package com.sun.webui.jsf.renderkit.html;
 
 import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Page;
 import com.sun.webui.jsf.util.MessageUtil;
 
@@ -35,7 +35,7 @@ import static com.sun.webui.jsf.util.RenderingUtilities.isPortlet;
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Page"))
-public final class PageRenderer extends javax.faces.render.Renderer {
+public final class PageRenderer extends jakarta.faces.render.Renderer {
 
     @Override
     public void encodeEnd(final FacesContext context,

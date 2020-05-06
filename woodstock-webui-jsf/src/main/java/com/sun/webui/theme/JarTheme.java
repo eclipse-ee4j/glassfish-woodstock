@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import com.sun.webui.jsf.util.ClientSniffer;
 import com.sun.webui.jsf.util.ClientType;
 import com.sun.webui.jsf.util.MessageUtil;

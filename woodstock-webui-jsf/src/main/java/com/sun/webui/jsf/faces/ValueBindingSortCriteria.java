@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
-import javax.faces.context.FacesContext;
-import javax.el.ValueExpression;
-import javax.el.ELContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.el.ELContext;
 import com.sun.data.provider.RowKey;
 import com.sun.data.provider.SortCriteria;
 import com.sun.data.provider.TableDataProvider;

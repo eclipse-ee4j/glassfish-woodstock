@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -25,17 +25,17 @@ import com.sun.webui.jsf.util.MethodBindingMethodExpressionAdapter;
 import com.sun.webui.jsf.util.MethodExpressionMethodBindingAdapter;
 import java.util.Iterator;
 import java.util.Map;
-import javax.el.ValueExpression;
-import javax.faces.component.ActionSource2;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
-import javax.faces.event.FacesEvent;
-import javax.faces.event.PhaseId;
-import javax.faces.el.MethodBinding;
-import javax.el.MethodExpression;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.ActionSource2;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.AbortProcessingException;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ActionListener;
+import jakarta.faces.event.FacesEvent;
+import jakarta.faces.event.PhaseId;
+import jakarta.faces.el.MethodBinding;
+import jakarta.el.MethodExpression;
 
 /**
  * The DropDown component is used to display a drop down menu to allow users to
@@ -83,7 +83,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      * bean. The method must take a single parameter that is an ActionEvent, and
      * its return type must be {@code void}. The class that defines the
      * method must implement the {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.
+     * {@code jakarta.faces.component.StateHolder} interface.
      *
      * <p>
      * The actionListenerExpression method is only invoked when the submitForm
@@ -96,7 +96,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
             displayName = "Action Listener Expression",
             category = "Advanced")
     @Property.Method(
-            signature = "void processAction(javax.faces.event.ActionEvent)")
+            signature = "void processAction(jakarta.faces.event.ActionEvent)")
     private MethodExpression actionListenerExpression;
 
     /**
@@ -425,7 +425,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      * method. The method must take no parameters and return an outcome string.
      * The class that defines the method must implement the
      * {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.</li>
+     * {@code jakarta.faces.component.StateHolder} interface.</li>
      * </ul>
      *
      * When you use the actionExpression attribute in the DropDown component,
@@ -455,7 +455,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      * method. The method must take no parameters and return an outcome string.
      * The class that defines the method must implement the
      * {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.</li>
+     * {@code jakarta.faces.component.StateHolder} interface.</li>
      * </ul>
      *
      * When you use the actionExpression attribute in the DropDown component,
@@ -470,11 +470,11 @@ public final class DropDown extends ListSelector implements ActionSource2 {
 
     /**
      * @deprecated
-     * @return {@code javax.faces.el.MethodBinding}
+     * @return {@code jakarta.faces.el.MethodBinding}
      */
     //emulating UICommand
     @Override
-    public javax.faces.el.MethodBinding getAction() {
+    public jakarta.faces.el.MethodBinding getAction() {
         MethodBinding result = null;
         MethodExpression me = getActionExpression();
         if (me != null) {
@@ -498,7 +498,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      */
     //emulating UICommand
     @Override
-    public void setAction(final javax.faces.el.MethodBinding action) {
+    public void setAction(final jakarta.faces.el.MethodBinding action) {
         MethodExpressionMethodBindingAdapter adapter;
         if (null != action) {
             adapter = new MethodExpressionMethodBindingAdapter(action);
@@ -510,11 +510,11 @@ public final class DropDown extends ListSelector implements ActionSource2 {
 
     /**
      * @deprecated
-     * @return {@code javax.faces.el.MethodBinding}
+     * @return {@code jakarta.faces.el.MethodBinding}
      */
     //emulating UICommand
     @Override
-    public javax.faces.el.MethodBinding getActionListener() {
+    public jakarta.faces.el.MethodBinding getActionListener() {
         return this.methodBindingActionListener;
     }
 
@@ -525,7 +525,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
     //emulating UICommand
     @Override
     public void setActionListener(
-            final javax.faces.el.MethodBinding actionListener) {
+            final jakarta.faces.el.MethodBinding actionListener) {
 
         this.methodBindingActionListener = actionListener;
     }
@@ -538,7 +538,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      * bean. The method must take a single parameter that is an ActionEvent, and
      * its return type must be {@code void}. The class that defines the
      * method must implement the {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.
+     * {@code jakarta.faces.component.StateHolder} interface.
      *
      * <p>
      * The actionListenerExpression method is only invoked when the submitForm
@@ -558,7 +558,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      * bean. The method must take a single parameter that is an ActionEvent, and
      * its return type must be {@code void}. The class that defines the
      * method must implement the {@code java.io.Serializable} interface or
-     * {@code javax.faces.component.StateHolder} interface.
+     * {@code jakarta.faces.component.StateHolder} interface.
      *
      * <p>
      * The actionListenerExpression method is only invoked when the submitForm

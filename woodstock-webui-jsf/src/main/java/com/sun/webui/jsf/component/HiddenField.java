@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -20,8 +20,8 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.LogUtil;
-import javax.el.ValueExpression;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.context.FacesContext;
 
 /**
  * The HiddenField component is used to create a hidden input field.
@@ -129,13 +129,13 @@ public class HiddenField extends WebuiInput {
      * @param context faces context
      * @param newValue value to convert
      * @return Object
-     * @throws javax.faces.convert.ConverterException if a conversion error
+     * @throws jakarta.faces.convert.ConverterException if a conversion error
      * occurs
      */
     @Override
     protected Object getConvertedValue(final FacesContext context,
             final Object newValue)
-            throws javax.faces.convert.ConverterException {
+            throws jakarta.faces.convert.ConverterException {
 
         if (DEBUG) {
             log("getConvertedValue()");

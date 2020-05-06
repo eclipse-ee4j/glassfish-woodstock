@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -29,12 +29,12 @@ import com.sun.webui.jsf.util.ValueTypeEvaluator;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.ConverterException;
-import javax.faces.FacesException;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.FacesException;
 
 /**
  * The OrderableList component creates a list with buttons allowing the user to
@@ -760,7 +760,7 @@ public final class OrderableList extends WebuiInput
      * @param context faces context
      * @param ruler ruler flag
      * @return an Iterator over {@link ListItem}.
-     * @throws javax.faces.FacesException
+     * @throws jakarta.faces.FacesException
      */
     @Override
     public Iterator getListItems(final FacesContext context,
@@ -932,7 +932,7 @@ public final class OrderableList extends WebuiInput
      *
      * @param context The FacesContext
      * @return String
-     * @throws javax.faces.FacesException If the list items cannot be processed
+     * @throws jakarta.faces.FacesException If the list items cannot be processed
      */
     protected String getValueAsReadOnly(final FacesContext context)
             throws FacesException {

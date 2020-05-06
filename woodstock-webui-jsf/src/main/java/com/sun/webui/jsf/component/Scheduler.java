@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -41,16 +41,16 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
-import javax.el.ValueExpression;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.IntegerConverter;
-import javax.faces.validator.DoubleRangeValidator;
+import jakarta.el.ValueExpression;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.convert.IntegerConverter;
+import jakarta.faces.validator.DoubleRangeValidator;
 
 /**
  * The Scheduler component is used to display a calendar and the input controls
@@ -618,7 +618,7 @@ public final class Scheduler extends WebuiInput
     /**
      * The {@code java.util.TimeZone} used with this component. Unless set, the
      * default TimeZone for the locale in
-     * {@code javax.faces.component.UIViewRoot} is used.
+     * {@code jakarta.faces.component.UIViewRoot} is used.
      */
     @Property(name = "timeZone",
             displayName = "Time Zone",
@@ -2977,7 +2977,7 @@ public final class Scheduler extends WebuiInput
     /**
      * The {@code java.util.TimeZone} used with this component. Unless set,
      * the default TimeZone for the locale in
-     * {@code javax.faces.component.UIViewRoot} is used.
+     * {@code jakarta.faces.component.UIViewRoot} is used.
      * @return TimeZone
      */
     @Override
@@ -2996,7 +2996,7 @@ public final class Scheduler extends WebuiInput
     /**
      * The {@code java.util.TimeZone} used with this component. Unless set,
      * the default TimeZone for the locale in
-     * {@code javax.faces.component.UIViewRoot} is used.
+     * {@code jakarta.faces.component.UIViewRoot} is used.
      *
      * @see #getTimeZone()
      * @param newTimeZone timeZone

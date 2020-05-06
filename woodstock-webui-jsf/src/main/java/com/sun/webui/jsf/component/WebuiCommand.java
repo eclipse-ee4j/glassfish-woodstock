@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,14 +16,14 @@
 
 package com.sun.webui.jsf.component;
 
-import javax.el.MethodExpression;
-import javax.faces.component.UICommand;
+import jakarta.el.MethodExpression;
+import jakarta.faces.component.UICommand;
 import com.sun.faces.annotation.Property;
-import javax.faces.context.FacesContext;
-import javax.faces.el.MethodBinding;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.FacesEvent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.el.MethodBinding;
+import jakarta.faces.event.AbortProcessingException;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.FacesEvent;
 
 /**
  * WebUI command.
@@ -123,7 +123,7 @@ public class WebuiCommand extends UICommand {
             editorClassName = "com.sun.rave.propertyeditors.MethodBindingPropertyEditor")
             //CHECKSTYLE:ON
     //CHECKSTYLE:OFF
-    @Property.Method(signature = "void processAction(javax.faces.event.ActionEvent)")
+    @Property.Method(signature = "void processAction(jakarta.faces.event.ActionEvent)")
     //CHECKSTYLE:ON
     private MethodExpression actionListenerExpression;
 

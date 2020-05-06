@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -27,11 +27,11 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
-import javax.el.ELResolver;
-import javax.el.ELContext;
-import javax.el.PropertyNotFoundException;
-import javax.el.PropertyNotWritableException;
-import javax.faces.context.FacesContext;
+import jakarta.el.ELResolver;
+import jakarta.el.ELContext;
+import jakarta.el.PropertyNotFoundException;
+import jakarta.el.PropertyNotWritableException;
+import jakarta.faces.context.FacesContext;
 
 /**
  * {@code PropertyResolver} implementation that passes calls to

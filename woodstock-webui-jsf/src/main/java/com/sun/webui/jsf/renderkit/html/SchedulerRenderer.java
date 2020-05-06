@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -21,10 +21,10 @@ import com.sun.faces.annotation.Renderer;
 import java.util.MissingResourceException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import javax.faces.FacesException;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIComponent;
+import jakarta.faces.FacesException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
 import com.sun.webui.jsf.component.DropDown;
 import com.sun.webui.jsf.component.Icon;
 import com.sun.webui.jsf.component.Scheduler;
@@ -34,7 +34,7 @@ import com.sun.webui.jsf.theme.ThemeImages;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.MessageUtil;
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
@@ -48,7 +48,7 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
  */
 @Renderer(
         @Renderer.Renders(componentFamily = "com.sun.webui.jsf.Scheduler"))
-public final class SchedulerRenderer extends javax.faces.render.Renderer {
+public final class SchedulerRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * HTML encoded space.

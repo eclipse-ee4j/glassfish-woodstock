@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,9 +20,9 @@ import com.sun.faces.annotation.Resolver;
 import com.sun.webui.jsf.util.LogUtil;
 import java.util.List;
 import java.util.ArrayList;
-import javax.faces.component.UIComponent;
-import javax.el.ELResolver;
-import javax.el.ELContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.el.ELResolver;
+import jakarta.el.ELContext;
 import java.util.Iterator;
 import java.beans.FeatureDescriptor;
 import java.util.Arrays;
@@ -201,7 +201,7 @@ public final class UIComponentELResolver extends ELResolver {
     /**
      * When the base object is a {@code UIComponent}, treat the property name as
      * the {@code id} of a child component to be retrieved.If the specified
-     * child actually exists, return {@code javax.faces.component.UIComponent}.
+     * child actually exists, return {@code jakarta.faces.component.UIComponent}.
      * If there is no such child, return without calling
      * {@code context.setPropertyResolved(true)}.
      *

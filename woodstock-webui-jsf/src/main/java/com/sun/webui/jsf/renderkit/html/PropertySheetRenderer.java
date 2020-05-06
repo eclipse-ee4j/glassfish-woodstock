@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,9 +18,9 @@ package com.sun.webui.jsf.renderkit.html;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.html.HTMLAttributes;
 import com.sun.webui.html.HTMLElements;
 import com.sun.webui.jsf.component.Anchor;
@@ -41,7 +41,7 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 @com.sun.faces.annotation.Renderer(
         @com.sun.faces.annotation.Renderer.Renders(
                 componentFamily = "com.sun.webui.jsf.PropertySheet"))
-public final class PropertySheetRenderer extends javax.faces.render.Renderer {
+public final class PropertySheetRenderer extends jakarta.faces.render.Renderer {
 
     /**
      * Jump to section tool-tip.

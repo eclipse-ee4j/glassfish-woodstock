@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -18,11 +18,11 @@ package com.sun.webui.jsf.renderkit.html;
 
 import java.io.IOException;
 import java.beans.Beans;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.component.UIParameter;
-import javax.faces.event.ActionEvent;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.component.UIParameter;
+import jakarta.faces.event.ActionEvent;
 import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
@@ -39,7 +39,7 @@ import com.sun.webui.jsf.component.ImageHyperlink;
 import com.sun.webui.jsf.component.ImageComponent;
 import com.sun.webui.jsf.component.Icon;
 import com.sun.webui.jsf.util.ComponentUtilities;
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 

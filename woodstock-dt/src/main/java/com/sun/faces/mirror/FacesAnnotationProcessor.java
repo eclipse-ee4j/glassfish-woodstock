@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -55,10 +55,10 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
-import javax.el.ELResolver;
-import javax.el.MethodExpression;
-import javax.faces.el.PropertyResolver;
-import javax.faces.el.VariableResolver;
+import jakarta.el.ELResolver;
+import jakarta.el.MethodExpression;
+import jakarta.faces.el.PropertyResolver;
+import jakarta.faces.el.VariableResolver;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -1103,7 +1103,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
             }
         }
 
-        // If property is of type javax.el.MethodExpression, verfiy that it is
+        // If property is of type jakarta.el.MethodExpression, verfiy that it is
         // annotated with a signature, or, that it refers to an event from which
         // the signature can be derived
         Element decl = ((DeclaredPropertyInfo) propInfo).getDeclaration();

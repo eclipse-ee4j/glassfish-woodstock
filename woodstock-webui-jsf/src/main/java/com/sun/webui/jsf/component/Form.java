@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -30,15 +30,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import javax.el.ValueExpression;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIData;
-import javax.faces.component.UIForm;
-import javax.faces.context.FacesContext;
-import javax.faces.event.FacesEvent;
-import javax.faces.event.ActionEvent;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIData;
+import jakarta.faces.component.UIForm;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.FacesEvent;
+import jakarta.faces.event.ActionEvent;
 
 /**
  * The Form component is used to create a form element.
@@ -715,7 +715,7 @@ public final class Form extends UIForm {
     }
 
     // Be sure to keep this method in sync with the version in
-    // {@code javax.faces.component.html.HtmlFormDesignInfo}
+    // {@code jakarta.faces.component.html.HtmlFormDesignInfo}
     // (in jsfcl).
     /**
      * Generate an array of {@code VirtualFormDescriptor}s based on a virtual
@@ -824,7 +824,7 @@ public final class Form extends UIForm {
     }
 
     // Be sure to keep this method in sync with the version in
-    // {@code javax.faces.component.html.HtmlFormDesignInfo}
+    // {@code jakarta.faces.component.html.HtmlFormDesignInfo}
     // (in jsfcl).
     /**
      * Generate a virtual form configuration {@code String} based on an array of
@@ -854,7 +854,7 @@ public final class Form extends UIForm {
     }
 
     // Be sure to keep this method in sync with the versions in
-    // {@code javax.faces.component.html.HtmlFormDesignInfo}
+    // {@code jakarta.faces.component.html.HtmlFormDesignInfo}
     // (in jsfcl) and  {@code com.sun.webui.jsf.component.FormDesignInfo}
     // (in webui).
     /**
@@ -902,7 +902,7 @@ public final class Form extends UIForm {
     }
 
     // Be sure to keep this method in sync with the version in
-    // {@code javax.faces.component.html.HtmlFormDesignInfo}
+    // {@code jakarta.faces.component.html.HtmlFormDesignInfo}
     // (in jsfcl).
     /**
      * Determine if the id provided is non-null and exhibits the traits of a
@@ -922,7 +922,7 @@ public final class Form extends UIForm {
     }
 
     // Be sure to keep this method in sync with the version in
-    // {@code javax.faces.component.html.HtmlFormDesignInfo}
+    // {@code jakarta.faces.component.html.HtmlFormDesignInfo}
     // (in jsfcl).
     /**
      * Determine if the fully qualified id provided matches the supplied
@@ -1035,7 +1035,7 @@ public final class Form extends UIForm {
     }
 
     // Be sure to keep this method in sync with the version in
-    // {@code javax.faces.component.html.HtmlFormDesignInfo}
+    // {@code jakarta.faces.component.html.HtmlFormDesignInfo}
     // (in jsfcl).
     /**
      * Virtual form descriptor.

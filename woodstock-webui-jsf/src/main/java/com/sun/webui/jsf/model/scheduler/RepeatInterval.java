@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -21,7 +21,7 @@ import com.sun.webui.jsf.util.LogUtil;
 import java.io.Serializable;
 import java.util.Calendar;
 import com.sun.webui.jsf.util.ThemeUtilities;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 // Delete the setters once you have reimplemented this not to
 // use the default Serializable mechanism, but the same as

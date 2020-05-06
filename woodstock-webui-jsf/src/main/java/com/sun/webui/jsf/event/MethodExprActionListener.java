@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -16,18 +16,16 @@
  */
 package com.sun.webui.jsf.event;
 
-import javax.el.ELContext;
-import javax.el.ELException;
-import javax.el.MethodExpression;
-import javax.faces.context.FacesContext;
-import javax.faces.component.StateHolder;
+import jakarta.el.ELContext;
+import jakarta.el.ELException;
+import jakarta.el.MethodExpression;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.StateHolder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ActionListener;
+import jakarta.faces.event.AbortProcessingException;
+import jakarta.faces.event.ActionEvent;
+import jakarta.faces.event.ActionListener;
 
 /**
  * <strong>MethodExprActionListener</strong> is an {@link ActionListener} that
@@ -42,7 +40,7 @@ public final class MethodExprActionListener
      * Logger.
      */
     private static final Logger LOGGER
-            = Logger.getLogger("javax.faces.event", "javax.faces.LogStrings");
+            = Logger.getLogger("jakarta.faces.event", "jakarta.faces.LogStrings");
 
     /**
      * Method expression.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,9 +20,9 @@ import com.sun.faces.annotation.Renderer;
 import com.sun.webui.jsf.component.ProgressBar;
 import java.io.IOException;
 import java.util.Map;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.json.JsonObject;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
 import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
@@ -32,7 +32,7 @@ import static com.sun.webui.jsf.util.JsonUtilities.writeJsonObject;
  */
 @Renderer(@Renderer.Renders(rendererType = "com.sun.webui.jsf.ajax.ProgressBar",
 componentFamily = "com.sun.webui.jsf.ProgressBar"))
-public final class ProgressBarRenderer extends javax.faces.render.Renderer {
+public final class ProgressBarRenderer extends jakarta.faces.render.Renderer {
 
     @Override
     public void decode(final FacesContext context,

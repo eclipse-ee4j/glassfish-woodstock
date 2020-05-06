@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,9 +20,9 @@ import com.sun.faces.annotation.Renderer;
 import java.io.IOException;
 import java.util.Iterator;
 import java.text.MessageFormat;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
 import com.sun.webui.jsf.component.Icon;
 import com.sun.webui.jsf.component.Wizard;
 import com.sun.webui.jsf.component.WizardStep;
@@ -30,8 +30,8 @@ import com.sun.webui.jsf.model.WizardStepListItem;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.theme.ThemeImages;
-import javax.faces.render.ResponseStateManager;
-import javax.json.JsonObject;
+import jakarta.faces.render.ResponseStateManager;
+import jakarta.json.JsonObject;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.getModuleName;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;

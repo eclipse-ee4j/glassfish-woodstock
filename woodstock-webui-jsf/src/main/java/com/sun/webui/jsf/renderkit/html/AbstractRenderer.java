@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,23 +19,23 @@ package com.sun.webui.jsf.renderkit.html;
 import com.sun.webui.jsf.model.Markup;
 import java.io.IOException;
 import java.util.Map;
-import javax.faces.application.Application;
-import javax.faces.component.EditableValueHolder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.ValueHolder;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.convert.Converter;
-import javax.el.ValueExpression;
-import javax.faces.render.Renderer;
+import jakarta.faces.application.Application;
+import jakarta.faces.component.EditableValueHolder;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.ValueHolder;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ResponseWriter;
+import jakarta.faces.convert.Converter;
+import jakarta.el.ValueExpression;
+import jakarta.faces.render.Renderer;
 
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderStyleClass;
 
 /**
  * Abstract base class for concrete implementations of
- * {@code javax.faces.render.Renderer} for JavaServer Faces component libraries.
+ * {@code jakarta.faces.render.Renderer} for JavaServer Faces component libraries.
  */
 public abstract class AbstractRenderer extends Renderer {
 

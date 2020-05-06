@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -19,16 +19,16 @@ package com.sun.webui.jsf.util;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
-import javax.faces.FactoryFinder;
-import javax.faces.application.Application;
-import javax.faces.application.ApplicationFactory;
-import javax.faces.component.UIComponent;
-import javax.faces.component.ValueHolder;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.el.ValueExpression;
-import javax.faces.FacesException;
+import jakarta.faces.FactoryFinder;
+import jakarta.faces.application.Application;
+import jakarta.faces.application.ApplicationFactory;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.ValueHolder;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.el.ValueExpression;
+import jakarta.faces.FacesException;
 
 /**
  * The ConversionUtilities class provides utility method for converting values
@@ -88,7 +88,7 @@ public final class ConversionUtilities {
         }
 
         // Optimization based on
-        // javax.faces.convert.Converter getAsObject.
+        // jakarta.faces.convert.Converter getAsObject.
         // It says:
         // return null if the value to convert is
         // null otherwise the result of the conversion

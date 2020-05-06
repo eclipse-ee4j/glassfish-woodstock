@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -20,10 +20,10 @@ import java.io.Serializable;
 import java.io.File;
 import java.net.InetAddress;
 
-import javax.faces.context.FacesContext;
-import javax.faces.component.UIComponent;
-import javax.faces.application.FacesMessage;
-import javax.faces.validator.ValidatorException;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.validator.ValidatorException;
 import com.sun.webui.jsf.component.Wizard;
 import com.sun.webui.jsf.event.WizardEvent;
 import com.sun.webui.jsf.event.WizardEventListener;

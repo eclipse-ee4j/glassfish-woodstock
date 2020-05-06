@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -20,10 +20,10 @@ package com.sun.webui.jsf.faces;
 import com.sun.faces.annotation.Resolver;
 import java.util.ArrayList;
 import java.util.List;
-import javax.el.ELResolver;
-import javax.el.ELContext;
-import javax.el.PropertyNotFoundException;
-import javax.faces.model.SelectItem;
+import jakarta.el.ELResolver;
+import jakarta.el.ELContext;
+import jakarta.el.PropertyNotFoundException;
+import jakarta.faces.model.SelectItem;
 import com.sun.data.provider.DataProvider;
 import com.sun.data.provider.DataProviderException;
 import com.sun.data.provider.FieldKey;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
@@ -20,10 +20,10 @@ import com.sun.faces.annotation.Component;
 import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.LogUtil;
-import javax.el.ValueExpression;
-import javax.faces.component.NamingContainer;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.el.ValueExpression;
+import jakarta.faces.component.NamingContainer;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 
 /**
  * Represents an input field whose content will be included when the surrounding
@@ -580,7 +580,7 @@ public class Field extends HiddenField
         // We need to allow an empty string label since this
         // could mean that there is value binding and a
         // message bundle hasn't loaded yet, but there
-        // is a value binding since the javax.el never returns
+        // is a value binding since the jakarta.el never returns
         // null for a String binding.
         if (labelString == null /*|| labelString.length() < 1*/) {
             if (DEBUG) {
