@@ -113,7 +113,7 @@ spec:
       steps {
         container('build-container') {
           timeout(time: 20, unit: 'MINUTES') {
-            sh 'mvn clean install'
+            sh 'mvn --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean install'
             
             junit testResults: '**/target/*-reports/*.xml', allowEmptyResults: true
           }
