@@ -95,6 +95,11 @@ spec:
         readOnly: true
       - name: maven-repo-local-storage
         mountPath: "/home/jenkins/.m2/repository/org/glassfish/woodstock"
+    env:
+      - name: "MAVEN_OPTS"
+        value: "-Duser.home=/home/jenkins"
+      - name: "MVN_EXTRA"
+        value: "--batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
     resources:
       limits:
         memory: "7Gi"
@@ -108,7 +113,7 @@ spec:
       steps {
         container('build-container') {
           timeout(time: 20, unit: 'MINUTES') {
-            sh 'mvn clean install -Pcopyright,checkstyle'
+            sh 'mvn clean install'
             
             junit testResults: '**/target/*-reports/*.xml', allowEmptyResults: true
           }
