@@ -28,7 +28,7 @@
 
     <artifactId>woodstock-webui-jsf-suntheme</artifactId>
 
-    <name>Woodstock WebUI JSF Suntheme</name>
+    <name>Woodstock WebUI Jakarta Faces Suntheme</name>
 
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>

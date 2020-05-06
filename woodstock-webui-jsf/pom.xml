@@ -28,7 +28,7 @@
 
     <artifactId>woodstock-webui-jsf</artifactId>
 
-    <name>Woodstock WebUI JSF</name>
+    <name>Woodstock WebUI Jakarta Faces</name>
 
     <properties>
         <commons-fileupload-src-folder>${project.build.directory}/commons-fileupload-src</commons-fileupload-src-folder>
