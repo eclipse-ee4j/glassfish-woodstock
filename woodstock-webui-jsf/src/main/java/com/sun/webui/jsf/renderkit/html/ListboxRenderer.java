@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -26,6 +27,7 @@ import com.sun.webui.jsf.component.Listbox;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import com.sun.webui.jsf.util.LogUtil;
 
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
@@ -37,18 +39,12 @@ import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 @Renderer(@Renderer.Renders(componentFamily = "com.sun.webui.jsf.Listbox"))
 public final class ListboxRenderer extends ListRendererBase {
 
-    /**
-     * Debug flag.
-     */
-    private static final boolean DEBUG = false;
-
     @Override
     public void encodeEnd(final FacesContext context,
             final UIComponent component) throws IOException {
 
-        if (DEBUG) {
-            log("encodeEnd()");
-        }
+        log("encodeEnd()");
+        
         if (component == null) {
             return;
         }
@@ -88,9 +84,7 @@ public final class ListboxRenderer extends ListRendererBase {
     private String[] getStyles(final FacesContext context,
             final UIComponent component, final boolean monospace) {
 
-        if (DEBUG) {
-            log("getStyles()");
-        }
+        log("getStyles()");
 
         Theme theme = getTheme(context);
 
@@ -122,6 +116,6 @@ public final class ListboxRenderer extends ListRendererBase {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(ListboxRenderer.class.getName() + "::" + msg);
+        LogUtil.finest(ListboxRenderer.class.getName() + "::" + msg);
     }
 }

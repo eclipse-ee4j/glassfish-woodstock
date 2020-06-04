@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -938,8 +939,7 @@ public class SimpleWizardBackingBean implements Serializable {
 
             Wizard wiz = event.getWizard();
             // WizardStep step = event.getStep();
-            // String stepTitle = step.getTitle();
-            // System.out.println("Wizard event step: " + stepTitle);
+            // String stepTitle = step.getTitle();;
             switch (event.getNavigationEvent()) {
 
                 // FINISH event indicates we can add our new user.

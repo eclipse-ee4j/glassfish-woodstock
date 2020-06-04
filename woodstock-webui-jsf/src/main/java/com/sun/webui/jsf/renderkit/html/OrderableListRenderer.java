@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,6 +32,7 @@ import static com.sun.webui.jsf.util.JavaScriptUtilities.getDomNode;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
 import static com.sun.webui.jsf.util.JsonUtilities.JSON_BUILDER_FACTORY;
+import com.sun.webui.jsf.util.LogUtil;
 import static com.sun.webui.jsf.util.RenderingUtilities.renderComponent;
 import static com.sun.webui.jsf.util.ThemeUtilities.getTheme;
 
@@ -411,6 +413,6 @@ public final class OrderableListRenderer extends ListRendererBase {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(OrderableListRenderer.class.getName() + "::" + msg);
+        LogUtil.finest(OrderableListRenderer.class.getName() + "::" + msg);
     }
 }

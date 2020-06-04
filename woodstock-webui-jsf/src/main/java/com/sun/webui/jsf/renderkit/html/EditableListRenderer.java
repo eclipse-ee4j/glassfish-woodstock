@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,6 +29,7 @@ import com.sun.webui.jsf.component.EditableList;
 import com.sun.webui.jsf.component.ListSelector;
 import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.theme.ThemeStyles;
+import com.sun.webui.jsf.util.LogUtil;
 import javax.json.JsonObject;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCall;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderCalls;
@@ -187,9 +189,7 @@ public class EditableListRenderer extends ListRendererBase {
             final FacesContext context, final String[] styles)
             throws IOException {
 
-        if (DEBUG) {
-            log("renderListComponent()");
-        }
+        log("renderListComponent()");
         if (component.isReadOnly()) {
             UIComponent label = component.getListLabelComponent();
             renderReadOnlyList(component, label, context, styles[8]);
@@ -506,6 +506,6 @@ public class EditableListRenderer extends ListRendererBase {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(EditableListRenderer.class.getName() + "::" + msg);
+        LogUtil.finest(EditableListRenderer.class.getName() + "::" + msg);
     }
 }

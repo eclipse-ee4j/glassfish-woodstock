@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,6 +23,7 @@ import com.sun.webui.theme.Theme;
 import com.sun.webui.jsf.util.ComponentUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ConversionUtilities;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.ValueType;
 import com.sun.webui.jsf.util.ValueTypeEvaluator;
 import java.lang.reflect.Array;
@@ -918,7 +920,7 @@ public final class OrderableList extends WebuiInput
             }
         } catch (FacesException ex) {
             if (DEBUG) {
-                ex.printStackTrace();
+                LogUtil.finest(null, ex);
             }
         }
         return cValue;
@@ -1007,7 +1009,7 @@ public final class OrderableList extends WebuiInput
      * @param msg message to log
      */
     private void log(final String msg) {
-        System.out.println(OrderableList.class.getName() + "::" + msg);
+        LogUtil.finest(OrderableList.class.getName() + "::" + msg);
     }
 
     /**

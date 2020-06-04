@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -31,6 +32,7 @@ import com.sun.data.provider.TableCursorVetoException;
 import com.sun.data.provider.TableDataProvider;
 import com.sun.data.provider.impl.TableRowDataProvider;
 import com.sun.webui.jsf.model.Option;
+import com.sun.webui.jsf.util.LogUtil;
 import java.util.Iterator;
 import java.beans.FeatureDescriptor;
 import java.util.Arrays;
@@ -441,7 +443,7 @@ public final class DataProviderELResolver extends ELResolver {
                                 .setCursorRow((RowKey) value);
                         return;
                     } catch (TableCursorVetoException ex) {
-                        ex.printStackTrace();
+                        LogUtil.severe(null, ex);
                     }
                 }
                 if (provider instanceof TableRowDataProvider) {
@@ -449,7 +451,7 @@ public final class DataProviderELResolver extends ELResolver {
                         ((TableRowDataProvider) provider)
                                 .setTableRow((RowKey) value);
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        LogUtil.severe(null, ex);
                     }
                 }
 
@@ -461,7 +463,7 @@ public final class DataProviderELResolver extends ELResolver {
                         ((TableDataProvider) provider).setCursorRow(row);
                         return;
                     } catch (DataProviderException ex) {
-                        ex.printStackTrace();
+                        LogUtil.severe(null, ex);
                     }
                 }
                 if (provider instanceof TableRowDataProvider) {
@@ -471,7 +473,7 @@ public final class DataProviderELResolver extends ELResolver {
                                 .getRowKey((String) value);
                         ((TableRowDataProvider) provider).setTableRow(row);
                     } catch (DataProviderException ex) {
-                        ex.printStackTrace();
+                        LogUtil.severe(null, ex);
                     }
                 }
             } else {

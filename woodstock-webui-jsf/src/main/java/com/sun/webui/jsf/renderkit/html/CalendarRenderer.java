@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,6 +33,7 @@ import com.sun.webui.jsf.theme.ThemeStyles;
 import com.sun.webui.jsf.util.MessageUtil;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import static com.sun.webui.jsf.util.JavaScriptUtilities.renderInitScriptTag;
+import com.sun.webui.jsf.util.LogUtil;
 import com.sun.webui.jsf.util.RenderingUtilities;
 import com.sun.webui.jsf.util.ThemeUtilities;
 import java.text.SimpleDateFormat;
@@ -454,6 +456,6 @@ public class CalendarRenderer extends FieldRenderer {
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(CalendarRenderer.class.getName() + "::" + msg);
+        LogUtil.finest(CalendarRenderer.class.getName() + "::" + msg);
     }
 }

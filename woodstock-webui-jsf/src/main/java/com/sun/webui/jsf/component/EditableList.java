@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020 Payara Services Ltd.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,6 +26,7 @@ import com.sun.webui.jsf.util.ThemeUtilities;
 import com.sun.webui.jsf.util.ConversionUtilities;
 import com.sun.webui.jsf.validator.StringLengthValidator;
 import com.sun.webui.jsf.util.JavaScriptUtilities;
+import com.sun.webui.jsf.util.LogUtil;
 import java.lang.reflect.Array;
 import java.io.Serializable;
 import java.text.Collator;
@@ -1489,7 +1491,7 @@ public final class EditableList extends WebuiInput implements ListManager,
      * @param msg message to log
      */
     private static void log(final String msg) {
-        System.out.println(EditableList.class.getName() + "::" + msg);
+        LogUtil.finest(EditableList.class.getName() + "::" + msg);
     }
 
     @Override
