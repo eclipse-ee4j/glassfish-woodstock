@@ -4,24 +4,28 @@ import jakarta.el.ELException;
 import jakarta.el.MethodExpression;
 import jakarta.el.ValueExpression;
 import jakarta.faces.FacesException;
+import jakarta.faces.component.FacesComponent;
 import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
 import jakarta.faces.component.StateHolder;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
 import jakarta.faces.event.ValueChangeEvent;
-import jakarta.faces.webapp.UIComponentELTag;
 import jakarta.faces.context.FacesContext;
 
 /**
  * This file was generated automatically on ${date}.
  */
+@FacesComponent(${tagClass}.COMPONENT_TYPE)
+public class ${tagClass} extends UIComponentBase {
 
-public class ${tagClass} extends UIComponentELTag {
-    
+    public static final String COMPONENT_TYPE = "${componentInfo.family}";
+
     /**
      * Returns the requested component type.
      */
-    public String getComponentType() {
+    @Override
+    public String getFamily() {
         return "${componentInfo.family}";
     }
     
@@ -40,7 +44,7 @@ public class ${tagClass} extends UIComponentELTag {
      * Release any allocated tag handler attributes.
      */
     public void release() {
-        super.release();
+        //super.release();
 #foreach($propertyInfo in $propertyInfos)
 #if ($propertyInfo.attributeInfo && !($propertyInfo.name == "id" || $propertyInfo.name == "parent"))
         ${propertyInfo.instanceName} = null;
@@ -52,7 +56,7 @@ public class ${tagClass} extends UIComponentELTag {
      * Transfer tag attribute values to component properties.
      */
     protected void setProperties(UIComponent component) {
-        super.setProperties(component);
+        //super.setProperties(component);
                         
 #foreach($propertyInfo in $propertyInfos)
 #if ($propertyInfo.attributeInfo)
