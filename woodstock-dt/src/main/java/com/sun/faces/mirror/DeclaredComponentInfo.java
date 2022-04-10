@@ -286,7 +286,7 @@ public final class DeclaredComponentInfo extends DeclaredClassInfo {
     public String getTagClassQualifiedName() {
         TypeElement tagClassDecl = this.getTagClassDeclaration();
         if (tagClassDecl == null) {
-            return this.getQualifiedName() + "Tag";
+            return this.getQualifiedName();
         }
         return tagClassDecl.getQualifiedName().toString();
     }

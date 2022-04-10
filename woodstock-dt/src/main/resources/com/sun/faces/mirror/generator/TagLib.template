@@ -1,29 +1,23 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- This file was generated automatically on ${date}. -->
-
 ## TODO Extract javadoc for taglib descriptions
-    
-<taglib>
-
-    <tlib-version>1.1</tlib-version>
-    <jsp-version>2.1</jsp-version>
+<facelet-taglib version="3.0"
+                xmlns="https://jakarta.ee/xml/ns/jakartaee" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-facelettaglibrary_3_0.xsd">
     <short-name>${namespacePrefix}</short-name>
-    <uri>${namespace}</uri>
+    <namespace>${namespace}</namespace>
 #foreach ($componentInfo in $componentInfoSet)
 #if ($componentInfo.isTag())
     <tag>
-        <name>${componentInfo.tagName}</name>
+        <tag-name>${componentInfo.tagName}</tag-name>
         <tag-class>${componentInfo.tagClassQualifiedName}</tag-class>
-        <body-content>JSP</body-content>
         <description><![CDATA[${componentInfo.tagDescription}]]></description>
 
         <attribute>
             <name>binding</name>
             <required>false</required>
-            <deferred-value>
-                <type>${componentInfo.qualifiedName}</type>
-            </deferred-value>
+            <type>${componentInfo.qualifiedName}</type>
             <description>
                 A ValueExpression that resolves to the UIComponent that corresponds
                 to this tag. This binding allows the Java bean that contains the UIComponent 
@@ -48,18 +42,12 @@
 #end  
 #if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.methodSignature)
-            <deferred-method>
-                <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
-            </deferred-method>
+            <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
 #else
-            <deferred-method>
-                <method-signature/>
-            </deferred-method>
+            <method-signature/>
 #end
 #else
-            <deferred-value>
-                <type>${propertyInfo.type}</type>
-            </deferred-value>
+            <type>${propertyInfo.type}</type>
 #end##if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.description)
             <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
@@ -76,7 +64,6 @@
         <attribute>
             <name>${propertyInfo.attributeInfo.name}</name>
             <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
         </attribute>
 #elseif ($propertyInfo.attributeInfo)
 
@@ -89,18 +76,12 @@
 #end
 #if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.methodSignature)
-            <deferred-method>
-                <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
-            </deferred-method>
+            <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
 #else
-            <deferred-method>
-                <method-signature/>
-            </deferred-method>
+            <method-signature/>
 #end
 #else
-            <deferred-value>
-                <type>${propertyInfo.type}</type>
-            </deferred-value>
+            <type>${propertyInfo.type}</type>
 #end##if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.description)
             <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
@@ -113,4 +94,4 @@
 
 #end
 #end
-</taglib>
+</facelet-taglib>

@@ -18,15 +18,15 @@ import jakarta.faces.context.FacesContext;
  */
 @FacesComponent(${tagClass}.COMPONENT_TYPE)
 public class ${tagClass} extends UIComponentBase {
-
+    
     public static final String COMPONENT_TYPE = "${componentInfo.family}";
-
+    
     /**
-     * Returns the requested component type.
+     * Returns the family.
      */
     @Override
     public String getFamily() {
-        return "${componentInfo.family}";
+        return ${tagClass}.COMPONENT_TYPE;
     }
     
     /**
@@ -44,7 +44,6 @@ public class ${tagClass} extends UIComponentBase {
      * Release any allocated tag handler attributes.
      */
     public void release() {
-        //super.release();
 #foreach($propertyInfo in $propertyInfos)
 #if ($propertyInfo.attributeInfo && !($propertyInfo.name == "id" || $propertyInfo.name == "parent"))
         ${propertyInfo.instanceName} = null;
@@ -56,8 +55,6 @@ public class ${tagClass} extends UIComponentBase {
      * Transfer tag attribute values to component properties.
      */
     protected void setProperties(UIComponent component) {
-        //super.setProperties(component);
-                        
 #foreach($propertyInfo in $propertyInfos)
 #if ($propertyInfo.attributeInfo)
 #if ($propertyInfo.type == "jakarta.el.MethodExpression")

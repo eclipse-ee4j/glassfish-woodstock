@@ -61,6 +61,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.woodstock</groupId>
             <artifactId>woodstock-dt</artifactId>
             <version>${project.version}</version>
@@ -105,7 +110,7 @@
                 <configuration>
                     <compilerArgs combine.children="append">
                         <arg>-Ataglibdoc=${basedir}/tag-descriptions.xml</arg>
-                        <arg>-Ataglibdoc.out=META-INF/webui-jsf.tld</arg>
+                        <arg>-Ataglibdoc.out=META-INF/webuijsf.taglib.xml</arg>
                         <arg>-Agenerate.designtime=false</arg>
                         <arg>-Agenerate.runtime=true</arg>
                         <arg>-Anamespace.prefix=webuijsf</arg>

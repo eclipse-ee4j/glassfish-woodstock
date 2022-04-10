@@ -14,10 +14,10 @@
         <el-resolver>${name}</el-resolver>
 #end
 #foreach ($name in $propertyResolverNameSet)
-        <property-resolver>${name}</property-resolver>
+        <el-resolver>${name}</el-resolver>
 #end
 #foreach ($name in $variableResolverNameSet)
-        <variable-resolver>${name}</variable-resolver>
+        <el-resolver>${name}</el-resolver>
 #end
     </application>
 #foreach ($componentInfo in $componentInfoSet)
