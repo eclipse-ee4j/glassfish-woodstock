@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
@@ -44,7 +45,7 @@ public final class ListboxRenderer extends ListRendererBase {
             final UIComponent component) throws IOException {
 
         log("encodeEnd()");
-        
+
         if (component == null) {
             return;
         }

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
@@ -148,7 +149,7 @@ public final class RepeatInterval implements Serializable {
         if (DEBUG) {
             log("getInstance(" + repr + ")");
         }
-        
+
         if (repr.equals(ONETIME)) {
             if (onetimeRi == null) {
                 onetimeRi = new RepeatInterval(-1, "Scheduler.oneTime",

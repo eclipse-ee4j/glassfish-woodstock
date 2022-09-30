@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
@@ -108,7 +109,7 @@ public final class RepeatUnit implements Serializable {
      */
     private RepeatUnit(final int newCalField, final String newKey,
             final String newRepresentation) {
-        
+
         if (DEBUG) {
             log("Create new RU");
         }
@@ -126,11 +127,11 @@ public final class RepeatUnit implements Serializable {
      * @return RepeatUnit
      */
     public static RepeatUnit getInstance(final String newRepresentation) {
-        
+
         if (DEBUG) {
             log("getInstance(" + newRepresentation + ")");
         }
-        
+
         if (newRepresentation.equals(HOURS)) {
             if (hoursRi == null) {
                 hoursRi = new RepeatUnit(Calendar.HOUR_OF_DAY,
