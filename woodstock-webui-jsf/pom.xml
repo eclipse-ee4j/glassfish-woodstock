@@ -61,6 +61,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.woodstock</groupId>
             <artifactId>woodstock-dt</artifactId>
             <version>${project.version}</version>

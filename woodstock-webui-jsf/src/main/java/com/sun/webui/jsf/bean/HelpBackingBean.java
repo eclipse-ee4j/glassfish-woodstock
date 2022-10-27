@@ -15,6 +15,7 @@
  */
 package com.sun.webui.jsf.bean;
 
+import javax.enterprise.context.RequestScoped;
 import javax.help.TreeItem;
 import javax.help.SearchTOCItem;
 import jakarta.faces.context.FacesContext;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import jakarta.faces.component.UIComponent;
+import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -50,6 +52,8 @@ import static com.sun.webui.jsf.util.ConversionUtilities.convertValueToString;
  * This class defines a backing bean required for use by the HelpWindow
  * component.
  */
+@RequestScoped
+@Named("JavaHelpBean")
 public final class HelpBackingBean {
 
     /**
