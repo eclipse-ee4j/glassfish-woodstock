@@ -18,6 +18,8 @@ package com.sun.webui.jsf.faces;
 
 import com.sun.faces.annotation.Resolver;
 import com.sun.webui.jsf.util.LogUtil;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import jakarta.faces.component.UIComponent;
@@ -25,7 +27,6 @@ import jakarta.el.ELResolver;
 import jakarta.el.ELContext;
 import java.util.Iterator;
 import java.beans.FeatureDescriptor;
-import java.util.Arrays;
 
 /**
  * Custom {@code ELResolver that, when the {@code base}
@@ -49,12 +50,11 @@ public final class UIComponentELResolver extends ELResolver {
     public Object getValue(final ELContext context, final Object base,
             final Object property) {
 
-        log("getValue(ctx, " + base + "," + property + ")");
+//        log("getValue(ctx, " + base + "," + property + ")");
         if (context == null) {
             throw new NullPointerException();
         }
-        if ((base == null) || (!(base instanceof UIComponent))
-                || (property == null)) {
+        if (!(base instanceof UIComponent) || property == null) {
             log("argument is null or not of applicable type. returning");
             return null;
         }
@@ -64,7 +64,7 @@ public final class UIComponentELResolver extends ELResolver {
         String id = property.toString();
 
         // First check for a facet w/ that name
-        UIComponent kid = (UIComponent) component.getFacets().get(id);
+        UIComponent kid = component.getFacets().get(id);
         if (kid != null) {
             context.setPropertyResolved(true);
             log("returning facet " + kid);
@@ -102,19 +102,17 @@ public final class UIComponentELResolver extends ELResolver {
      * @param property Property name
      * @param value Replacement component
      */
-    @SuppressWarnings("unchecked")
+
     @Override
     public void setValue(final ELContext context, final Object base,
             final Object property, final Object value) {
 
-        log("setValue(ctx, " + base + "," + property + "," + value + ")");
+//        log("setValue(ctx, " + base + "," + property + "," + value + ")");
 
         if (context == null) {
             throw new NullPointerException();
         }
-        if ((base == null) || (!(base instanceof UIComponent))
-                || (property == null)
-                || (value == null) || (!(value instanceof UIComponent))) {
+        if (!(base instanceof UIComponent) || (property == null) || !(value instanceof UIComponent)) {
             log("argument is null or not of applicable type. returning");
             return;
         }
@@ -163,12 +161,11 @@ public final class UIComponentELResolver extends ELResolver {
     public boolean isReadOnly(final ELContext context, final Object base,
             final Object property) {
 
-        log("isReadOnly(ctx, " + base + "," + property + ")");
+//        log("isReadOnly(ctx, " + base + "," + property + ")");
         if (context == null) {
             throw new NullPointerException();
         }
-        if ((base == null) || (!(base instanceof UIComponent))
-                || (property == null)) {
+        if (!(base instanceof UIComponent) || property == null) {
             log("argument is null or not of applicable type. returning");
             return false;
         }
@@ -214,13 +211,11 @@ public final class UIComponentELResolver extends ELResolver {
     public Class getType(final ELContext context, final Object base,
             final Object property) {
 
-        log("getType(ctx, " + base + "," + property + ")");
+//        log("getType(ctx, " + base + "," + property + ")");
         if (context == null) {
             throw new NullPointerException();
         }
-        if ((base == null)
-                || (!(base instanceof UIComponent))
-                || (property == null)) {
+        if (!(base instanceof UIComponent) || property == null) {
             log("argument is null or not of applicable type. returning");
             return null;
         }
@@ -274,13 +269,13 @@ public final class UIComponentELResolver extends ELResolver {
     public Iterator<FeatureDescriptor> getFeatureDescriptors(
             final ELContext context, final Object base) {
 
-        log("getFeatureDescriptors(ctx, " + base + ")");
+//        log("getFeatureDescriptors(ctx, " + base + ")");
 
         if (context == null) {
             throw new NullPointerException();
         }
         if (base == null) {
-            return Arrays.asList(new FeatureDescriptor[0]).iterator();
+            return Collections.emptyIterator();
         }
         if (!(base instanceof UIComponent)) {
             return null;
@@ -316,7 +311,7 @@ public final class UIComponentELResolver extends ELResolver {
     public Class getCommonPropertyType(final ELContext context,
             final Object base) {
 
-        log("getCommonPropertyType(ctx, " + base + ")");
+//        log("getCommonPropertyType(ctx, " + base + ")");
 
         if (context == null) {
             throw new NullPointerException();
