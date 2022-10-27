@@ -57,8 +57,6 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import jakarta.el.ELResolver;
 import jakarta.el.MethodExpression;
-import jakarta.faces.el.PropertyResolver;
-import jakarta.faces.el.VariableResolver;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -204,18 +202,6 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
      */
     private final  Map<String, CategoryInfo> categories =
             new HashMap<String, CategoryInfo>();
-
-    /**
-     * A set of all JSF property resolvers declared in the current compilation
-     * unit.
-     */
-    private final  Set<String> propResolverNames = new HashSet<String>();
-
-    /**
-     * A set of all JSF variable resolvers declared in the current compilation
-     * unit.
-     */
-    private final  Set<String> variableResolverNames = new HashSet<String>();
 
     /**
      * A set of all Java EE EL resolvers declared in the current compilation
@@ -436,7 +422,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
     }
 
     /**
-     * This is a JSF property or variable resolver, or a JavaEE EL resolver.
+     * This is a JakartaEE EL resolver.
      * @param elt element to process
      */
     private void processResolver(final TypeElement elt) {
@@ -446,11 +432,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
                     .getTypeUtils().asElement(superClass);
             String superCName = superClassType.getQualifiedName()
                     .toString();
-            if (superCName.equals(PropertyResolver.class.getName())) {
-                propResolverNames.add(elt.getQualifiedName().toString());
-            } else if (superCName.equals(VariableResolver.class.getName())) {
-                variableResolverNames.add(elt.getQualifiedName().toString());
-            } else if (superCName.equals(ELResolver.class.getName())) {
+            if (superCName.equals(ELResolver.class.getName())) {
                 javaeeResolverNames.add(elt.getQualifiedName().toString());
             }
             superClass = superClassType.getSuperclass();
@@ -1259,8 +1241,6 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
                 .getFacesConfigFileGenerator();
         generator.setDeclaredComponentInfos(declaredComps);
         generator.setDeclaredRendererInfos(declaredRenderers);
-        generator.setDeclaredPropertyResolverNames(propResolverNames);
-        generator.setDeclaredVariableResolverNames(variableResolverNames);
         generator.setDeclaredJavaEEResolverNames(javaeeResolverNames);
         FileObject sourceFile = filer.createResource(
                 StandardLocation.CLASS_OUTPUT, "", runtimeOut);

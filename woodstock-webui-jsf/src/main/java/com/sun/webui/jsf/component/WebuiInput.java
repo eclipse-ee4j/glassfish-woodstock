@@ -25,7 +25,6 @@ import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.validator.MethodExprValidator;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.el.MethodBinding;
 import jakarta.faces.event.AbortProcessingException;
 import jakarta.faces.event.FacesEvent;
 import jakarta.faces.event.ValueChangeEvent;
@@ -106,28 +105,6 @@ public class WebuiInput extends UIInput {
     @Override
     public void setRequired(final boolean required) {
         super.setRequired(required);
-    }
-
-    /**
-     * {@inheritDoc}
-     * This implementation invokes {@code super.getValidator}.
-     **/
-    //Override to annotate
-    @Property(isHidden = true, isAttribute = false)
-    @Override
-    public MethodBinding getValidator() {
-        return super.getValidator();
-    }
-
-    /**
-     * {@inheritDoc}
-     * This implementation invokes {@code super.getValueChangeListener}.
-     **/
-    //Override to annotate
-    @Property(isHidden = true, isAttribute = false)
-    @Override
-    public MethodBinding getValueChangeListener() {
-        return super.getValueChangeListener();
     }
 
     /**

@@ -67,21 +67,6 @@ public final class UIInputBeanInfo extends UIOutputBeanInfo {
                         .asList(super.getPropertyDescriptors()));
                 AttributeDescriptor attrib;
 
-                PropertyDescriptor propValidator =
-                        new PropertyDescriptor("validator", UIInput.class,
-                                "getValidator", "setValidator");
-                propValidator.setDisplayName(RESOURCE_BUNDLE
-                        .getString("UIInput_validator_DisplayName"));
-                propValidator.setShortDescription(RESOURCE_BUNDLE
-                        .getString("UIInput_validator_Description"));
-                propValidator.setPropertyEditorClass(
-                        loadClass(VALIDATOR_EDITOR));
-                attrib = new AttributeDescriptor("validator", false, null,
-                        true);
-                propValidator.setValue(ATTRIBUTE_DESCRIPTOR, attrib);
-                propValidator.setValue(CATEGORY, DATA);
-                descList.add(propValidator);
-
                 PropertyDescriptor propImmediate =
                         new PropertyDescriptor("immediate", UIInput.class,
                                 "isImmediate", "setImmediate");
