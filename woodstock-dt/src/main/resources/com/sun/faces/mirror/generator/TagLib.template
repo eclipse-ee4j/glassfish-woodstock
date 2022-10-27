@@ -23,7 +23,7 @@
             <component-type>${componentInfo.type}</component-type>
             <renderer-type>${componentInfo.tagRendererType}</renderer-type>
         </component>
-
+#*
         <attribute>
             <description>
                 A ValueExpression that resolves to the UIComponent that corresponds
@@ -94,7 +94,7 @@
         </attribute>
 #end##if ($propertyInfo.attributeInfo)
 #end##foreach ($propertyInfo in $componentInfo.inheritedPropertyInfos)
-
+*#
     </tag>
 #end
 #end
