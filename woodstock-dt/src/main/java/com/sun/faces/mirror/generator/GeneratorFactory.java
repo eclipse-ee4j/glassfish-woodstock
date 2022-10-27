@@ -68,14 +68,6 @@ public final class GeneratorFactory {
     }
 
     /**
-     * Get the tag source generator.
-     * @return TagSourceGenerator
-     */
-    public TagSourceGenerator getTagSourceGenerator() {
-        return new TagSourceGeneratorImpl(this.velocityEngine);
-    }
-
-    /**
      * Get the debug generator.
      * @return DebugGenerator
      */

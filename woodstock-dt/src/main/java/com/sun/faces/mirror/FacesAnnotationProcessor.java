@@ -29,7 +29,6 @@ import com.sun.faces.mirror.generator.FacesConfigFileGenerator;
 import com.sun.faces.mirror.generator.GeneratorException;
 import com.sun.faces.mirror.generator.GeneratorFactory;
 import com.sun.faces.mirror.generator.TagLibFileGenerator;
-import com.sun.faces.mirror.generator.TagSourceGenerator;
 import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
 import java.beans.BeanInfo;
@@ -1249,35 +1248,6 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
     }
 
     /**
-     * Generate the JSP tag classes.
-     * @param factory generator factory
-     * @throws IOException if an I/O error occurs
-     * @throws GeneratorException if a generation error occurs
-     */
-    private void generateJspTagClasses(final GeneratorFactory factory)
-            throws IOException, GeneratorException {
-
-        // Generate JSP tag class files, unless a hand-authored tag class
-        // exists
-        Filer filer = processingEnv.getFiler();
-        TagSourceGenerator generator = factory.getTagSourceGenerator();
-        generator.setNamespace(namespaceUri);
-        generator.setNamespacePrefix(namespacePrefix);
-        for (DeclaredComponentInfo componentInfo : declaredComps) {
-            if (!declaredTagClasses.containsKey(componentInfo.getType())
-                    && componentInfo.isTag()) {
-                generator.setDeclaredComponentInfo(componentInfo);
-                JavaFileObject sourceFile = filer.createSourceFile(
-                        generator.getQualifiedName(),
-                        (Element) null);
-                generator.setPrintWriter(new PrintWriter(
-                        sourceFile.openWriter()));
-                generator.generate();
-            }
-        }
-    }
-
-    /**
      * Generate the JSP tag lib.
      * @param factory generator factory
      * @throws IOException if an I/O error occurs
@@ -1427,8 +1397,6 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
             if (declaredComps.size() > 0) {
                 generateFacesConfig(factory);
             }
-
-            generateJspTagClasses(factory);
 
             // Generate JSP tag library configuration file
             if (declaredComps.size() > 0) {
