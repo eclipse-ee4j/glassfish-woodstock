@@ -33,7 +33,6 @@ import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DES
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.CATEGORY;
 import static jakarta.faces.component.CategoryDescriptorsConstants.ADVANCED;
 import static jakarta.faces.component.CategoryDescriptorsConstants.DATA;
-import static jakarta.faces.component.PropertyEditorConstants.VALIDATOR_EDITOR;
 
 /**
  * BeanInfo for {@link jakarta.faces.component.UIInput}.
