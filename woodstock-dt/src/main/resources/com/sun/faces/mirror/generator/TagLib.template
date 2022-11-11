@@ -4,66 +4,61 @@
 
 ## TODO Extract javadoc for taglib descriptions
     
-<taglib>
-
-    <tlib-version>1.1</tlib-version>
-    <jsp-version>2.1</jsp-version>
+<facelet-taglib version="4.0"
+                xmlns="https://jakarta.ee/xml/ns/jakartaee"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-facelettaglibrary_4_0.xsd">
+    <namespace>${namespace}</namespace>
     <short-name>${namespacePrefix}</short-name>
-    <uri>${namespace}</uri>
 #foreach ($componentInfo in $componentInfoSet)
 #if ($componentInfo.isTag())
     <tag>
-        <name>${componentInfo.tagName}</name>
-        <tag-class>${componentInfo.tagClassQualifiedName}</tag-class>
-        <body-content>JSP</body-content>
-        <description><![CDATA[${componentInfo.tagDescription}]]></description>
-
+        <tag-name>${componentInfo.tagName}</tag-name>
+        <component>
+            <description>
+                <![CDATA[
+                    ${componentInfo.tagDescription}
+                ]]>
+            </description>
+            <component-type>${componentInfo.type}</component-type>
+            <renderer-type>${componentInfo.tagRendererType}</renderer-type>
+        </component>
+#*
         <attribute>
-            <name>binding</name>
-            <required>false</required>
-            <deferred-value>
-                <type>${componentInfo.qualifiedName}</type>
-            </deferred-value>
             <description>
                 A ValueExpression that resolves to the UIComponent that corresponds
-                to this tag. This binding allows the Java bean that contains the UIComponent 
+                to this tag. This binding allows the Java bean that contains the UIComponent
                 to manipulate the UIComponent, its properties, and its children.
             </description>
+            <name>binding</name>
+            <required>false</required>
+            <type>${componentInfo.qualifiedName}</type>
         </attribute>
 #foreach ($propertyInfo in $componentInfo.propertyInfos)
 #if ($propertyInfo.name == 'id' && $propertyInfo.attributeInfo)
         <attribute>
             <name>${propertyInfo.attributeInfo.name}</name>
             <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
+            <type>${propertyInfo.type}</type>
         </attribute>
 #elseif ($propertyInfo.attributeInfo)
-
         <attribute>
+#if ($propertyInfo.attributeInfo.description)
+            <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
+#end
             <name>${propertyInfo.attributeInfo.name}</name>
 #if ($propertyInfo.attributeInfo.isRequired())
             <required>true</required>
 #else
             <required>false</required>
-#end  
+#end
 #if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.methodSignature)
-            <deferred-method>
-                <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
-            </deferred-method>
+            <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
 #else
-            <deferred-method>
-                <method-signature/>
-            </deferred-method>
+            <type>${propertyInfo.type}</type>
 #end
-#else
-            <deferred-value>
-                <type>${propertyInfo.type}</type>
-            </deferred-value>
 #end##if ($propertyInfo.type == 'jakarta.el.MethodExpression')
-#if ($propertyInfo.attributeInfo.description)
-            <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
-#end
         </attribute>
 #end##if ($propertyInfo.attributeInfo)
 #end##foreach ($propertyInfo in $componentInfo.propertyInfos)
@@ -76,11 +71,13 @@
         <attribute>
             <name>${propertyInfo.attributeInfo.name}</name>
             <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
+            <type>${propertyInfo.type}</type>
         </attribute>
 #elseif ($propertyInfo.attributeInfo)
-
         <attribute>
+#if ($propertyInfo.attributeInfo.description)
+            <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
+#end
             <name>${propertyInfo.attributeInfo.name}</name>
 #if ($propertyInfo.attributeInfo.isRequired())
             <required>true</required>
@@ -89,28 +86,16 @@
 #end
 #if ($propertyInfo.type == 'jakarta.el.MethodExpression')
 #if ($propertyInfo.attributeInfo.methodSignature)
-            <deferred-method>
-                <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
-            </deferred-method>
+            <method-signature>${propertyInfo.attributeInfo.methodSignature}</method-signature>
 #else
-            <deferred-method>
-                <method-signature/>
-            </deferred-method>
+            <type>${propertyInfo.type}</type>
 #end
-#else
-            <deferred-value>
-                <type>${propertyInfo.type}</type>
-            </deferred-value>
 #end##if ($propertyInfo.type == 'jakarta.el.MethodExpression')
-#if ($propertyInfo.attributeInfo.description)
-            <description><![CDATA[${propertyInfo.attributeInfo.description}]]></description>
-#end
         </attribute>
 #end##if ($propertyInfo.attributeInfo)
 #end##foreach ($propertyInfo in $componentInfo.inheritedPropertyInfos)
-
+*#
     </tag>
-
 #end
 #end
-</taglib>
+</facelet-taglib>

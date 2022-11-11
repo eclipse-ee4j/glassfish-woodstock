@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -29,7 +30,6 @@ import com.sun.faces.mirror.generator.FacesConfigFileGenerator;
 import com.sun.faces.mirror.generator.GeneratorException;
 import com.sun.faces.mirror.generator.GeneratorFactory;
 import com.sun.faces.mirror.generator.TagLibFileGenerator;
-import com.sun.faces.mirror.generator.TagSourceGenerator;
 import com.sun.rave.designtime.CategoryDescriptor;
 import com.sun.rave.designtime.Constants;
 import java.beans.BeanInfo;
@@ -57,8 +57,6 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import jakarta.el.ELResolver;
 import jakarta.el.MethodExpression;
-import jakarta.faces.el.PropertyResolver;
-import jakarta.faces.el.VariableResolver;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -204,18 +202,6 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
      */
     private final  Map<String, CategoryInfo> categories =
             new HashMap<String, CategoryInfo>();
-
-    /**
-     * A set of all JSF property resolvers declared in the current compilation
-     * unit.
-     */
-    private final  Set<String> propResolverNames = new HashSet<String>();
-
-    /**
-     * A set of all JSF variable resolvers declared in the current compilation
-     * unit.
-     */
-    private final  Set<String> variableResolverNames = new HashSet<String>();
 
     /**
      * A set of all Java EE EL resolvers declared in the current compilation
@@ -436,7 +422,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
     }
 
     /**
-     * This is a JSF property or variable resolver, or a JavaEE EL resolver.
+     * This is a JakartaEE EL resolver.
      * @param elt element to process
      */
     private void processResolver(final TypeElement elt) {
@@ -446,11 +432,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
                     .getTypeUtils().asElement(superClass);
             String superCName = superClassType.getQualifiedName()
                     .toString();
-            if (superCName.equals(PropertyResolver.class.getName())) {
-                propResolverNames.add(elt.getQualifiedName().toString());
-            } else if (superCName.equals(VariableResolver.class.getName())) {
-                variableResolverNames.add(elt.getQualifiedName().toString());
-            } else if (superCName.equals(ELResolver.class.getName())) {
+            if (superCName.equals(ELResolver.class.getName())) {
                 javaeeResolverNames.add(elt.getQualifiedName().toString());
             }
             superClass = superClassType.getSuperclass();
@@ -1259,42 +1241,11 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
                 .getFacesConfigFileGenerator();
         generator.setDeclaredComponentInfos(declaredComps);
         generator.setDeclaredRendererInfos(declaredRenderers);
-        generator.setDeclaredPropertyResolverNames(propResolverNames);
-        generator.setDeclaredVariableResolverNames(variableResolverNames);
         generator.setDeclaredJavaEEResolverNames(javaeeResolverNames);
         FileObject sourceFile = filer.createResource(
                 StandardLocation.CLASS_OUTPUT, "", runtimeOut);
         generator.setPrintWriter(new PrintWriter(sourceFile.openWriter()));
         generator.generate();
-    }
-
-    /**
-     * Generate the JSP tag classes.
-     * @param factory generator factory
-     * @throws IOException if an I/O error occurs
-     * @throws GeneratorException if a generation error occurs
-     */
-    private void generateJspTagClasses(final GeneratorFactory factory)
-            throws IOException, GeneratorException {
-
-        // Generate JSP tag class files, unless a hand-authored tag class
-        // exists
-        Filer filer = processingEnv.getFiler();
-        TagSourceGenerator generator = factory.getTagSourceGenerator();
-        generator.setNamespace(namespaceUri);
-        generator.setNamespacePrefix(namespacePrefix);
-        for (DeclaredComponentInfo componentInfo : declaredComps) {
-            if (!declaredTagClasses.containsKey(componentInfo.getType())
-                    && componentInfo.isTag()) {
-                generator.setDeclaredComponentInfo(componentInfo);
-                JavaFileObject sourceFile = filer.createSourceFile(
-                        generator.getQualifiedName(),
-                        (Element) null);
-                generator.setPrintWriter(new PrintWriter(
-                        sourceFile.openWriter()));
-                generator.generate();
-            }
-        }
     }
 
     /**
@@ -1447,8 +1398,6 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
             if (declaredComps.size() > 0) {
                 generateFacesConfig(factory);
             }
-
-            generateJspTagClasses(factory);
 
             // Generate JSP tag library configuration file
             if (declaredComps.size() > 0) {

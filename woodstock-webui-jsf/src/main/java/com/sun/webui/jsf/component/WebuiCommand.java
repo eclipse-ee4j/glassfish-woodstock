@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -20,7 +21,6 @@ import jakarta.el.MethodExpression;
 import jakarta.faces.component.UICommand;
 import com.sun.faces.annotation.Property;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.el.MethodBinding;
 import jakarta.faces.event.AbortProcessingException;
 import jakarta.faces.event.ActionEvent;
 import jakarta.faces.event.FacesEvent;
@@ -68,28 +68,6 @@ public class WebuiCommand extends UICommand {
     @Override
     public void setRendered(final boolean rendered) {
         super.setRendered(rendered);
-    }
-
-    /**
-     * This implementation invokes {@code super.getAction}.
-     * @return MethodBinding
-     */
-    //Override to annotate
-    @Property(isHidden = true, isAttribute = false)
-    @Override
-    public MethodBinding getAction() {
-        return super.getAction();
-    }
-
-    /**
-     * This implementation invokes {@code super.getActionListener}.
-     * @return MethodBinding
-     */
-    //Override to annotate
-    @Property(isHidden = true, isAttribute = false)
-    @Override
-    public MethodBinding getActionListener() {
-        return super.getActionListener();
     }
 
     /**
