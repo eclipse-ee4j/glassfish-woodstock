@@ -219,8 +219,7 @@
                         <source>11</source>
                         <quiet>true</quiet>
                         <detectJavaApiLink>false</detectJavaApiLink>
-                        <additionalJOption>-Xdoclint:none</additionalJOption>
-                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <doclint>none</doclint>
                     </configuration>
                 </plugin>
                 
