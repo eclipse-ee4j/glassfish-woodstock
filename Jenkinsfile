@@ -34,7 +34,7 @@ pipeline {
     stage('build') {
     agent any
     tools {
-      jdk 'temurin-jdk8-latest'
+      jdk 'temurin-jdk11-latest'
       maven 'apache-maven-latest'
     }
     steps {
