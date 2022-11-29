@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -32,7 +33,6 @@ import static com.sun.rave.designtime.Constants.PropertyDescriptor.ATTRIBUTE_DES
 import static com.sun.rave.designtime.Constants.PropertyDescriptor.CATEGORY;
 import static jakarta.faces.component.CategoryDescriptorsConstants.ADVANCED;
 import static jakarta.faces.component.CategoryDescriptorsConstants.DATA;
-import static jakarta.faces.component.PropertyEditorConstants.VALIDATOR_EDITOR;
 
 /**
  * BeanInfo for {@link jakarta.faces.component.UIInput}.
@@ -66,21 +66,6 @@ public final class UIInputBeanInfo extends UIOutputBeanInfo {
                 descList.addAll(Arrays
                         .asList(super.getPropertyDescriptors()));
                 AttributeDescriptor attrib;
-
-                PropertyDescriptor propValidator =
-                        new PropertyDescriptor("validator", UIInput.class,
-                                "getValidator", "setValidator");
-                propValidator.setDisplayName(RESOURCE_BUNDLE
-                        .getString("UIInput_validator_DisplayName"));
-                propValidator.setShortDescription(RESOURCE_BUNDLE
-                        .getString("UIInput_validator_Description"));
-                propValidator.setPropertyEditorClass(
-                        loadClass(VALIDATOR_EDITOR));
-                attrib = new AttributeDescriptor("validator", false, null,
-                        true);
-                propValidator.setValue(ATTRIBUTE_DESCRIPTOR, attrib);
-                propValidator.setValue(CATEGORY, DATA);
-                descList.add(propValidator);
 
                 PropertyDescriptor propImmediate =
                         new PropertyDescriptor("immediate", UIInput.class,

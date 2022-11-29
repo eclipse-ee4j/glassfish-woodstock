@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -26,7 +27,8 @@ import jakarta.faces.component.NamingContainer;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
-import jakarta.faces.el.ValueBinding;
+
+import java.util.Objects;
 
 /**
  * The ProgressBar component is used to create a progress indicator.
@@ -589,9 +591,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.toolTip != null) {
             return this.toolTip;
         }
-        ValueBinding vb = getValueBinding("toolTip");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("toolTip");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -617,9 +619,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.description != null) {
             return this.description;
         }
-        ValueBinding vb = getValueBinding("description");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("description");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -640,9 +642,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
      * @return String
      */
     public String getFailedStateText() {
-        ValueBinding vb = getValueBinding("failedStateText");
+        ValueExpression valueExpression = getValueExpression("failedStateText");
         // set the default text for failed state if failedStateText is null
-        if (vb == null && this.failedStateText == null) {
+        if (valueExpression == null && this.failedStateText == null) {
             this.failedStateText = ThemeUtilities
                     .getTheme(FacesContext.getCurrentInstance())
                     .getMessage("ProgressBar.failedText");
@@ -651,8 +653,8 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
             return this.failedStateText;
         }
 
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -677,13 +679,11 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.heightSet) {
             return this.height;
         }
-        ValueBinding vb = getValueBinding("height");
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return Integer.MIN_VALUE;
-            } else {
-                return ((Integer) result);
+        ValueExpression valueExpression = getValueExpression("height");
+        if (valueExpression != null) {
+            Integer result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return Integer.MIN_VALUE;
@@ -711,9 +711,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.logMessage != null) {
             return this.logMessage;
         }
-        ValueBinding vb = getValueBinding("logMessage");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("logMessage");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -739,13 +739,11 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.overlayAnimationSet) {
             return this.overlayAnimation;
         }
-        ValueBinding vb = getValueBinding("overlayAnimation");
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return false;
-            } else {
-                return ((Boolean) result);
+        ValueExpression valueExpression = getValueExpression("overlayAnimation");
+        if (valueExpression != null) {
+            Boolean result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return false;
@@ -772,13 +770,11 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.progressSet) {
             return this.progress;
         }
-        ValueBinding vb = getValueBinding("progress");
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return Integer.MIN_VALUE;
-            } else {
-                return ((Integer) result);
+        ValueExpression valueExpression = getValueExpression("progress");
+        if (valueExpression != null) {
+            Integer result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return Integer.MIN_VALUE;
@@ -805,9 +801,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.progressImageUrl != null) {
             return this.progressImageUrl;
         }
-        ValueBinding vb = getValueBinding("progressImageUrl");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("progressImageUrl");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -830,20 +826,18 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
      */
     @SuppressWarnings("checkstyle:magicnumber")
     public int getRefreshRate() {
-        ValueBinding vb = getValueBinding("refreshRate");
+        ValueExpression valueExpression = getValueExpression("refreshRate");
         //set the default refresh rate 3000 if refreshRate < 0
-        if (vb == null && this.refreshRate < 0) {
+        if (valueExpression == null && this.refreshRate < 0) {
             this.refreshRate = 3000;
         }
         if (this.refreshRateSet) {
             return this.refreshRate;
         }
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return Integer.MIN_VALUE;
-            } else {
-                return ((Integer) result);
+        if (valueExpression != null) {
+            Integer result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return Integer.MIN_VALUE;
@@ -870,9 +864,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.status != null) {
             return this.status;
         }
-        ValueBinding vb = getValueBinding("status");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("status");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -898,9 +892,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.style != null) {
             return this.style;
         }
-        ValueBinding vb = getValueBinding("style");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("style");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -926,9 +920,9 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.styleClass != null) {
             return this.styleClass;
         }
-        ValueBinding vb = getValueBinding("styleClass");
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
+        ValueExpression valueExpression = getValueExpression("styleClass");
+        if (valueExpression != null) {
+            return valueExpression.getValue(getFacesContext().getELContext());
         }
         return null;
     }
@@ -956,13 +950,11 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.tabIndexSet) {
             return this.tabIndex;
         }
-        ValueBinding vb = getValueBinding("tabIndex");
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return Integer.MIN_VALUE;
-            } else {
-                return ((Integer) result);
+        ValueExpression valueExpression = getValueExpression("tabIndex");
+        if (valueExpression != null) {
+            Integer result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return Integer.MIN_VALUE;
@@ -1004,13 +996,13 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         // is greater than zero and task state is not started then set
         // it to running state. Also if progress > 99 set taskState to
         // completed
-        ValueBinding vb = getValueBinding("taskState");
-        if (this.taskState == null && vb == null) {
+        ValueExpression valueExpression = getValueExpression("taskState");
+        if (this.taskState == null && valueExpression == null) {
             this.taskState = ProgressBar.TASK_NOT_STARTED;
-        } else if (this.taskState.equals(ProgressBar.TASK_NOT_STARTED)
+        } else if (Objects.equals(this.taskState, ProgressBar.TASK_NOT_STARTED)
                 && this.progress > 0) {
             this.taskState = ProgressBar.TASK_RUNNING;
-        } else if (!(this.taskState.equals(ProgressBar.TASK_COMPLETED))
+        } else if (!(Objects.equals(this.taskState, ProgressBar.TASK_COMPLETED))
                 && this.progress > 99) {
             this.taskState = ProgressBar.TASK_COMPLETED;
         }
@@ -1018,11 +1010,7 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.taskState != null) {
             return this.taskState;
         }
-
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
-        }
-        return null;
+        return valueExpression.getValue(getFacesContext().getELContext());
     }
 
     /**
@@ -1058,19 +1046,15 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
      * @return String
      */
     public String getType() {
-        ValueBinding vb = getValueBinding("type");
+        ValueExpression valueExpression = getValueExpression("type");
         //set type attribute to DETERMINATE if type is null
-        if (vb == null && this.type == null) {
+        if (valueExpression == null && this.type == null) {
             this.type = ProgressBar.DETERMINATE;
         }
         if (this.type != null) {
             return this.type;
         }
-
-        if (vb != null) {
-            return (String) vb.getValue(getFacesContext());
-        }
-        return null;
+        return valueExpression.getValue(getFacesContext().getELContext());
     }
 
     /**
@@ -1104,13 +1088,11 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.visibleSet) {
             return this.visible;
         }
-        ValueBinding vb = getValueBinding("visible");
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return false;
-            } else {
-                return ((Boolean) result);
+        ValueExpression valueExpression = getValueExpression("visible");
+        if (valueExpression != null) {
+            Boolean result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return true;
@@ -1143,13 +1125,11 @@ public final class ProgressBar extends jakarta.faces.component.UIOutput
         if (this.widthSet) {
             return this.width;
         }
-        ValueBinding vb = getValueBinding("width");
-        if (vb != null) {
-            Object result = vb.getValue(getFacesContext());
-            if (result == null) {
-                return Integer.MIN_VALUE;
-            } else {
-                return ((Integer) result);
+        ValueExpression valueExpression = getValueExpression("width");
+        if (valueExpression != null) {
+            Integer result = valueExpression.getValue(getFacesContext().getELContext());
+            if (result != null) {
+                return result;
             }
         }
         return Integer.MIN_VALUE;

@@ -120,27 +120,32 @@
             <dependency>
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
-                <version>5.0.0</version>
+                <version>6.0.0</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.servlet.jsp</groupId>
                 <artifactId>jakarta.servlet.jsp-api</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.faces</groupId>
                 <artifactId>jakarta.faces-api</artifactId>
-                <version>3.0.0</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.json</groupId>
                 <artifactId>jakarta.json-api</artifactId>
-                <version>2.0.0</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.el</groupId>
                 <artifactId>jakarta.el-api</artifactId>
-                <version>4.0.0</version>
+                <version>5.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.enterprise</groupId>
+                <artifactId>jakarta.enterprise.cdi-api</artifactId>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>javax.help</groupId>
@@ -165,7 +170,7 @@
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.faces</artifactId>
-                <version>3.0.0</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
@@ -175,7 +180,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>4.13.2</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.woodstock.dependlibs</groupId>
@@ -191,11 +196,16 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.10.1</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>11</source>
+                        <target>11</target>
                         <compilerArgs>
                             <arg>-Xlint:unchecked</arg>
                         </compilerArgs>
@@ -203,13 +213,20 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.4.1</version>
+                    <configuration>
+                        <source>11</source>
+                        <quiet>true</quiet>
+                        <detectJavaApiLink>false</detectJavaApiLink>
+                        <doclint>none</doclint>
+                    </configuration>
                 </plugin>
+                
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -219,17 +236,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.3</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M4</version>
+                    <version>3.0.0-M7</version>
                     <configuration>
                         <argLine>-Dfile.encoding=UTF-8</argLine>
                     </configuration>
@@ -279,6 +296,28 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[11,)</version>
+                                    <message>You need JDK11+</message>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>3.5.4</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.commonjava.maven.plugins</groupId>
                 <artifactId>directory-maven-plugin</artifactId>
                 <executions>
@@ -290,28 +329,6 @@
                         <phase>validate</phase>
                         <configuration>
                             <property>top.parent.basedir</property>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[1.8.0,)</version>
-                                    <message>You need JDK8+</message>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>3.5.4</version>
-                                </requireMavenVersion>
-                            </rules>
                         </configuration>
                     </execution>
                 </executions>

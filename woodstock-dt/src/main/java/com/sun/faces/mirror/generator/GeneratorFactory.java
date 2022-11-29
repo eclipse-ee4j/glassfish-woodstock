@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -65,14 +66,6 @@ public final class GeneratorFactory {
      */
     public TagLibFileGenerator getTagLibFileGenerator() {
         return new TagLibFileGeneratorImpl(this.velocityEngine);
-    }
-
-    /**
-     * Get the tag source generator.
-     * @return TagSourceGenerator
-     */
-    public TagSourceGenerator getTagSourceGenerator() {
-        return new TagSourceGeneratorImpl(this.velocityEngine);
     }
 
     /**

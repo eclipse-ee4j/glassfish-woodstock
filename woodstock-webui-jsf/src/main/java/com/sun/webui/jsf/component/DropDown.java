@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020 Payara Services Ltd.
  *
@@ -21,10 +22,7 @@ import com.sun.faces.annotation.Property;
 import com.sun.webui.jsf.el.DropDownMethodExpression;
 import com.sun.webui.jsf.event.MethodExprActionListener;
 import com.sun.webui.jsf.util.LogUtil;
-import com.sun.webui.jsf.util.MethodBindingMethodExpressionAdapter;
-import com.sun.webui.jsf.util.MethodExpressionMethodBindingAdapter;
-import java.util.Iterator;
-import java.util.Map;
+import jakarta.el.MethodExpression;
 import jakarta.el.ValueExpression;
 import jakarta.faces.component.ActionSource2;
 import jakarta.faces.component.UIComponent;
@@ -34,8 +32,9 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.event.ActionListener;
 import jakarta.faces.event.FacesEvent;
 import jakarta.faces.event.PhaseId;
-import jakarta.faces.el.MethodBinding;
-import jakarta.el.MethodExpression;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * The DropDown component is used to display a drop down menu to allow users to
@@ -64,11 +63,6 @@ public final class DropDown extends ListSelector implements ActionSource2 {
      * fireAction flag.
      */
     private boolean fireAction = false;
-
-    /**
-     * action listener.
-     */
-    private MethodBinding methodBindingActionListener;
 
     /**
      * action expression.
@@ -469,68 +463,6 @@ public final class DropDown extends ListSelector implements ActionSource2 {
     }
 
     /**
-     * @deprecated
-     * @return {@code jakarta.faces.el.MethodBinding}
-     */
-    //emulating UICommand
-    @Override
-    public jakarta.faces.el.MethodBinding getAction() {
-        MethodBinding result = null;
-        MethodExpression me = getActionExpression();
-        if (me != null) {
-            // if the MethodExpression is an instance of our private
-            // wrapper class.
-            if (me.getClass() == MethodExpressionMethodBindingAdapter.class) {
-                result = ((MethodExpressionMethodBindingAdapter) me)
-                        .getWrapped();
-            } else {
-                // otherwise, this is a real MethodExpression.  Wrap it
-                // in a MethodBinding.
-                result = new MethodBindingMethodExpressionAdapter(me);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * @deprecated
-     * @param action action
-     */
-    //emulating UICommand
-    @Override
-    public void setAction(final jakarta.faces.el.MethodBinding action) {
-        MethodExpressionMethodBindingAdapter adapter;
-        if (null != action) {
-            adapter = new MethodExpressionMethodBindingAdapter(action);
-            setActionExpression(adapter);
-        } else {
-            setActionExpression(null);
-        }
-    }
-
-    /**
-     * @deprecated
-     * @return {@code jakarta.faces.el.MethodBinding}
-     */
-    //emulating UICommand
-    @Override
-    public jakarta.faces.el.MethodBinding getActionListener() {
-        return this.methodBindingActionListener;
-    }
-
-    /**
-     * @deprecated
-     * @param actionListener actionListener
-     */
-    //emulating UICommand
-    @Override
-    public void setActionListener(
-            final jakarta.faces.el.MethodBinding actionListener) {
-
-        this.methodBindingActionListener = actionListener;
-    }
-
-    /**
      * The actionListenerExpression attribute is used to specify a method to
      * handle an action event that is triggered when this component is activated
      * by the user. The actionListenerExpression attribute value must be a
@@ -763,7 +695,7 @@ public final class DropDown extends ListSelector implements ActionSource2 {
         values[7] = this.toolTip;
         Object[] values2 = new Object[4];
         values2[0] = values;
-        values2[1] = saveAttachedState(context, methodBindingActionListener);
+        values2[1] = null;
         values2[2] = saveAttachedState(context, actionExpression);
         values2[3] = saveAttachedState(context, actionListenerExpression);
         return (values2);
@@ -782,8 +714,6 @@ public final class DropDown extends ListSelector implements ActionSource2 {
         this.submitForm = ((Boolean) values[5]);
         this.submitFormSet = ((Boolean) values[6]);
         this.toolTip = (String) values[7];
-        methodBindingActionListener = (MethodBinding)
-                restoreAttachedState(context, values2[1]);
         actionExpression = (MethodExpression)
                 restoreAttachedState(context, values2[2]);
         actionListenerExpression = (MethodExpression)
