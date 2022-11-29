@@ -38,7 +38,7 @@ pipeline {
       maven 'apache-maven-latest'
     }
     steps {
-          sh 'mvn --batch-mode clean install -Pcheckstyle'
+          sh 'mvn --batch-mode clean install -Pcheckstyle,copyright'
 
           junit testResults: '**/target/*-reports/*.xml', allowEmptyResults: true
       }
