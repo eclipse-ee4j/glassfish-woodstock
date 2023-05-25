@@ -20,6 +20,7 @@ import com.sun.faces.annotation.Property;
 import java.util.Map;
 import jakarta.el.ValueExpression;
 import jakarta.faces.context.FacesContext;
+import java.util.Objects;
 
 /**
  * <p>
@@ -246,6 +247,13 @@ public final class RadioButton extends RbCbSelector {
             return rm.get(name);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public void updateModel(FacesContext context) {
+        if (Objects.equals(getSelected(getName()), getValue())) {
+            super.updateModel(context);
         }
     }
 
