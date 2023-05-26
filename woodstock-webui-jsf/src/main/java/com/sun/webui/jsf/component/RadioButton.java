@@ -251,7 +251,7 @@ public final class RadioButton extends RbCbSelector {
     }
 
     @Override
-    public void updateModel(FacesContext context) {
+    public void updateModel(final FacesContext context) {
         if (Objects.equals(getSelected(getName()), getValue())) {
             super.updateModel(context);
         }
