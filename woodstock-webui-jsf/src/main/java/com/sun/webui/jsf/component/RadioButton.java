@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 Contributors to the Eclipse Foundation.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -20,6 +21,7 @@ import com.sun.faces.annotation.Property;
 import java.util.Map;
 import jakarta.el.ValueExpression;
 import jakarta.faces.context.FacesContext;
+import java.util.Objects;
 
 /**
  * <p>
@@ -246,6 +248,13 @@ public final class RadioButton extends RbCbSelector {
             return rm.get(name);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public void updateModel(final FacesContext context) {
+        if (Objects.equals(getSelected(getName()), getValue())) {
+            super.updateModel(context);
         }
     }
 
