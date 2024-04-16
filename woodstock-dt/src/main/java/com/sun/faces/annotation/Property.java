@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -292,7 +293,7 @@ public @interface Property {
     // descriptors
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.FIELD, ElementType.METHOD})
-    public @interface Method {
+    @interface Method {
 
         /**
          * The complete signature of the method to which the annotated method
