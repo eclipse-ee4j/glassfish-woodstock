@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation. All rights reserved.
+ * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation. All rights reserved.
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -1483,7 +1483,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
      * Visitor implementation used to visit field and method declarations in a
      * class.
      */
-    private class MemberDeclarationVisitor extends SimpleElementVisitor6 {
+    private final class MemberDeclarationVisitor extends SimpleElementVisitor6 {
 
         /**
          * Properties.
@@ -1797,7 +1797,7 @@ public final class FacesAnnotationProcessor extends AbstractProcessor {
      * Handler implementation used to collect tag and attribute descriptions
      * during the parsing of a tag lib file.
      */
-    private static class TaglibDocHandler extends DefaultHandler {
+    private static final class TaglibDocHandler extends DefaultHandler {
 
         /**
          * Tag attribute name.
