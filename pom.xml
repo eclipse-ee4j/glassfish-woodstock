@@ -304,7 +304,7 @@
                                     <message>You need JDK11+</message>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
-                                    <version>3.5.4</version>
+                                    <version>3.6.3</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
