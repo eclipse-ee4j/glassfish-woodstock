@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!--
 
+    Copyright (c) 2024 Contributors to the Eclipse Foundation. All rights reserved.
     Copyright (c) 2019 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
@@ -36,4 +37,12 @@
     <suppress checks="FileLength" files="woodstock-webui-jsf/src/main/java/com/sun/webui/jsf/component/TableRowGroup.java"/>
     <suppress checks="FileLength" files="woodstock-webui-jsf/src/main/java/com/sun/webui/jsf/component/Wizard.java"/>
     <suppress checks="FileLength" files="woodstock-webui-jsf/src/main/java/com/sun/webui/jsf/renderkit/html/WizardRenderer.java"/>
+
+    <suppress checks="LineLength" files="woodstock-dt/src/main/resources/jakarta/faces/component/bundle.properties"/>
+    <suppress checks="LineLength" files="woodstock-webui-jsf/src/main/java/com/sun/webui/jsf/renderkit/html/PageRenderer.java"/>
+    <suppress checks="LineLength" files="woodstock-webui-jsf/src/main/java/com/sun/webui/jsf/component/EditableList.java"/>
+    <suppress checks="LineLength" files="woodstock-webui-jsf/src/main/resources/com/sun/webui/jsf/resources/LogMessages.properties"/>
+    <suppress checks="LineLength" files="woodstock-webui-jsf/src/main/resources/com/sun/webui/jsf/component/Bundle.properties"/>
+    <suppress checks="LineLength" files="woodstock-webui-jsf-suntheme/src/main/resources/messages/messages.properties"/>
+    <suppress checks="LineLength" files="woodstock-example/src/main/resources/com/sun/webui/jsf/example/resources/Resources.properties"/>
 </suppressions>
