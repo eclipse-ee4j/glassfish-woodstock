@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation.
  * Copyright (c) 2007, 2019 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -150,7 +151,7 @@ import java.util.Map;
  *
  * @see TypeConversion
  */
-public final class TypeConverter extends Object {
+public final class TypeConverter {
 
     /**
      * Type conversions map.
