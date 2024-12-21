@@ -250,6 +250,7 @@
                         <debug>false</debug>
                         <scmOnly>true</scmOnly>
                         <warn>true</warn>
+                        <quiet>false</quiet>
                         <ignoreYear>false</ignoreYear>
                         <useComma>true</useComma>
                         <doHidden>true</doHidden>
@@ -357,13 +358,6 @@
                             <excludeFile>${top.parent.basedir}/copyright-exclude</excludeFile>
                         </configuration>
                         <executions>
-                            <execution>
-                                <id>print-copyright</id>
-                                <goals>
-                                    <goal>copyright</goal>
-                                </goals>
-                                <phase>validate</phase>
-                            </execution>
                             <execution>
                                 <id>check-copyright</id>
                                 <goals>
