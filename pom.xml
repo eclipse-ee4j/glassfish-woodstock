@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation. All rights reserved.
+    Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation. All rights reserved.
     Copyright (c) 2019, 2020 Oracle and/or its affiliates. All rights reserved.
     Copyright (c) 2020 Payara Services Ltd.
 
@@ -252,7 +252,6 @@
                         <warn>true</warn>
                         <quiet>false</quiet>
                         <ignoreYear>false</ignoreYear>
-                        <useComma>true</useComma>
                         <doHidden>true</doHidden>
                     </configuration>
                 </plugin>
