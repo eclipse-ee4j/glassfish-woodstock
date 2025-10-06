@@ -79,7 +79,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dojo.version>1.15.0</dojo.version>
-        <commons-fileupload.version>1.5</commons-fileupload.version>
+        <commons-fileupload.version>1.6.0</commons-fileupload.version>
     </properties>
 
     <dependencyManagement>
