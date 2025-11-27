@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.glassfish.woodstock.external</groupId>
         <artifactId>woodstock-external</artifactId>
-        <version>6.1.0-SNAPSHOT</version>
+        <version>6.0.2</version>
     </parent>
 
     <artifactId>dojo</artifactId>
