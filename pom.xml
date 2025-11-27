@@ -30,7 +30,7 @@
 
     <groupId>org.glassfish.woodstock</groupId>
     <artifactId>woodstock-parent</artifactId>
-    <version>6.0.2</version>
+    <version>6.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Woodstock Parent</name>
