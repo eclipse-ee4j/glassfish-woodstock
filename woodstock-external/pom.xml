@@ -35,5 +35,6 @@
 
     <modules>
         <module>dojo</module>
+        <module>prototype</module>
     </modules>
 </project>
