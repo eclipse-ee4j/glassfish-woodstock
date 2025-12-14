@@ -26,13 +26,13 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <dependencySets>
-        <dependencySet>
-            <outputDirectory>${project.build.directory}/prototype</outputDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources</directory>
+            <outputDirectory>/</outputDirectory>
             <includes>
-                <include>org.glassfish.woodstock.external:prototype-dist</include>
+                <include>**/*.js</include>
             </includes>
-            <unpack>true</unpack>
-        </dependencySet>
-    </dependencySets>
+        </fileSet>
+    </fileSets>
 </assembly>

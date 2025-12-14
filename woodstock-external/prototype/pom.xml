@@ -43,24 +43,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-zip</id>
-                        <phase>validate</phase>
-                        <goals><goal>install-file</goal></goals>
-                        <configuration>
-                            <file>${project.basedir}/src/main/resources/prototype-1.7.3-distribution.zip</file>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}-dist</artifactId>
-                            <version>${project.version}</version>
-                            <packaging>zip</packaging>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
@@ -69,7 +51,6 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
-
                         <configuration>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                             <descriptors>
