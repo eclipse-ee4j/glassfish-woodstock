@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.glassfish.woodstock.external</groupId>
         <artifactId>woodstock-external</artifactId>
-        <version>6.0.3</version>
+        <version>6.0.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>prototype</artifactId>
