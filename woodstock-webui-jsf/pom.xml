@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation. All rights reserved.
+    Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation. All rights reserved.
     Copyright (c) 2019, 2020 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.glassfish.woodstock</groupId>
         <artifactId>woodstock-parent</artifactId>
-        <version>6.0.3-SNAPSHOT</version>
+        <version>6.0.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>woodstock-webui-jsf</artifactId>
